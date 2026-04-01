@@ -111,6 +111,8 @@
   --hud-text-3: rgba(90, 100, 120, 1);
   /* Positive/healing color (green) */
   --hud-positive: rgba(52, 211, 153, 1);
+  /* Informational color (blue) */
+  --hud-info: rgba(96, 165, 250, 1);
   /* Warning color (amber) */
   --hud-warning: rgba(251, 191, 36, 1);
   /* Danger color for enemies/damage */

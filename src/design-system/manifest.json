@@ -1,0 +1,313 @@
+{
+  "tokens": {
+    "theme": "src/styles/theme.css",
+    "tailwind": "src/styles/tailwind.css"
+  },
+  "uiPrimitives": [
+    {
+      "id": "accordion",
+      "path": "src/app/components/ui/accordion.tsx",
+      "category": "disclosure",
+      "summary": "Expandable sections with trigger and content primitives.",
+      "showcase": true
+    },
+    {
+      "id": "alert-dialog",
+      "path": "src/app/components/ui/alert-dialog.tsx",
+      "category": "overlay",
+      "summary": "Confirmation dialog primitives for destructive or blocking actions.",
+      "showcase": true
+    },
+    {
+      "id": "alert",
+      "path": "src/app/components/ui/alert.tsx",
+      "category": "feedback",
+      "summary": "Inline callout container for status and messaging states.",
+      "showcase": true
+    },
+    {
+      "id": "aspect-ratio",
+      "path": "src/app/components/ui/aspect-ratio.tsx",
+      "category": "layout",
+      "summary": "Layout helper for locking media and surfaces to a ratio.",
+      "showcase": true
+    },
+    {
+      "id": "avatar",
+      "path": "src/app/components/ui/avatar.tsx",
+      "category": "data-display",
+      "summary": "Avatar container, image, and fallback primitives.",
+      "showcase": true
+    },
+    {
+      "id": "badge",
+      "path": "src/app/components/ui/badge.tsx",
+      "category": "feedback",
+      "summary": "Compact pill label for statuses, counts, and tags.",
+      "showcase": true
+    },
+    {
+      "id": "breadcrumb",
+      "path": "src/app/components/ui/breadcrumb.tsx",
+      "category": "navigation",
+      "summary": "Breadcrumb navigation items and separators.",
+      "showcase": true
+    },
+    {
+      "id": "button",
+      "path": "src/app/components/ui/button.tsx",
+      "category": "actions",
+      "summary": "Primary action primitive with variant and size options.",
+      "showcase": true
+    },
+    {
+      "id": "calendar",
+      "path": "src/app/components/ui/calendar.tsx",
+      "category": "inputs",
+      "summary": "Calendar date picker surface based on react-day-picker.",
+      "showcase": true
+    },
+    {
+      "id": "card",
+      "path": "src/app/components/ui/card.tsx",
+      "category": "layout",
+      "summary": "Card shell with header, content, and footer slots.",
+      "showcase": true
+    },
+    {
+      "id": "checkbox",
+      "path": "src/app/components/ui/checkbox.tsx",
+      "category": "toggles",
+      "summary": "Boolean checkbox control with checked indicator.",
+      "showcase": true
+    },
+    {
+      "id": "collapsible",
+      "path": "src/app/components/ui/collapsible.tsx",
+      "category": "disclosure",
+      "summary": "Open or close hidden content without leaving the page.",
+      "showcase": true
+    },
+    {
+      "id": "context-menu",
+      "path": "src/app/components/ui/context-menu.tsx",
+      "category": "menus",
+      "summary": "Right-click or long-press contextual menu primitives.",
+      "showcase": true
+    },
+    {
+      "id": "dialog",
+      "path": "src/app/components/ui/dialog.tsx",
+      "category": "overlay",
+      "summary": "Modal dialog primitives for blocking workflows.",
+      "showcase": true
+    },
+    {
+      "id": "dropdown-menu",
+      "path": "src/app/components/ui/dropdown-menu.tsx",
+      "category": "menus",
+      "summary": "Triggered action menus with items, labels, and separators.",
+      "showcase": true
+    },
+    {
+      "id": "form",
+      "path": "src/app/components/ui/form.tsx",
+      "category": "forms",
+      "summary": "Form field helpers built on labels and slots.",
+      "showcase": true
+    },
+    {
+      "id": "hover-card",
+      "path": "src/app/components/ui/hover-card.tsx",
+      "category": "overlay",
+      "summary": "Preview card that opens on hover or focus.",
+      "showcase": true
+    },
+    {
+      "id": "input",
+      "path": "src/app/components/ui/input.tsx",
+      "category": "inputs",
+      "summary": "Single-line text input with tokenized focus and error states.",
+      "showcase": true
+    },
+    {
+      "id": "label",
+      "path": "src/app/components/ui/label.tsx",
+      "category": "inputs",
+      "summary": "Text label primitive for form fields and controls.",
+      "showcase": true
+    },
+    {
+      "id": "menubar",
+      "path": "src/app/components/ui/menubar.tsx",
+      "category": "menus",
+      "summary": "Persistent menubar with nested menu content.",
+      "showcase": true
+    },
+    {
+      "id": "navigation-menu",
+      "path": "src/app/components/ui/navigation-menu.tsx",
+      "category": "navigation",
+      "summary": "Navigation menu with viewport and animated content.",
+      "showcase": true
+    },
+    {
+      "id": "pagination",
+      "path": "src/app/components/ui/pagination.tsx",
+      "category": "navigation",
+      "summary": "Pagination controls for multi-page collections.",
+      "showcase": true
+    },
+    {
+      "id": "popover",
+      "path": "src/app/components/ui/popover.tsx",
+      "category": "overlay",
+      "summary": "Anchored floating surface for lightweight workflows.",
+      "showcase": true
+    },
+    {
+      "id": "progress",
+      "path": "src/app/components/ui/progress.tsx",
+      "category": "feedback",
+      "summary": "Progress indicator for completion or loading state.",
+      "showcase": true
+    },
+    {
+      "id": "radio-group",
+      "path": "src/app/components/ui/radio-group.tsx",
+      "category": "toggles",
+      "summary": "Single-choice selection group using radio items.",
+      "showcase": true
+    },
+    {
+      "id": "resizable",
+      "path": "src/app/components/ui/resizable.tsx",
+      "category": "layout",
+      "summary": "Resizable panel group primitives built on react-resizable-panels.",
+      "showcase": true
+    },
+    {
+      "id": "scroll-area",
+      "path": "src/app/components/ui/scroll-area.tsx",
+      "category": "layout",
+      "summary": "Custom scrollable container with styled scrollbars.",
+      "showcase": true
+    },
+    {
+      "id": "select",
+      "path": "src/app/components/ui/select.tsx",
+      "category": "inputs",
+      "summary": "Composable select menu with trigger, content, and items.",
+      "showcase": true
+    },
+    {
+      "id": "separator",
+      "path": "src/app/components/ui/separator.tsx",
+      "category": "layout",
+      "summary": "Visual divider for separating related content groups.",
+      "showcase": true
+    },
+    {
+      "id": "sheet",
+      "path": "src/app/components/ui/sheet.tsx",
+      "category": "overlay",
+      "summary": "Edge-mounted drawer surface built on dialog primitives.",
+      "showcase": true
+    },
+    {
+      "id": "sidebar",
+      "path": "src/app/components/ui/sidebar.tsx",
+      "category": "layout",
+      "summary": "Sidebar composition helpers for application layouts.",
+      "showcase": true
+    },
+    {
+      "id": "skeleton",
+      "path": "src/app/components/ui/skeleton.tsx",
+      "category": "feedback",
+      "summary": "Placeholder shimmer block for loading states.",
+      "showcase": true
+    },
+    {
+      "id": "slider",
+      "path": "src/app/components/ui/slider.tsx",
+      "category": "inputs",
+      "summary": "Continuous range slider with one or more thumbs.",
+      "showcase": true
+    },
+    {
+      "id": "switch",
+      "path": "src/app/components/ui/switch.tsx",
+      "category": "toggles",
+      "summary": "Binary on or off switch with track and thumb.",
+      "showcase": true
+    },
+    {
+      "id": "table",
+      "path": "src/app/components/ui/table.tsx",
+      "category": "data-display",
+      "summary": "Table wrappers for headers, rows, cells, and captions.",
+      "showcase": true
+    },
+    {
+      "id": "tabs",
+      "path": "src/app/components/ui/tabs.tsx",
+      "category": "disclosure",
+      "summary": "Tabbed navigation and content regions.",
+      "showcase": true
+    },
+    {
+      "id": "textarea",
+      "path": "src/app/components/ui/textarea.tsx",
+      "category": "inputs",
+      "summary": "Multi-line text field with tokenized focus styling.",
+      "showcase": true
+    },
+    {
+      "id": "toggle-group",
+      "path": "src/app/components/ui/toggle-group.tsx",
+      "category": "toggles",
+      "summary": "Coordinated group of toggle buttons for single or multi select.",
+      "showcase": true
+    },
+    {
+      "id": "toggle",
+      "path": "src/app/components/ui/toggle.tsx",
+      "category": "toggles",
+      "summary": "Pressed-state toggle button for formatting or filters.",
+      "showcase": true
+    },
+    {
+      "id": "tooltip",
+      "path": "src/app/components/ui/tooltip.tsx",
+      "category": "overlay",
+      "summary": "Hover or focus hint surface with provider and content.",
+      "showcase": true
+    }
+  ],
+  "uiUtilities": [
+    {
+      "id": "use-mobile",
+      "path": "src/app/components/ui/use-mobile.ts",
+      "summary": "Viewport helper hook for mobile breakpoints."
+    },
+    {
+      "id": "utils",
+      "path": "src/app/components/ui/utils.ts",
+      "summary": "Shared class name merge helper used by UI primitives."
+    }
+  ],
+  "panelBuilder": {
+    "blockTypes": [
+      "text-input",
+      "textarea",
+      "select",
+      "toggle",
+      "submit-button",
+      "output"
+    ],
+    "previewTemplates": [
+      "session-recap"
+    ]
+  }
+}
