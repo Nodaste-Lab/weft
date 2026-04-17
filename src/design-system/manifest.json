@@ -302,6 +302,11 @@
       "text-input",
       "textarea",
       "select",
+      "date-input",
+      "number-input",
+      "checkbox",
+      "repeat-list",
+      "tab-group",
       "toggle",
       "submit-button",
       "output"

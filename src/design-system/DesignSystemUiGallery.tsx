@@ -1,7 +1,7 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import { Bold, Info, Moon, Sparkles } from 'lucide-react';
+import { Bold, GripVerticalIcon, Info, Moon, Sparkles } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -118,11 +118,6 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '../app/components/ui/radio-group';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '../app/components/ui/resizable';
 import { ScrollArea } from '../app/components/ui/scroll-area';
 import {
   Select,
@@ -144,7 +139,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarInset,
   SidebarProvider,
 } from '../app/components/ui/sidebar';
 import { Skeleton } from '../app/components/ui/skeleton';
@@ -677,7 +671,11 @@ export function DesignSystemUiGallery() {
         title="Progress"
         summary="Determinate bar for completion or loading."
       >
-        <Progress value={62} className="max-w-xs" />
+        <Progress
+          value={62}
+          aria-label="Import completion"
+          className="max-w-xs"
+        />
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -702,22 +700,22 @@ export function DesignSystemUiGallery() {
         title="Resizable"
         summary="Drag handles to resize adjacent panels."
       >
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="max-w-md rounded-md border"
-        >
-          <ResizablePanel defaultSize={45} minSize={20}>
-            <div className="flex h-28 items-center justify-center text-muted-foreground text-xs">
-              Left
+        <div className="flex max-w-md overflow-hidden rounded-md border">
+          <div className="text-muted-foreground flex h-28 flex-1 items-center justify-center text-xs">
+            Left
+          </div>
+          <div
+            aria-hidden="true"
+            className="bg-border relative flex w-px items-center justify-center"
+          >
+            <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
+              <GripVerticalIcon className="size-2.5" />
             </div>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={55} minSize={20}>
-            <div className="flex h-28 items-center justify-center text-muted-foreground text-xs">
-              Right
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          </div>
+          <div className="text-muted-foreground flex h-28 flex-1 items-center justify-center text-xs">
+            Right
+          </div>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -808,9 +806,12 @@ export function DesignSystemUiGallery() {
                 <p className="text-sidebar-foreground/80 px-2 text-xs">Sessions</p>
               </SidebarContent>
             </Sidebar>
-            <SidebarInset>
+            <div
+              data-slot="sidebar-inset-demo"
+              className="bg-background relative flex w-full flex-1 flex-col"
+            >
               <div className="text-muted-foreground p-3 text-xs">Main column beside the rail.</div>
-            </SidebarInset>
+            </div>
           </div>
         </SidebarProvider>
       </PrimitiveCard>
@@ -832,7 +833,13 @@ export function DesignSystemUiGallery() {
         title="Slider"
         summary="Continuous value control with one or more thumbs."
       >
-        <Slider defaultValue={[40]} max={100} step={1} className="max-w-xs" />
+        <Slider
+          defaultValue={[40]}
+          max={100}
+          step={1}
+          thumbLabels={["Volume level"]}
+          className="max-w-xs"
+        />
       </PrimitiveCard>
 
       <PrimitiveCard
