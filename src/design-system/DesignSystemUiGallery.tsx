@@ -157,6 +157,7 @@ import { Textarea } from '../app/components/ui/textarea';
 import { Toggle } from '../app/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
+import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
 
 /** Every `uiPrimitives[].id` from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
@@ -177,6 +178,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'dropdown-menu',
   'form',
   'hover-card',
+  'HudIssueCallout',
   'input',
   'label',
   'menubar',
@@ -538,6 +540,49 @@ export function DesignSystemUiGallery() {
             <p className="text-muted-foreground mt-1">Investigator · Lantern guild</p>
           </HoverCardContent>
         </HoverCard>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="HudIssueCallout"
+        title="HUD Issue Callout"
+        summary="Structured failure callout used across HUD panels, rows, and submit flows."
+      >
+        <div style={{ display: 'grid', gap: 10 }}>
+          <HudIssueCallout
+            issue={{
+              reason: 'fetch_failed',
+              source: 'ccore',
+              scope: 'panel',
+              severity: 'error',
+              title: 'Could not load signals',
+              detail: 'Sprite HUD reached C-Core but the request failed: HTTP 503 Service Unavailable.',
+              nextAction: 'Use Refresh to try again. If the problem persists, check that the backend is running.',
+              preservedStateNote: 'Previously loaded signals are still visible; only the latest refresh failed.',
+            }}
+          />
+          <HudIssueCallout
+            issue={{
+              reason: 'unsupported_feature',
+              source: 'ccore',
+              scope: 'capability',
+              severity: 'info',
+              title: 'Agent actions unavailable on this backend',
+              detail: 'C-Core does not expose agent actions yet, so Delegate and Draft are not available for signals from this backend.',
+              nextAction: 'Switch the panel to a provider that supports agent actions, or hide these actions in panel settings.',
+            }}
+          />
+          <HudIssueCallout
+            issue={{
+              reason: 'mutation_failed',
+              source: 'signal-provider',
+              scope: 'row-action',
+              severity: 'error',
+              title: 'Could not acknowledge this signal',
+              detail: 'the mock provider rejected the request: HTTP 500',
+              nextAction: 'Wait a moment and try the action again.',
+            }}
+          />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard

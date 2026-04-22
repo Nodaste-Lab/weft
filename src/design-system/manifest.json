@@ -124,6 +124,13 @@
       "showcase": true
     },
     {
+      "id": "HudIssueCallout",
+      "path": "src/app/components/ui/HudIssueCallout.tsx",
+      "category": "feedback",
+      "summary": "Shared HUD issue primitive that renders structured failure callouts with source attribution and next-action copy.",
+      "showcase": true
+    },
+    {
       "id": "input",
       "path": "src/app/components/ui/input.tsx",
       "category": "inputs",
@@ -309,7 +316,10 @@
       "tab-group",
       "toggle",
       "submit-button",
-      "output"
+      "output",
+      "signal-list",
+      "signal-filters",
+      "signal-stats"
     ],
     "previewTemplates": [
       "session-recap"
