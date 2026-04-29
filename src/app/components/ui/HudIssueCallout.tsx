@@ -104,14 +104,14 @@ export function HudIssueCallout({
     border: `1px solid ${colors.border}`,
     background: colors.background,
     color: 'var(--hud-text-1)',
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: 'var(--weft-font-sans)',
     alignItems: 'start',
     ...style,
   };
 
   const iconStyle: CSSProperties = {
     color: colors.accent,
-    fontFamily: 'monospace',
+    fontFamily: 'var(--weft-font-mono)',
     fontSize: compact ? 11 : 13,
     lineHeight: '1.2',
     fontWeight: 700,
@@ -158,7 +158,7 @@ export function HudIssueCallout({
     marginTop: compact ? 4 : 8,
     padding: compact ? '3px 8px' : '4px 10px',
     fontSize: compact ? 10 : 11,
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: 'var(--weft-font-sans)',
     color: colors.accent,
     background: 'transparent',
     border: `1px solid ${colors.accent}`,

@@ -1051,7 +1051,7 @@ const galleryStyle: CSSProperties = {
 };
 
 const exampleSurfaceStyle: CSSProperties = {
-  background: 'rgba(0,0,0,0.18)',
+  background: 'var(--hud-section-fill-medium)',
   border: '1px solid var(--hud-border)',
   borderRadius: 'var(--radius-sm)',
   padding: 14,

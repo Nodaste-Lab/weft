@@ -256,7 +256,7 @@ const sandboxShellStyle: CSSProperties = {
   padding: 12,
   border: '1px dashed var(--hud-border)',
   borderRadius: 'var(--radius-sm)',
-  background: 'rgba(0,0,0,0.25)',
+  background: 'var(--hud-section-fill-strong)',
 };
 
 const sandboxLabelStyle: CSSProperties = {

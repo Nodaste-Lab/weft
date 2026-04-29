@@ -127,6 +127,51 @@
   --hud-glow: 0 0 24px rgba(127, 86, 217, 0.22);
   /* Backdrop blur for glass effect */
   --hud-blur: blur(24px) saturate(180%);
+
+  /* ── HUD modal/sidebar surface tokens ──
+   * Used by SettingsModal and other dim-then-elevate surfaces. Defined here as
+   * default (legacy) values; the Weft palette bridges them in weft.css so the
+   * Settings modal flips to paper surfaces under [data-palette="weft"]. */
+  --hud-modal-backdrop:     rgba(2, 4, 10, 0.68);
+  --hud-tint-1:             rgba(255, 255, 255, 0.02);
+  --hud-tint-2:             rgba(255, 255, 255, 0.04);
+  --hud-tint-3:             rgba(255, 255, 255, 0.06);
+  --hud-input-bg:           rgba(0, 0, 0, 0.2);
+  --hud-row-active:         rgba(127, 86, 217, 0.14);
+  --hud-row-active-soft:    rgba(127, 86, 217, 0.08);
+  --hud-scrim:              rgba(4, 6, 12, 0.82);
+
+  /* ── Section-fill scale ──
+   * Replaces inline rgba(0,0,0,X) backgrounds used to group sub-sections
+   * (mode toggles, period selectors, etc). Under Weft these become faint
+   * ink-on-cream tints so a "section" reads as paper geometry, not a dim
+   * disabled block. soft=0.08–0.12, medium=0.13–0.20, strong=0.21–0.35. */
+  --hud-section-fill-soft:    rgba(0, 0, 0, 0.10);
+  --hud-section-fill-medium:  rgba(0, 0, 0, 0.18);
+  --hud-section-fill-strong:  rgba(0, 0, 0, 0.28);
+  --hud-canvas-bg:          transparent;
+  --hud-overlay-gradient:   radial-gradient(ellipse at 50% 0%, rgba(127, 86, 217, 0.06) 0%, transparent 65%);
+
+  /* ── HUD primary-tint scale ──
+   * Replaces inline rgba(127, 86, 217, X) literals scattered across panel
+   * components. Each tier maps to a band of source alphas; small visual shifts
+   * (e.g. 0.05 -> soft@0.06) are accepted in exchange for a single bridge under
+   * Weft. soft=0.03–0.09, medium=0.10–0.16, strong=0.18–0.25, stronger=0.30–0.65. */
+  --hud-primary-tint-soft:     rgba(127, 86, 217, 0.06);
+  --hud-primary-tint-medium:   rgba(127, 86, 217, 0.12);
+  --hud-primary-tint-strong:   rgba(127, 86, 217, 0.22);
+  --hud-primary-tint-stronger: rgba(127, 86, 217, 0.45);
+
+  /* ── Severity-row background scale (legacy HUD defaults) ──
+   * Status-row tints for caution / danger / positive / info. The Weft palette
+   * bridges these to its own warm-amber + red + green + sky values; HUD keeps
+   * the brighter neon defaults for the legacy dark-glass aesthetic. */
+  --hud-attention-bg-soft:     rgba(251, 191,  36, 0.08);
+  --hud-attention-bg-strong:   rgba(251, 191,  36, 0.16);
+  --hud-danger-bg-soft:        rgba(239,  68,  68, 0.08);
+  --hud-danger-bg-strong:      rgba(239,  68,  68, 0.14);
+  --hud-positive-bg-soft:      rgba( 52, 211, 153, 0.08);
+  --hud-info-bg-soft:          rgba( 96, 165, 250, 0.08);
 }
 
 @theme inline {
@@ -177,7 +222,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--weft-font-sans);
   }
 }
 
@@ -187,56 +232,56 @@
 @layer base {
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-2xl);
       font-weight: var(--font-weight-semibold);
       line-height: 1.33;
     }
 
     h2 {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-xl);
       font-weight: var(--font-weight-semibold);
       line-height: 1.56;
     }
 
     h3 {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-lg);
       font-weight: var(--font-weight-semibold);
       line-height: 1.5;
     }
 
     h4 {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-sm);
       font-weight: var(--font-weight-semibold);
       line-height: 1.43;
     }
 
     p {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
       line-height: 1.5;
     }
 
     label {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-xs);
       font-weight: var(--font-weight-medium);
       line-height: 1.5;
     }
 
     button {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-sm);
       font-weight: var(--font-weight-semibold);
       line-height: 1.43;
     }
 
     input {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--weft-font-sans);
       font-size: var(--text-base);
       font-weight: var(--font-weight-normal);
       line-height: 1.5;

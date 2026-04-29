@@ -1,1 +1,39 @@
-/* Intentionally avoid remote font imports so file:// packaged loads stay deterministic. */
+/*
+ * Weft type system — local font bundles (no remote @import).
+ *
+ * Three roles, per brand-package/03-color-and-type.md:
+ *   --weft-font-serif → Fraunces (high-contrast editorial serif, 300–500 only)
+ *   --weft-font-sans  → Inter Tight (humanist sans, 400/500/600/700)
+ *   --weft-font-mono  → JetBrains Mono (system precision, 400/500/700)
+ *
+ * Fonts are bundled via @fontsource packages — each import below resolves to
+ * the @font-face block plus the woff2 file under node_modules/. Vite hashes
+ * and serves them at build time, so file:// packaged loads stay deterministic
+ * (the original reason this file held no imports).
+ *
+ * Weight discipline:
+ *   - Fraunces ships 300 (italic accents only) + 400 + 500. Never heavier.
+ *   - Inter Tight ships 400/500/600/700.
+ *   - JetBrains Mono ships 400/500/700.
+ *
+ * Italic accent rule: italic words inside a Fraunces headline use weight 300
+ * and Weft blue (or yellow on a blue slab). Brand-package §03.
+ */
+
+/* ── Fraunces (variable, weight + italic axes) ──
+ * One file covers the full 300–500 weight range, eliminating per-weight HTTP
+ * requests. The italic file is a separate axis. */
+@import "@fontsource-variable/fraunces/wght.css";
+@import "@fontsource-variable/fraunces/wght-italic.css";
+
+/* ── Inter Tight ── */
+@import "@fontsource/inter-tight/400.css";
+@import "@fontsource/inter-tight/500.css";
+@import "@fontsource/inter-tight/600.css";
+@import "@fontsource/inter-tight/700.css";
+@import "@fontsource/inter-tight/400-italic.css";
+
+/* ── JetBrains Mono ── */
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
