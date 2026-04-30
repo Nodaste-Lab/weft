@@ -16,7 +16,7 @@
  * (no data-density attribute). App surfaces typically set data-density="compact"
  * and let the user pick a palette via the existing HUD theme picker.
  *
- * See brand-package/04-design-system.md and 09-app-primitives.md for the spec.
+ * See docs/brand-package/04-design-system.md and 09-app-primitives.md for the spec.
  */
 
 :root,
@@ -435,7 +435,7 @@
 }
 
 /* ── Type roles under Weft ──
- * Per brand-package §03 (color-and-type), three typefaces in deliberate tension:
+ * Per docs/brand-package §03 (color-and-type), three typefaces in deliberate tension:
  *   • Fraunces serif → editorial moments (h1/h2/h3, hero copy)
  *   • Inter Tight    → body running copy (default everywhere)
  *   • JetBrains Mono → uppercase labels, paths, technical metadata

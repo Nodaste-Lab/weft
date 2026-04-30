@@ -1,7 +1,7 @@
 /*
  * Weft type system — local font bundles (no remote @import).
  *
- * Three roles, per brand-package/03-color-and-type.md:
+ * Three roles, per docs/brand-package/03-color-and-type.md:
  *   --weft-font-serif → Fraunces (high-contrast editorial serif, 300–500 only)
  *   --weft-font-sans  → Inter Tight (humanist sans, 400/500/600/700)
  *   --weft-font-mono  → JetBrains Mono (system precision, 400/500/700)

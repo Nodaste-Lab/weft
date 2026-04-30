@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Weft — the Heddle design system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===========================================================
+     HEDDLE DESIGN SYSTEM — rendered reference
+     All tokens and components from 04-design-system.md, live.
+     =========================================================== */
+
+  :root {
+    /* ==== Palette ==== */
+    --weft-blue: #2563ff;
+    --weft-blue-deep: #1b46c7;
+    --weft-blue-ink: #0a1f5c;
+    --weft-yellow: #ffd866;
+    --weft-yellow-soft: #fff4cd;
+    --weft-mark: var(--weft-yellow);                         /* text highlight behind .underline */
+    --weft-cream: #fbf8f0;
+    --weft-paper: #ffffff;
+    --weft-ink: #0b1020;
+    --weft-muted: #5a6485;
+    --weft-rule: rgba(11, 16, 32, 0.12);
+    --weft-rule-strong: rgba(11, 16, 32, 0.28);                 /* border on hover, input emphasis */
+
+    /* ==== Semantic / accessible ==== */
+    --weft-link: var(--weft-blue);                              /* text accent color — brightened in dark mode */
+    --weft-stop: #a8382b;                                       /* error / validation failure — AA 6.27:1 on cream */
+    --weft-focus-ring: 0 0 0 2px var(--weft-cream), 0 0 0 4px var(--weft-blue);
+
+    /* ==== On-blue (light-on-dark variants) ==== */
+    --weft-on-blue:           rgba(255, 255, 255, 0.95);   /* body copy on blue — AA normal (4.55:1) */
+    --weft-on-blue-muted:     rgba(255, 255, 255, 0.88);   /* secondary on blue — AA large only (4.13:1) */
+    --weft-on-blue-soft:      rgba(255, 255, 255, 0.78);   /* tertiary / decorative on blue — AA large only (3.58:1) */
+    --weft-on-blue-rule:      rgba(255, 255, 255, 0.18);
+    --weft-on-blue-rule-soft: rgba(255, 255, 255, 0.15);
+    --weft-on-blue-dot:       rgba(255, 255, 255, 0.12);
+    --weft-on-blue-bg:        rgba(255, 255, 255, 0.03);
+    --weft-on-blue-bg-hover:  rgba(255, 255, 255, 0.08);
+
+    /* ==== Backdrop + glass ==== */
+    --weft-thread-blue:   rgba(37,  99, 255, 0.09);
+    --weft-thread-wash:   rgba(37,  99, 255, 0.06);
+    --weft-thread-yellow: rgba(255, 216, 102, 0.18);
+    --weft-glass-cream:   rgba(251, 248, 240, 0.78);
+
+    /* ==== Syntax (code block only) ==== */
+    --weft-code-bg:   var(--weft-ink);
+    --weft-code-fg:   #e5e9f5;
+    --weft-code-str:  #a6e3a1;
+    --weft-code-tag:  #89b4fa;
+    --weft-code-stop: #a8382b;
+
+    /* ==== Typography ==== */
+    --weft-font-serif: 'Fraunces', serif;
+    --weft-font-mono:  'JetBrains Mono', monospace;
+    --weft-font-sans:  'Inter Tight', sans-serif;
+
+    /* ==== Radius ==== */
+    --weft-radius-0:     0;
+    --weft-radius-chip:  2px;
+    --weft-radius-card:  4px;
+    --weft-radius-logo:  7px;
+    --weft-radius-pill:  999px;
+    --weft-radius-dot:   50%;
+
+    /* ==== Motion ==== */
+    --weft-dur-fast:  0.20s;
+    --weft-dur-base:  0.25s;
+    --weft-dur-slow:  0.30s;
+    --weft-dur-enter: 1s;
+    --weft-dur-pulse: 2s;
+    --weft-ease-out:    ease-out;
+    --weft-ease-in-out: ease-in-out;
+
+    /* ==== Layout ==== */
+    --weft-wrap-max:    1240px;
+    --weft-wrap-pad:    48px;
+    --weft-wrap-pad-sm: 24px;
+    /* Single breakpoint at 900px (hardcoded in @media — vars unsupported there) */
+  }
+
+  /* ==== Dark mode (v0 — in review, not yet documented) ====
+     Only neutrals + washes flip. Blue, blue-deep, blue-ink, yellow,
+     and the on-blue scale stay fixed so brand accents read true. */
+  [data-theme="dark"] {
+    --weft-cream:       #0b1020;                       /* page bg = ink */
+    --weft-paper:       #141a2e;                       /* elevated surface */
+    --weft-ink:         #f4f1e8;                       /* text = warm off-white */
+    --weft-muted:       #8b93b0;                       /* lightened blue-slate */
+    --weft-rule:        rgba(244, 241, 232, 0.12);
+    --weft-rule-strong: rgba(244, 241, 232, 0.28);
+    --weft-yellow-soft: #2a241a;                       /* warm-dark for ghost numerals */
+    --weft-mark:        rgba(255, 216, 102, 0.28);     /* translucent so off-white reads through */
+
+    /* Brighter link color for dark bg — 5.02:1 on --weft-cream, passes AA normal */
+    --weft-link:        #4a7bff;
+    --weft-stop:        #e06e63;                       /* lightened error — AA 5.69:1 on ink */
+    --weft-focus-ring:  0 0 0 2px var(--weft-cream), 0 0 0 4px var(--weft-yellow);
+
+    --weft-thread-blue:   rgba( 37,  99, 255, 0.18);
+    --weft-thread-wash:   rgba( 37,  99, 255, 0.10);
+    --weft-thread-yellow: rgba(255, 216, 102, 0.12);
+    --weft-glass-cream:   rgba( 11,  16,  32, 0.78);
+
+    --weft-code-bg: #05080f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ==== Accessibility: focus + motion ==== */
+  :where(a, button, [tabindex], input, select, textarea):focus-visible {
+    outline: none;
+    box-shadow: var(--weft-focus-ring);
+    border-radius: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  /* Skip link — first focusable element, visible on focus only */
+  .skip-link {
+    position: absolute;
+    top: -40px; left: 16px;
+    background: var(--weft-blue); color: #fff;
+    padding: 10px 16px; border-radius: 4px;
+    text-decoration: none; font-weight: 600;
+    font-family: var(--weft-font-sans); font-size: 14px;
+    z-index: 9999;
+    transition: top var(--weft-dur-fast) var(--weft-ease-out);
+  }
+  .skip-link:focus { top: 16px; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--weft-font-sans);
+    color: var(--weft-ink);
+    background: var(--weft-cream);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .display, h1, h2, h3 {
+    font-family: var(--weft-font-serif);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+
+  .mono {
+    font-family: var(--weft-font-mono);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* === THREAD BACKDROP === */
+  .threads {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; overflow: hidden;
+  }
+  .threads::before, .threads::after {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to bottom, transparent 0%, var(--weft-thread-wash) 50%, transparent 100%),
+      repeating-linear-gradient(
+        to right, transparent 0, transparent 79px,
+        var(--weft-thread-blue) 79px, var(--weft-thread-blue) 80px
+      );
+  }
+  .threads::after {
+    background-image: repeating-linear-gradient(
+      to right, transparent 0, transparent 239px,
+      var(--weft-thread-yellow) 239px, var(--weft-thread-yellow) 240px
+    );
+  }
+
+  /* === LAYOUT === */
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: var(--weft-wrap-max); margin: 0 auto; padding: 0 var(--weft-wrap-pad);
+  }
+
+  /* === NAV === */
+  nav.site {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: var(--weft-glass-cream);
+    border-bottom: 1px solid var(--weft-rule);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px var(--weft-wrap-pad); max-width: var(--weft-wrap-max); margin: 0 auto;
+  }
+  .logo {
+    display: flex; align-items: center;
+  }
+  .logo img {
+    height: 40px; width: auto; display: block;
+  }
+  .nav-meta {
+    display: flex; gap: 28px; align-items: center;
+    font-size: 13px; color: var(--weft-muted);
+  }
+  .nav-meta a {
+    color: var(--weft-ink); text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--weft-dur-fast);
+  }
+  .nav-meta a:hover { border-bottom-color: var(--weft-link); }
+
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; min-height: 24px;   /* WCAG 2.5.8 — 24px AA touch target */
+    background: transparent; color: var(--weft-ink);
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-pill);
+    font-family: var(--weft-font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color var(--weft-dur-fast), background var(--weft-dur-fast);
+  }
+  .theme-toggle:hover { border-color: var(--weft-link); }
+  .theme-toggle::before {
+    content: ""; width: 6px; height: 6px;
+    border-radius: var(--weft-radius-dot);
+    background: var(--weft-blue);
+  }
+  [data-theme="dark"] .theme-toggle::before { background: var(--weft-yellow); }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; min-height: 24px;   /* WCAG 2.5.8 — 24px AA touch target */
+    background: var(--weft-yellow); color: var(--weft-blue-ink);
+    border-radius: var(--weft-radius-pill);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    font-family: var(--weft-font-mono);
+  }
+  .pill::before {
+    content: ""; width: 6px; height: 6px;
+    border-radius: var(--weft-radius-dot); background: var(--weft-blue);
+    animation: pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* === FORM INPUTS === */
+  .field {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 20px;
+    font-family: var(--weft-font-sans);
+  }
+  .field-label {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--weft-muted);
+  }
+  .field-label .req { color: var(--weft-stop); margin-left: 2px; }
+  .field-hint {
+    font-size: 13px; color: var(--weft-muted); line-height: 1.4;
+  }
+  .field-hint.is-error { color: var(--weft-stop); }
+
+  .input, .textarea, .select {
+    font-family: var(--weft-font-sans);
+    font-size: 16px; line-height: 1.4;
+    color: var(--weft-ink);
+    background: var(--weft-paper);
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card);
+    padding: 11px 14px;
+    min-height: 44px;
+    width: 100%;
+    transition:
+      border-color var(--weft-dur-fast) var(--weft-ease-out),
+      background-color var(--weft-dur-fast) var(--weft-ease-out);
+  }
+  .input::placeholder, .textarea::placeholder { color: var(--weft-muted); }
+  .input:hover:not(:disabled),
+  .textarea:hover:not(:disabled),
+  .select:hover:not(:disabled) { border-color: var(--weft-rule-strong); }
+  .input[aria-invalid="true"],
+  .textarea[aria-invalid="true"],
+  .select[aria-invalid="true"] { border-color: var(--weft-stop); }
+
+  .textarea { min-height: 96px; resize: vertical; }
+
+  .select {
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%230B1020' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  [data-theme="dark"] .select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
+  }
+
+  .checkbox-wrap, .radio-wrap {
+    display: inline-flex; align-items: center; gap: 10px;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: var(--weft-font-sans);
+    font-size: 15px; color: var(--weft-ink);
+  }
+  .checkbox-wrap + .checkbox-wrap,
+  .radio-wrap + .radio-wrap { margin-left: 20px; }
+  .checkbox, .radio {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--weft-ink);
+    background: var(--weft-paper);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition:
+      background-color var(--weft-dur-fast) var(--weft-ease-out),
+      border-color var(--weft-dur-fast) var(--weft-ease-out);
+  }
+  .checkbox { border-radius: var(--weft-radius-chip); }
+  .radio    { border-radius: var(--weft-radius-dot); }
+  .checkbox:hover:not(:disabled),
+  .radio:hover:not(:disabled)    { border-color: var(--weft-blue); }
+  .checkbox:checked, .radio:checked {
+    background-color: var(--weft-blue); border-color: var(--weft-blue);
+  }
+  /* Check glyph: inline SVG centered on the blue fill. White stays crisp in both themes
+     because the fill is always --weft-blue (theme-invariant). */
+  .checkbox:checked {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 12px;
+  }
+  .radio:checked::after {
+    content: ""; position: absolute;
+    inset: 4px;
+    border-radius: var(--weft-radius-dot);
+    background: #ffffff;
+  }
+  .checkbox[aria-invalid="true"],
+  .radio[aria-invalid="true"] { border-color: var(--weft-stop); }
+
+  fieldset.field-group {
+    border: none; padding: 0; margin: 0 0 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  fieldset.field-group > legend {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--weft-muted);
+    margin-bottom: 4px; padding: 0;
+  }
+
+  /* === HERO === */
+  header.hero {
+    padding: 120px 0 100px; position: relative;
+  }
+  .eyebrow {
+    font-family: var(--weft-font-mono);
+    font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--weft-link);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before {
+    content: ""; width: 40px; height: 1px;
+    background: var(--weft-blue); display: inline-block;
+  }
+  h1.display {
+    font-size: clamp(56px, 8.5vw, 128px);
+    font-weight: 400; max-width: 13ch; margin-bottom: 40px;
+  }
+  h1 .italic { font-style: italic; font-weight: 300; color: var(--weft-link); }
+  h1 .underline {
+    background: linear-gradient(to top, var(--weft-mark) 38%, transparent 38%);
+    padding: 0 6px;
+  }
+  .lede {
+    font-size: 22px; max-width: 58ch;
+    color: var(--weft-muted); line-height: 1.5; font-weight: 400;
+  }
+  .lede strong { color: var(--weft-ink); font-weight: 600; }
+
+  /* === SECTIONS === */
+  section { padding: 110px 0; position: relative; }
+  .section-head {
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 60px; margin-bottom: 72px; align-items: start;
+  }
+  .section-num {
+    font-family: var(--weft-font-mono);
+    font-size: 13px; letter-spacing: 0.15em;
+    color: var(--weft-link); text-transform: uppercase;
+  }
+  .section-num span {
+    display: block; margin-top: 12px;
+    color: var(--weft-muted); font-size: 11px; letter-spacing: 0.12em;
+  }
+  .section-title {
+    font-size: clamp(36px, 4.5vw, 60px);
+    font-weight: 400; max-width: 20ch;
+  }
+  .section-title .accent { color: var(--weft-link); font-style: italic; font-weight: 300; }
+
+  /* === DS-SPECIFIC === */
+  .spec {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 72px;
+  }
+  .spec-row {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 3fr;
+    gap: 48px;
+    align-items: start;
+    padding-top: 36px;
+    border-top: 1px solid var(--weft-rule);
+  }
+  .spec-row:first-child { border-top: none; padding-top: 0; }
+  .spec-label {
+    font-family: var(--weft-font-mono);
+    font-size: 12px; letter-spacing: 0.15em;
+    color: var(--weft-link); text-transform: uppercase;
+  }
+  .spec-label span {
+    display: block; margin-top: 10px;
+    color: var(--weft-muted); font-size: 11px;
+    letter-spacing: 0.1em; line-height: 1.55;
+    text-transform: none; font-weight: 400;
+  }
+  .spec-body > * + * { margin-top: 20px; }
+
+  /* color swatches */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .swatch {
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card);
+    overflow: hidden;
+    background: var(--weft-paper);
+  }
+  .swatch-block {
+    height: 96px;
+    border-bottom: 1px solid var(--weft-rule);
+  }
+  .swatch-meta {
+    padding: 14px 16px;
+  }
+  .swatch-name {
+    font-family: var(--weft-font-serif);
+    font-size: 17px; font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .swatch-hex, .swatch-use {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; color: var(--weft-muted);
+    letter-spacing: 0.05em;
+  }
+  .swatch-use { margin-top: 6px; text-transform: none; line-height: 1.5; }
+
+  /* type specimen rows */
+  .type-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 40px; align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px dashed var(--weft-rule);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-tag {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--weft-muted); text-transform: uppercase;
+    padding-top: 8px;
+  }
+  .type-specimen { color: var(--weft-ink); }
+
+  /* scale tables */
+  .scale {
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card);
+    overflow: hidden;
+    background: var(--weft-paper);
+  }
+  .scale-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 2fr;
+    gap: 24px; align-items: center;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--weft-rule);
+  }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-tok {
+    font-family: var(--weft-font-mono);
+    font-size: 12px; color: var(--weft-link);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .scale-val {
+    font-family: var(--weft-font-mono);
+    font-size: 13px; color: var(--weft-ink);
+  }
+  .scale-use {
+    font-size: 14px; color: var(--weft-muted); line-height: 1.5;
+  }
+
+  /* component display blocks */
+  .demo {
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card);
+    background: var(--weft-paper);
+    padding: 36px;
+    position: relative;
+  }
+  .demo.on-cream { background: var(--weft-cream); }
+  .demo.on-blue { background: var(--weft-blue); color: white; }
+  .demo.on-blue::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, var(--weft-on-blue-dot) 1px, transparent 0);
+    background-size: 24px 24px; opacity: 0.5;
+    pointer-events: none;
+  }
+  .demo.on-blue > * { position: relative; z-index: 1; }
+  .demo-frame {
+    border: 1px dashed var(--weft-rule);
+    padding: 24px;
+    border-radius: var(--weft-radius-card);
+    background: var(--weft-cream);
+  }
+  .demo-frame.dark { background: var(--weft-ink); color: white; }
+
+  /* code blocks */
+  pre.code {
+    background: var(--weft-code-bg);
+    color: var(--weft-code-fg);
+    padding: 22px 24px;
+    border-radius: var(--weft-radius-card);
+    font-family: var(--weft-font-mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    overflow-x: auto;
+    letter-spacing: 0;
+  }
+  pre.code .c-key { color: var(--weft-yellow); }
+  pre.code .c-str { color: var(--weft-code-str); }
+  pre.code .c-tag { color: var(--weft-code-tag); }
+  pre.code .c-com { color: var(--weft-muted); font-style: italic; }
+
+  /* === HERO-GRID (stat cells) === */
+  .hero-grid {
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--weft-rule);
+    border: 1px solid var(--weft-rule);
+  }
+  .hero-stat { background: var(--weft-cream); padding: 28px 24px; }
+  .hero-stat .n {
+    font-family: var(--weft-font-serif);
+    font-size: 44px; font-weight: 300;
+    color: var(--weft-link); letter-spacing: -0.03em;
+    line-height: 1; margin-bottom: 10px;
+  }
+  .hero-stat .l {
+    font-size: 13px; color: var(--weft-muted); line-height: 1.45;
+  }
+
+  /* === MATURITY === */
+  .maturity {
+    display: flex; flex-direction: column; gap: 0;
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card); overflow: hidden;
+    background: var(--weft-paper);
+  }
+  .maturity-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    padding: 22px 26px; align-items: center; gap: 20px;
+    border-bottom: 1px solid var(--weft-rule);
+    transition: background var(--weft-dur-slow);
+  }
+  .maturity-row:last-child { border-bottom: none; }
+  .maturity-row .stage {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; color: var(--weft-muted); letter-spacing: 0.1em;
+  }
+  .maturity-row .desc {
+    font-size: 15px; color: var(--weft-ink); font-weight: 500;
+  }
+  .maturity-row .desc span {
+    display: block; font-size: 13px;
+    color: var(--weft-muted); font-weight: 400; margin-top: 4px;
+  }
+  .maturity-row.here {
+    background: var(--weft-yellow-soft);
+    border-left: 3px solid var(--weft-yellow);
+  }
+  .maturity-row.you {
+    background: var(--weft-blue); color: white;
+  }
+  .maturity-row.you .stage { color: var(--weft-yellow); }
+  .maturity-row.you .desc { color: white; }
+  .maturity-row.you .desc span { color: var(--weft-on-blue); }     /* 13px — must use AA-normal token */
+  .maturity-row .tag {
+    font-family: var(--weft-font-mono);
+    font-size: 10px; letter-spacing: 0.1em;
+    padding: 4px 10px; border-radius: var(--weft-radius-pill);
+    text-transform: uppercase; font-weight: 600;
+  }
+  .maturity-row.here .tag { background: var(--weft-yellow); color: var(--weft-blue-ink); }
+  .maturity-row.you .tag { background: var(--weft-yellow); color: var(--weft-blue-ink); }
+  .maturity-row.dim { opacity: 0.55; }
+
+  /* roles */
+  .roles {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .role {
+    font-family: var(--weft-font-mono);
+    font-size: 12px; padding: 7px 13px;
+    background: var(--weft-cream); border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-pill); color: var(--weft-ink);
+  }
+  .role.hl { background: var(--weft-blue); color: var(--weft-yellow); border-color: var(--weft-link); }
+
+  /* problem */
+  .problem {
+    background: var(--weft-paper); border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card); padding: 36px 32px;
+    position: relative; overflow: hidden;
+    transition: transform var(--weft-dur-slow), border-color var(--weft-dur-slow);
+    max-width: 360px;
+  }
+  .problem:hover { transform: translateY(-4px); border-color: var(--weft-link); }
+  .problem::before {
+    content: attr(data-num); position: absolute;
+    top: -20px; right: 24px;
+    font-family: var(--weft-font-serif);
+    font-size: 150px; font-weight: 300;
+    color: var(--weft-yellow-soft);
+    line-height: 1; font-style: italic;
+    pointer-events: none;
+  }
+  .problem-icon { width: 44px; height: 44px; margin-bottom: 24px; position: relative; z-index: 1; }
+  .problem h4 {
+    font-family: var(--weft-font-serif);
+    font-size: 24px; font-weight: 500;
+    margin-bottom: 14px; letter-spacing: -0.015em;
+    position: relative; z-index: 1; line-height: 1.15;
+  }
+  .problem p {
+    font-size: 15px; color: var(--weft-muted);
+    line-height: 1.6; position: relative; z-index: 1; margin-bottom: 20px;
+  }
+  .problem .quote {
+    font-family: var(--weft-font-serif); font-style: italic;
+    font-size: 14px; color: var(--weft-ink);
+    padding-top: 18px; border-top: 1px dashed var(--weft-rule);
+    position: relative; z-index: 1; line-height: 1.5;
+  }
+  .problem .quote::before { content: "\201C"; color: var(--weft-link); margin-right: 2px; font-size: 20px; }
+  .problem .quote::after { content: "\201D"; color: var(--weft-link); margin-left: 2px; font-size: 20px; }
+
+  /* ecosystem / eco-cell (inside on-blue demo) */
+  .ecosystem {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--weft-on-blue-rule);
+    border-radius: var(--weft-radius-card); overflow: hidden;
+  }
+  .eco-cell {
+    padding: 36px 28px;
+    border-right: 1px solid var(--weft-on-blue-rule-soft);
+    border-bottom: 1px solid var(--weft-on-blue-rule-soft);
+    background: var(--weft-on-blue-bg);
+    transition: background var(--weft-dur-slow);
+  }
+  .eco-cell:hover { background: var(--weft-on-blue-bg-hover); }
+  .eco-cell:nth-child(3n) { border-right: none; }
+  .eco-cell:nth-last-child(-n+3) { border-bottom: none; }
+  .eco-cat {
+    font-family: var(--weft-font-mono);
+    font-size: 10px; letter-spacing: 0.15em;
+    color: var(--weft-yellow); text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .eco-name {
+    font-family: var(--weft-font-serif);
+    font-size: 26px; font-weight: 500;
+    margin-bottom: 10px; letter-spacing: -0.02em;
+  }
+  .eco-name em { font-style: italic; font-weight: 300; color: var(--weft-yellow); }
+  .eco-desc {
+    font-size: 14px; color: var(--weft-on-blue); /* 14px — must use AA-normal token */ line-height: 1.5;
+  }
+
+  /* flow diagram */
+  .flow-diagram {
+    background: var(--weft-paper); border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card); padding: 36px; position: relative;
+    max-width: 460px;
+  }
+  .flow-diagram-title {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--weft-link);
+    margin-bottom: 24px;
+  }
+  .flow-step {
+    display: grid; grid-template-columns: 40px 1fr;
+    gap: 16px; padding: 16px 0;
+    border-bottom: 1px dashed var(--weft-rule);
+    align-items: start;
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-step-num {
+    font-family: var(--weft-font-serif);
+    font-size: 28px; font-weight: 300;
+    color: var(--weft-link); font-style: italic; line-height: 1;
+  }
+  .flow-step-name { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .flow-step-desc { font-size: 13px; color: var(--weft-muted); line-height: 1.5; }
+
+  /* CTA */
+  .cta-big {
+    font-family: var(--weft-font-serif);
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 400; line-height: 0.98; letter-spacing: -0.025em;
+  }
+  .cta-big em { color: var(--weft-link); font-style: italic; font-weight: 300; }
+  .cta-big .y {
+    background: linear-gradient(to top, var(--weft-mark) 40%, transparent 40%);
+    padding: 0 6px;
+  }
+  .cta-label {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--weft-muted);
+    margin-bottom: 18px;
+  }
+  .cta-email {
+    display: inline-block;
+    font-family: var(--weft-font-serif);
+    font-size: 28px; font-weight: 500;
+    color: var(--weft-link); text-decoration: none;
+    border-bottom: 2px solid var(--weft-link);
+    padding-bottom: 4px;
+    transition: all var(--weft-dur-base);
+  }
+  .cta-email:hover {
+    color: var(--weft-blue-ink);
+    border-bottom-color: var(--weft-yellow);
+    border-bottom-width: 6px;
+  }
+  .cta-email::after { content: " \2192"; }
+
+  /* footer */
+  footer {
+    padding: 36px 0; border-top: 1px solid var(--weft-rule);
+    background: var(--weft-cream);
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--weft-muted);
+    font-family: var(--weft-font-mono); letter-spacing: 0.05em;
+  }
+
+  /* radius demo */
+  .radius-row {
+    display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-end;
+  }
+  .radius-demo {
+    text-align: center;
+  }
+  .radius-shape {
+    width: 96px; height: 96px;
+    background: var(--weft-blue);
+    margin-bottom: 10px;
+  }
+  .radius-shape.r-pill { border-radius: var(--weft-radius-pill); width: 160px; height: 48px; }
+  .radius-shape.r-card { border-radius: var(--weft-radius-card); }
+  .radius-shape.r-logo { border-radius: var(--weft-radius-logo); }
+  .radius-shape.r-hard { border-radius: var(--weft-radius-0); }
+  .radius-label {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--weft-muted); text-transform: uppercase;
+  }
+
+  /* spacing demo */
+  .space-row {
+    display: flex; gap: 20px; align-items: flex-end;
+    padding: 24px; background: var(--weft-paper);
+    border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card);
+    overflow-x: auto;
+  }
+  .space-bar {
+    background: var(--weft-blue); color: var(--weft-yellow);
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.05em;
+    text-align: center; padding: 6px 4px;
+    border-radius: var(--weft-radius-chip); white-space: nowrap;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+
+  /* motion demo */
+  .motion-box {
+    padding: 24px; background: var(--weft-cream);
+    border: 1px dashed var(--weft-rule); border-radius: var(--weft-radius-card);
+    display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+  }
+  .motion-dot {
+    width: 16px; height: 16px; border-radius: var(--weft-radius-dot);
+    background: var(--weft-blue);
+    animation: pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
+  }
+  .motion-replay {
+    font-family: var(--weft-font-mono);
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--weft-link); background: transparent;
+    border: 1px solid var(--weft-rule); padding: 8px 14px;
+    border-radius: var(--weft-radius-pill); cursor: pointer;
+    transition: border-color var(--weft-dur-fast);
+  }
+  .motion-replay:hover { border-color: var(--weft-link); }
+
+  .fade-stack > * {
+    opacity: 0; transform: translateY(24px);
+    animation: fadeUp var(--weft-dur-enter) var(--weft-ease-out) forwards;
+  }
+  .fade-stack > *:nth-child(1) { animation-delay: 0.1s; }
+  .fade-stack > *:nth-child(2) { animation-delay: 0.25s; }
+  .fade-stack > *:nth-child(3) { animation-delay: 0.4s; }
+  .fade-stack > *:nth-child(4) { animation-delay: 0.55s; }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* don'ts */
+  .donts {
+    border: 1px solid var(--weft-rule);
+    border-radius: var(--weft-radius-card); overflow: hidden; background: var(--weft-paper);
+  }
+  .dont-row {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--weft-rule);
+    display: grid; grid-template-columns: 32px 1fr;
+    gap: 20px; align-items: baseline;
+  }
+  .dont-row:last-child { border-bottom: none; }
+  .dont-x {
+    font-family: var(--weft-font-mono);
+    font-weight: 700; font-size: 14px;
+    color: var(--weft-code-stop); letter-spacing: 0.05em;
+  }
+  .dont-row p { color: var(--weft-muted); font-size: 15px; line-height: 1.55; }
+  .dont-row strong { color: var(--weft-ink); font-weight: 600; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .wrap, .nav-inner { padding-left: var(--weft-wrap-pad-sm); padding-right: var(--weft-wrap-pad-sm); }
+    .section-head, .spec-row { grid-template-columns: 1fr; gap: 20px; }
+    .hero-grid, .ecosystem { grid-template-columns: 1fr; }
+    .type-row, .scale-row { grid-template-columns: 1fr; gap: 8px; }
+    section { padding: 80px 0; }
+    header.hero { padding: 60px 0 80px; }
+    /* WCAG 2.5.8 — bump in-line nav links to 24px hit area on touch breakpoints */
+    .nav-meta a { display: inline-flex; align-items: center; min-height: 24px; padding: 4px 0; }
+  }
+
+  /* fade-up for hero */
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    animation: fadeUp var(--weft-dur-enter) var(--weft-ease-out) forwards;
+  }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.4s; }
+  .d4 { animation-delay: 0.55s; }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="threads" aria-hidden="true"></div>
+
+<nav class="site">
+  <div class="nav-inner">
+    <div class="logo">
+      <img src="assets/heddle-lockup.svg" alt="Heddle" />
+    </div>
+    <div class="nav-meta">
+      <a href="#foundations">Foundations</a>
+      <a href="#layout">Layout</a>
+      <a href="#components">Components</a>
+      <a href="#patterns">Patterns</a>
+      <a href="#donts">Don&rsquo;ts</a>
+      <button type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" aria-pressed="false">
+        <span data-theme-label>Dark</span>
+      </button>
+      <span class="pill">Weft v1</span>
+    </div>
+  </div>
+</nav>
+<script>
+  function toggleTheme() {
+    var root = document.documentElement;
+    var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    var label = document.querySelector('[data-theme-label]');
+    if (label) label.textContent = next === 'dark' ? 'Light' : 'Dark';
+    var btn = document.querySelector('.theme-toggle');
+    if (btn) btn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+  }
+</script>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow fade-up d1">Weft &middot; Rendered reference for builders</div>
+    <h1 class="display fade-up d2">
+      A <span class="italic">living</span> record of every <span class="underline">component</span>.
+    </h1>
+    <p class="lede fade-up d3">
+      Weft is the design system Heddle uses. Every token, primitive, and pattern &mdash; in one place, at real sizes, with the code that renders them. Tokens are namespaced <code style="font-family:var(--weft-font-mono);font-size:0.85em;background:var(--weft-yellow-soft);padding:1px 6px;border-radius:3px;">--weft-*</code>; if you see a token without that prefix in a Heddle file, it's pre-Weft and needs to migrate.
+    </p>
+  </div>
+</header>
+
+<!-- ============ 01 / FOUNDATIONS ============ -->
+<section id="foundations">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">01 / Foundations<span>tokens under everything</span></div>
+      <h2 class="section-title">The <span class="accent">palette, type, and scale.</span></h2>
+    </div>
+
+    <div class="spec">
+
+      <!-- COLOR -->
+      <div class="spec-row">
+        <div class="spec-label">Color<span>Neutrals, blue family, yellow family. No third accent.</span></div>
+        <div class="spec-body">
+          <div class="swatch-grid">
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-cream);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Cream</div>
+                <div class="swatch-hex">#fbf8f0 &middot; --weft-cream</div>
+                <div class="swatch-use">Primary page background. Warm off-white.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-paper); border-bottom-color: var(--weft-rule);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Paper</div>
+                <div class="swatch-hex">#ffffff &middot; --weft-paper</div>
+                <div class="swatch-use">Elevated cards, contrast bands.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-ink);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Ink</div>
+                <div class="swatch-hex">#0b1020 &middot; --weft-ink</div>
+                <div class="swatch-use">Text, headlines. Near-black navy, not pure.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-muted);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Muted</div>
+                <div class="swatch-hex">#5a6485 &middot; --weft-muted</div>
+                <div class="swatch-use">Secondary text, captions. Blue-cast slate.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-rule);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Rule</div>
+                <div class="swatch-hex">rgba(11, 16, 32, 0.12)</div>
+                <div class="swatch-use">Hairlines, borders. Ink at 12%.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Blue</div>
+                <div class="swatch-hex">#2563ff &middot; --weft-blue</div>
+                <div class="swatch-use">Italic accents, CTAs, slab, section labels.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue-deep);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Blue-deep</div>
+                <div class="swatch-hex">#1b46c7 &middot; --weft-blue-deep</div>
+                <div class="swatch-use">Hover state for blue surfaces.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue-ink);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Blue-ink</div>
+                <div class="swatch-hex">#0a1f5c &middot; --weft-blue-ink</div>
+                <div class="swatch-use">Text on yellow surfaces.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-yellow);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Yellow</div>
+                <div class="swatch-hex">#ffd866 &middot; --weft-yellow</div>
+                <div class="swatch-use">Badge pills, accents on blue, logo mark H. Unchanged in dark mode.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-yellow-soft);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Yellow-soft</div>
+                <div class="swatch-hex">#fff4cd &middot; --weft-yellow-soft</div>
+                <div class="swatch-use">Ghost numerals, &ldquo;you are here&rdquo; fill. Flips to warm-dark #2a241a in dark mode.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-mark);"></div>
+              <div class="swatch-meta">
+                <div class="swatch-name">Mark</div>
+                <div class="swatch-hex">var(--weft-yellow) &middot; --weft-mark</div>
+                <div class="swatch-use">Highlight-mark behind .underline. Translucent in dark so off-white text reads through.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ON-BLUE VARIANTS -->
+      <div class="spec-row">
+        <div class="spec-label">On-blue<span>Pre-mixed white-on-blue alphas. Use these anywhere text or borders land on a blue slab &mdash; never reach for a raw rgba().</span></div>
+        <div class="spec-body">
+          <div class="swatch-grid">
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue</div>
+                <div class="swatch-hex">rgba(255,255,255,0.95) &middot; --weft-on-blue</div>
+                <div class="swatch-use">Body copy on the blue slab.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-muted);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue muted</div>
+                <div class="swatch-hex">rgba(255,255,255,0.88) &middot; --weft-on-blue-muted</div>
+                <div class="swatch-use">Secondary text on blue (eco-desc).</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-soft);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue soft</div>
+                <div class="swatch-hex">rgba(255,255,255,0.78) &middot; --weft-on-blue-soft</div>
+                <div class="swatch-use">Tertiary/meta text on blue.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-rule);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue rule</div>
+                <div class="swatch-hex">rgba(255,255,255,0.18) &middot; --weft-on-blue-rule</div>
+                <div class="swatch-use">Outer border on blue.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-rule-soft);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue rule soft</div>
+                <div class="swatch-hex">rgba(255,255,255,0.15) &middot; --weft-on-blue-rule-soft</div>
+                <div class="swatch-use">Internal cell dividers on blue.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-dot);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue dot</div>
+                <div class="swatch-hex">rgba(255,255,255,0.12) &middot; --weft-on-blue-dot</div>
+                <div class="swatch-use">Radial dot overlay on the slab.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-bg);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue bg</div>
+                <div class="swatch-hex">rgba(255,255,255,0.03) &middot; --weft-on-blue-bg</div>
+                <div class="swatch-use">Default eco-cell fill on blue.</div>
+              </div>
+            </div>
+            <div class="swatch">
+              <div class="swatch-block" style="background: var(--weft-blue); position: relative;">
+                <div style="position: absolute; inset: 0; background: var(--weft-on-blue-bg-hover);"></div>
+              </div>
+              <div class="swatch-meta">
+                <div class="swatch-name">On-blue bg hover</div>
+                <div class="swatch-hex">rgba(255,255,255,0.08) &middot; --weft-on-blue-bg-hover</div>
+                <div class="swatch-use">Hovered eco-cell fill on blue.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKDROP + GLASS -->
+      <div class="spec-row">
+        <div class="spec-label">Backdrop + glass<span>Threaded backdrop and blurred nav &mdash; both are built from these four tokens. Changing the thread density means changing a token, not a selector.</span></div>
+        <div class="spec-body">
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">--weft-thread-blue</div>
+              <div class="scale-val">rgba(37,99,255,0.09)</div>
+              <div class="scale-use">Vertical blue lines, every 80px on .threads.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-thread-wash</div>
+              <div class="scale-val">rgba(37,99,255,0.06)</div>
+              <div class="scale-use">Soft blue vertical gradient wash behind the lines.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-thread-yellow</div>
+              <div class="scale-val">rgba(255,216,102,0.18)</div>
+              <div class="scale-use">Yellow vertical lines, every 240px on .threads.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-glass-cream</div>
+              <div class="scale-val">rgba(251,248,240,0.78)</div>
+              <div class="scale-use">Sticky nav tint. Pairs with backdrop-filter: blur(14px).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TYPOGRAPHY -->
+      <div class="spec-row">
+        <div class="spec-label">Typography<span>Three families, three roles. Always reach for the token, never the string literal.</span></div>
+        <div class="spec-body">
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">--weft-font-serif</div>
+              <div class="scale-val" style="font-family: var(--weft-font-serif); font-size: 20px; letter-spacing: -0.02em;">Fraunces</div>
+              <div class="scale-use">Voice. Headlines, italics, display numerals. Variable-font axes: ital, opsz, wght 300&ndash;900.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-font-mono</div>
+              <div class="scale-val" style="font-family: var(--weft-font-mono); font-size: 14px;">JetBrains Mono</div>
+              <div class="scale-use">System. Eyebrows, section-nums, pills, footers. Weight 400/500/700.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-font-sans</div>
+              <div class="scale-val" style="font-family: var(--weft-font-sans); font-size: 16px;">Inter Tight</div>
+              <div class="scale-use">Reading surface. Body, ledes. Weight 400/500/600/700.</div>
+            </div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">h1.display / 56&mdash;128px</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-serif); font-size: clamp(48px, 6vw, 88px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.0;">Weaving <span style="font-style: italic; font-weight: 300; color: var(--weft-link);">AI</span> into <span style="background: linear-gradient(to top, var(--weft-mark) 38%, transparent 38%); padding: 0 6px;">human</span> workflows.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">section-title / 36&mdash;60px</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-serif); font-size: 44px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.05;">A surface, <span style="color: var(--weft-link); font-style: italic; font-weight: 300;">not a dashboard.</span></div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">h3 / 34px</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-serif); font-size: 34px; font-weight: 400; line-height: 1.1;">You&rsquo;ve done the easy part. <em style="color: var(--weft-link); font-style: italic; font-weight: 300;">Now comes the hard part.</em></div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">h4 / 24px</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-serif); font-size: 24px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.15;">Redundant knowledge, brittle handoffs</div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">lede / 22px</div>
+            <div class="type-specimen" style="font-size: 22px; color: var(--weft-muted); line-height: 1.5; max-width: 58ch;">A quiet layer that keeps your <strong style="color: var(--weft-ink); font-weight: 600;">spaces, docs, and signals</strong> in the right order.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">body / 16&mdash;17px</div>
+            <div class="type-specimen" style="font-size: 17px; color: var(--weft-muted); line-height: 1.6; max-width: 62ch;">Default body copy runs in Inter Tight at 17px with 1.6 line-height. The humanist sans carries the reading load quietly between the serif voice and the mono system labels.</div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">eyebrow / 12px mono</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--weft-link); display: flex; align-items: center; gap: 14px;"><span style="width: 40px; height: 1px; background: var(--weft-blue);"></span>For teams beyond individual AI</div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">section-num / 13px mono</div>
+            <div class="type-specimen">
+              <div style="font-family: var(--weft-font-mono); font-size: 13px; letter-spacing: 0.15em; color: var(--weft-link); text-transform: uppercase;">01 / Audience<span style="display: block; margin-top: 12px; color: var(--weft-muted); font-size: 11px; letter-spacing: 0.12em;">who Heddle is built for</span></div>
+            </div>
+          </div>
+          <div class="type-row">
+            <div class="type-tag">code / 14px mono</div>
+            <div class="type-specimen" style="font-family: var(--weft-font-mono); font-size: 14px; color: var(--weft-ink);">heddle space sync-status personal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RADII -->
+      <div class="spec-row">
+        <div class="spec-label">Radius<span>Five tokens. Pills for CTAs, 4px cards, 7px mark tile, 2px chips, 0 for layout edges. Nothing else exists.</span></div>
+        <div class="spec-body">
+          <div class="radius-row">
+            <div class="radius-demo">
+              <div class="radius-shape r-pill"></div>
+              <div class="radius-label">--weft-radius-pill &middot; 999px</div>
+            </div>
+            <div class="radius-demo">
+              <div class="radius-shape r-logo"></div>
+              <div class="radius-label">--weft-radius-logo &middot; 7px</div>
+            </div>
+            <div class="radius-demo">
+              <div class="radius-shape r-card"></div>
+              <div class="radius-label">--weft-radius-card &middot; 4px</div>
+            </div>
+            <div class="radius-demo">
+              <div class="radius-shape r-hard"></div>
+              <div class="radius-label">--weft-radius-0 &middot; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPACING -->
+      <div class="spec-row">
+        <div class="spec-label">Spacing<span>Container: 1240px max, 48px gutter (24px on narrow). Section: 110px top/bottom, 80px on narrow.</span></div>
+        <div class="spec-body">
+          <div class="space-row">
+            <div class="space-bar" style="height: 64px; width: 8px;">8</div>
+            <div class="space-bar" style="height: 64px; width: 16px;">16</div>
+            <div class="space-bar" style="height: 64px; width: 24px;">24</div>
+            <div class="space-bar" style="height: 64px; width: 32px;">32</div>
+            <div class="space-bar" style="height: 64px; width: 48px;">48</div>
+            <div class="space-bar" style="height: 64px; width: 60px;">60</div>
+            <div class="space-bar" style="height: 64px; width: 72px;">72</div>
+            <div class="space-bar" style="height: 64px; width: 80px;">80</div>
+            <div class="space-bar" style="height: 64px; width: 110px;">110</div>
+            <div class="space-bar" style="height: 64px; width: 140px;">140</div>
+          </div>
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">Max width</div>
+              <div class="scale-val">1240px</div>
+              <div class="scale-use">Content container. Everything sits inside .wrap.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">Gutter</div>
+              <div class="scale-val">48px / 24px</div>
+              <div class="scale-use">Desktop / &le;900px. Left and right padding on .wrap.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">Section</div>
+              <div class="scale-val">110px 0 / 80px 0</div>
+              <div class="scale-use">Top and bottom padding per section.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">Hero</div>
+              <div class="scale-val">120px 0 100px</div>
+              <div class="scale-use">Hero top-heavy padding. 60/80 on narrow.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">CTA</div>
+              <div class="scale-val">140px 0</div>
+              <div class="scale-use">The closing section gets extra breathing room.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">Section-head</div>
+              <div class="scale-val">margin-bottom: 72px</div>
+              <div class="scale-use">48px on narrow viewports.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOTION -->
+      <div class="spec-row">
+        <div class="spec-label">Motion<span>Two named animations. Hero-only stagger. Nothing animates below the fold.</span></div>
+        <div class="spec-body">
+          <div class="motion-box">
+            <div class="motion-dot"></div>
+            <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--weft-muted);">pulse &middot; 2s ease-in-out infinite</div>
+          </div>
+          <div class="motion-box" id="fade-demo">
+            <div class="fade-stack" style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--weft-link);">&mdash; d1 &middot; 0.10s</div>
+              <div style="font-family: var(--weft-font-serif); font-size: 28px; font-weight: 400; letter-spacing: -0.02em;">d2 &middot; 0.25s</div>
+              <div style="font-size: 15px; color: var(--weft-muted);">d3 &middot; 0.40s &middot; lede tier</div>
+              <div style="font-size: 13px; color: var(--weft-muted); font-family: var(--weft-font-mono); letter-spacing: 0.08em;">d4 &middot; 0.55s</div>
+            </div>
+            <button class="motion-replay" onclick="document.querySelectorAll('#fade-demo .fade-stack > *').forEach(el => { el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; });">Replay</button>
+          </div>
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">--weft-dur-fast</div>
+              <div class="scale-val">0.20s</div>
+              <div class="scale-use">Nav-link underlines, chip borders. Snappy, not instant.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-dur-base</div>
+              <div class="scale-val">0.25s</div>
+              <div class="scale-use">CTA email underline hover-grow.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-dur-slow</div>
+              <div class="scale-val">0.30s</div>
+              <div class="scale-use">Card lifts, maturity row tints, eco-cell fills.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-dur-enter</div>
+              <div class="scale-val">1s</div>
+              <div class="scale-use">Hero fade-up total duration (hero-only).</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-dur-pulse</div>
+              <div class="scale-val">2s</div>
+              <div class="scale-use">.pill status dot pulse cycle.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-ease-out / --weft-ease-in-out</div>
+              <div class="scale-val">ease-out / ease-in-out</div>
+              <div class="scale-use">Enter animations use ease-out; looping pulse uses ease-in-out.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">d1 / d2 / d3 / d4</div>
+              <div class="scale-val">0.10 / 0.25 / 0.40 / 0.55s</div>
+              <div class="scale-use">Stagger delays for hero elements in sequence.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DARK MODE -->
+      <div class="spec-row">
+        <div class="spec-label">Dark mode<span>A token override, not a second design. Flip <code style="font-family: var(--weft-font-mono); font-size: 12px;">data-theme="dark"</code> on the root &mdash; neutrals and washes remap, brand accents stay fixed. Toggle lives in the nav.</span></div>
+        <div class="spec-body">
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">--weft-cream / --weft-paper / --weft-ink</div>
+              <div class="scale-val">flip</div>
+              <div class="scale-use">Page = ink-navy. Elevated surface = #141a2e. Text = warm off-white #f4f1e8 (not pure white &mdash; keeps the editorial feel).</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-muted / --weft-rule</div>
+              <div class="scale-val">flip</div>
+              <div class="scale-use">Muted text lightens to a blue-slate; rule becomes a low-alpha warm-white.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-yellow-soft</div>
+              <div class="scale-val">#2a241a</div>
+              <div class="scale-use">Warm-dark. Ghost numerals and "you are here" fills become a whisper on the dark ground instead of a glare.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-mark</div>
+              <div class="scale-val">rgba(255,216,102,0.28)</div>
+              <div class="scale-use">Highlight-mark behind .underline. Translucent so warm off-white text reads through as glow, not block.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-thread-* alphas</div>
+              <div class="scale-val">+0.03&ndash;0.09</div>
+              <div class="scale-use">Nudged up so the threaded backdrop stays visible against the darker page.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-glass-cream</div>
+              <div class="scale-val">rgba(11,16,32,0.78)</div>
+              <div class="scale-use">Sticky nav still frosted, now tinted to the new page.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-code-bg</div>
+              <div class="scale-val">#05080f</div>
+              <div class="scale-use">Code block steps down from --weft-paper, not onto it.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">--weft-blue / --weft-yellow / --weft-on-blue-*</div>
+              <div class="scale-val">unchanged</div>
+              <div class="scale-use">Brand accents read true in both modes. The blue slab is the same blue slab.</div>
+            </div>
+          </div>
+          <pre class="code" style="margin-top: 24px;">
+<span class="c-com">/* Flip the root. Everything else inherits. */</span>
+[data-theme=<span class="c-str">"dark"</span>] {
+  <span class="c-key">--weft-cream</span>:       #0b1020;
+  <span class="c-key">--weft-paper</span>:       #141a2e;
+  <span class="c-key">--weft-ink</span>:         #f4f1e8;
+  <span class="c-key">--weft-muted</span>:       #8b93b0;
+  <span class="c-key">--weft-rule</span>:        rgba(244, 241, 232, 0.12);
+  <span class="c-key">--weft-yellow-soft</span>: #2a241a;
+  <span class="c-key">--weft-mark</span>:        rgba(255, 216, 102, 0.28);
+  <span class="c-com">/* thread-*, glass-cream, code-bg also remap */</span>
+}</pre>
+          <p style="margin-top: 16px; color: var(--weft-muted); font-size: 14px;">
+            <strong style="color: var(--weft-ink);">Test for new components:</strong> toggle the page. If anything breaks, the fix is in the token layer, not the component. A component reaching for a raw hex, <code style="font-family: var(--weft-font-mono); font-size: 13px;">#fff</code>, or <code style="font-family: var(--weft-font-mono); font-size: 13px;">rgba()</code> outside the token block is the bug &mdash; route it through a token.
+          </p>
+          <p style="margin-top: 12px; color: var(--weft-muted); font-size: 14px;">
+            <strong style="color: var(--weft-ink);">Persistence:</strong> theme resets on reload by design. v0 is deliberately stateless while the palette settles.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 / LAYOUT ============ -->
+<section id="layout" style="background: var(--weft-paper); border-top: 1px solid var(--weft-rule); border-bottom: 1px solid var(--weft-rule);">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">02 / Layout<span>primitives every page sits on</span></div>
+      <h2 class="section-title">The <span class="accent">container, the backdrop, the breakpoint.</span></h2>
+    </div>
+
+    <div class="spec">
+
+      <div class="spec-row">
+        <div class="spec-label">.wrap<span>Content container. 1240px max. z-index: 1 so it sits above the thread backdrop.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="background: var(--weft-cream); border: 1px dashed var(--weft-rule);">
+            <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--weft-muted); text-transform: uppercase; text-align: center;">
+              &larr; 1240px max &middot; 48px gutter each side &rarr;
+            </div>
+          </div>
+<pre class="code"><span class="c-com">/* Content container */</span>
+.wrap {
+  <span class="c-key">position</span>: relative;
+  <span class="c-key">z-index</span>: 1;
+  <span class="c-key">max-width</span>: 1240px;
+  <span class="c-key">margin</span>: 0 auto;
+  <span class="c-key">padding</span>: 0 48px;
+}</pre>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">.threads<span>Fixed backdrop of blue + yellow vertical lines at low opacity. Implemented once at body level.</span></div>
+        <div class="spec-body">
+          <p style="color: var(--weft-muted); font-size: 15px; line-height: 1.6; max-width: 58ch;">The backdrop is live on this page right now &mdash; look past this card and you&rsquo;ll see faint vertical blue lines every 80px and yellow lines every 240px, plus a soft blue vertical wash. Solid-color sections cover it; cream sections let it show through.</p>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"threads"</span> <span class="c-key">aria-hidden</span>=<span class="c-str">"true"</span><span class="c-tag">&gt;&lt;/div&gt;</span>
+
+<span class="c-com">/* CSS */</span>
+.threads {
+  <span class="c-key">position</span>: fixed; <span class="c-key">inset</span>: 0;
+  <span class="c-key">z-index</span>: 0;
+  <span class="c-key">pointer-events</span>: none;
+  <span class="c-key">overflow</span>: hidden;
+}
+.threads::before {
+  <span class="c-key">background-image</span>:
+    <span class="c-com">/* soft blue vertical wash */</span>
+    linear-gradient(to bottom, transparent 0%, rgba(37,99,255,0.06) 50%, transparent 100%),
+    <span class="c-com">/* repeating blue lines every 80px */</span>
+    repeating-linear-gradient(to right,
+      transparent 0, transparent 79px,
+      rgba(37,99,255,0.09) 79px, rgba(37,99,255,0.09) 80px);
+}
+.threads::after {
+  <span class="c-key">background-image</span>: repeating-linear-gradient(to right,
+    transparent 0, transparent 239px,
+    rgba(255,216,102,0.18) 239px, rgba(255,216,102,0.18) 240px);
+}</pre>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Breakpoint<span>One breakpoint at 900px. Below that, grids collapse to single columns and padding contracts.</span></div>
+        <div class="spec-body">
+          <div class="scale">
+            <div class="scale-row">
+              <div class="scale-tok">.wrap gutter</div>
+              <div class="scale-val">48px &rarr; 24px</div>
+              <div class="scale-use">Page margin tightens.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">.hero-grid</div>
+              <div class="scale-val">4 cols &rarr; 2 cols</div>
+              <div class="scale-use">Stat cells reflow to a 2-up grid.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">.section-head</div>
+              <div class="scale-val">1fr 2fr &rarr; 1fr</div>
+              <div class="scale-use">Section-num stacks above the title.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">.audience-grid / .flow-inner / .cta-inner</div>
+              <div class="scale-val">2 cols &rarr; 1 col</div>
+              <div class="scale-use">Gap tightens to 48px.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">.problems-grid / .ecosystem</div>
+              <div class="scale-val">3+ cols &rarr; 1 col</div>
+              <div class="scale-use">Cards stack; eco-cell borders reset.</div>
+            </div>
+            <div class="scale-row">
+              <div class="scale-tok">section padding</div>
+              <div class="scale-val">110 &rarr; 80px</div>
+              <div class="scale-use">Hero: 120/100 &rarr; 60/80.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 / COMPONENTS ============ -->
+<section id="components">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">03 / Components<span>every piece, rendered live</span></div>
+      <h2 class="section-title">The <span class="accent">inventory.</span></h2>
+    </div>
+
+    <div class="spec">
+
+      <!-- NAV / LOGO -->
+      <div class="spec-row">
+        <div class="spec-label">Logo<span>Always ship the SVG. The mark is a rounded blue tile with a custom H glyph built from two loom-heddle shafts; the wordmark is drawn as vector paths, never typeset. Seven canonical files in <code>assets/</code>: <code>heddle-mark.svg</code> + three mark variants, and <code>heddle-lockup.svg</code> + two mono lockups. See <a href="02-logo-usage.md">02 &middot; Logo usage</a>.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="logo">
+              <img src="assets/heddle-lockup.svg" alt="Heddle" />
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"logo"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;img</span> <span class="c-key">src</span>=<span class="c-str">"assets/heddle-lockup.svg"</span> <span class="c-key">alt</span>=<span class="c-str">"Heddle"</span> <span class="c-tag">/&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- PILL -->
+      <div class="spec-row">
+        <div class="spec-label">.pill<span>Yellow pill + pulsing blue dot. Mono caps at 11px / 0.05em / weight 600. For ambient status signals.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+            <span class="pill">Design partner program open</span>
+            <span class="pill">Working beta</span>
+            <span class="pill">Waitlist open</span>
+          </div>
+<pre class="code"><span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"pill"</span><span class="c-tag">&gt;</span>Design partner program open<span class="c-tag">&lt;/span&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- EYEBROW -->
+      <div class="spec-row">
+        <div class="spec-label">.eyebrow<span>Section signifier. 40px &times; 1px blue hairline, then mono caps 12px at 0.18em. Margin-bottom 28px.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="eyebrow" style="margin-bottom: 0;">For teams beyond individual AI</div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"eyebrow"</span><span class="c-tag">&gt;</span>For teams beyond individual AI<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- SECTION HEAD -->
+      <div class="spec-row">
+        <div class="spec-label">.section-head<span>2-column grid: section-num on the left, title + optional prose on the right. 60px gap, 72px bottom margin.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="section-head" style="margin-bottom: 0;">
+              <div class="section-num">01 / Audience<span>who Heddle is built for</span></div>
+              <div>
+                <h2 class="section-title">Orgs past individual AI, <span class="accent">stuck at the team level.</span></h2>
+              </div>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"section-head"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"section-num"</span><span class="c-tag">&gt;</span>01 / Audience<span class="c-tag">&lt;span&gt;</span>who Heddle is built for<span class="c-tag">&lt;/span&gt;&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div&gt;</span>
+    <span class="c-tag">&lt;h2</span> <span class="c-key">class</span>=<span class="c-str">"section-title"</span><span class="c-tag">&gt;</span>Orgs past individual AI, <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"accent"</span><span class="c-tag">&gt;</span>stuck at the team level.<span class="c-tag">&lt;/span&gt;&lt;/h2&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- LEDE -->
+      <div class="spec-row">
+        <div class="spec-label">.lede<span>Hero paragraph. 22px / 58ch / line-height 1.5 / weight 400. &lt;strong&gt; takes ink / weight 600.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <p class="lede">Your people have great personal AI setups. The problem is what happens <strong>between</strong> them &mdash; the copy-paste, the stale context, the redundant knowledge bases.</p>
+          </div>
+<pre class="code"><span class="c-tag">&lt;p</span> <span class="c-key">class</span>=<span class="c-str">"lede"</span><span class="c-tag">&gt;</span>...happens <span class="c-tag">&lt;strong&gt;</span>between<span class="c-tag">&lt;/strong&gt;</span> them...<span class="c-tag">&lt;/p&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- HERO GRID -->
+      <div class="spec-row">
+        <div class="spec-label">.hero-grid<span>4-cell maturity stat grid. 1px gaps + rule-colored background = internal borders. Stats 03 and 04 override fill for state.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="padding: 0; border: none;">
+            <div class="hero-grid">
+              <div class="hero-stat">
+                <div class="n">01</div>
+                <div class="l">Individual use<br/><span style="color:var(--weft-link)">one-off questions</span></div>
+              </div>
+              <div class="hero-stat">
+                <div class="n">02</div>
+                <div class="l">Personal workflow<br/><span style="color:var(--weft-link)">agent + team visibility</span></div>
+              </div>
+              <div class="hero-stat" style="background: var(--weft-yellow-soft); border: 1px solid var(--weft-yellow);">
+                <div class="n">03</div>
+                <div class="l"><strong>You are here &rarr;</strong><br/><span style="color:var(--weft-blue-ink)">team workflow stall</span></div>
+              </div>
+              <div class="hero-stat" style="background: var(--weft-blue); color: white;">
+                <div class="n" style="color: var(--weft-yellow);">04</div>
+                <div class="l" style="color: var(--weft-on-blue);">Shared context<br/><span style="color:var(--weft-yellow)">where Heddle takes you</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MATURITY -->
+      <div class="spec-row">
+        <div class="spec-label">.maturity<span>Staged-progression table. Row variants: default / dim (past) / here (yellow-soft) / you (blue fill).</span></div>
+        <div class="spec-body">
+          <div class="demo" style="padding: 0; border: none;">
+            <div class="maturity">
+              <div class="maturity-row dim">
+                <div class="stage">STAGE 01</div>
+                <div class="desc">Individual use<span>One person asks an AI one-off questions</span></div>
+                <div class="tag" style="background: var(--weft-cream); color: var(--weft-muted);">solved</div>
+              </div>
+              <div class="maturity-row dim">
+                <div class="stage">STAGE 02</div>
+                <div class="desc">Personal workflow<span>Someone pipes agent output into Slack / Notion</span></div>
+                <div class="tag" style="background: var(--weft-cream); color: var(--weft-muted);">solved</div>
+              </div>
+              <div class="maturity-row here">
+                <div class="stage">STAGE 03</div>
+                <div class="desc">Team workflow<span>Agents try to pass context &mdash; and break</span></div>
+                <div class="tag">you are here</div>
+              </div>
+              <div class="maturity-row you">
+                <div class="stage">STAGE 04</div>
+                <div class="desc">Shared context<span>Humans and agents from one live source of truth</span></div>
+                <div class="tag">with Heddle</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROLES -->
+      <div class="spec-row">
+        <div class="spec-label">.role<span>Mono pill chips for audience roles. 999px, cream fill, rule border. .role.hl flips to blue fill with yellow text.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="roles">
+              <span class="role hl">PM &amp; Product leads</span>
+              <span class="role">Eng managers</span>
+              <span class="role">Ops &amp; RevOps</span>
+              <span class="role">Design leads</span>
+              <span class="role">Research teams</span>
+              <span class="role">AI platform owners</span>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"role hl"</span><span class="c-tag">&gt;</span>PM &amp; Product leads<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"role"</span><span class="c-tag">&gt;</span>Eng managers<span class="c-tag">&lt;/span&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- PROBLEM CARD -->
+      <div class="spec-row">
+        <div class="spec-label">.problem<span>Card with 150px ghost numeral bleeding off top-right, 44px SVG icon, h4, description, pull-quote under dashed rule.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="padding: 36px;">
+            <div class="problem" data-num="01">
+              <svg class="problem-icon" viewBox="0 0 44 44" fill="none" aria-hidden="true" focusable="false">
+                <rect x="4" y="6" width="14" height="10" rx="2" style="stroke: var(--weft-blue)" stroke-width="2"/>
+                <rect x="26" y="6" width="14" height="10" rx="2" style="stroke: var(--weft-blue)" stroke-width="2"/>
+                <rect x="4" y="28" width="14" height="10" rx="2" style="stroke: var(--weft-blue)" stroke-width="2"/>
+                <rect x="26" y="28" width="14" height="10" rx="2" style="stroke: var(--weft-blue)" stroke-width="2"/>
+                <path d="M11 16 L11 28 M33 16 L33 28 M18 11 L26 11 M18 33 L26 33" style="stroke: var(--weft-yellow)" stroke-width="2" stroke-dasharray="2 3"/>
+              </svg>
+              <h4>Redundant knowledge, brittle handoffs</h4>
+              <p>Everyone is quietly building a personal KB with the same meeting transcripts. The seams between teammates are where AI value leaks out.</p>
+              <div class="quote">How much copy and paste can I really do each day?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ECOSYSTEM / SLAB -->
+      <div class="spec-row">
+        <div class="spec-label">.what-section / .ecosystem<span>Full-bleed blue slab with radial-dot overlay. Inside: ecosystem grid of 6 cells divided by 1px white/15 lines.</span></div>
+        <div class="spec-body">
+          <div class="demo on-blue" style="padding: 36px;">
+            <div class="eyebrow" style="color: var(--weft-yellow); margin-bottom: 20px;">
+              <span style="width: 40px; height: 1px; background: var(--weft-yellow); display: inline-block;"></span>
+              <span style="color: var(--weft-yellow); font-family: var(--weft-font-mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;">03 / Product</span>
+            </div>
+            <div class="ecosystem">
+              <div class="eco-cell">
+                <div class="eco-cat">Engine / 01</div>
+                <div class="eco-name">Heddle <em>Drifter</em></div>
+                <div class="eco-desc">Ambient change detection across your team&rsquo;s sources.</div>
+              </div>
+              <div class="eco-cell">
+                <div class="eco-cat">Engine / 02</div>
+                <div class="eco-name">Heddle <em>Shuttle</em></div>
+                <div class="eco-desc">Gathers context at the right time, in the right place.</div>
+              </div>
+              <div class="eco-cell">
+                <div class="eco-cat">Engine / 03</div>
+                <div class="eco-name">Heddle <em>Context</em></div>
+                <div class="eco-desc">Self-managing source of truth.</div>
+              </div>
+              <div class="eco-cell">
+                <div class="eco-cat">Interface / 01</div>
+                <div class="eco-name">Heddle <em>HUD</em></div>
+                <div class="eco-desc">Surfaces signals where your team already works.</div>
+              </div>
+              <div class="eco-cell">
+                <div class="eco-cat">Interface / 02</div>
+                <div class="eco-name">Heddle <em>DocT</em></div>
+                <div class="eco-desc">Built natively for both humans and agents.</div>
+              </div>
+              <div class="eco-cell">
+                <div class="eco-cat">Engine / 04</div>
+                <div class="eco-name">Heddle <em>Trace</em></div>
+                <div class="eco-desc">Follow any decision back through every source.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLOW DIAGRAM -->
+      <div class="spec-row">
+        <div class="spec-label">.flow-diagram<span>Paper card with mono caps title, five steps divided by dashed hairlines. Each step: Fraunces italic-300 numeral + name/desc.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="flow-diagram">
+              <div class="flow-diagram-title">&mdash; scan &rarr; stage &rarr; review &rarr; approve &rarr; merge</div>
+              <div class="flow-step">
+                <div class="flow-step-num">01</div>
+                <div>
+                  <div class="flow-step-name">Scan</div>
+                  <div class="flow-step-desc">Agent watches tier-1 sources across the vault.</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-num">02</div>
+                <div>
+                  <div class="flow-step-name">Stage</div>
+                  <div class="flow-step-desc">Classifies candidates, links evidence &mdash; can&rsquo;t touch canonical logs.</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-num">03</div>
+                <div>
+                  <div class="flow-step-name">Review</div>
+                  <div class="flow-step-desc">Weekly packet for human judgment.</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-num">04</div>
+                <div>
+                  <div class="flow-step-name">Approve</div>
+                  <div class="flow-step-desc">Approve &middot; Hold &middot; Keep project-local.</div>
+                </div>
+              </div>
+              <div class="flow-step">
+                <div class="flow-step-num">05</div>
+                <div>
+                  <div class="flow-step-name">Merge</div>
+                  <div class="flow-step-desc">Decision propagates to every agent and teammate downstream.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="spec-row">
+        <div class="spec-label">.cta-big / .cta-email<span>Oversize serif statement + large serif email link. Link underline grows from 2px blue to 6px yellow on hover.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div class="cta-big" style="margin-bottom: 32px;">Teams &amp; AI cohesively delivering <em>together</em>, working from the right information, <span class="y">fast.</span></div>
+            <div class="cta-label">Design partner program &middot; open</div>
+            <a href="#" class="cta-email" onclick="return false;">ana@nodaste.com</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="spec-row">
+        <div class="spec-label">Footer<span>Minimal mono caps row. Brand + year on the left, tagline on the right. 12px / 0.05em / muted.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="padding: 0;">
+            <div style="padding: 36px 32px; border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card); background: var(--weft-cream);">
+              <div class="footer-inner">
+                <div>HEDDLE &middot; 2026</div>
+                <div>WEAVING AI INTO HUMAN WORKFLOWS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM INPUTS — TEXT -->
+      <div class="spec-row">
+        <div class="spec-label">.input<span>Single-line text field. Sans 16px on paper surface, 1px <code>--weft-rule</code> border, 4px radius, 44px min-height. Label above in mono caps. Focus ring comes from the global <code>:focus-visible</code> rule. Hover deepens border to <code>--weft-rule-strong</code>. Error sets <code>aria-invalid="true"</code> which swaps border to <code>--weft-stop</code> and surfaces a red hint via <code>aria-describedby</code>.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
+            <div class="field">
+              <label class="field-label" for="demo-input-default">Full name</label>
+              <input class="input" id="demo-input-default" type="text" placeholder="Ana Chen" />
+              <span class="field-hint">Default &middot; empty</span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="demo-input-filled">Workspace</label>
+              <input class="input" id="demo-input-filled" type="text" value="nodaste-core" />
+              <span class="field-hint">Filled</span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="demo-input-error">Email<span class="req">*</span></label>
+              <input class="input" id="demo-input-error" type="email" value="ana@" aria-invalid="true" aria-describedby="demo-input-error-hint" />
+              <span class="field-hint is-error" id="demo-input-error-hint">Needs a full address &middot; ana@nodaste.com</span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="demo-input-hover">Team size</label>
+              <input class="input" id="demo-input-hover" type="text" placeholder="12" style="border-color: var(--weft-rule-strong);" />
+              <span class="field-hint">Hover (border emphasized)</span>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"field"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"field-label"</span> <span class="c-key">for</span>=<span class="c-str">"email"</span><span class="c-tag">&gt;</span>Email<span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"req"</span><span class="c-tag">&gt;</span>*<span class="c-tag">&lt;/span&gt;&lt;/label&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"input"</span> <span class="c-key">id</span>=<span class="c-str">"email"</span> <span class="c-key">type</span>=<span class="c-str">"email"</span>
+         <span class="c-key">aria-invalid</span>=<span class="c-str">"true"</span> <span class="c-key">aria-describedby</span>=<span class="c-str">"email-hint"</span> <span class="c-tag">/&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"field-hint is-error"</span> <span class="c-key">id</span>=<span class="c-str">"email-hint"</span><span class="c-tag">&gt;</span>Needs a full address.<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- FORM INPUTS — TEXTAREA -->
+      <div class="spec-row">
+        <div class="spec-label">.textarea<span>Multi-line input. Same surface + border + radius as <code>.input</code>, with <code>min-height: 96px</code> and <code>resize: vertical</code>. For descriptions, messages, longer copy. Same hover / focus / error rules.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="max-width: 640px;">
+            <div class="field">
+              <label class="field-label" for="demo-textarea">What are you weaving together?</label>
+              <textarea class="textarea" id="demo-textarea" placeholder="A few sentences is plenty. We'll follow up."></textarea>
+              <span class="field-hint">500 characters max.</span>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;textarea</span> <span class="c-key">class</span>=<span class="c-str">"textarea"</span> <span class="c-key">id</span>=<span class="c-str">"note"</span> <span class="c-tag">&gt;&lt;/textarea&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- FORM INPUTS — SELECT -->
+      <div class="spec-row">
+        <div class="spec-label">.select<span>Native <code>&lt;select&gt;</code> with the platform caret stripped and a single-stroke chevron re-added via inline SVG. Sits on the same surface + border + radius as <code>.input</code>. Caret color flips automatically in dark mode.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
+            <div class="field">
+              <label class="field-label" for="demo-select-default">Team size</label>
+              <select class="select" id="demo-select-default">
+                <option>Just me</option>
+                <option>2&ndash;5</option>
+                <option>6&ndash;15</option>
+                <option>16+</option>
+              </select>
+              <span class="field-hint">Default</span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="demo-select-error">Primary tool<span class="req">*</span></label>
+              <select class="select" id="demo-select-error" aria-invalid="true" aria-describedby="demo-select-error-hint">
+                <option value="">Pick one&hellip;</option>
+                <option>Claude</option>
+                <option>ChatGPT</option>
+                <option>Gemini</option>
+              </select>
+              <span class="field-hint is-error" id="demo-select-error-hint">Required.</span>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;select</span> <span class="c-key">class</span>=<span class="c-str">"select"</span> <span class="c-key">id</span>=<span class="c-str">"team-size"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;option&gt;</span>Just me<span class="c-tag">&lt;/option&gt;</span>
+  <span class="c-tag">&lt;option&gt;</span>2&ndash;5<span class="c-tag">&lt;/option&gt;</span>
+<span class="c-tag">&lt;/select&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- FORM INPUTS — CHECKBOX + RADIO -->
+      <div class="spec-row">
+        <div class="spec-label">.checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 44px min-height clickable wrap. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 640px;">
+            <div>
+              <div class="field-label" style="margin-bottom: 10px;">Checkboxes</div>
+              <div>
+                <label class="checkbox-wrap">
+                  <input class="checkbox" type="checkbox" checked />
+                  Send me the weekly roundup
+                </label>
+              </div>
+              <div>
+                <label class="checkbox-wrap">
+                  <input class="checkbox" type="checkbox" />
+                  Invite my team too
+                </label>
+              </div>
+              <div>
+                <label class="checkbox-wrap">
+                  <input class="checkbox" type="checkbox" aria-invalid="true" aria-describedby="demo-cb-err-hint" />
+                  Accept the terms
+                </label>
+                <span class="field-hint is-error" id="demo-cb-err-hint" style="margin-left: 28px;">Required to continue.</span>
+              </div>
+            </div>
+            <div>
+              <fieldset class="field-group">
+                <legend>Preferred contact</legend>
+                <label class="radio-wrap">
+                  <input class="radio" type="radio" name="demo-contact" checked />
+                  Email
+                </label>
+                <label class="radio-wrap">
+                  <input class="radio" type="radio" name="demo-contact" />
+                  Slack
+                </label>
+                <label class="radio-wrap">
+                  <input class="radio" type="radio" name="demo-contact" />
+                  Neither &mdash; I&rsquo;ll reach out
+                </label>
+              </fieldset>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"checkbox-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"checkbox"</span> <span class="c-key">type</span>=<span class="c-str">"checkbox"</span> <span class="c-tag">/&gt;</span>
+  Invite my team too
+<span class="c-tag">&lt;/label&gt;</span>
+
+<span class="c-tag">&lt;fieldset</span> <span class="c-key">class</span>=<span class="c-str">"field-group"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;legend&gt;</span>Preferred contact<span class="c-tag">&lt;/legend&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"radio-wrap"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"radio"</span> <span class="c-key">type</span>=<span class="c-str">"radio"</span> <span class="c-key">name</span>=<span class="c-str">"contact"</span> <span class="c-tag">/&gt;</span>
+    Email
+  <span class="c-tag">&lt;/label&gt;</span>
+<span class="c-tag">&lt;/fieldset&gt;</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 / PATTERNS ============ -->
+<section id="patterns" style="background: var(--weft-paper); border-top: 1px solid var(--weft-rule); border-bottom: 1px solid var(--weft-rule);">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">04 / Patterns<span>combinations that recur</span></div>
+      <h2 class="section-title">How the <span class="accent">pieces go together.</span></h2>
+    </div>
+
+    <div class="spec">
+
+      <div class="spec-row">
+        <div class="spec-label">Two-accent headline<span>Max two accented words per headline. One italic-blue-300, one yellow-highlight-mark. Zero accents is fine; three is noise.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <h2 style="font-family: var(--weft-font-serif); font-size: clamp(36px, 4vw, 52px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.05;">Weaving <span style="font-style: italic; font-weight: 300; color: var(--weft-link);">AI</span> into <span style="background: linear-gradient(to top, var(--weft-mark) 38%, transparent 38%); padding: 0 6px;">human</span> workflows.</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Section number convention<span>Every major section is NN / Name, zero-padded, with a muted subtitle below. Visible in the UI, not hidden.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 32px;">
+            <div class="section-num">01 / Audience<span>who Heddle is built for</span></div>
+            <div class="section-num">02 / Problems<span>what Heddle solves</span></div>
+            <div class="section-num">03 / Product<span>what heddle actually is</span></div>
+            <div class="section-num">04 / Method<span>the human-gated loop</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Pull-quote under dashed rule<span>Voice-of-user quotes sit at the bottom of cards, separated by a 1px dashed hairline, in Fraunces italic 14px with curly blue quotes.</span></div>
+        <div class="spec-body">
+          <div class="demo">
+            <div style="max-width: 48ch;">
+              <p style="font-size: 15px; color: var(--weft-muted); line-height: 1.6; margin-bottom: 20px;">Decisions don&rsquo;t propagate. The PM has to schedule four meetings so everyone actually hears them.</p>
+              <div style="font-family: var(--weft-font-serif); font-style: italic; font-size: 14px; color: var(--weft-ink); padding-top: 18px; border-top: 1px dashed var(--weft-rule); line-height: 1.5;">
+                <span style="color: var(--weft-link); font-size: 20px; margin-right: 2px;">&ldquo;</span>It feels like a waste of time to regenerate tasks every day, even with an agent.<span style="color: var(--weft-link); font-size: 20px; margin-left: 2px;">&rdquo;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Dashed vs. solid rules<span>Solid 1px rules mark section boundaries. Dashed rules mark soft, related boundaries &mdash; between flow steps, between body and pull-quote.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: flex; gap: 40px; flex-direction: column;">
+            <div>
+              <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--weft-muted); text-transform: uppercase; margin-bottom: 10px;">Solid &middot; hard boundary</div>
+              <div style="border-top: 1px solid var(--weft-rule); width: 100%;"></div>
+            </div>
+            <div>
+              <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--weft-muted); text-transform: uppercase; margin-bottom: 10px;">Dashed &middot; soft boundary</div>
+              <div style="border-top: 1px dashed var(--weft-rule); width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Glass nav<span>Sticky top bar with backdrop-filter: blur(14px) and var(--weft-glass-cream) cream tint. Never fully opaque &mdash; the threads show faintly through.</span></div>
+        <div class="spec-body">
+          <p style="color: var(--weft-muted); font-size: 15px; line-height: 1.6; max-width: 58ch;">Scroll this page and watch the nav at the top. As you pass a colored section, the backdrop-blur picks up the section tint behind it. Same pattern lives on the landing page.</p>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">Staggered fade-up<span>Hero only. Eyebrow (d1) &rarr; h1 (d2) &rarr; lede (d3) &rarr; hero-grid (d4). Do not apply below the fold.</span></div>
+        <div class="spec-body">
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"eyebrow fade-up d1"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;h1</span> <span class="c-key">class</span>=<span class="c-str">"display fade-up d2"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/h1&gt;</span>
+<span class="c-tag">&lt;p</span> <span class="c-key">class</span>=<span class="c-str">"lede fade-up d3"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/p&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"hero-grid fade-up d4"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 / DON'TS ============ -->
+<section id="donts">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">05 / Don&rsquo;ts<span>the guardrails</span></div>
+      <h2 class="section-title">What <span class="accent">not to do.</span></h2>
+    </div>
+
+    <div class="donts">
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t introduce a third accent color.</strong> Blue and yellow are the full set. Functional states (ok / warn / stop) are tuned down, not saturated, and are not third accents.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t use gradients on surfaces.</strong> The one exception is the yellow highlight-mark (linear-gradient yellow &rarr; transparent at 38&ndash;40%).</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t use pure black.</strong> Ink is <code style="font-family: var(--weft-font-mono); font-size: 13px;">#0b1020</code> &mdash; near-black navy.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t use pure white for page backgrounds.</strong> Cream is the page. Paper (<code style="font-family: var(--weft-font-mono); font-size: 13px;">#ffffff</code>) is for elevated card surfaces and contrast bands only.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t bold the display serif past 500.</strong> Headlines live in the 300&ndash;500 range &mdash; high contrast comes from the typeface, not the weight. The mark and wordmark are SVG, not typeset, so the serif has no role in the logo.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t place blue and yellow at equal weight on the same element.</strong> On a blue slab, yellow does the italic accents. On cream, blue does the italic accents and yellow does the highlight. Text on yellow is <code style="font-family: var(--weft-font-mono); font-size: 13px;">blue-ink</code>.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t stack more than two accent patterns in one headline.</strong> One italic-blue + one yellow-underline is the maximum.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t put body text on yellow or yellow-soft.</strong> Yellow is for highlights, badges, and accents. Labels and prose go elsewhere.</p>
+      </div>
+      <div class="dont-row">
+        <div class="dont-x">&times;</div>
+        <p><strong>Don&rsquo;t animate sections below the fold on page load.</strong> Stagger-fade is hero-only. Everything else stays still until interacted with.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div>HEDDLE &middot; DESIGN SYSTEM v1</div>
+      <div>LIVING RECORD &middot; UPDATED 2026-04-21</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
