@@ -94,9 +94,9 @@
 
   /* ─── HUD-specific tokens ─── */
   /* Dark glassmorphism surface for the floating HUD */
-  --hud-surface: rgba(8, 11, 18, 0.86);
+  --hud-surface: rgba(8, 11, 18, 1);
   /* Slightly raised surface for panels and cards */
-  --hud-surface-raised: rgba(16, 21, 33, 0.94);
+  --hud-surface-raised: rgba(16, 21, 33, 1);
   /* Surface used on interactive hover states */
   --hud-surface-hover: rgba(26, 33, 50, 0.96);
   /* Subtle white-tinted border for glass panels */
@@ -108,7 +108,7 @@
   /* Secondary text on dark HUD surfaces */
   --hud-text-2: rgba(160, 168, 192, 1);
   /* Muted/disabled text on dark HUD surfaces */
-  --hud-text-3: rgba(90, 100, 120, 1);
+  --hud-text-3: rgba(128, 138, 164, 1);
   /* Positive/healing color (green) */
   --hud-positive: rgba(52, 211, 153, 1);
   /* Informational color (blue) */
