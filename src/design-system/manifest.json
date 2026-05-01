@@ -12,6 +12,34 @@
       "showcase": true
     },
     {
+      "id": "action-button-row.figma",
+      "path": "src/app/components/ui/action-button-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for ActionButtonRow.",
+      "showcase": false
+    },
+    {
+      "id": "action-button-row",
+      "path": "src/app/components/ui/action-button-row.tsx",
+      "category": "actions",
+      "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment.",
+      "showcase": true
+    },
+    {
+      "id": "add-item-button.figma",
+      "path": "src/app/components/ui/add-item-button.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for AddItemButton.",
+      "showcase": false
+    },
+    {
+      "id": "add-item-button",
+      "path": "src/app/components/ui/add-item-button.tsx",
+      "category": "actions",
+      "summary": "Dashed-border 'add item' trigger for editable list footers.",
+      "showcase": true
+    },
+    {
       "id": "alert-dialog",
       "path": "src/app/components/ui/alert-dialog.tsx",
       "category": "overlay",
@@ -110,6 +138,34 @@
       "showcase": true
     },
     {
+      "id": "empty-state.figma",
+      "path": "src/app/components/ui/empty-state.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for EmptyState.",
+      "showcase": false
+    },
+    {
+      "id": "empty-state",
+      "path": "src/app/components/ui/empty-state.tsx",
+      "category": "feedback",
+      "summary": "Centered icon + title + description + action slot for 'nothing to show yet' surfaces.",
+      "showcase": true
+    },
+    {
+      "id": "eyebrow-label.figma",
+      "path": "src/app/components/ui/eyebrow-label.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for EyebrowLabel.",
+      "showcase": false
+    },
+    {
+      "id": "eyebrow-label",
+      "path": "src/app/components/ui/eyebrow-label.tsx",
+      "category": "feedback",
+      "summary": "Uppercase tracked-out section label. Picks up Weft mono font automatically under data-palette='weft'.",
+      "showcase": true
+    },
+    {
       "id": "form",
       "path": "src/app/components/ui/form.tsx",
       "category": "forms",
@@ -163,6 +219,34 @@
       "path": "src/app/components/ui/pagination.tsx",
       "category": "navigation",
       "summary": "Pagination controls for multi-page collections.",
+      "showcase": true
+    },
+    {
+      "id": "panel-header.figma",
+      "path": "src/app/components/ui/panel-header.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for PanelHeader.",
+      "showcase": false
+    },
+    {
+      "id": "panel-header",
+      "path": "src/app/components/ui/panel-header.tsx",
+      "category": "layout",
+      "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button.",
+      "showcase": true
+    },
+    {
+      "id": "pill-toggle-group.figma",
+      "path": "src/app/components/ui/pill-toggle-group.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for PillToggleGroup.",
+      "showcase": false
+    },
+    {
+      "id": "pill-toggle-group",
+      "path": "src/app/components/ui/pill-toggle-group.tsx",
+      "category": "toggles",
+      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup — used for period and mode selectors.",
       "showcase": true
     },
     {
@@ -243,6 +327,34 @@
       "showcase": true
     },
     {
+      "id": "source-pill.figma",
+      "path": "src/app/components/ui/source-pill.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for SourcePill.",
+      "showcase": false
+    },
+    {
+      "id": "source-pill",
+      "path": "src/app/components/ui/source-pill.tsx",
+      "category": "data-display",
+      "summary": "Small monospace pill for file paths and origin tags. Inherits Weft mono font under data-palette='weft'.",
+      "showcase": true
+    },
+    {
+      "id": "stat-row.figma",
+      "path": "src/app/components/ui/stat-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for StatRow.",
+      "showcase": false
+    },
+    {
+      "id": "stat-row",
+      "path": "src/app/components/ui/stat-row.tsx",
+      "category": "data-display",
+      "summary": "Label-on-left, value-on-right key/value row with optional hint badge.",
+      "showcase": true
+    },
+    {
       "id": "switch",
       "path": "src/app/components/ui/switch.tsx",
       "category": "toggles",
@@ -289,62 +401,6 @@
       "path": "src/app/components/ui/tooltip.tsx",
       "category": "overlay",
       "summary": "Hover or focus hint surface with provider and content.",
-      "showcase": true
-    },
-    {
-      "id": "eyebrow-label",
-      "path": "src/app/components/ui/eyebrow-label.tsx",
-      "category": "feedback",
-      "summary": "Uppercase tracked-out section label. Picks up Weft mono font automatically under data-palette='weft'.",
-      "showcase": true
-    },
-    {
-      "id": "panel-header",
-      "path": "src/app/components/ui/panel-header.tsx",
-      "category": "layout",
-      "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button.",
-      "showcase": true
-    },
-    {
-      "id": "action-button-row",
-      "path": "src/app/components/ui/action-button-row.tsx",
-      "category": "actions",
-      "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment.",
-      "showcase": true
-    },
-    {
-      "id": "add-item-button",
-      "path": "src/app/components/ui/add-item-button.tsx",
-      "category": "actions",
-      "summary": "Dashed-border 'add item' trigger for editable list footers.",
-      "showcase": true
-    },
-    {
-      "id": "pill-toggle-group",
-      "path": "src/app/components/ui/pill-toggle-group.tsx",
-      "category": "toggles",
-      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup — used for period and mode selectors.",
-      "showcase": true
-    },
-    {
-      "id": "stat-row",
-      "path": "src/app/components/ui/stat-row.tsx",
-      "category": "data-display",
-      "summary": "Label-on-left, value-on-right key/value row with optional hint badge.",
-      "showcase": true
-    },
-    {
-      "id": "empty-state",
-      "path": "src/app/components/ui/empty-state.tsx",
-      "category": "feedback",
-      "summary": "Centered icon + title + description + action slot for 'nothing to show yet' surfaces.",
-      "showcase": true
-    },
-    {
-      "id": "source-pill",
-      "path": "src/app/components/ui/source-pill.tsx",
-      "category": "data-display",
-      "summary": "Small monospace pill for file paths and origin tags. Inherits Weft mono font under data-palette='weft'.",
       "showcase": true
     }
   ],
