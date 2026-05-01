@@ -57,7 +57,7 @@ function severityColors(severity: HudIssueSeverity): {
       return {
         accent: 'var(--hud-danger)',
         border: 'rgba(239, 68, 68, 0.32)',
-        background: 'rgba(57, 29, 20, 0.78)',
+        background: 'var(--hud-danger-bg-strong)',
         icon: '!',
         role: 'alert',
       };
@@ -65,7 +65,7 @@ function severityColors(severity: HudIssueSeverity): {
       return {
         accent: 'var(--hud-warning)',
         border: 'rgba(251, 191, 36, 0.3)',
-        background: 'rgba(52, 40, 20, 0.72)',
+        background: 'var(--hud-attention-bg-strong)',
         icon: '⚠',
         role: 'alert',
       };
@@ -74,7 +74,7 @@ function severityColors(severity: HudIssueSeverity): {
       return {
         accent: 'var(--hud-info, var(--primary))',
         border: 'var(--hud-border-accent)',
-        background: 'rgba(24, 32, 48, 0.68)',
+        background: 'var(--hud-info-bg-soft)',
         icon: 'ℹ',
         role: 'status',
       };
