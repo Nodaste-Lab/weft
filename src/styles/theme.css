@@ -10,13 +10,13 @@
   --text-sm: 14px;
   --text-xs: 12px;
   /* The default background color for the application. */
-  --background: rgba(255, 255, 255, 1);
+  --background: rgba(5, 7, 12, 1);
   /* The default color for elements or text that appears on top of the background. */
-  --foreground: rgba(24, 29, 39, 1);
+  --foreground: rgba(245, 248, 255, 1);
   /* The background color for cards, modals, and other containers. */
-  --card: rgba(255, 255, 255, 1);
+  --card: rgba(16, 21, 33, 0.94);
   /* The default color for text or elements that appear on top of cards, modals and other background containers. */
-  --card-foreground: rgba(65, 70, 81, 1);
+  --card-foreground: rgba(245, 248, 255, 1);
   /* The background color for dropdowns and tooltips. */
   --popover: rgba(10, 13, 18, 1);
   /* The default color for text or elements that appear on top of dropdowns and tooltips. */
@@ -26,13 +26,13 @@
   /* The default color for text or elements that appear on top of primary colored elements. */
   --primary-foreground: rgba(255, 255, 255, 1);
   /* The secondary color used for secondary(but NOT-DESTRUCTIVE) buttons and interactive elements. */
-  --secondary: rgba(255, 255, 255, 1);
+  --secondary: rgba(26, 33, 50, 0.96);
   /* The default color for text or elements that appear on top of secondary colored elements. */
-  --secondary-foreground: rgba(65, 70, 81, 1);
+  --secondary-foreground: rgba(245, 248, 255, 1);
   /* The muted color used for less prominent elements, such as disabled buttons or disabled text. */
-  --muted: rgba(250, 250, 250, 1);
+  --muted: rgba(16, 21, 33, 0.78);
   /* The default color for text or elements that appear on top of muted colored elements. */
-  --muted-foreground: rgba(164, 167, 174, 1);
+  --muted-foreground: rgba(160, 168, 192, 1);
   /* The accent color used for highlights, links, and other interactive elements. */
   --accent: rgba(105, 65, 198, 1);
   /* The default color for text or elements that appear on top of accent colored elements. */
@@ -42,11 +42,11 @@
   /* The default color for text or elements that appear on top of destructive colored elements. */
   --destructive-foreground: rgba(255, 255, 255, 1);
   /* The default border color for elements such as inputs, buttons, and other containers. */
-  --border: rgba(213, 215, 218, 1);
+  --border: rgba(255, 255, 255, 0.07);
   /* The default background color for input fields once the text has been filled. Should be either transparent or match the input-background. */
-  --input: rgba(255, 255, 255, 1);
+  --input: rgba(255, 255, 255, 0.10);
   /* The default background color for input fields, text areas, and other input elements. */
-  --input-background: rgba(255, 255, 255, 1);
+  --input-background: rgba(0, 0, 0, 0.28);
   /* The default font weight for medium text. */
   --font-weight-medium: 500;
   /* The default font weight for normal text. */
@@ -76,19 +76,19 @@
   /* Pill border radius for rounded pill-shaped elements. */
   --radius-pill: 9999px;
   /* The background color for sidebars, navigation menus, and other persistent elements. */
-  --sidebar: rgba(255, 255, 255, 1);
+  --sidebar: rgba(16, 21, 33, 0.94);
   /* The default color for text or elements that appear on top of sidebars, navigation menus, and other persistent elements. */
-  --sidebar-foreground: rgba(65, 70, 81, 1);
+  --sidebar-foreground: rgba(245, 248, 255, 1);
   /* The primary color used for buttons, links, and other interactive elements in sidebars and navigation menus. */
   --sidebar-primary: rgba(127, 86, 217, 1);
   /* The default color for text or elements that appear on top of primary colored elements in sidebars and navigation menus. */
   --sidebar-primary-foreground: rgba(255, 255, 255, 1);
   /* The accent color used for highlights, links, and other interactive elements in sidebars and navigation menus. */
-  --sidebar-accent: rgba(250, 250, 250, 1);
+  --sidebar-accent: rgba(26, 33, 50, 0.96);
   /* The default color for text or elements that appear on top of accent colored elements in sidebars and navigation menus. */
-  --sidebar-accent-foreground: rgba(37, 43, 55, 1);
+  --sidebar-accent-foreground: rgba(245, 248, 255, 1);
   /* The default border color for elements in sidebars and navigation menus. */
-  --sidebar-border: rgba(233, 234, 235, 1);
+  --sidebar-border: rgba(255, 255, 255, 0.07);
   /* The default color for focus rings, outlines, and other focus indicators in sidebars and navigation menus. */
   --sidebar-ring: rgba(127, 86, 217, 1);
 
@@ -149,7 +149,7 @@
   --hud-section-fill-soft:    rgba(0, 0, 0, 0.10);
   --hud-section-fill-medium:  rgba(0, 0, 0, 0.18);
   --hud-section-fill-strong:  rgba(0, 0, 0, 0.28);
-  --hud-canvas-bg:          transparent;
+  --hud-canvas-bg:          rgba(4, 7, 12, 1);
   --hud-overlay-gradient:   radial-gradient(ellipse at 50% 0%, rgba(127, 86, 217, 0.06) 0%, transparent 65%);
 
   /* ── HUD primary-tint scale ──
@@ -216,6 +216,14 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  :root[data-palette="weft"]:not([data-theme="dark"]) {
+    color-scheme: light;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -223,6 +231,23 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--weft-font-sans);
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: var(--input-background);
+    color: var(--foreground);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  select option {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
   }
 }
 
