@@ -317,3 +317,28 @@
 html {
   font-size: var(--font-size);
 }
+
+[data-hud-field-scope] :where(input:not([type='checkbox']):not([type='radio']):not([type='range']), textarea, select) {
+  background: var(--hud-input-bg);
+  border: 1px solid var(--hud-border);
+  border-radius: var(--radius-xs);
+  color: var(--hud-text-1);
+  color-scheme: dark;
+}
+
+[data-hud-field-scope] :where(input:not([type='checkbox']):not([type='radio']):not([type='range']), textarea)::placeholder {
+  color: var(--hud-text-3);
+  opacity: 1;
+}
+
+[data-hud-field-scope] :where(button[data-slot='button'][class*='bg-secondary'], button[data-slot='pill-toggle-group-item'][data-state='off']) {
+  background: var(--hud-input-bg);
+  border-color: var(--hud-border);
+  color: var(--hud-text-2);
+}
+
+[data-hud-field-scope] :where(button[data-slot='button'][class*='bg-secondary'], button[data-slot='pill-toggle-group-item'][data-state='off']):hover {
+  background: var(--hud-surface-hover);
+  border-color: var(--hud-border-accent);
+  color: var(--hud-text-1);
+}
