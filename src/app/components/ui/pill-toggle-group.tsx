@@ -77,7 +77,7 @@ function PillToggleGroupItem({
         "inline-flex shrink-0 items-center whitespace-nowrap rounded-sm border px-2.5 py-1 text-xs transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         active
-          ? "border-primary/40 bg-primary/15 font-semibold text-primary"
+          ? "border-primary/70 bg-primary font-semibold text-primary-foreground"
           : "border-border bg-card font-normal text-muted-foreground hover:text-foreground hover:border-primary/30",
         className,
       )}

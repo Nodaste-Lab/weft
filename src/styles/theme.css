@@ -22,9 +22,9 @@
   /* The default color for text or elements that appear on top of dropdowns and tooltips. */
   --popover-foreground: rgba(255, 255, 255, 1);
   /* The primary color used for buttons, links, and other interactive elements. */
-  --primary: rgba(127, 86, 217, 1);
+  --primary: rgba(167, 139, 250, 1);
   /* The default color for text or elements that appear on top of primary colored elements. */
-  --primary-foreground: rgba(255, 255, 255, 1);
+  --primary-foreground: rgba(11, 16, 32, 1);
   /* The secondary color used for secondary(but NOT-DESTRUCTIVE) buttons and interactive elements. */
   --secondary: rgba(26, 33, 50, 0.96);
   /* The default color for text or elements that appear on top of secondary colored elements. */

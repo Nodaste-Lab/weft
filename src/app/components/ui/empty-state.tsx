@@ -46,7 +46,7 @@ function EmptyState({
         <span
           className={cn(
             "inline-flex items-center justify-center text-muted-foreground/60 [&>svg]:size-7",
-            tone === "warning" && "text-amber-600/80",
+            tone === "warning" && "text-[var(--hud-warning)]",
           )}
           aria-hidden="true"
         >
@@ -58,7 +58,7 @@ function EmptyState({
         <p
           className={cn(
             "m-0 max-w-sm text-xs text-muted-foreground",
-            tone === "warning" && "text-amber-700/90",
+            tone === "warning" && "text-[var(--hud-warning)]",
           )}
         >
           {description}
