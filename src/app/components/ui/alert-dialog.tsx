@@ -46,13 +46,18 @@ const AlertDialogOverlay = React.forwardRef<
   );
 });
 
+interface AlertDialogContentProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> {
+  overlayClassName?: string;
+  overlayStyle?: React.CSSProperties;
+}
+
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => {
+  AlertDialogContentProps
+>(({ className, overlayClassName, overlayStyle, ...props }, ref) => {
   return (
     <AlertDialogPortal>
-      <AlertDialogOverlay />
+      <AlertDialogOverlay className={overlayClassName} style={overlayStyle} />
       <AlertDialogPrimitive.Content
         ref={ref}
         data-slot="alert-dialog-content"
