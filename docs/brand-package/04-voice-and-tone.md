@@ -127,8 +127,9 @@ Heddle tells the reader **what is actually true**. It does not motivate, reassur
 
 ### One idea per sentence
 
-- ✅ "Your passphrase is stored in the system keychain. You can rotate it any time with `heddle account password change`."
-- ❌ "Your passphrase is stored in the system keychain, which you can rotate any time with the built-in `heddle account password change` command that runs interactively and backs up your existing session first."
+- ✅ "You're signed in with Clerk. This machine stores a local keychain credential for Heddle sync."
+- ✅ "Your Clerk credential stays in Clerk. This machine can re-authenticate through Clerk if the local sync credential is missing."
+- ❌ "Enter your Heddle passphrase to repair this Clerk-backed account."
 
 ## Things Heddle never says
 
