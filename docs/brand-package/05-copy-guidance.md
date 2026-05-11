@@ -77,7 +77,7 @@ Inline code for short identifiers; fenced code for anything multi-line or runnab
 - `attach` — how a machine joins an existing space
 - `invite code` — the `heddle_inv_*` string used to join a shared space
 - `node` — the background service (`ccore-node` / `heddle-node`)
-- `account` — the identity tied to a passphrase
+- `account` — the identity tied to Clerk sign-in
 - `session` — an authenticated runtime on one machine
 
 ### Avoid
@@ -110,7 +110,7 @@ Inline code for short identifiers; fenced code for anything multi-line or runnab
 ### Sentence case everywhere
 
 - Headings: `Set up your account`
-- Buttons: `Install Heddle`, `Rotate passphrase`
+- Buttons: `Install Heddle`, `Sign in with Clerk`, `Refresh session`
 - Nav items: `Docs`, `Pricing`, `Changelog`
 
 Title Case Only For: **the product word itself when it's a proper noun in running text** (Heddle, CCore, HUD, DocT), **and nowhere else**.

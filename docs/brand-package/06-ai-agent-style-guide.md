@@ -149,9 +149,9 @@ Let's get you set up. It takes about a minute.
 
 Your account is how Heddle recognizes you across machines.
 
-- Choose a handle — letters, numbers, dashes
-- Set a passphrase — stored in your system keychain
-- You can rotate it anytime with `heddle account password change`
+- Sign in with Clerk
+- Heddle stores a local keychain credential for this machine
+- If the local credential is missing, Heddle re-authenticates through Clerk
 
 [ Handle: _________ ]   [ Continue ]
 ```
@@ -164,7 +164,7 @@ Heddle is running in the background. Your personal space will sync quietly from 
 
 - Check status anytime with `heddle health`
 - Invite a machine to a shared space with `heddle space invite-import <code>`
-- Rotate your passphrase with `heddle account password change`
+- Manage account sign-in from Clerk
 
 [ Open Heddle ]
 ```
@@ -233,9 +233,9 @@ The studio space tried to attach at 06:14 and couldn't — you're not a member y
 
 **What to do:** ping Aaron, then `heddle space invite-import <code>`.
 
-## 🟡 Personal passphrase — 94 days old
+## 🟡 Local session — needs refresh
 
-Not urgent. You rotated it on January 16. You can rotate again with `heddle account password change`.
+Not urgent. This machine needs a fresh Clerk-backed session before it can sync again.
 
 ## 🟢 Resolved since Friday
 
@@ -262,9 +262,9 @@ Not urgent. You rotated it on January 16. You can rotate again with `heddle acco
 ### Pattern — three-part error
 
 ```
-Heddle couldn't rotate your passphrase.
+Heddle couldn't refresh your local session.
 
-The remote rotation succeeded, but the local session couldn't be rewritten. Your account is in an inconsistent state.
+Clerk is the credential broker, but this machine could not write the refreshed local sync credential.
 
 What to do:
 1. Do not retry the rotation — it will fail closed.
@@ -377,7 +377,7 @@ Then: heddle health
 
 **Before:** "In this section, we will walk you through the powerful capabilities of Heddle's robust account management system, which provides industry-leading security for your valuable data."
 
-**After:** "Your account is how Heddle recognizes you across machines. This page covers setting a passphrase, rotating it, and what happens if you forget it."
+**After:** "Your account is how Heddle recognizes you across machines. This page covers Clerk sign-in, local device trust, and session recovery."
 
 ### Rewrite 4 — HUD line
 
