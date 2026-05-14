@@ -1,7 +1,7 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
-import { Bold, GripVerticalIcon, Info, Moon, Sparkles } from 'lucide-react';
+import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -158,6 +158,20 @@ import { Toggle } from '../app/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
 import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
+import { Callout } from '../app/components/ui/callout';
+import { HpBarTrack } from '../app/components/ui/hp-bar-track';
+import { HudListRow, HudListRowMeta, HudListRowTitle } from '../app/components/ui/hud-list-row';
+import { HudPopoverDropdown } from '../app/components/ui/hud-popover-dropdown';
+import { HudToggleSwitch } from '../app/components/ui/hud-toggle-switch';
+import { MetricTile } from '../app/components/ui/metric-tile';
+import { CombatantTypeDot } from '../app/components/ui/combatant-type-dot';
+import { DeathSaveDot } from '../app/components/ui/death-save-dot';
+import { PanelBlockShell } from '../app/components/ui/panel-block-shell';
+import { SettingsModuleShell } from '../app/components/ui/settings-module-shell';
+import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
+import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
+import { StatusIconRow } from '../app/components/ui/status-icon-row';
+import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
 /** Every `uiPrimitives[].id` from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
@@ -170,31 +184,44 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'breadcrumb',
   'button',
   'calendar',
+  'callout',
   'card',
   'checkbox',
   'collapsible',
+  'combatant-type-dot',
   'context-menu',
+  'death-save-dot',
   'dialog',
   'dropdown-menu',
   'form',
   'hover-card',
+  'hp-bar-track',
+  'hud-list-row',
+  'hud-popover-dropdown',
+  'hud-toggle-switch',
   'HudIssueCallout',
+  'inline-edit-list-row',
   'input',
   'label',
   'menubar',
+  'metric-tile',
   'navigation-menu',
   'pagination',
+  'panel-block-shell',
   'popover',
   'progress',
   'radio-group',
+  'recap-section-shell',
   'resizable',
   'scroll-area',
   'select',
   'separator',
+  'settings-module-shell',
   'sheet',
   'sidebar',
   'skeleton',
   'slider',
+  'status-icon-row',
   'switch',
   'table',
   'tabs',
@@ -202,7 +229,81 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'toggle-group',
   'toggle',
   'tooltip',
+  'vault-sheet-match-row',
 ] as const;
+
+function HudPopoverDropdownDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+      <HudPopoverDropdown
+        open={open}
+        onOpenChange={setOpen}
+        align="end"
+        width="auto"
+        contentClassName="min-w-[140px] py-1"
+        contentAriaLabel="Demo menu"
+        trigger={
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            className="rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-input-bg)] px-3 py-1.5 text-[length:var(--text-xs)] text-[var(--hud-text-1)] [font-family:var(--weft-font-sans)]"
+            aria-expanded={open}
+          >
+            Open menu
+          </button>
+        }
+      >
+        <div className="flex flex-col py-1 text-[length:var(--text-xs)] text-[var(--hud-text-1)] [font-family:var(--weft-font-sans)]">
+          <button
+            type="button"
+            onMouseDown={(event) => { event.preventDefault(); setOpen(false); }}
+            className="cursor-pointer border-0 bg-transparent px-2.5 py-1.5 text-left hover:bg-[var(--hud-tint-2)]"
+          >
+            Action one
+          </button>
+          <button
+            type="button"
+            onMouseDown={(event) => { event.preventDefault(); setOpen(false); }}
+            className="cursor-pointer border-0 bg-transparent px-2.5 py-1.5 text-left hover:bg-[var(--hud-tint-2)]"
+          >
+            Action two
+          </button>
+        </div>
+      </HudPopoverDropdown>
+    </div>
+  );
+}
+
+function HudToggleSwitchDemo() {
+  const [defaultOn, setDefaultOn] = React.useState(true);
+  const [smallOn, setSmallOn] = React.useState(false);
+  return (
+    <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2">
+        <HudToggleSwitch
+          active={defaultOn}
+          onToggle={() => setDefaultOn((value) => !value)}
+          ariaLabel="Toggle default size"
+        />
+        <span className="text-xs text-muted-foreground">default (34×18)</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <HudToggleSwitch
+          active={smallOn}
+          onToggle={() => setSmallOn((value) => !value)}
+          ariaLabel="Toggle small size"
+          size="sm"
+        />
+        <span className="text-xs text-muted-foreground">sm (28×16)</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <HudToggleSwitch active={false} onToggle={() => undefined} ariaLabel="Disabled toggle" disabled />
+        <span className="text-xs text-muted-foreground">disabled</span>
+      </div>
+    </div>
+  );
+}
 
 export function DesignSystemUiGallery() {
   const [switchOn, setSwitchOn] = React.useState(true);
@@ -374,6 +475,27 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="callout"
+        title="Callout"
+        summary="Inline message panel — denser than Alert, generic for help notes, status banners, and panel-level hints."
+      >
+        <div className="flex w-full max-w-md flex-col gap-2">
+          <Callout tone="info" title="Recap queued">
+            Generation will resume the next time the workspace mode opens.
+          </Callout>
+          <Callout tone="warning" density="compact" title="Add an OpenAI API key">
+            Open App Settings → AI providers to enable transcription.
+          </Callout>
+          <Callout tone="danger" density="compact">
+            Vault unreachable — last sync 4h ago.
+          </Callout>
+          <Callout tone="positive" density="compact">
+            Saved. Local changes synced to the Personal vault.
+          </Callout>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="card"
         title="Card"
         summary="Card shell with header, content, and footer slots."
@@ -427,6 +549,31 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="combatant-type-dot"
+        title="Combatant Type Dot"
+        summary="Round dot that color-codes a combatant's type (enemy/ally/player). Default 7px; pulsing wrapper variant for TPK warning banner."
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <CombatantTypeDot type="player" />
+            <span className="text-xs text-muted-foreground">player</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CombatantTypeDot type="ally" />
+            <span className="text-xs text-muted-foreground">ally</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CombatantTypeDot type="enemy" />
+            <span className="text-xs text-muted-foreground">enemy</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CombatantTypeDot type="enemy" pulsing />
+            <span className="text-xs text-muted-foreground">enemy · pulsing</span>
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="context-menu"
         title="Context Menu"
         summary="Right-click or long-press menu anchored to a trigger region."
@@ -445,6 +592,27 @@ export function DesignSystemUiGallery() {
             <ContextMenuItem>Paste</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="death-save-dot"
+        title="Death Save Dot"
+        summary="8×8 success/fail dot used inside the death-save row for downed PCs. Color follows kind + filled state."
+      >
+        <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <span>successes:</span>
+            <DeathSaveDot kind="success" filled />
+            <DeathSaveDot kind="success" filled />
+            <DeathSaveDot kind="success" filled={false} />
+          </div>
+          <div className="flex items-center gap-1">
+            <span>failures:</span>
+            <DeathSaveDot kind="fail" filled />
+            <DeathSaveDot kind="fail" filled={false} />
+            <DeathSaveDot kind="fail" filled={false} />
+          </div>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -543,6 +711,64 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="hp-bar-track"
+        title="HP Bar Track"
+        summary="HP bar track + temp-HP sliver + readout — auto-tones positive/warning/danger from hp/maxHp."
+      >
+        <div className="flex w-full max-w-md flex-col gap-3">
+          <HpBarTrack hp={42} maxHp={50} />
+          <HpBarTrack hp={18} maxHp={50} variant="track" tempHp={6} />
+          <HpBarTrack hp={4} maxHp={50} variant="thick" tempHp={2} />
+          <HpBarTrack hp={0} maxHp={0} tone="muted" showReadout={false} />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="hud-list-row"
+        title="HUD List Row"
+        summary="Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active)."
+      >
+        <div className="flex w-full max-w-md flex-col">
+          <HudListRow
+            state="unread"
+            leading={<div className="size-2 rounded-full bg-[var(--primary)]" aria-hidden />}
+            trailing={<Button size="sm" variant="ghost">View</Button>}
+          >
+            <HudListRowTitle emphasis>Review Q3 roadmap</HudListRowTitle>
+            <HudListRowMeta>3h ago · #product · Slack</HudListRowMeta>
+          </HudListRow>
+          <HudListRow
+            state="overdue"
+            leading={<div className="size-2 rounded-full bg-[var(--hud-danger)]" aria-hidden />}
+            trailing={<Badge variant="destructive">overdue</Badge>}
+          >
+            <HudListRowTitle>Send signed contract</HudListRowTitle>
+            <HudListRowMeta>2d overdue · vendor.com</HudListRowMeta>
+          </HudListRow>
+          <HudListRow state="resolved" interactive>
+            <HudListRowTitle>Approved expense report</HudListRowTitle>
+            <HudListRowMeta>resolved · 4h ago</HudListRowMeta>
+          </HudListRow>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="hud-popover-dropdown"
+        title="HUD Popover Dropdown"
+        summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the campaign dropdown."
+      >
+        <HudPopoverDropdownDemo />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="hud-toggle-switch"
+        title="HUD Toggle Switch"
+        summary="HUD-density binary toggle (34×18). Use in HUD chrome where Switch is too tall."
+      >
+        <HudToggleSwitchDemo />
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="HudIssueCallout"
         title="HUD Issue Callout"
         summary="Structured failure callout used across HUD panels, rows, and submit flows."
@@ -581,6 +807,29 @@ export function DesignSystemUiGallery() {
               detail: 'the mock provider rejected the request: HTTP 500',
               nextAction: 'Wait a moment and try the action again.',
             }}
+          />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="inline-edit-list-row"
+        title="Inline Edit List Row"
+        summary="Editable text row with optional index badge / leading icon, click-to-edit body, and hover edit + delete affordances. Used in recap beats + mysteries."
+      >
+        <div className="flex w-full max-w-md flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <InlineEditListRow
+            text="The party negotiated safe passage."
+            showIndex
+            index={0}
+            onUpdate={() => {}}
+            onDelete={() => {}}
+          />
+          <InlineEditListRow
+            text="Who is the Whisper Court answering to?"
+            italic
+            leadingIcon={<AlertTriangle size={12} className="text-[var(--hud-warning)]" />}
+            onUpdate={() => {}}
+            onDelete={() => {}}
           />
         </div>
       </PrimitiveCard>
@@ -627,6 +876,20 @@ export function DesignSystemUiGallery() {
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="metric-tile"
+        title="Metric Tile"
+        summary="Label-over-value tile with tone-aware value (default/danger/warning/positive/muted/info). Used in Signal stats and dashboard-style HUD readouts."
+      >
+        <div className="flex w-full max-w-xl flex-wrap gap-2">
+          <MetricTile label="Urgent" value={3} valueTone="danger" />
+          <MetricTile label="Overdue" value={1} valueTone="warning" />
+          <MetricTile label="Open" value={12} />
+          <MetricTile label="Total" value={38} valueTone="muted" />
+          <MetricTile label="Completed" value={24} valueTone="positive" hint="this week" />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -692,6 +955,36 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="panel-block-shell"
+        title="Panel Block Shell"
+        summary="Outer chrome for custom-panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists)."
+      >
+        <div className="flex w-full max-w-md flex-col gap-3">
+          <PanelBlockShell title="Stats" headerRight={<Badge variant="outline">live</Badge>}>
+            <div className="flex flex-wrap gap-2">
+              <MetricTile label="Open" value={9} />
+              <MetricTile label="Done" value={42} valueTone="positive" />
+            </div>
+          </PanelBlockShell>
+          <PanelBlockShell
+            title="Filters"
+            collapsible
+            sectionLabel="Filters"
+            activeCountText="3 active"
+          >
+            <div className="text-xs text-muted-foreground">
+              Body content collapses with the title chevron.
+            </div>
+          </PanelBlockShell>
+          <PanelBlockShell title="Selected card" selected>
+            <div className="text-xs text-muted-foreground">
+              Selected blocks render with the accent border ring.
+            </div>
+          </PanelBlockShell>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="popover"
         title="Popover"
         summary="Anchored floating panel for lightweight tasks."
@@ -738,6 +1031,29 @@ export function DesignSystemUiGallery() {
             <span>Auto-publish</span>
           </label>
         </RadioGroup>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="recap-section-shell"
+        title="Recap Section Shell"
+        summary="Collapsible section shell with icon + uppercase title + count pill + chevron. Used to wrap each visible recap section (beats, decisions, npcMoments, promises, mysteries)."
+      >
+        <div className="flex w-full max-w-md flex-col rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+          <RecapSectionShell
+            icon={<Sparkles size={12} className="text-[var(--primary)]" />}
+            title="Beats"
+            count={3}
+            open
+            onToggle={() => {}}
+          >
+            <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)] [font-family:var(--weft-font-sans)]">
+              Section body (beats list lives here)
+            </span>
+          </RecapSectionShell>
+          <RecapSectionShell title="Mysteries" count={1} open={false} onToggle={() => {}}>
+            <span>Collapsed body is hidden.</span>
+          </RecapSectionShell>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -815,6 +1131,29 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="settings-module-shell"
+        title="Settings Module Shell"
+        summary="Bordered settings card — eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager."
+      >
+        <SettingsModuleShell
+          className="max-w-md"
+          eyebrow="Module"
+          title="Live transcription"
+          description="Captures session audio for recap and signal extraction."
+          actions={<HudToggleSwitch active onToggle={() => undefined} ariaLabel="Toggle live transcription" />}
+          footer={
+            <Button size="sm" variant="ghost">
+              Open advanced settings
+            </Button>
+          }
+        >
+          <p className="m-0 text-xs text-muted-foreground">
+            Body content lives here. Compose labelled fields, selects, or any panel chrome inside.
+          </p>
+        </SettingsModuleShell>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="sheet"
         title="Sheet"
         summary="Edge-mounted drawer built on dialog primitives."
@@ -885,6 +1224,33 @@ export function DesignSystemUiGallery() {
           thumbLabels={["Volume level"]}
           className="max-w-xs"
         />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="status-icon-row"
+        title="Status Icon Row"
+        summary="Leading-icon + title + detail row for status inside SettingsModuleShell bodies (device-login status, ccore runtime row, agent-plugin install status). Tone-aware title accent."
+      >
+        <div className="flex w-full max-w-md flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <StatusIconRow
+            tone="success"
+            icon={<Link2 size={11} className="text-[var(--hud-positive)]" />}
+            title="ccore sync connected"
+            detail="Account alyx"
+          />
+          <StatusIconRow
+            tone="warning"
+            icon={<AlertTriangle size={11} className="text-[var(--hud-warning)]" />}
+            title="Sign-in needs attention"
+            detail="Heddle could not reach the local ccore runtime."
+          />
+          <StatusIconRow
+            tone="muted"
+            icon={<AlertTriangle size={11} className="text-[var(--hud-text-3)]" />}
+            title="ccore sync off"
+            detail="ccore Clerk sync is off for this build."
+          />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1004,6 +1370,34 @@ export function DesignSystemUiGallery() {
             Tooltips should add context, not duplicate visible labels.
           </TooltipContent>
         </Tooltip>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="vault-sheet-match-row"
+        title="Vault Sheet Match Row"
+        summary="Sheet match row used by the BattleTracker vault search results (staging + in-combat). Name + confidence pill + HP/AC summary + file path + Add button."
+      >
+        <div className="flex w-full max-w-lg flex-col">
+          <VaultSheetMatchRow
+            match={{
+              characterName: 'Aboleth',
+              confidence: 'exact',
+              filePath: 'monsters/aboleth.md',
+              parsedData: { hp: 135, ac: 17 },
+            }}
+            onAdd={() => undefined}
+          />
+          <VaultSheetMatchRow
+            match={{
+              characterName: 'Bandit Captain',
+              confidence: 'partial',
+              filePath: 'monsters/bandit-captain.md',
+              parsedData: { hp: 65, ac: 15 },
+            }}
+            onAdd={() => undefined}
+            addLabel="Add to Combat"
+          />
+        </div>
       </PrimitiveCard>
     </div>
   );

@@ -96,6 +96,20 @@
       "showcase": true
     },
     {
+      "id": "callout.figma",
+      "path": "src/app/components/ui/callout.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for Callout.",
+      "showcase": false
+    },
+    {
+      "id": "callout",
+      "path": "src/app/components/ui/callout.tsx",
+      "category": "feedback",
+      "summary": "Inline message panel — denser than Alert, generic for help notes, status banners, and panel-level hints. Supports info/warning/danger/positive/muted tones.",
+      "showcase": true
+    },
+    {
       "id": "card",
       "path": "src/app/components/ui/card.tsx",
       "category": "layout",
@@ -117,10 +131,38 @@
       "showcase": true
     },
     {
+      "id": "combatant-type-dot.figma",
+      "path": "src/app/components/ui/combatant-type-dot.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for CombatantTypeDot.",
+      "showcase": false
+    },
+    {
+      "id": "combatant-type-dot",
+      "path": "src/app/components/ui/combatant-type-dot.tsx",
+      "category": "data-display",
+      "summary": "Round dot that color-codes a combatant's type (enemy/ally/player). Default 7px to match BattleTracker chrome; pulsing wrapper variant for TPK warning banner.",
+      "showcase": true
+    },
+    {
       "id": "context-menu",
       "path": "src/app/components/ui/context-menu.tsx",
       "category": "menus",
       "summary": "Right-click or long-press contextual menu primitives.",
+      "showcase": true
+    },
+    {
+      "id": "death-save-dot.figma",
+      "path": "src/app/components/ui/death-save-dot.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for DeathSaveDot.",
+      "showcase": false
+    },
+    {
+      "id": "death-save-dot",
+      "path": "src/app/components/ui/death-save-dot.tsx",
+      "category": "data-display",
+      "summary": "8×8 success/fail dot used inside the death-save row for downed PCs in BattleTracker. Color follows kind + filled state.",
       "showcase": true
     },
     {
@@ -180,10 +222,80 @@
       "showcase": true
     },
     {
+      "id": "hp-bar-track.figma",
+      "path": "src/app/components/ui/hp-bar-track.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for HpBarTrack.",
+      "showcase": false
+    },
+    {
+      "id": "hp-bar-track",
+      "path": "src/app/components/ui/hp-bar-track.tsx",
+      "category": "data-display",
+      "summary": "HP bar track + temp-HP sliver + numeric readout for combatant rows. Auto-tones to positive/warning/danger by hp/maxHp ratio.",
+      "showcase": true
+    },
+    {
+      "id": "hud-list-row.figma",
+      "path": "src/app/components/ui/hud-list-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for HudListRow.",
+      "showcase": false
+    },
+    {
+      "id": "hud-list-row",
+      "path": "src/app/components/ui/hud-list-row.tsx",
+      "category": "data-display",
+      "summary": "Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active). Used by SignalRow, account lists, ticket updates.",
+      "showcase": true
+    },
+    {
+      "id": "hud-popover-dropdown.figma",
+      "path": "src/app/components/ui/hud-popover-dropdown.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for HudPopoverDropdown.",
+      "showcase": false
+    },
+    {
+      "id": "hud-popover-dropdown",
+      "path": "src/app/components/ui/hud-popover-dropdown.tsx",
+      "category": "menus",
+      "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + campaign dropdown.",
+      "showcase": true
+    },
+    {
+      "id": "hud-toggle-switch.figma",
+      "path": "src/app/components/ui/hud-toggle-switch.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for HudToggleSwitch.",
+      "showcase": false
+    },
+    {
+      "id": "hud-toggle-switch",
+      "path": "src/app/components/ui/hud-toggle-switch.tsx",
+      "category": "toggles",
+      "summary": "HUD-density binary toggle (34×18). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
+      "showcase": true
+    },
+    {
       "id": "HudIssueCallout",
       "path": "src/app/components/ui/HudIssueCallout.tsx",
       "category": "feedback",
       "summary": "Shared HUD issue primitive that renders structured failure callouts with source attribution and next-action copy.",
+      "showcase": true
+    },
+    {
+      "id": "inline-edit-list-row.figma",
+      "path": "src/app/components/ui/inline-edit-list-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for InlineEditListRow.",
+      "showcase": false
+    },
+    {
+      "id": "inline-edit-list-row",
+      "path": "src/app/components/ui/inline-edit-list-row.tsx",
+      "category": "data-display",
+      "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Used in recap beats + mysteries.",
       "showcase": true
     },
     {
@@ -208,6 +320,20 @@
       "showcase": true
     },
     {
+      "id": "metric-tile.figma",
+      "path": "src/app/components/ui/metric-tile.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for MetricTile.",
+      "showcase": false
+    },
+    {
+      "id": "metric-tile",
+      "path": "src/app/components/ui/metric-tile.tsx",
+      "category": "data-display",
+      "summary": "Label-over-value tile with tone-aware value (default/danger/warning/positive/muted/info). Used in Signal stats and other dashboard-style HUD readouts.",
+      "showcase": true
+    },
+    {
       "id": "navigation-menu",
       "path": "src/app/components/ui/navigation-menu.tsx",
       "category": "navigation",
@@ -219,6 +345,20 @@
       "path": "src/app/components/ui/pagination.tsx",
       "category": "navigation",
       "summary": "Pagination controls for multi-page collections.",
+      "showcase": true
+    },
+    {
+      "id": "panel-block-shell.figma",
+      "path": "src/app/components/ui/panel-block-shell.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for PanelBlockShell.",
+      "showcase": false
+    },
+    {
+      "id": "panel-block-shell",
+      "path": "src/app/components/ui/panel-block-shell.tsx",
+      "category": "layout",
+      "summary": "Outer chrome for custom panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
       "showcase": true
     },
     {
@@ -271,6 +411,20 @@
       "showcase": true
     },
     {
+      "id": "recap-section-shell.figma",
+      "path": "src/app/components/ui/recap-section-shell.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for RecapSectionShell.",
+      "showcase": false
+    },
+    {
+      "id": "recap-section-shell",
+      "path": "src/app/components/ui/recap-section-shell.tsx",
+      "category": "layout",
+      "summary": "Collapsible section shell with icon + uppercase title + count pill and chevron, used to wrap each recap section.",
+      "showcase": true
+    },
+    {
       "id": "resizable",
       "path": "src/app/components/ui/resizable.tsx",
       "category": "layout",
@@ -296,6 +450,20 @@
       "path": "src/app/components/ui/separator.tsx",
       "category": "layout",
       "summary": "Visual divider for separating related content groups.",
+      "showcase": true
+    },
+    {
+      "id": "settings-module-shell.figma",
+      "path": "src/app/components/ui/settings-module-shell.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for SettingsModuleShell.",
+      "showcase": false
+    },
+    {
+      "id": "settings-module-shell",
+      "path": "src/app/components/ui/settings-module-shell.tsx",
+      "category": "layout",
+      "summary": "Bordered settings card — eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
       "showcase": true
     },
     {
@@ -355,6 +523,20 @@
       "showcase": true
     },
     {
+      "id": "status-icon-row.figma",
+      "path": "src/app/components/ui/status-icon-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for StatusIconRow.",
+      "showcase": false
+    },
+    {
+      "id": "status-icon-row",
+      "path": "src/app/components/ui/status-icon-row.tsx",
+      "category": "data-display",
+      "summary": "Leading-icon + title + detail status row used inside SettingsModuleShell bodies (device-login status, ccore runtime row, agent-plugin install status). Tone-aware title accent.",
+      "showcase": true
+    },
+    {
       "id": "switch",
       "path": "src/app/components/ui/switch.tsx",
       "category": "toggles",
@@ -401,6 +583,20 @@
       "path": "src/app/components/ui/tooltip.tsx",
       "category": "overlay",
       "summary": "Hover or focus hint surface with provider and content.",
+      "showcase": true
+    },
+    {
+      "id": "vault-sheet-match-row.figma",
+      "path": "src/app/components/ui/vault-sheet-match-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for VaultSheetMatchRow.",
+      "showcase": false
+    },
+    {
+      "id": "vault-sheet-match-row",
+      "path": "src/app/components/ui/vault-sheet-match-row.tsx",
+      "category": "data-display",
+      "summary": "Sheet match row used by the BattleTracker vault search results (staging + in-combat). Name + confidence pill + HP/AC summary + file path + Add button.",
       "showcase": true
     }
   ],
