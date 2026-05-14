@@ -21,8 +21,10 @@ import {
 } from '../app/components/ui/alert-dialog';
 import { Alert, AlertDescription, AlertTitle } from '../app/components/ui/alert';
 import { AspectRatio } from '../app/components/ui/aspect-ratio';
+import { AttentionTicketCard } from '../app/components/ui/attention-ticket-card';
 import { Avatar, AvatarFallback } from '../app/components/ui/avatar';
 import { Badge } from '../app/components/ui/badge';
+import { BattleCombatantSummaryRow } from '../app/components/ui/battle-combatant-summary-row';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -42,6 +44,7 @@ import {
   CardTitle,
 } from '../app/components/ui/card';
 import { Checkbox } from '../app/components/ui/checkbox';
+import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
 import {
   Collapsible,
   CollapsibleContent,
@@ -108,12 +111,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '../app/components/ui/pagination';
+import { PeriodChipRow } from '../app/components/ui/period-chip-row';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '../app/components/ui/popover';
 import { Progress } from '../app/components/ui/progress';
+import { ProviderStatusBadge } from '../app/components/ui/provider-status-badge';
 import {
   RadioGroup,
   RadioGroupItem,
@@ -154,6 +159,7 @@ import {
 } from '../app/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../app/components/ui/tabs';
 import { Textarea } from '../app/components/ui/textarea';
+import { TranscriptListItemFrame } from '../app/components/ui/transcript-list-item-frame';
 import { Toggle } from '../app/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
@@ -161,26 +167,39 @@ import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
 import { Callout } from '../app/components/ui/callout';
 import { HpBarTrack } from '../app/components/ui/hp-bar-track';
 import { HudListRow, HudListRowMeta, HudListRowTitle } from '../app/components/ui/hud-list-row';
+import { HudMetaCaption } from '../app/components/ui/hud-meta-caption';
 import { HudPopoverDropdown } from '../app/components/ui/hud-popover-dropdown';
+import { HudQuickCommandFooter } from '../app/components/ui/hud-quick-command-footer';
 import { HudToggleSwitch } from '../app/components/ui/hud-toggle-switch';
 import { MetricTile } from '../app/components/ui/metric-tile';
+import { ModeOnlyToggle } from '../app/components/ui/mode-only-toggle';
 import { CombatantTypeDot } from '../app/components/ui/combatant-type-dot';
+import { ConditionChipStrip } from '../app/components/ui/condition-chip-strip';
 import { DeathSaveDot } from '../app/components/ui/death-save-dot';
 import { PanelBlockShell } from '../app/components/ui/panel-block-shell';
+import { PartyCombatantAccordion } from '../app/components/ui/party-combatant-accordion';
 import { SettingsModuleShell } from '../app/components/ui/settings-module-shell';
+import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-group';
+import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
+import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
+import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
 import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
 /** Every `uiPrimitives[].id` from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
+  'action-button-row',
+  'add-item-button',
   'alert-dialog',
   'alert',
   'aspect-ratio',
+  'attention-ticket-card',
   'avatar',
   'badge',
+  'battle-combatant-summary-row',
   'breadcrumb',
   'button',
   'calendar',
@@ -189,29 +208,43 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'checkbox',
   'collapsible',
   'combatant-type-dot',
+  'command-category-tag',
+  'condition-chip-strip',
   'context-menu',
   'death-save-dot',
   'dialog',
   'dropdown-menu',
+  'empty-state',
+  'eyebrow-label',
   'form',
   'hover-card',
   'hp-bar-track',
   'hud-list-row',
+  'hud-meta-caption',
   'hud-popover-dropdown',
+  'hud-quick-command-footer',
   'hud-toggle-switch',
   'HudIssueCallout',
   'inline-edit-list-row',
   'input',
   'label',
+  'lore-search-result-row',
   'menubar',
   'metric-tile',
+  'mode-only-toggle',
   'navigation-menu',
   'pagination',
   'panel-block-shell',
+  'panel-header',
+  'party-combatant-accordion',
+  'period-chip-row',
+  'pill-toggle-group',
   'popover',
   'progress',
+  'provider-status-badge',
   'radio-group',
   'recap-section-shell',
+  'repeat-list-field-column',
   'resizable',
   'scroll-area',
   'select',
@@ -219,8 +252,12 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'settings-module-shell',
   'sheet',
   'sidebar',
+  'signal-filter-chip-group',
+  'signal-group-collapsible',
   'skeleton',
   'slider',
+  'source-pill',
+  'stat-row',
   'status-icon-row',
   'switch',
   'table',
@@ -229,8 +266,77 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'toggle-group',
   'toggle',
   'tooltip',
+  'transcript-list-item-frame',
   'vault-sheet-match-row',
 ] as const;
+
+function PartyCombatantAccordionDemo() {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <div className="flex w-full max-w-md flex-col overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+      <PartyCombatantAccordion
+        expanded={open}
+        expandRegionId="gallery-party-1"
+        header={
+          <>
+            <button
+              type="button"
+              className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-[var(--radius-sm)] border-0 bg-transparent p-0 text-left outline-none hover:bg-[var(--hud-tint-1)] focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-controls="gallery-party-1"
+            >
+              <div className="size-2 shrink-0 rounded-[var(--radius-pill)] bg-[var(--hud-positive)] shadow-[0_0_6px_var(--hud-positive)]" aria-hidden />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-[var(--hud-text-1)]">Mira Ashvale</div>
+                <div className="text-[length:var(--text-xs)] text-muted-foreground">Ranger 5</div>
+              </div>
+              <span className="shrink-0 text-[length:var(--text-xs)] text-muted-foreground" aria-hidden>
+                {open ? '▴' : '▾'}
+              </span>
+            </button>
+          </>
+        }
+      >
+        <p className="text-[length:var(--text-xs)] leading-[1.45] text-[var(--hud-text-2)]">
+          Expanded HP editor, conditions, and stat grid render in this panel in production.
+        </p>
+      </PartyCombatantAccordion>
+      <PartyCombatantAccordion
+        expanded={false}
+        className="border-b-0"
+        header={<span className="text-[length:var(--text-xs)] text-muted-foreground">Static row (no expand control in demo)</span>}
+      />
+    </div>
+  );
+}
+
+function AttentionTicketCardDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+      <AttentionTicketCard
+        reasonLabel="New comment"
+        reasonColor="var(--hud-info)"
+        projectLabel="HUD"
+        timestampLabel="3h ago"
+        title="Polish ticket row conformance"
+        reasonText="Design systems bot left a review"
+        snippet="Can we match the Weft spec?"
+        issueUrl="#"
+        expanded={open}
+        onToggle={() => setOpen((v) => !v)}
+        openInProviderAriaLabel="Open ticket (demo)"
+      >
+        {open ? (
+          <p className="text-[length:var(--text-xs)] text-[var(--hud-text-2)]">
+            Expanded thread body would render here.
+          </p>
+        ) : null}
+      </AttentionTicketCard>
+    </div>
+  );
+}
 
 function HudPopoverDropdownDemo() {
   const [open, setOpen] = React.useState(false);
@@ -271,6 +377,77 @@ function HudPopoverDropdownDemo() {
           </button>
         </div>
       </HudPopoverDropdown>
+    </div>
+  );
+}
+
+function SignalFilterChipGroupShowcase() {
+  const [timeframe, setTimeframe] = React.useState<string>("today");
+  const [priorities, setPriorities] = React.useState<string[]>(["high"]);
+
+  return (
+    <div className="flex w-full max-w-md flex-col gap-3 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+      <SignalFilterChipGroup
+        label="Timeframe"
+        options={[
+          { value: "all", label: "All" },
+          { value: "today", label: "Today" },
+          { value: "week", label: "This week" },
+          { value: "month", label: "This month" },
+        ]}
+        isActive={(value) => value === timeframe}
+        onToggle={(value) => setTimeframe(value)}
+      />
+      <SignalFilterChipGroup
+        label="Priority"
+        options={[
+          { value: "high", label: "High" },
+          { value: "medium", label: "Medium" },
+          { value: "low", label: "Low" },
+        ]}
+        isActive={(value) => priorities.includes(value)}
+        onToggle={(value) =>
+          setPriorities((prev) =>
+            prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+          )
+        }
+      />
+    </div>
+  );
+}
+
+function SignalGroupCollapsibleShowcase() {
+  const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>({
+    "my-project": false,
+    "team-project": true,
+  });
+  const toggle = (key: string) =>
+    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  return (
+    <div className="flex w-full max-w-md flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+      <SignalGroupCollapsible
+        groupKey="my-project"
+        label="My project"
+        count={4}
+        collapsed={collapsed["my-project"]}
+        onToggle={() => toggle("my-project")}
+      >
+        <div className="px-3 py-2 text-[length:var(--text-xs)] text-[var(--hud-text-2)]">
+          Group body — list rows go here.
+        </div>
+      </SignalGroupCollapsible>
+      <SignalGroupCollapsible
+        groupKey="team-project"
+        label="Team project"
+        count={11}
+        collapsed={collapsed["team-project"]}
+        onToggle={() => toggle("team-project")}
+      >
+        <div className="px-3 py-2 text-[length:var(--text-xs)] text-[var(--hud-text-2)]">
+          Hidden when collapsed.
+        </div>
+      </SignalGroupCollapsible>
     </div>
   );
 }
@@ -394,6 +571,14 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="attention-ticket-card"
+        title="Attention Ticket Card"
+        summary="Linear-style attention row: reason pill, title, snippet, external link, expand slot for thread."
+      >
+        <AttentionTicketCardDemo />
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="avatar"
         title="Avatar"
         summary="Image and fallback circle for people or entities."
@@ -420,6 +605,29 @@ export function DesignSystemUiGallery() {
             <Moon size={12} />
             Night mode
           </Badge>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="battle-combatant-summary-row"
+        title="Battle Combatant Summary Row"
+        summary="Initiative pill, name + type dot + deck/dead affordances, AC, reorder column, remove — Battle Tracker row 1."
+      >
+        <div className="max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <BattleCombatantSummaryRow
+            initiative={14}
+            name="Shadow griffon"
+            combatantType="enemy"
+            isActive
+            isOnDeck={false}
+            isDead={false}
+            ac={16}
+            onReorderUp={() => {}}
+            onReorderDown={() => {}}
+            onRemove={() => {}}
+            disableReorderUp={false}
+            disableReorderDown={false}
+          />
         </div>
       </PrimitiveCard>
 
@@ -571,6 +779,35 @@ export function DesignSystemUiGallery() {
             <span className="text-xs text-muted-foreground">enemy · pulsing</span>
           </div>
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="command-category-tag"
+        title="Command Category Tag"
+        summary="Tone-colored reference label for NLP quick-command categories (5e palette)."
+      >
+        <div className="flex flex-wrap gap-2">
+          <CommandCategoryTag tone="danger">Damage</CommandCategoryTag>
+          <CommandCategoryTag tone="positive">Heal</CommandCategoryTag>
+          <CommandCategoryTag tone="warning">Condition</CommandCategoryTag>
+          <CommandCategoryTag tone="bulk">Bulk</CommandCategoryTag>
+          <CommandCategoryTag tone="muted">Turn</CommandCategoryTag>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="condition-chip-strip"
+        title="Condition Chip Strip"
+        summary="Flex-wrap rail for removable condition chips plus add-condition control slot."
+      >
+        <ConditionChipStrip className="max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-section-fill-strong)] p-2">
+          <Badge variant="outline" className="h-auto border-[color-mix(in_srgb,var(--hud-warning)_25%,transparent)] bg-[var(--hud-attention-bg-soft)] text-[10px] text-[var(--hud-warning)]">
+            Poisoned ×
+          </Badge>
+          <Button variant="outline" size="sm" className="h-7 min-h-0 rounded-[var(--radius-xs)] border border-dashed text-[10px]">
+            + condition
+          </Button>
+        </ConditionChipStrip>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -753,11 +990,43 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="hud-meta-caption"
+        title="HUD Meta Caption"
+        summary="Muted micro-label for relative timestamps and compact secondary text in list rows and note cards."
+      >
+        <div className="flex flex-col gap-2">
+          <HudMetaCaption>2h ago</HudMetaCaption>
+          <div className="flex items-center gap-2">
+            <span className="text-[length:var(--text-sm)] text-[var(--hud-text-1)]">Session notes</span>
+            <HudMetaCaption>Editing</HudMetaCaption>
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="hud-popover-dropdown"
         title="HUD Popover Dropdown"
         summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the campaign dropdown."
       >
         <HudPopoverDropdownDemo />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="hud-quick-command-footer"
+        title="HUD Quick Command Footer"
+        summary="Sticky bottom shell for NLP quick-command column — surface fill, top border, lift shadow."
+      >
+        <div className="relative h-28 overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-section-fill-medium)]">
+          <div className="p-2 text-[length:var(--text-xs)] text-[var(--hud-text-3)]">Scroll content above…</div>
+          <HudQuickCommandFooter className="absolute bottom-0 left-0 right-0 border-t-0 shadow-none" footerBar={(
+            <div className="border-t border-[var(--hud-border)] px-2 py-1.5 text-center text-[10px] text-[var(--hud-text-3)]">
+              Footer action strip
+            </div>
+          )}
+          >
+            <div className="px-2 py-1.5 text-[length:var(--text-xs)] text-[var(--hud-text-2)]">Quick command body</div>
+          </HudQuickCommandFooter>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -857,6 +1126,29 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="lore-search-result-row"
+        title="Lore Search Result Row"
+        summary="Vault search hit with Obsidian link, relevance strip, excerpt, and copy-path control."
+      >
+        <div className="max-w-md overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+          <LoreSearchResultRow
+            result={{
+              id: 'demo',
+              title: 'The Seal of Kervahn',
+              path: 'lore/artifacts/seal.md',
+              excerpt: 'A wax seal carried by the envoy…',
+              relevance: 91,
+              categories: ['artifact'],
+            }}
+            obsidianHref="#"
+            isBrowseMode={false}
+            copiedPath={null}
+            onCopyPath={() => {}}
+          />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="menubar"
         title="Menubar"
         summary="Persistent top-level menus with nested content."
@@ -889,6 +1181,17 @@ export function DesignSystemUiGallery() {
           <MetricTile label="Open" value={12} />
           <MetricTile label="Total" value={38} valueTone="muted" />
           <MetricTile label="Completed" value={24} valueTone="positive" hint="this week" />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="mode-only-toggle"
+        title="Mode Only Toggle"
+        summary="“Use only in {mode} mode” control for vault paths, OpenAI key scope, and transcription (Session Context + App Settings)."
+      >
+        <div className="flex flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <ModeOnlyToggle active={false} label="Use only in TTRPG mode" onToggle={() => {}} />
+          <ModeOnlyToggle active label="Use only in Productivity mode" onToggle={() => {}} />
         </div>
       </PrimitiveCard>
 
@@ -955,6 +1258,21 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="period-chip-row"
+        title="Period Chip Row"
+        summary="Flex-wrap row for recap period / date-window preset chips."
+      >
+        <PeriodChipRow className="max-w-md">
+          <span className="rounded-full border border-[var(--hud-border)] bg-[var(--hud-surface)] px-2.5 py-1 text-[10px] text-[var(--hud-text-2)]">
+            Last 7 days
+          </span>
+          <span className="rounded-full border border-[var(--hud-border-accent)] bg-[var(--hud-primary-tint-medium)] px-2.5 py-1 text-[10px] font-medium text-[var(--primary)]">
+            Last 90 days
+          </span>
+        </PeriodChipRow>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="panel-block-shell"
         title="Panel Block Shell"
         summary="Outer chrome for custom-panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists)."
@@ -982,6 +1300,14 @@ export function DesignSystemUiGallery() {
             </div>
           </PanelBlockShell>
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="party-combatant-accordion"
+        title="Party Combatant Accordion"
+        summary="Roster row shell — header row triggers expand; optional non-interactive header; bordered body stack."
+      >
+        <PartyCombatantAccordionDemo />
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1014,6 +1340,20 @@ export function DesignSystemUiGallery() {
           aria-label="Import completion"
           className="max-w-xs"
         />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="provider-status-badge"
+        title="Provider Status Badge"
+        summary="Capsule for local transcription provider probe status on Apple Speech / Wispr rows."
+      >
+        <div className="flex flex-wrap gap-2">
+          <ProviderStatusBadge status="available" />
+          <ProviderStatusBadge status="checking" />
+          <ProviderStatusBadge status="running" />
+          <ProviderStatusBadge status="unavailable" />
+          <ProviderStatusBadge status="error" />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1053,6 +1393,18 @@ export function DesignSystemUiGallery() {
           <RecapSectionShell title="Mysteries" count={1} open={false} onToggle={() => {}}>
             <span>Collapsed body is hidden.</span>
           </RecapSectionShell>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="repeat-list-field-column"
+        title="Repeat List Field Column"
+        summary="Uppercase micro-label + control slot for repeat-list grids in the custom panel runtime."
+      >
+        <div className="max-w-xs rounded-[var(--radius-xs)] border border-[var(--hud-border)] bg-[var(--hud-surface)] p-3">
+          <RepeatListFieldColumn label="Party member">
+            <Input placeholder="Name" className="h-8 text-xs" />
+          </RepeatListFieldColumn>
         </div>
       </PrimitiveCard>
 
@@ -1201,6 +1553,22 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="signal-filter-chip-group"
+        title="Signal Filter Chip Group"
+        summary="Label + flex-wrap rail of toggle chips. Owns the role=group landmark, the uppercase caption, and the active/idle chip chrome — consumer drives isActive + onToggle."
+      >
+        <SignalFilterChipGroupShowcase />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="signal-group-collapsible"
+        title="Signal Group Collapsible"
+        summary="Collapse-toggle header + body for grouped signal lists. Owns chevron, uppercase label, count meta, ARIA wiring, and data-signal-group marker."
+      >
+        <SignalGroupCollapsibleShowcase />
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="skeleton"
         title="Skeleton"
         summary="Placeholder block while content or data loads."
@@ -1319,6 +1687,36 @@ export function DesignSystemUiGallery() {
             id="ds-notes"
             defaultValue="The party entered Brindlewick at dusk and noticed the wind chimes."
             rows={4}
+          />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="transcript-list-item-frame"
+        title="Transcript List Item Frame"
+        summary="Header meta + body text + optional footer for transcript, highlight, and pinned lines."
+      >
+        <div className="max-w-md border border-[var(--hud-border)] rounded-[var(--radius-sm)] overflow-hidden bg-[var(--hud-surface-raised)]">
+          <TranscriptListItemFrame
+            header={(
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="size-2.5 rounded-full bg-[var(--hud-positive)]" aria-hidden />
+                  <span className="text-sm font-semibold text-[var(--hud-text-1)]">Lyra</span>
+                  <span className="text-xs text-[var(--hud-text-3)]">Investigator</span>
+                </div>
+                <span className="text-xs text-[var(--hud-text-3)] [font-family:var(--weft-font-mono)]">00:12</span>
+              </div>
+            )}
+            body={<p className="text-sm text-[var(--hud-text-2)]">We should check the east gate before nightfall.</p>}
+            footer={(
+              <div className="flex justify-between gap-2">
+                <span className="rounded-[var(--radius-pill)] border border-[var(--hud-border-accent)] bg-[var(--hud-primary-tint-medium)] px-1.5 py-px text-[10px] text-[var(--primary)]">
+                  #clue
+                </span>
+                <span className="text-[10px] text-[var(--hud-text-3)]">Assign ▾</span>
+              </div>
+            )}
           />
         </div>
       </PrimitiveCard>

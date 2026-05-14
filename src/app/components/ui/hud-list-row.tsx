@@ -28,16 +28,28 @@ import { cn } from "./utils";
 type HudListRowState = "default" | "unread" | "overdue" | "resolved" | "active";
 type HudListRowDensity = "compact" | "default";
 
-interface HudListRowProps extends React.ComponentProps<"div"> {
+type HudListRowOwnProps = {
   state?: HudListRowState;
   density?: HudListRowDensity;
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
+  /** Extra classes for the middle column wrapper (`hud-list-row-body`). */
+  bodyClassName?: string;
   divider?: boolean;
   interactive?: boolean;
-  asButton?: boolean;
+  /** Use native button for row-level expand / navigate actions (a11y). */
+  as?: "div" | "button";
+  /** When `as="button"`, forwarded to the element (default `"button"`). */
+  type?: "button" | "submit" | "reset";
   onSelect?: () => void;
-}
+};
+
+type HudListRowProps = HudListRowOwnProps &
+  Omit<React.ComponentPropsWithoutRef<"div">, "children"> &
+  Omit<React.ComponentPropsWithoutRef<"button">, "children" | "type"> & {
+    children?: React.ReactNode;
+    type?: "button" | "submit" | "reset";
+  };
 
 const STATE_ACCENT: Record<HudListRowState, string> = {
   default: "border-l-transparent",
@@ -52,7 +64,7 @@ const DENSITY_PADDING: Record<HudListRowDensity, string> = {
   default: "px-3 py-2.5 gap-2.5",
 };
 
-const HudListRow = React.forwardRef<HTMLDivElement, HudListRowProps>(
+const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement, HudListRowProps>(
   (
     {
       className,
@@ -60,8 +72,11 @@ const HudListRow = React.forwardRef<HTMLDivElement, HudListRowProps>(
       density = "default",
       leading,
       trailing,
+      bodyClassName,
       divider = true,
       interactive,
+      as = "div",
+      type = "button",
       onSelect,
       onClick,
       children,
@@ -70,35 +85,77 @@ const HudListRow = React.forwardRef<HTMLDivElement, HudListRowProps>(
     ref,
   ) => {
     const handleClick = onSelect
-      ? (event: React.MouseEvent<HTMLDivElement>) => {
+      ? (event: React.MouseEvent<HTMLDivElement & HTMLButtonElement>) => {
           onClick?.(event);
           if (!event.defaultPrevented) onSelect();
         }
       : onClick;
 
+    const commonClassName = cn(
+      "flex w-full items-start border-l-2 transition-colors",
+      DENSITY_PADDING[density],
+      STATE_ACCENT[state],
+      divider && "border-b border-[var(--hud-border)]",
+      interactive && "cursor-pointer hover:bg-[var(--hud-surface-hover)]",
+      className,
+    );
+
+    if (as === "button") {
+      return (
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          type={type}
+          data-slot="hud-list-row"
+          data-state={state}
+          data-density={density}
+          className={cn(
+            commonClassName,
+            "cursor-pointer bg-transparent text-left [font-family:inherit]",
+            // Reset UA button chrome without clobbering Tailwind border utilities on this element.
+            "[&]:appearance-none [&]:[border-style:solid]",
+          )}
+          onClick={handleClick}
+          {...(props as React.ComponentPropsWithoutRef<"button">)}
+        >
+          {leading ? (
+            <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
+              {leading}
+            </div>
+          ) : null}
+          <div
+            data-slot="hud-list-row-body"
+            className={cn("flex min-w-0 flex-1 flex-col gap-0.5", bodyClassName)}
+          >
+            {children}
+          </div>
+          {trailing ? (
+            <div data-slot="hud-list-row-trailing" className="flex shrink-0 items-center gap-1">
+              {trailing}
+            </div>
+          ) : null}
+        </button>
+      );
+    }
+
     return (
       <div
-        ref={ref}
+        ref={ref as React.Ref<HTMLDivElement>}
         data-slot="hud-list-row"
         data-state={state}
         data-density={density}
-        className={cn(
-          "flex w-full items-start border-l-2 transition-colors",
-          DENSITY_PADDING[density],
-          STATE_ACCENT[state],
-          divider && "border-b border-[var(--hud-border)]",
-          interactive && "cursor-pointer hover:bg-[var(--hud-surface-hover)]",
-          className,
-        )}
+        className={commonClassName}
         onClick={handleClick}
-        {...props}
+        {...(props as React.ComponentPropsWithoutRef<"div">)}
       >
         {leading ? (
           <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
             {leading}
           </div>
         ) : null}
-        <div data-slot="hud-list-row-body" className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div
+          data-slot="hud-list-row-body"
+          className={cn("flex min-w-0 flex-1 flex-col gap-0.5", bodyClassName)}
+        >
           {children}
         </div>
         {trailing ? (

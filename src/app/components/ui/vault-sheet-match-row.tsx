@@ -26,6 +26,8 @@ interface VaultSheetMatchValue {
   parsedData?: {
     hp?: number;
     ac?: number;
+    cls?: string;
+    level?: number | string;
   };
 }
 
@@ -35,6 +37,9 @@ interface VaultSheetMatchRowProps<T extends VaultSheetMatchValue>
   onAdd: (match: T) => void;
   addLabel?: string;
   ariaLabel?: string;
+  /** Replaces default Plus icon in the action button. */
+  actionIcon?: React.ReactNode;
+  actionVariant?: React.ComponentProps<typeof Button>["variant"];
 }
 
 const CONFIDENCE_BG: Record<SheetMatchConfidence, string> = {
@@ -59,6 +64,8 @@ function VaultSheetMatchRowInner<T extends VaultSheetMatchValue>(
     onAdd,
     addLabel = "Add",
     ariaLabel,
+    actionIcon,
+    actionVariant = "default",
     ...props
   }: VaultSheetMatchRowProps<T>,
   ref: React.Ref<HTMLDivElement>,
@@ -92,30 +99,42 @@ function VaultSheetMatchRowInner<T extends VaultSheetMatchValue>(
             {match.confidence}
           </span>
         </div>
-        <div className="mt-0.5 flex gap-2 text-[9px] text-[var(--hud-text-3)]">
-          {match.parsedData?.hp !== undefined && (
-            <span className="inline-flex items-center gap-0.5">
-              <Heart size={8} /> {match.parsedData.hp}
-            </span>
-          )}
-          {match.parsedData?.ac !== undefined && (
-            <span className="inline-flex items-center gap-0.5">
-              <Shield size={8} /> {match.parsedData.ac}
-            </span>
-          )}
-        </div>
+        {(match.parsedData?.cls ||
+          match.parsedData?.level != null ||
+          match.parsedData?.hp !== undefined ||
+          match.parsedData?.ac !== undefined) && (
+          <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[9px] text-[var(--hud-text-3)]">
+            {(match.parsedData.cls || match.parsedData.level != null) && (
+              <span>
+                {match.parsedData.cls}
+                {match.parsedData.cls && match.parsedData.level != null ? ' ' : ''}
+                {match.parsedData.level ?? ''}
+              </span>
+            )}
+            {match.parsedData?.hp !== undefined && (
+              <span className="inline-flex items-center gap-0.5">
+                <Heart size={8} /> {match.parsedData.hp}
+              </span>
+            )}
+            {match.parsedData?.ac !== undefined && (
+              <span className="inline-flex items-center gap-0.5">
+                <Shield size={8} /> {match.parsedData.ac}
+              </span>
+            )}
+          </div>
+        )}
         <div className="mt-px truncate text-[9px] text-[var(--hud-text-3)] [font-family:var(--weft-font-mono)]">
           {match.filePath}
         </div>
       </div>
       <Button
-        variant="default"
+        variant={actionVariant}
         size="sm"
         onClick={() => onAdd(match)}
         aria-label={ariaLabel ?? `Add ${match.characterName}`}
         className="flex-shrink-0"
       >
-        <Plus size={10} /> {addLabel}
+        {actionIcon ?? <Plus size={10} />} {addLabel}
       </Button>
     </div>
   );

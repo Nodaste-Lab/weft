@@ -82,7 +82,9 @@ const PanelBlockShell = React.forwardRef<HTMLElement, PanelBlockShellProps>(
         }
       : onClick;
 
-    const headerVisible = !headless && (customHeader || title || headerRight || collapsible);
+    const headerVisible = customHeader
+      ? true
+      : !headless && (title || headerRight || collapsible);
 
     return (
       <section
@@ -90,12 +92,17 @@ const PanelBlockShell = React.forwardRef<HTMLElement, PanelBlockShellProps>(
         data-slot="panel-block-shell"
         data-selected={selected ? "true" : undefined}
         data-collapsed={collapsed ? "true" : undefined}
+        data-seamless={seamless ? "true" : undefined}
         className={cn(
-          "flex w-full flex-col rounded-[var(--radius-sm)] border [font-family:var(--weft-font-sans)]",
-          selected
-            ? "border-[var(--hud-border-accent)] shadow-[0_0_0_1px_var(--hud-border-accent)]"
-            : "border-[var(--hud-border)]",
-          "bg-[var(--hud-surface-raised)]",
+          "flex w-full flex-col [font-family:var(--weft-font-sans)]",
+          seamless
+            ? "border-0 bg-transparent rounded-none pt-2"
+            : cn(
+                "rounded-[var(--radius-sm)] border bg-[var(--hud-surface-raised)]",
+                selected
+                  ? "border-[var(--hud-border-accent)] shadow-[0_0_0_1px_var(--hud-border-accent)]"
+                  : "border-[var(--hud-border)]",
+              ),
           className,
         )}
         onClick={handleClick}
@@ -106,9 +113,11 @@ const PanelBlockShell = React.forwardRef<HTMLElement, PanelBlockShellProps>(
             data-signal-header
             data-slot="panel-block-shell-header"
             className={cn(
-              "flex items-center gap-2 border-b border-[var(--hud-border)] px-3 py-2",
+              "flex items-center gap-2 px-3 py-2",
               "text-[length:var(--text-xs)] text-[var(--hud-text-1)]",
-              seamless && "border-b-0",
+              seamless
+                ? "border-b-0 flex-wrap gap-y-1"
+                : "border-b border-[var(--hud-border)]",
               headerClassName,
             )}
           >
@@ -135,7 +144,11 @@ const PanelBlockShell = React.forwardRef<HTMLElement, PanelBlockShellProps>(
                   {title}
                 </span>
                 {activeCountText ? (
-                  <span className="text-[var(--hud-text-3)] text-[10px] font-normal normal-case tracking-normal">
+                  <span
+                    aria-hidden
+                    className="ml-0.5 text-[10px] font-medium normal-case tracking-normal text-[var(--primary)]"
+                  >
+                    {"\u00B7 "}
                     {activeCountText}
                   </span>
                 ) : null}
