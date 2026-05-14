@@ -220,7 +220,7 @@ export function WeftConformanceBacklogSection() {
           marginTop: 8,
         }}
       >
-        HIGH — inline-heavy (11)
+        HIGH — inline-heavy ({high.length})
       </div>
       <BacklogTable rows={high} />
 
@@ -236,7 +236,7 @@ export function WeftConformanceBacklogSection() {
           marginTop: 8,
         }}
       >
-        MEDIUM (8)
+        MEDIUM ({medium.length})
       </div>
       <BacklogTable rows={medium} />
 
