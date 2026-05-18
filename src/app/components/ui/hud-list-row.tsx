@@ -38,7 +38,7 @@ type HudListRowOwnProps = {
   divider?: boolean;
   interactive?: boolean;
   /** Use native button for row-level expand / navigate actions (a11y). */
-  as?: "div" | "button";
+  as?: "div" | "button" | "li";
   /** When `as="button"`, forwarded to the element (default `"button"`). */
   type?: "button" | "submit" | "reset";
   onSelect?: () => void;
@@ -46,6 +46,7 @@ type HudListRowOwnProps = {
 
 type HudListRowProps = HudListRowOwnProps &
   Omit<React.ComponentPropsWithoutRef<"div">, "children"> &
+  Omit<React.ComponentPropsWithoutRef<"li">, "children"> &
   Omit<React.ComponentPropsWithoutRef<"button">, "children" | "type"> & {
     children?: React.ReactNode;
     type?: "button" | "submit" | "reset";
@@ -64,7 +65,7 @@ const DENSITY_PADDING: Record<HudListRowDensity, string> = {
   default: "px-3 py-2.5 gap-2.5",
 };
 
-const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement, HudListRowProps>(
+const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIElement, HudListRowProps>(
   (
     {
       className,
@@ -134,6 +135,37 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement, HudListR
             </div>
           ) : null}
         </button>
+      );
+    }
+
+    if (as === "li") {
+      return (
+        <li
+          ref={ref as React.Ref<HTMLLIElement>}
+          data-slot="hud-list-row"
+          data-state={state}
+          data-density={density}
+          className={cn(commonClassName, "list-none")}
+          onClick={handleClick}
+          {...(props as React.ComponentPropsWithoutRef<"li">)}
+        >
+          {leading ? (
+            <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
+              {leading}
+            </div>
+          ) : null}
+          <div
+            data-slot="hud-list-row-body"
+            className={cn("flex min-w-0 flex-1 flex-col gap-0.5", bodyClassName)}
+          >
+            {children}
+          </div>
+          {trailing ? (
+            <div data-slot="hud-list-row-trailing" className="flex shrink-0 items-center gap-1">
+              {trailing}
+            </div>
+          ) : null}
+        </li>
       );
     }
 

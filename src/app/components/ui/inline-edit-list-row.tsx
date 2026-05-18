@@ -14,6 +14,7 @@ interface InlineEditListRowProps extends Omit<React.ComponentProps<"div">, "onUp
   editAriaLabel?: string;
   deleteAriaLabel?: string;
   rows?: number;
+  as?: "div" | "li";
 }
 
 function IndexBadge({ index }: { index: number }) {
@@ -27,7 +28,7 @@ function IndexBadge({ index }: { index: number }) {
   );
 }
 
-const InlineEditListRow = React.forwardRef<HTMLDivElement, InlineEditListRowProps>(
+const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, InlineEditListRowProps>(
   (
     {
       className,
@@ -41,10 +42,12 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement, InlineEditListRowProp
       editAriaLabel = "Edit item",
       deleteAriaLabel = "Delete item",
       rows = 2,
+      as = "div",
       ...props
     },
     ref,
   ) => {
+    const ElementTag = as;
     const [editing, setEditing] = React.useState(false);
     const [draft, setDraft] = React.useState(text);
     const [hovered, setHovered] = React.useState(false);
@@ -67,11 +70,11 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement, InlineEditListRowProp
 
     if (editing) {
       return (
-        <div
-          ref={ref}
+        <ElementTag
+          ref={ref as React.Ref<HTMLDivElement & HTMLLIElement>}
           data-slot="inline-edit-list-row"
           data-state="editing"
-          className={cn("flex items-start gap-2", className)}
+          className={cn("flex items-start gap-2", as === "li" ? "list-none" : "", className)}
           {...props}
         >
           {showIndex && <IndexBadge index={index} />}
@@ -94,16 +97,16 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement, InlineEditListRowProp
             aria-label={editAriaLabel}
             rows={rows}
           />
-        </div>
+        </ElementTag>
       );
     }
 
     return (
-      <div
-        ref={ref}
+      <ElementTag
+        ref={ref as React.Ref<HTMLDivElement & HTMLLIElement>}
         data-slot="inline-edit-list-row"
         data-state="idle"
-        className={cn("flex items-start gap-2", className)}
+        className={cn("flex items-start gap-2", as === "li" ? "list-none" : "", className)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         {...props}
@@ -144,7 +147,7 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement, InlineEditListRowProp
             <X size={10} />
           </button>
         </div>
-      </div>
+      </ElementTag>
     );
   },
 );
