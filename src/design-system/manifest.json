@@ -369,6 +369,13 @@
       "showcase": true
     },
     {
+      "id": "HudIssueToast",
+      "path": "src/app/components/ui/HudIssueToast.tsx",
+      "category": "feedback",
+      "summary": "Global toast primitive for panel-level data-load failures with source attribution and remediation guidance.",
+      "showcase": true
+    },
+    {
       "id": "inline-edit-list-row.figma",
       "path": "src/app/components/ui/inline-edit-list-row.figma.tsx",
       "category": "code-connect",

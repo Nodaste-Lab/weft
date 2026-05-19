@@ -164,6 +164,7 @@ import { Toggle } from '../app/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
 import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
+import { HudIssueToast } from '../app/components/ui/HudIssueToast';
 import { Callout } from '../app/components/ui/callout';
 import { HpBarTrack } from '../app/components/ui/hp-bar-track';
 import { HudListRow, HudListRowMeta, HudListRowTitle } from '../app/components/ui/hud-list-row';
@@ -225,6 +226,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'hud-quick-command-footer',
   'hud-toggle-switch',
   'HudIssueCallout',
+  'HudIssueToast',
   'inline-edit-list-row',
   'input',
   'label',
@@ -1078,6 +1080,26 @@ export function DesignSystemUiGallery() {
             }}
           />
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="HudIssueToast"
+        title="HUD Issue Toast"
+        summary="Global toast surface for panel-level data-load failures with source attribution and next-action guidance."
+      >
+        <HudIssueToast
+          issue={{
+            reason: 'connection_failed',
+            source: 'integration',
+            sourceLabel: 'Linear',
+            scope: 'panel',
+            severity: 'error',
+            title: 'Ticket updates unavailable',
+            detail: 'Linear is not reachable from this workspace right now.',
+            nextAction: 'Reconnect Linear in settings and refresh this panel.',
+          }}
+          onDismiss={() => undefined}
+        />
       </PrimitiveCard>
 
       <PrimitiveCard
