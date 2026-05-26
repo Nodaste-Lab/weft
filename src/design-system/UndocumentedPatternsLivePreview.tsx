@@ -4,7 +4,7 @@
  */
 import type { CSSProperties } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { FileText, Layers, Sparkles } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import { HUDPanelProviders } from '../app/AppProviders';
 import { useNotes } from '../app/context/NotesContext';
 import { CustomPanelsSection } from '../app/components/panels/CustomPanelsSection';
@@ -13,7 +13,8 @@ import { MyAccountSection } from '../app/components/panels/MyAccountSection';
 import { NoteCard } from '../app/components/panels/NoteCard';
 import { SheetResolutionCard } from '../app/components/panels/SheetResolutionCard';
 import { TranscriptionPanel } from '../app/components/panels/TranscriptionPanel';
-import { PreviewPaneSurface } from '../app/panel-builder/PreviewPaneSurface';
+import { CustomPanelRuntime } from '../app/panel-builder/CustomPanelRuntime';
+import { createDefaultCustomPanelDefinition } from '../app/panel-builder/types';
 import { buildDefaultPanels } from '../app/mode/panelRegistry';
 import type { Mode } from '../app/mode/types';
 import { PlayerSheetService } from '../app/services/playerSheetService';
@@ -127,46 +128,15 @@ function UndocumentedPatternsLivePreviewInner() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-      <PatternSubheading>Custom panel preview &amp; runtime (PreviewPaneSurface)</PatternSubheading>
+      <PatternSubheading>Custom panel runtime (single-surface Weft)</PatternSubheading>
       <p style={{ margin: '0 0 12px', color: 'var(--hud-text-2)', fontSize: 'var(--text-xs)', lineHeight: 1.65 }}>
-        Custom HUD panels are authored via your agent/tooling flow; below is pane chrome shared with{' '}
-        <code style={{ fontSize: '0.92em' }}>CustomPanelRuntime</code>.
+        Custom HUD panels are authored via your agent/tooling flow; below is a live preview of the single-surface runtime.
       </p>
       <div
         data-palette="hud-glass"
         style={{ ...hudGlassShellStyle(380), padding: 12 }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12 }}>
-          <PreviewPaneSurface
-            pane="input"
-            title="Goals"
-            subtitle="What should this panel accomplish?"
-            icon={<Sparkles size={14} />}
-          >
-            <div style={{ color: 'var(--hud-text-2)', fontSize: 11, lineHeight: 1.5 }}>
-              Sample input-region body — real panels render block definitions here.
-            </div>
-          </PreviewPaneSurface>
-          <PreviewPaneSurface
-            pane="output"
-            title="Preview"
-            subtitle="HUD-styled output"
-            icon={<FileText size={14} />}
-          >
-            <div
-              style={{
-                padding: 10,
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--hud-border)',
-                background: 'var(--hud-surface-raised)',
-                color: 'var(--hud-text-2)',
-                fontSize: 11,
-              }}
-            >
-              Example response body
-            </div>
-          </PreviewPaneSurface>
-        </div>
+        <CustomPanelRuntime definition={createDefaultCustomPanelDefinition(PREVIEW_MODE_ID)} mode="preview" />
       </div>
 
       <PatternSubheading>Settings workspace modules</PatternSubheading>
