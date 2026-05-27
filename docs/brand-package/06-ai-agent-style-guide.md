@@ -63,8 +63,8 @@ audience: LLMs and agents producing copy for Heddle surfaces
 ```
 ✗ space_attach_forbidden: studio
   you're not a member of this space.
-  ask the owner for an invite code, then:
-  heddle space invite-import <code>
+  ask the owner to add your Clerk account.
+  after they do, sign in again and Heddle will attach it automatically.
 ```
 
 **Error — longer context:**
@@ -163,7 +163,7 @@ Your account is how Heddle recognizes you across machines.
 Heddle is running in the background. Your personal space will sync quietly from here.
 
 - Check status anytime with `heddle health`
-- Invite a machine to a shared space with `heddle space invite-import <code>`
+- Shared spaces appear automatically after a space owner grants your Clerk account access
 - Manage account sign-in from Clerk
 
 [ Open Heddle ]
@@ -184,28 +184,28 @@ Heddle is running in the background. Your personal space will sync quietly from 
 ### Pattern — a command reference page
 
 ```
-# heddle space invite-import
+# Shared space access
 
-Import an invite code to join a shared space.
+Join a shared space after an owner grants access to your Clerk account.
 
 ## Usage
 
-    heddle space invite-import <code>
+    heddle init
 
 ## What happens
 
-- The code is validated against the hub
-- A local copy of the space is created
+- Heddle signs in with Clerk and reads the account catalog
+- Any shared spaces granted to the account are attached locally
 - Sync begins immediately, in the background
 
 ## When to use it
 
-When someone on another account shares a `heddle_inv_*` code with you. For a second machine on the same account, run `heddle init` instead — it'll attach existing spaces automatically.
+When a space owner has added your Clerk account or email to a shared space. For a second machine on the same account, use the same flow — Heddle attaches existing spaces automatically.
 
 ## Related
 
-- `heddle space rejoin` — rebind an existing local space
-- `heddle space forget-sync` — clear stale linkage before a rejoin
+- `heddle space members` — list shared-space members when your permission allows it
+- `heddle space invite` — grant another Clerk account access to a shared space
 ```
 
 ### Anti-patterns
@@ -229,9 +229,9 @@ Heddle caught up overnight. Three things worth your eye today:
 
 ## 🔴 Studio sync — blocked on an invite
 
-The studio space tried to attach at 06:14 and couldn't — you're not a member yet. Aaron can send a `heddle_inv_*` code when you're ready.
+The studio space tried to attach at 06:14 and couldn't — you're not a member yet. Aaron can add your Clerk account when you're ready.
 
-**What to do:** ping Aaron, then `heddle space invite-import <code>`.
+**What to do:** ping Aaron to add your account, then sign in again.
 
 ## 🟡 Local session — needs refresh
 
@@ -276,10 +276,9 @@ What to do:
 ### Pattern — short error
 
 ```
-This invite code has expired.
+This account grant is no longer active.
 
-Ask whoever sent it for a fresh one, then run:
-  heddle space invite-import <code>
+Ask a space owner to grant your Clerk account access again, then sign in again.
 ```
 
 ### Anti-patterns
@@ -331,7 +330,7 @@ A quiet layer that keeps your spaces, docs, and signals in the right order — a
 ### Pattern — ask
 
 ```
-Hey — can you send me a studio invite code when you have a sec? Stuck at space_attach_forbidden on my laptop.
+Hey — can you add my Clerk account to the studio space when you have a sec? Stuck at space_attach_forbidden on my laptop.
 
 No rush, just when it's convenient.
 ```
