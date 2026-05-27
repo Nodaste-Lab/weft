@@ -94,10 +94,10 @@ Same intent, different surface.
 
 ### "This space can't attach right now."
 
-- **CLI:** `space_attach_forbidden: you're not a member of "studio". Ask the owner for an invite code, then run heddle space invite-import <code>.`
-- **HUD:** `Studio space · can't attach yet · needs an invite`
-- **Morning update:** `The studio space didn't attach this morning — you're not a member yet. Aaron can send an invite code when you're ready.`
-- **Docs:** `If you see space_attach_forbidden, you're not a member of that space. Ask the space owner for an invite code, then run: heddle space invite-import <code>.`
+- **CLI:** `space_attach_forbidden: you're not a member of "studio". Ask the owner to add your Clerk account to the space.`
+- **HUD:** `Studio space · can't attach yet · ask an owner for access`
+- **Morning update:** `The studio space didn't attach this morning — you're not a member yet. Aaron can add your account when you're ready.`
+- **Docs:** `If you see space_attach_forbidden, you're not a member of that space. Ask a space owner to add your Clerk account, then sign in again so Heddle can attach it automatically.`
 
 ## Signature moves
 
