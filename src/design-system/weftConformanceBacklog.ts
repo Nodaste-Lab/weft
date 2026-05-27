@@ -69,33 +69,17 @@ export const WEFT_CONFORMANCE_BACKLOG: WeftConformanceRow[] = [
   {
     relativePath: 'src/app/panel-builder/CustomPanelRuntime.tsx',
     severity: 'MEDIUM',
-    summary: 'Custom panel runtime split panes and block renderers.',
+    summary: 'Custom panel runtime single-surface block renderer.',
     consumePrimitives: [
       'Gallery primitives per block type',
-      'PreviewPaneSurface',
       'Custom Panel Preview & Runtime doc',
       'Button',
       'Input',
       'RepeatListFieldColumn (#repeat-list-field-column) — repeat-list grid cells (2026-05-14)',
-      'Grid [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] on main pane wrapper (2026-05-14)',
+      'Single-surface block composition',
     ],
-    suggestedComposites: 'Pane chrome already in PreviewPaneSurface — focus on block-level wrappers.',
-    notes: 'Tier 3 P10: repeat-list column label shell promoted; blockShellStyle and other blocks still use CSSProperties helpers.',
-  },
-  {
-    relativePath: 'src/app/panel-builder/SessionRecapBuilderPreview.tsx',
-    severity: 'MEDIUM',
-    summary: 'Session recap template preview inside custom panel flow.',
-    consumePrimitives: [
-      'Align with CustomPanelRuntime + gallery',
-      'Card',
-      'Button',
-      'EmptyState',
-      'PeriodChipRow (#period-chip-row) — recap period preset rows (2026-05-14)',
-      'Root layout grid Tailwind arbitrary minmax(280px,1fr)',
-    ],
-    suggestedComposites: 'Shared **preview output card** with CustomPanelRuntime output pane.',
-    notes: 'Tier 3 P10: chip rows use PeriodChipRow; panel card + toolbar still CSSProperties.',
+    suggestedComposites: 'Focus on block-level wrappers and remove remaining local CSS helper usage.',
+    notes: 'Post pane-removal follow-up: continue adopting shared Weft composites for repeated block chrome.',
   },
 ];
 
