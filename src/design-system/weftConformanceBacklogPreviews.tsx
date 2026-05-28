@@ -4,7 +4,6 @@
 import React, { type CSSProperties, type ReactNode } from 'react';
 import { SessionContextPanel } from '../app/components/panels/SessionContextPanel';
 import { CustomPanelRuntime } from '../app/panel-builder/CustomPanelRuntime';
-import { SessionRecapBuilderPreview } from '../app/panel-builder/SessionRecapBuilderPreview';
 import { createDefaultCustomPanelDefinition } from '../app/panel-builder/types';
 import { HUDPanelProviders } from '../app/AppProviders';
 import { backlogPreviewAnchorId, WEFT_CONFORMANCE_BACKLOG } from './weftConformanceBacklog';
@@ -87,16 +86,6 @@ function renderPreviewForPath(relativePath: string): { title: string; subtitle?:
         node: (
           <div style={{ padding: 12 }}>
             <CustomPanelRuntime definition={createDefaultCustomPanelDefinition(PREVIEW_MODE_ID)} mode="preview" />
-          </div>
-        ),
-      };
-    case 'src/app/panel-builder/SessionRecapBuilderPreview.tsx':
-      return {
-        title: 'SessionRecapBuilderPreview.tsx',
-        subtitle: 'PeriodChipRow on presets; panel card + toolbar still use CSSProperties layout helpers.',
-        node: (
-          <div style={{ padding: 12 }}>
-            <SessionRecapBuilderPreview />
           </div>
         ),
       };

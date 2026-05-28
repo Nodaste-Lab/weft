@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import {
-  HUD_ISSUE_SOURCE_LABEL,
+  resolveHudIssueSourceLabel,
   type HudIssue,
   type HudIssueScope,
   type HudIssueSeverity,
@@ -92,7 +92,7 @@ export function HudIssueCallout({
   const colors = severityColors(issue.severity);
 
   const compact = effectiveVariant === 'compact';
-  const sourceLabel = HUD_ISSUE_SOURCE_LABEL[issue.source];
+  const sourceLabel = resolveHudIssueSourceLabel(issue);
 
   const rootStyle: CSSProperties = {
     display: 'grid',

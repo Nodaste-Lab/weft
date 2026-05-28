@@ -75,7 +75,7 @@ Inline code for short identifiers; fenced code for anything multi-line or runnab
 - `space` — a Heddle sync unit (personal, studio, etc.)
 - `sync` — the noun and verb for what Heddle does
 - `attach` — how a machine joins an existing space
-- `invite code` — the `heddle_inv_*` string used to join a shared space
+- `account grant` — owner-created shared-space access for a Clerk account or email
 - `node` — the background service (`ccore-node` / `heddle-node`)
 - `account` — the identity tied to Clerk sign-in
 - `session` — an authenticated runtime on one machine
