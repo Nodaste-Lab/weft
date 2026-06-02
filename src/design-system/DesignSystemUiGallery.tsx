@@ -691,7 +691,7 @@ export function DesignSystemUiGallery() {
       >
         <div className="flex w-full max-w-md flex-col gap-2">
           <Callout tone="info" title="Recap queued">
-            Generation will resume the next time the workspace mode opens.
+            Generation will resume the next time the mode opens.
           </Callout>
           <Callout tone="warning" density="compact" title="Add an OpenAI API key">
             Open App Settings → AI providers to enable transcription.
@@ -1095,7 +1095,7 @@ export function DesignSystemUiGallery() {
             scope: 'panel',
             severity: 'error',
             title: 'Ticket updates unavailable',
-            detail: 'Linear is not reachable from this workspace right now.',
+            detail: 'Linear is not reachable from this mode right now.',
             nextAction: 'Reconnect Linear in settings and refresh this panel.',
           }}
           onDismiss={() => undefined}
