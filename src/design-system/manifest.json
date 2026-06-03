@@ -383,6 +383,13 @@
       "showcase": true
     },
     {
+      "id": "image",
+      "path": "src/app/components/ui/image.tsx",
+      "category": "media",
+      "summary": "Tokenized content image primitive with required alt text, fit/radius controls, and predictable loading defaults.",
+      "showcase": true
+    },
+    {
       "id": "inline-edit-list-row.figma",
       "path": "src/app/components/ui/inline-edit-list-row.figma.tsx",
       "category": "code-connect",

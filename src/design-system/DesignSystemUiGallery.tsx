@@ -186,6 +186,7 @@ import { SettingsModuleShell } from '../app/components/ui/settings-module-shell'
 import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-group';
 import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
+import { Image } from '../app/components/ui/image';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
@@ -232,6 +233,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'hud-toggle-switch',
   'HudIssueCallout',
   'HudIssueToast',
+  'image',
   'inline-edit-list-row',
   'input',
   'label',
@@ -1131,6 +1133,27 @@ export function DesignSystemUiGallery() {
           }}
           onDismiss={() => undefined}
         />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="image"
+        title="Image"
+        summary="Tokenized content image primitive with required alt text, fit/radius controls, and predictable loading defaults."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <Image
+            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Ccircle%20cx='180'%20cy='145'%20r='64'%20fill='%237cc4ff'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E"
+            alt="Abstract landscape preview with a blue moon and green ridge"
+            aspectRatio="video"
+            bordered
+            radius="lg"
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Use Image for meaningful content images that need alt text. Pass `alt=""` only
+            when the caller intentionally marks the image decorative; captions and media
+            collections belong to ImageBlock and ImageGallery.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard
