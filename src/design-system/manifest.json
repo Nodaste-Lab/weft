@@ -152,6 +152,13 @@
       "showcase": true
     },
     {
+      "id": "code-block",
+      "path": "src/app/components/ui/code-block.tsx",
+      "category": "data-display",
+      "summary": "Tokenized plain-text code block for generated snippets and diagnostics.",
+      "showcase": true
+    },
+    {
       "id": "collapsible",
       "path": "src/app/components/ui/collapsible.tsx",
       "category": "disclosure",

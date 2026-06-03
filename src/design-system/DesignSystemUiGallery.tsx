@@ -44,6 +44,7 @@ import {
   CardTitle,
 } from '../app/components/ui/card';
 import { Checkbox } from '../app/components/ui/checkbox';
+import { CodeBlock } from '../app/components/ui/code-block';
 import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
 import {
   Collapsible,
@@ -209,6 +210,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'callout',
   'card',
   'checkbox',
+  'code-block',
   'collapsible',
   'combatant-type-dot',
   'command-category-tag',
@@ -741,6 +743,29 @@ export function DesignSystemUiGallery() {
           <Checkbox defaultChecked />
           <span>Include vault sources</span>
         </label>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="code-block"
+        title="Code Block"
+        summary="Tokenized plain-text code block for generated snippets and diagnostics."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <CodeBlock
+            label="Install command"
+            language="shell"
+            code="npm run mac:dev:web"
+            onCopy={() => undefined}
+            copyLabel="Copy install command"
+          />
+          <CodeBlock
+            label="Diagnostic output"
+            language="text"
+            wrap
+            density="compact"
+            code="CodeBlock displays already-safe plain text only. Markdown parsing, HTML rendering, and syntax highlighting belong to MarkDownRenderer."
+          />
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard
