@@ -348,6 +348,39 @@ const componentShelfAnchorByCategory: Record<string, string> = {
   typography: 'component-shelf-typography',
 };
 
+const patternOwnerAnchorByPrimitive: Record<string, string> = {
+  'attention-ticket-card': 'pattern-family-signals',
+  'battle-combatant-summary-row': 'pattern-family-battle',
+  'combatant-type-dot': 'pattern-family-battle',
+  'command-category-tag': 'pattern-family-battle',
+  'condition-chip-strip': 'pattern-family-battle',
+  'death-save-dot': 'pattern-family-battle',
+  'hp-bar-track': 'pattern-family-battle',
+  'hud-quick-command-footer': 'pattern-family-custom-panel',
+  'inline-edit-list-row': 'pattern-family-recap',
+  'lore-search-result-row': 'pattern-family-vault-lore',
+  'metric-tile': 'pattern-family-signals',
+  'mode-only-toggle': 'pattern-family-settings',
+  'panel-block-shell': 'pattern-family-custom-panel',
+  'party-combatant-accordion': 'pattern-family-party',
+  'period-chip-row': 'pattern-family-transcript',
+  'provider-status-badge': 'pattern-family-provider-issues',
+  'recap-section-shell': 'pattern-family-recap',
+  'repeat-list-field-column': 'pattern-family-recap',
+  'settings-module-shell': 'pattern-family-settings',
+  'signal-filter-chip-group': 'pattern-family-signals',
+  'signal-group-collapsible': 'pattern-family-signals',
+  'status-icon-row': 'pattern-family-signals',
+  'transcript-list-item-frame': 'pattern-family-transcript',
+  'vault-sheet-match-row': 'pattern-family-vault-lore',
+  HudIssueCallout: 'pattern-family-provider-issues',
+  HudIssueToast: 'pattern-family-provider-issues',
+};
+
+function ownerAnchorForPrimitive(id: string, category: string): string {
+  return patternOwnerAnchorByPrimitive[id] ?? componentShelfAnchorByCategory[category] ?? `${id}-example`;
+}
+
 function PartyCombatantAccordionDemo() {
   const [open, setOpen] = React.useState(true);
   return (
@@ -2168,6 +2201,7 @@ function PrimitiveCard({
 }) {
   const category = primitiveCategoryById.get(id) ?? 'uncategorized';
   const label = primitiveCategoryLabels[category] ?? category;
+  const ownerAnchor = ownerAnchorForPrimitive(id, category);
 
   return (
     <section
@@ -2191,6 +2225,14 @@ function PrimitiveCard({
           </div>
         </div>
         <p style={summaryStyle}>{summary}</p>
+        <a
+          href={`#${ownerAnchor}`}
+          data-gallery-owner-link={id}
+          style={ownerLinkStyle}
+          aria-label={`${title} taxonomy owner docs`}
+        >
+          Owner docs
+        </a>
       </div>
       <div style={exampleSurfaceStyle}>{children}</div>
     </section>
@@ -2295,6 +2337,14 @@ const summaryStyle: CSSProperties = {
   color: 'var(--hud-text-2)',
   fontSize: 12,
   lineHeight: 1.5,
+};
+
+const ownerLinkStyle: CSSProperties = {
+  color: 'var(--primary)',
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 11,
+  fontWeight: 700,
+  textDecoration: 'none',
 };
 
 const metaTextStyle: CSSProperties = {
