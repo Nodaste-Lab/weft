@@ -390,6 +390,13 @@
       "showcase": true
     },
     {
+      "id": "image-gallery",
+      "path": "src/app/components/ui/image-gallery.tsx",
+      "category": "media",
+      "summary": "Accessible responsive media collection that composes Image and ImageBlock.",
+      "showcase": true
+    },
+    {
       "id": "image",
       "path": "src/app/components/ui/image.tsx",
       "category": "media",

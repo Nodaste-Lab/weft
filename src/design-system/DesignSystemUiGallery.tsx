@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
+import designSystemManifest from './manifest.json';
 import {
   Accordion,
   AccordionContent,
@@ -188,6 +189,7 @@ import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collap
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
 import { Image } from '../app/components/ui/image';
 import { ImageBlock } from '../app/components/ui/image-block';
+import { ImageGallery } from '../app/components/ui/image-gallery';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
@@ -235,6 +237,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'HudIssueCallout',
   'HudIssueToast',
   'image-block',
+  'image-gallery',
   'image',
   'inline-edit-list-row',
   'input',
@@ -283,6 +286,67 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'transcript-list-item-frame',
   'vault-sheet-match-row',
 ] as const;
+
+const primitiveCategoryById = new Map(
+  designSystemManifest.uiPrimitives.map((primitive) => [primitive.id, primitive.category]),
+);
+
+const primitiveCategoryLabels: Record<string, string> = {
+  actions: 'Actions',
+  'code-connect': 'Code Connect',
+  'data-display': 'Data Display',
+  disclosure: 'Disclosure',
+  feedback: 'Feedback',
+  forms: 'Forms',
+  inputs: 'Inputs',
+  layout: 'Layout',
+  media: 'Media',
+  menus: 'Menus',
+  navigation: 'Navigation',
+  overlay: 'Overlays',
+  toggles: 'Toggles',
+  typography: 'Typography',
+};
+
+const galleryCategoryOrder = [
+  'actions',
+  'feedback',
+  'inputs',
+  'forms',
+  'layout',
+  'media',
+  'overlay',
+  'menus',
+  'navigation',
+  'typography',
+  'data-display',
+  'toggles',
+  'disclosure',
+] as const;
+
+const showcasedCategoryGroups = galleryCategoryOrder
+  .map((category) => ({
+    category,
+    label: primitiveCategoryLabels[category] ?? category,
+    ids: SHOWCASED_PRIMITIVE_IDS.filter((id) => primitiveCategoryById.get(id) === category),
+  }))
+  .filter((group) => group.ids.length > 0);
+
+const componentShelfAnchorByCategory: Record<string, string> = {
+  actions: 'component-shelf-actions',
+  'data-display': 'component-shelf-data-display',
+  disclosure: 'component-shelf-disclosure',
+  feedback: 'component-shelf-feedback',
+  forms: 'component-shelf-inputs-forms',
+  inputs: 'component-shelf-inputs-forms',
+  layout: 'component-shelf-layout',
+  media: 'component-shelf-media',
+  menus: 'component-shelf-menus',
+  navigation: 'component-shelf-navigation',
+  overlay: 'component-shelf-overlays',
+  toggles: 'component-shelf-toggles',
+  typography: 'component-shelf-typography',
+};
 
 function PartyCombatantAccordionDemo() {
   const [open, setOpen] = React.useState(true);
@@ -510,7 +574,21 @@ export function DesignSystemUiGallery() {
   });
 
   return (
-    <div style={galleryStyle}>
+    <div style={galleryPageStyle}>
+      <div style={categoryShelfStyle} aria-label="Primitive categories">
+        {showcasedCategoryGroups.map((group) => (
+          <a
+            key={group.category}
+            href={`#${componentShelfAnchorByCategory[group.category] ?? `${group.ids[0]}-example`}`}
+            aria-label={`${group.label} component docs`}
+            style={categoryShelfLinkStyle}
+          >
+            <span style={categoryShelfLabelStyle}>{group.label}</span>
+            <span style={categoryShelfCountStyle}>{group.ids.length}</span>
+          </a>
+        ))}
+      </div>
+      <div style={galleryStyle}>
       <PrimitiveCard
         id="accordion"
         title="Accordion"
@@ -1154,6 +1232,105 @@ export function DesignSystemUiGallery() {
           <TextContent size="sm" tone="muted" measure="wide">
             Use Image for bare content images, ImageBlock for one image with optional caption,
             and reserve ImageGallery for collections. Captions should stay visible and concise.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="image-gallery"
+        title="Image Gallery"
+        summary="Accessible responsive media collection that composes Image and ImageBlock."
+      >
+        <Stack gap="sm" className="w-full max-w-2xl">
+          <ImageGallery
+            aria-label="Sample media references"
+            layout="simple-grid"
+            columns="3"
+            gap="sm"
+            items={[
+              {
+                id: 'ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Abstract green ridge on a dark field',
+                caption: 'Captioned media item',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%231f2937'/%3E%3Ccircle%20cx='320'%20cy='180'%20r='92'%20fill='%237cc4ff'/%3E%3C/svg%3E",
+                alt: 'Blue moon study on a dark field',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'sun',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Ccircle%20cx='210'%20cy='132'%20r='64'%20fill='%23f3d36b'/%3E%3Cpath%20d='M0%20300%20L180%20210%20L340%20280%20L520%20185%20L640%20248%20L640%20360%20L0%20360Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Yellow sun over a green valley',
+                caption: 'Second caption',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <ImageGallery
+            aria-label="Masonry media references"
+            layout="masonry"
+            columns="3"
+            gap="sm"
+            items={[
+              {
+                id: 'masonry-ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Wide green ridge study',
+                caption: 'Wide item',
+                aspectRatio: 'video',
+                bordered: true,
+                span: 'wide',
+              },
+              {
+                id: 'masonry-moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20360%20640'%3E%3Crect%20width='360'%20height='640'%20fill='%231f2937'/%3E%3Ccircle%20cx='180'%20cy='190'%20r='84'%20fill='%237cc4ff'/%3E%3Cpath%20d='M40%20540%20L180%20320%20L320%20540Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Tall blue moon study',
+                aspectRatio: 'portrait',
+                bordered: true,
+                span: 'tall',
+              },
+              {
+                id: 'masonry-sun',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Ccircle%20cx='210'%20cy='132'%20r='64'%20fill='%23f3d36b'/%3E%3Cpath%20d='M0%20300%20L180%20210%20L340%20280%20L520%20185%20L640%20248%20L640%20360%20L0%20360Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Yellow sun over a green valley',
+                caption: 'Default item',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <ImageGallery
+            aria-label="Carousel media references"
+            layout="carousel"
+            items={[
+              {
+                id: 'carousel-ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Carousel ridge reference',
+                caption: 'Carousel item 1',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'carousel-moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%231f2937'/%3E%3Ccircle%20cx='320'%20cy='180'%20r='92'%20fill='%237cc4ff'/%3E%3C/svg%3E",
+                alt: 'Carousel blue moon reference',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            ImageGallery supports simple grid, masonry-style grid, and carousel layouts.
+            It preserves DOM order for static layouts, keeps carousel controls visible, and
+            stays narrow: no lightbox, autoplay, upload, reorder, or selection behavior.
           </TextContent>
         </Stack>
       </PrimitiveCard>
@@ -1973,6 +2150,7 @@ export function DesignSystemUiGallery() {
           />
         </div>
       </PrimitiveCard>
+      </div>
     </div>
   );
 }
@@ -1988,9 +2166,13 @@ function PrimitiveCard({
   summary: string;
   children: ReactNode;
 }) {
+  const category = primitiveCategoryById.get(id) ?? 'uncategorized';
+  const label = primitiveCategoryLabels[category] ?? category;
+
   return (
     <section
       id={`${id}-example`}
+      data-primitive-category={category}
       style={{
         border: '1px solid var(--hud-border)',
         borderRadius: 'var(--radius-sm)',
@@ -2003,7 +2185,10 @@ function PrimitiveCard({
       <div style={{ display: 'grid', gap: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <span style={titleStyle}>{title}</span>
-          <code style={codeStyle}>{id}</code>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={categoryBadgeStyle}>{label}</span>
+            <code style={codeStyle}>{id}</code>
+          </div>
         </div>
         <p style={summaryStyle}>{summary}</p>
       </div>
@@ -2012,10 +2197,60 @@ function PrimitiveCard({
   );
 }
 
+const galleryPageStyle: CSSProperties = {
+  display: 'grid',
+  gap: 16,
+};
+
+const categoryShelfStyle: CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 8,
+};
+
+const categoryShelfLinkStyle: CSSProperties = {
+  alignItems: 'center',
+  background: 'var(--hud-section-fill-medium)',
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-pill)',
+  color: 'var(--hud-text-2)',
+  display: 'inline-flex',
+  gap: 6,
+  padding: '4px 9px',
+  textDecoration: 'none',
+};
+
+const categoryShelfLabelStyle: CSSProperties = {
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 10,
+  fontWeight: 700,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+};
+
+const categoryShelfCountStyle: CSSProperties = {
+  color: 'var(--hud-text-3)',
+  fontFamily: 'var(--weft-font-mono)',
+  fontSize: 10,
+};
+
 const galleryStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
   gap: 14,
+};
+
+const categoryBadgeStyle: CSSProperties = {
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-pill)',
+  color: 'var(--hud-text-3)',
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 9,
+  fontWeight: 700,
+  letterSpacing: '0.08em',
+  padding: '2px 6px',
+  textTransform: 'uppercase',
+  whiteSpace: 'nowrap',
 };
 
 const exampleSurfaceStyle: CSSProperties = {
