@@ -148,6 +148,7 @@ import {
 } from '../app/components/ui/sidebar';
 import { Skeleton } from '../app/components/ui/skeleton';
 import { Slider } from '../app/components/ui/slider';
+import { Stack } from '../app/components/ui/stack';
 import { Switch } from '../app/components/ui/switch';
 import {
   Table,
@@ -259,6 +260,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'skeleton',
   'slider',
   'source-pill',
+  'stack',
   'stat-row',
   'status-icon-row',
   'switch',
@@ -1614,6 +1616,30 @@ export function DesignSystemUiGallery() {
           thumbLabels={["Volume level"]}
           className="max-w-xs"
         />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="stack"
+        title="Stack"
+        summary="Tokenized flex stack for neutral vertical or horizontal child layout."
+      >
+        <Stack className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <Stack gap="xs">
+            <span className="text-sm font-semibold text-[var(--hud-text-1)]">Session checklist</span>
+            <span className="text-xs text-[var(--hud-text-2)]">
+              Use Stack for spacing and alignment only; keep lists, forms, and navigation semantic at the caller.
+            </span>
+          </Stack>
+          <Stack direction="horizontal" gap="sm" align="center" wrap>
+            <Badge variant="secondary">Briefing</Badge>
+            <Badge variant="outline">Transcript</Badge>
+            <Badge variant="outline">Vault</Badge>
+          </Stack>
+          <Stack direction="horizontal" gap="sm" align="center" justify="between">
+            <span className="text-xs text-[var(--hud-text-2)]">Keyboard order follows DOM order.</span>
+            <Button size="sm" variant="secondary">Review</Button>
+          </Stack>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard

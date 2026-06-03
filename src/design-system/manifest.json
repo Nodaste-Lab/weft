@@ -712,6 +712,13 @@
       "showcase": true
     },
     {
+      "id": "stack",
+      "path": "src/app/components/ui/stack.tsx",
+      "category": "layout",
+      "summary": "Tokenized flex stack for neutral vertical or horizontal child layout.",
+      "showcase": true
+    },
+    {
       "id": "stat-row.figma",
       "path": "src/app/components/ui/stat-row.figma.tsx",
       "category": "code-connect",
