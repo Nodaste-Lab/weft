@@ -187,6 +187,7 @@ import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-g
 import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
 import { Image } from '../app/components/ui/image';
+import { ImageBlock } from '../app/components/ui/image-block';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
@@ -233,6 +234,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'hud-toggle-switch',
   'HudIssueCallout',
   'HudIssueToast',
+  'image-block',
   'image',
   'inline-edit-list-row',
   'input',
@@ -1133,6 +1135,27 @@ export function DesignSystemUiGallery() {
           }}
           onDismiss={() => undefined}
         />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="image-block"
+        title="Image Block"
+        summary="Semantic figure wrapper that composes Image with an optional visible caption."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <ImageBlock
+            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Cpath%20d='M64%20292%20L198%20158%20L294%20234%20L428%20108%20L588%20292Z'%20fill='%2389d37f'/%3E%3Ccircle%20cx='486'%20cy='96'%20r='46'%20fill='%23f3d36b'/%3E%3C/svg%3E"
+            alt="Stylized valley illustration with a green ridge and yellow sun"
+            caption="Use ImageBlock when a single image and caption should travel together as one semantic figure."
+            aspectRatio="video"
+            bordered
+            radius="lg"
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Use Image for bare content images, ImageBlock for one image with optional caption,
+            and reserve ImageGallery for collections. Captions should stay visible and concise.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard

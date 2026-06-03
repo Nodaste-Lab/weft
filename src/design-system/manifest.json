@@ -383,6 +383,13 @@
       "showcase": true
     },
     {
+      "id": "image-block",
+      "path": "src/app/components/ui/image-block.tsx",
+      "category": "media",
+      "summary": "Semantic figure wrapper that composes Image with an optional visible caption.",
+      "showcase": true
+    },
+    {
       "id": "image",
       "path": "src/app/components/ui/image.tsx",
       "category": "media",
