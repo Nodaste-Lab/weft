@@ -425,6 +425,13 @@
       "showcase": true
     },
     {
+      "id": "markdown-renderer",
+      "path": "src/app/components/ui/markdown-renderer.tsx",
+      "category": "data-display",
+      "summary": "Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code primitives.",
+      "showcase": true
+    },
+    {
       "id": "menubar",
       "path": "src/app/components/ui/menubar.tsx",
       "category": "menus",

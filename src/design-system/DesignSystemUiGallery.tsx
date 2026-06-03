@@ -187,6 +187,7 @@ import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-g
 import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
+import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
@@ -235,6 +236,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'input',
   'label',
   'lore-search-result-row',
+  'markdown-renderer',
   'menubar',
   'metric-tile',
   'mode-only-toggle',
@@ -1196,6 +1198,38 @@ export function DesignSystemUiGallery() {
             copiedPath={null}
             onCopyPath={() => {}}
           />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="markdown-renderer"
+        title="MarkDownRenderer"
+        summary="Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code primitives."
+      >
+        <div className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <MarkDownRenderer
+            markdown={[
+              '### Morning summary',
+              '',
+              'The party found `three clues` near the east gate.',
+              '',
+              '- Safe list item',
+              '- [Safe link](https://example.com)',
+              '- [Blocked link](javascript:alert(1))',
+              '',
+              '```ts',
+              'const clues = 3;',
+              '```',
+              '',
+              '![Map preview](https://example.com/map.png)',
+              '<button onclick="alert(1)">unsafe</button>',
+            ].join('\n')}
+          />
+          <TextContent size="sm" tone="muted" measure="wide" className="mt-3">
+            Accessibility: render real headings, paragraphs, lists, links, and code blocks from trusted
+            markdown structure. Consumers own heading hierarchy; unsafe links become inert text, images
+            become alt-text placeholders, and raw HTML is skipped.
+          </TextContent>
         </div>
       </PrimitiveCard>
 
