@@ -159,6 +159,7 @@ import {
   TableRow,
 } from '../app/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../app/components/ui/tabs';
+import { TextContent } from '../app/components/ui/text-content';
 import { Textarea } from '../app/components/ui/textarea';
 import { TranscriptListItemFrame } from '../app/components/ui/transcript-list-item-frame';
 import { Toggle } from '../app/components/ui/toggle';
@@ -266,6 +267,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'switch',
   'table',
   'tabs',
+  'text-content',
   'textarea',
   'toggle-group',
   'toggle',
@@ -1722,6 +1724,27 @@ export function DesignSystemUiGallery() {
             <p style={metaTextStyle}>Session prep content lives in a sibling tab panel.</p>
           </TabsContent>
         </Tabs>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="text-content"
+        title="Text Content"
+        summary="Readable generated copy primitive with bounded size, weight, tone, and measure variants."
+      >
+        <Stack gap="sm" className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <TextContent asChild size="lg" weight="semibold" tone="strong" measure="narrow">
+            <h3>Generated session summary</h3>
+          </TextContent>
+          <TextContent>
+            The party followed the signal through the east gate and found three fresh cart tracks near the old watch post.
+          </TextContent>
+          <TextContent size="sm" tone="muted" measure="narrow">
+            Use TextContent for readable generated copy. Keep headings, lists, and captions semantic at the caller.
+          </TextContent>
+          <TextContent weight="medium" tone="accent" measure="none">
+            Tone is decorative unless adjacent text carries the meaning.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard

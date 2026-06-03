@@ -768,6 +768,13 @@
       "showcase": true
     },
     {
+      "id": "text-content",
+      "path": "src/app/components/ui/text-content.tsx",
+      "category": "typography",
+      "summary": "Readable generated copy primitive with bounded size, weight, tone, and measure variants.",
+      "showcase": true
+    },
+    {
       "id": "textarea",
       "path": "src/app/components/ui/textarea.tsx",
       "category": "inputs",
