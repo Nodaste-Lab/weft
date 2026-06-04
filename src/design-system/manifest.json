@@ -145,6 +145,13 @@
       "showcase": true
     },
     {
+      "id": "carousel",
+      "path": "src/app/components/ui/carousel.tsx",
+      "category": "layout",
+      "summary": "Generic content carousel with accessible slide semantics, previous/next controls, and bounded keyboard navigation.",
+      "showcase": true
+    },
+    {
       "id": "checkbox",
       "path": "src/app/components/ui/checkbox.tsx",
       "category": "toggles",

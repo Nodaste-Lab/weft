@@ -44,6 +44,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../app/components/ui/card';
+import { Carousel } from '../app/components/ui/carousel';
 import { Checkbox } from '../app/components/ui/checkbox';
 import { CodeBlock } from '../app/components/ui/code-block';
 import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
@@ -215,6 +216,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'calendar',
   'callout',
   'card',
+  'carousel',
   'checkbox',
   'code-block',
   'collapsible',
@@ -853,6 +855,55 @@ export function DesignSystemUiGallery({
             </Button>
           </CardFooter>
         </Card>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="carousel"
+        title="Carousel"
+        summary="Generic content carousel with accessible slide semantics and bounded controls."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <Carousel
+            aria-label="Client handoff carousel"
+            items={[
+              {
+                id: 'sources',
+                label: 'Sources',
+                description: 'Confirm the material that grounds the handoff.',
+                content: (
+                  <TextContent size="sm" measure="wide">
+                    Use Carousel for short ordered content, not for image-only galleries or autoplaying promotion.
+                  </TextContent>
+                ),
+              },
+              {
+                id: 'review',
+                label: 'Review',
+                description: 'Keep the human check in front of generated copy.',
+                content: (
+                  <Stack direction="horizontal" gap="xs" wrap>
+                    <Badge variant="secondary">Citations</Badge>
+                    <Badge variant="outline">Risks</Badge>
+                    <Badge variant="outline">Next actions</Badge>
+                  </Stack>
+                ),
+              },
+              {
+                id: 'share',
+                label: 'Share',
+                description: 'Move only reviewed material to the client vault.',
+                content: (
+                  <Button type="button" size="sm" variant="secondary">
+                    Open handoff
+                  </Button>
+                ),
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Carousel owns generic slide navigation. Use ImageGallery layout=&quot;carousel&quot; for image collections.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard
