@@ -278,6 +278,20 @@
       "showcase": true
     },
     {
+      "id": "follow-up-block",
+      "path": "src/app/components/ui/follow-up-block.tsx",
+      "category": "actions",
+      "summary": "Generated-response follow-up suggestion container that composes FollowUpItem without adding chat state.",
+      "showcase": true
+    },
+    {
+      "id": "follow-up-item",
+      "path": "src/app/components/ui/follow-up-item.tsx",
+      "category": "actions",
+      "summary": "Generated-response follow-up suggestion item with display-only and optional action semantics.",
+      "showcase": true
+    },
+    {
       "id": "form",
       "path": "src/app/components/ui/form.tsx",
       "category": "forms",
@@ -436,6 +450,20 @@
       "path": "src/app/components/ui/label.tsx",
       "category": "inputs",
       "summary": "Text label component for form fields and controls.",
+      "showcase": true
+    },
+    {
+      "id": "list-block",
+      "path": "src/app/components/ui/list-block.tsx",
+      "category": "actions",
+      "summary": "Generated-response option list container that composes ListItem without replacing HUD domain rows.",
+      "showcase": true
+    },
+    {
+      "id": "list-item",
+      "path": "src/app/components/ui/list-item.tsx",
+      "category": "actions",
+      "summary": "Generated-response option list item with display-only and optional action semantics.",
       "showcase": true
     },
     {
@@ -653,6 +681,20 @@
       "path": "src/app/components/ui/scroll-area.tsx",
       "category": "layout",
       "summary": "Custom scrollable container with styled scrollbars.",
+      "showcase": true
+    },
+    {
+      "id": "section-block",
+      "path": "src/app/components/ui/section-block.tsx",
+      "category": "disclosure",
+      "summary": "Generated-response section container that composes foldable SectionItem rows.",
+      "showcase": true
+    },
+    {
+      "id": "section-item",
+      "path": "src/app/components/ui/section-item.tsx",
+      "category": "disclosure",
+      "summary": "Generated-response foldable section item with trigger, metadata, and content slots.",
       "showcase": true
     },
     {

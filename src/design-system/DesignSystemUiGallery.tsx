@@ -83,6 +83,8 @@ import {
   FormLabel,
   FormMessage,
 } from '../app/components/ui/form';
+import { FollowUpBlock } from '../app/components/ui/follow-up-block';
+import { FollowUpItem } from '../app/components/ui/follow-up-item';
 import {
   HoverCard,
   HoverCardContent,
@@ -191,10 +193,14 @@ import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
 import { Image } from '../app/components/ui/image';
 import { ImageBlock } from '../app/components/ui/image-block';
 import { ImageGallery } from '../app/components/ui/image-gallery';
+import { ListBlock } from '../app/components/ui/list-block';
+import { ListItem } from '../app/components/ui/list-item';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
+import { SectionBlock } from '../app/components/ui/section-block';
+import { SectionItem } from '../app/components/ui/section-item';
 import { Steps } from '../app/components/ui/steps';
 import { StepsItem } from '../app/components/ui/steps-item';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
@@ -230,6 +236,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'dropdown-menu',
   'empty-state',
   'eyebrow-label',
+  'follow-up-block',
+  'follow-up-item',
   'form',
   'hover-card',
   'hp-bar-track',
@@ -246,6 +254,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'inline-edit-list-row',
   'input',
   'label',
+  'list-block',
+  'list-item',
   'lore-search-result-row',
   'markdown-renderer',
   'menubar',
@@ -266,6 +276,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'repeat-list-field-column',
   'resizable',
   'scroll-area',
+  'section-block',
+  'section-item',
   'select',
   'separator',
   'settings-module-shell',
@@ -295,6 +307,28 @@ export const SHOWCASED_PRIMITIVE_IDS = [
 
 const primitiveCategoryById = new Map(
   designSystemManifest.uiPrimitives.map((primitive) => [primitive.id, primitive.category]),
+);
+
+function capitalizePrimitiveWord(word: string): string {
+  return word.length > 0 ? `${word[0].toUpperCase()}${word.slice(1)}` : word;
+}
+
+function primitiveDisplayTitle(id: string): string {
+  if (id.startsWith('Hud') || id.startsWith('HUD')) {
+    return id;
+  }
+  if (id.startsWith('hud-')) {
+    return `HUD ${id.slice(4).split('-').map(capitalizePrimitiveWord).join(' ')}`;
+  }
+  return id.split('-').map(capitalizePrimitiveWord).join(' ');
+}
+
+const ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS = [...SHOWCASED_PRIMITIVE_IDS].sort((a, b) =>
+  primitiveDisplayTitle(a).localeCompare(primitiveDisplayTitle(b), undefined, { sensitivity: 'base' }),
+);
+
+const showcasedPrimitiveDisplayOrderById = new Map(
+  ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS.map((id, index) => [id, index]),
 );
 
 const primitiveCategoryLabels: Record<string, string> = {
@@ -579,7 +613,7 @@ type DesignSystemUiGalleryProps = {
 };
 
 export function DesignSystemUiGallery({
-  ids = SHOWCASED_PRIMITIVE_IDS,
+  ids = ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS,
   showCategoryLinks = true,
 }: DesignSystemUiGalleryProps) {
   const [switchOn, setSwitchOn] = React.useState(true);
@@ -1135,6 +1169,51 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="follow-up-block"
+        title="FollowUpBlock"
+        summary="Generated-response suggestion container that composes FollowUpItem without adding chat state."
+      >
+        <FollowUpBlock
+          aria-label="Suggested follow-ups"
+          title="Suggested next prompts"
+          description="Generated suggestions stay reviewable and explicit."
+          className="w-full max-w-md"
+          items={[
+            {
+              id: 'brief',
+              label: 'Summarize the source note',
+              detail: 'Create a short reviewable brief.',
+            },
+            {
+              id: 'risks',
+              label: 'Show risks',
+              detail: 'List blockers before sharing.',
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="follow-up-item"
+        title="FollowUpItem"
+        summary="Generated-response follow-up suggestion item with display-only and optional action semantics."
+      >
+        <div role="list" aria-label="Follow-up item examples" className="flex w-full max-w-md flex-col gap-2">
+          <FollowUpItem
+            id="display"
+            label="Explain the next action"
+            detail="Display-only suggestion with no implicit interaction."
+          />
+          <FollowUpItem
+            id="action"
+            label="Draft a client handoff"
+            detail="Actionable only because an onSelect handler is provided."
+            onSelect={() => undefined}
+          />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="hover-card"
         title="Hover Card"
         summary="Rich preview on hover or keyboard focus."
@@ -1492,6 +1571,53 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="list-block"
+        title="ListBlock"
+        summary="Generated-response option list container that composes ListItem without replacing HUD domain rows."
+      >
+        <ListBlock
+          aria-label="Generated options"
+          title="Choose an output"
+          description="Generated choices stay explicit and reviewable."
+          className="w-full max-w-md"
+          selectionMode="single"
+          items={[
+            {
+              id: 'brief',
+              label: 'Create brief',
+              detail: 'Draft a concise summary.',
+            },
+            {
+              id: 'tasks',
+              label: 'Extract tasks',
+              detail: 'Find follow-up actions.',
+              selected: true,
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="list-item"
+        title="ListItem"
+        summary="Generated-response option item with display-only and optional action semantics."
+      >
+        <ul aria-label="List item examples" className="m-0 flex w-full max-w-md list-none flex-col gap-2 p-0">
+          <ListItem
+            id="display"
+            label="Display-only choice"
+            detail="No action handler means no implicit button."
+          />
+          <ListItem
+            id="action"
+            label="Use this generated choice"
+            detail="Actionable only when a handler is provided."
+            onSelect={() => undefined}
+          />
+        </ul>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="lore-search-result-row"
         title="Lore Search Result Row"
         summary="Vault search hit with Obsidian link, relevance strip, excerpt, and copy-path control."
@@ -1844,6 +1970,56 @@ export function DesignSystemUiGallery({
               .join(' ')}
           </p>
         </ScrollArea>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="section-block"
+        title="SectionBlock"
+        summary="Generated-response section container that composes foldable SectionItem rows."
+      >
+        <SectionBlock
+          aria-label="Generated sections"
+          title="Generated brief"
+          description="Grouped output for human review."
+          className="w-full max-w-md"
+          items={[
+            {
+              id: 'summary',
+              label: 'Summary',
+              meta: '2 notes',
+              defaultOpen: true,
+              content: <TextContent size="sm">Generated summary stays reviewable before sharing.</TextContent>,
+            },
+            {
+              id: 'risks',
+              label: 'Risks',
+              meta: '1 blocker',
+              content: <TextContent size="sm">Vault sync is stale.</TextContent>,
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="section-item"
+        title="SectionItem"
+        summary="Generated-response foldable section item with trigger, metadata, and content slots."
+      >
+        <ul aria-label="Section item examples" className="m-0 flex w-full max-w-md list-none flex-col gap-2 p-0">
+          <SectionItem
+            id="open"
+            label="Open generated section"
+            meta="Ready"
+            defaultOpen
+            content={<TextContent size="sm">Use SectionItem for foldable generated output, not domain panel shells.</TextContent>}
+          />
+          <SectionItem
+            id="closed"
+            label="Collapsed generated section"
+            meta="Optional"
+            content={<TextContent size="sm">Closed content remains available through the trigger.</TextContent>}
+          />
+        </ul>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2352,6 +2528,7 @@ function PrimitiveCard({
       id={`${id}-example`}
       data-component-category={category}
       style={{
+        order: showcasedPrimitiveDisplayOrderById.get(id) ?? 0,
         border: '1px solid var(--hud-border)',
         borderRadius: 'var(--radius-sm)',
         background: 'var(--hud-surface-raised)',
