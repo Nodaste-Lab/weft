@@ -197,7 +197,7 @@ import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-co
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
 import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
-/** Every `uiPrimitives[].id` from `manifest.json`, in registry order. */
+/** Every component id from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
   'action-button-row',
@@ -324,13 +324,16 @@ const galleryCategoryOrder = [
   'disclosure',
 ] as const;
 
-const showcasedCategoryGroups = galleryCategoryOrder
-  .map((category) => ({
+function categoryGroupsForIds(ids: readonly string[]) {
+  return galleryCategoryOrder.map((category) => ({
     category,
     label: primitiveCategoryLabels[category] ?? category,
-    ids: SHOWCASED_PRIMITIVE_IDS.filter((id) => primitiveCategoryById.get(id) === category),
+    ids: ids.filter((id) => primitiveCategoryById.get(id) === category),
   }))
   .filter((group) => group.ids.length > 0);
+}
+
+const PrimitiveVisibilityContext = React.createContext<ReadonlySet<string> | null>(null);
 
 const componentShelfAnchorByCategory: Record<string, string> = {
   actions: 'component-shelf-actions',
@@ -348,37 +351,8 @@ const componentShelfAnchorByCategory: Record<string, string> = {
   typography: 'component-shelf-typography',
 };
 
-const patternOwnerAnchorByPrimitive: Record<string, string> = {
-  'attention-ticket-card': 'pattern-family-signals',
-  'battle-combatant-summary-row': 'pattern-family-battle',
-  'combatant-type-dot': 'pattern-family-battle',
-  'command-category-tag': 'pattern-family-battle',
-  'condition-chip-strip': 'pattern-family-battle',
-  'death-save-dot': 'pattern-family-battle',
-  'hp-bar-track': 'pattern-family-battle',
-  'hud-quick-command-footer': 'pattern-family-custom-panel',
-  'inline-edit-list-row': 'pattern-family-recap',
-  'lore-search-result-row': 'pattern-family-vault-lore',
-  'metric-tile': 'pattern-family-signals',
-  'mode-only-toggle': 'pattern-family-settings',
-  'panel-block-shell': 'pattern-family-custom-panel',
-  'party-combatant-accordion': 'pattern-family-party',
-  'period-chip-row': 'pattern-family-transcript',
-  'provider-status-badge': 'pattern-family-provider-issues',
-  'recap-section-shell': 'pattern-family-recap',
-  'repeat-list-field-column': 'pattern-family-recap',
-  'settings-module-shell': 'pattern-family-settings',
-  'signal-filter-chip-group': 'pattern-family-signals',
-  'signal-group-collapsible': 'pattern-family-signals',
-  'status-icon-row': 'pattern-family-signals',
-  'transcript-list-item-frame': 'pattern-family-transcript',
-  'vault-sheet-match-row': 'pattern-family-vault-lore',
-  HudIssueCallout: 'pattern-family-provider-issues',
-  HudIssueToast: 'pattern-family-provider-issues',
-};
-
-function ownerAnchorForPrimitive(id: string, category: string): string {
-  return patternOwnerAnchorByPrimitive[id] ?? componentShelfAnchorByCategory[category] ?? `${id}-example`;
+function ownerAnchorForComponent(id: string): string {
+  return id;
 }
 
 function PartyCombatantAccordionDemo() {
@@ -593,7 +567,15 @@ function HudToggleSwitchDemo() {
   );
 }
 
-export function DesignSystemUiGallery() {
+type DesignSystemUiGalleryProps = {
+  ids?: readonly string[];
+  showCategoryLinks?: boolean;
+};
+
+export function DesignSystemUiGallery({
+  ids = SHOWCASED_PRIMITIVE_IDS,
+  showCategoryLinks = true,
+}: DesignSystemUiGalleryProps) {
   const [switchOn, setSwitchOn] = React.useState(true);
   const [toggleOn, setToggleOn] = React.useState(true);
   const [radioValue, setRadioValue] = React.useState('manual');
@@ -605,43 +587,48 @@ export function DesignSystemUiGallery() {
   const form = useForm<{ title: string }>({
     defaultValues: { title: 'Brindlewick arc' },
   });
+  const visibleIds = React.useMemo(() => new Set(ids), [ids]);
+  const showcasedCategoryGroups = React.useMemo(() => categoryGroupsForIds(ids), [ids]);
 
   return (
-    <div style={galleryPageStyle}>
-      <div style={categoryShelfStyle} aria-label="Primitive categories">
-        {showcasedCategoryGroups.map((group) => (
-          <a
-            key={group.category}
-            href={`#${componentShelfAnchorByCategory[group.category] ?? `${group.ids[0]}-example`}`}
-            aria-label={`${group.label} component docs`}
-            style={categoryShelfLinkStyle}
-          >
-            <span style={categoryShelfLabelStyle}>{group.label}</span>
-            <span style={categoryShelfCountStyle}>{group.ids.length}</span>
-          </a>
-        ))}
-      </div>
-      <div style={galleryStyle}>
-      <PrimitiveCard
-        id="accordion"
-        title="Accordion"
-        summary="Expandable sections with trigger and content primitives."
-      >
-        <Accordion type="single" collapsible className="w-full max-w-md">
-          <AccordionItem value="one">
-            <AccordionTrigger className="text-sm">Session goals</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground text-xs">
-              Keep scenes tight and spotlight player choices.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="two">
-            <AccordionTrigger className="text-sm">Safety tools</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground text-xs">
-              Lines, veils, and pause available at any time.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </PrimitiveCard>
+    <PrimitiveVisibilityContext.Provider value={visibleIds}>
+      <div style={galleryPageStyle}>
+        {showCategoryLinks ? (
+          <div style={categoryShelfStyle} aria-label="Component categories">
+            {showcasedCategoryGroups.map((group) => (
+              <a
+                key={group.category}
+                href={`#${componentShelfAnchorByCategory[group.category] ?? `${group.ids[0]}-example`}`}
+                aria-label={`${group.label} component docs`}
+                style={categoryShelfLinkStyle}
+              >
+                <span style={categoryShelfLabelStyle}>{group.label}</span>
+                <span style={categoryShelfCountStyle}>{group.ids.length}</span>
+              </a>
+            ))}
+          </div>
+        ) : null}
+        <div style={galleryStyle}>
+        <PrimitiveCard
+          id="accordion"
+          title="Accordion"
+        summary="Expandable sections with trigger and content components."
+        >
+          <Accordion type="single" collapsible className="w-full max-w-md">
+            <AccordionItem value="one">
+              <AccordionTrigger className="text-sm">Session goals</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-xs">
+                Keep scenes tight and spotlight player choices.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="two">
+              <AccordionTrigger className="text-sm">Safety tools</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-xs">
+                Lines, veils, and pause available at any time.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </PrimitiveCard>
 
       <PrimitiveCard
         id="alert-dialog"
@@ -772,7 +759,7 @@ export function DesignSystemUiGallery() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Primitives</BreadcrumbPage>
+                <BreadcrumbPage>Components</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -810,12 +797,27 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="callout"
         title="Callout"
-        summary="Inline message panel — denser than Alert, generic for help notes, status banners, and panel-level hints."
+        summary="Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints."
       >
         <div className="flex w-full max-w-md flex-col gap-2">
           <Callout tone="info" title="Recap queued">
             Generation will resume the next time the workspace mode opens.
           </Callout>
+          <Callout
+            variant="text"
+            tone="info"
+            title="Client handoff"
+            action={<Button type="button" size="sm" variant="secondary">Review</Button>}
+          >
+            Keep the summary short, cite the source note, and show the next action before sharing.
+          </Callout>
+          <Callout
+            variant="text"
+            tone="warning"
+            density="compact"
+            title="Review generated notes"
+            markdown="Check the [source note](/vault/session-12) before sharing. Raw HTML is skipped by MarkDownRenderer."
+          />
           <Callout tone="warning" density="compact" title="Add an OpenAI API key">
             Open App Settings → AI providers to enable transcription.
           </Callout>
@@ -1013,7 +1015,7 @@ export function DesignSystemUiGallery() {
             <DialogHeader>
               <DialogTitle>Publish recap</DialogTitle>
               <DialogDescription>
-                This dialog demonstrates the shared modal treatment used by design-system primitives.
+                This dialog demonstrates the shared modal treatment used by design-system components.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -1371,7 +1373,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="image"
         title="Image"
-        summary="Tokenized content image primitive with required alt text, fit/radius controls, and predictable loading defaults."
+        summary="Tokenized content image component with required alt text, fit/radius controls, and predictable loading defaults."
       >
         <Stack gap="sm" className="w-full max-w-md">
           <Image
@@ -1460,7 +1462,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="markdown-renderer"
         title="MarkDownRenderer"
-        summary="Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code primitives."
+        summary="Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code components."
       >
         <div className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
           <MarkDownRenderer
@@ -1849,7 +1851,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="sheet"
         title="Sheet"
-        summary="Edge-mounted drawer built on dialog primitives."
+        summary="Edge-mounted drawer built on dialog components."
       >
         <Sheet>
           <SheetTrigger asChild>
@@ -1871,7 +1873,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="sidebar"
         title="Sidebar"
-        summary="Layout primitives for a persistent rail and main inset."
+        summary="Layout components for a persistent rail and main inset."
       >
         <SidebarProvider defaultOpen className="min-h-[132px]">
           <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border">
@@ -2044,7 +2046,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="text-content"
         title="Text Content"
-        summary="Readable generated copy primitive with bounded size, weight, tone, and measure variants."
+        summary="Readable generated copy component with bounded size, weight, tone, and measure variants."
       >
         <Stack gap="sm" className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
           <TextContent asChild size="lg" weight="semibold" tone="strong" measure="narrow">
@@ -2185,6 +2187,7 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
       </div>
     </div>
+    </PrimitiveVisibilityContext.Provider>
   );
 }
 
@@ -2201,12 +2204,17 @@ function PrimitiveCard({
 }) {
   const category = primitiveCategoryById.get(id) ?? 'uncategorized';
   const label = primitiveCategoryLabels[category] ?? category;
-  const ownerAnchor = ownerAnchorForPrimitive(id, category);
+  const ownerAnchor = ownerAnchorForComponent(id);
+  const visibleIds = React.useContext(PrimitiveVisibilityContext);
+
+  if (visibleIds && !visibleIds.has(id)) {
+    return null;
+  }
 
   return (
     <section
       id={`${id}-example`}
-      data-primitive-category={category}
+      data-component-category={category}
       style={{
         border: '1px solid var(--hud-border)',
         borderRadius: 'var(--radius-sm)',

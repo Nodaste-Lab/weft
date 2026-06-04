@@ -1,6 +1,8 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
+import { MarkDownRenderer } from "./markdown-renderer";
+import { TextContent, type TextContentMeasure } from "./text-content";
 import { cn } from "./utils";
 
 /*
@@ -21,6 +23,10 @@ const calloutVariants = cva(
   "flex w-full items-start gap-2 rounded-[var(--radius-sm)] border [font-family:var(--weft-font-sans)]",
   {
     variants: {
+      variant: {
+        inline: "",
+        text: "gap-3",
+      },
       tone: {
         info: "border-[var(--hud-border-accent)] bg-[var(--hud-info-bg-soft)] text-[var(--hud-text-1)]",
         warning:
@@ -37,6 +43,7 @@ const calloutVariants = cva(
       },
     },
     defaultVariants: {
+      variant: "inline",
       tone: "info",
       density: "default",
     },
@@ -62,19 +69,38 @@ interface CalloutProps
   icon?: React.ReactNode;
   title?: React.ReactNode;
   action?: React.ReactNode;
+  markdown?: string;
+  contentMeasure?: TextContentMeasure;
 }
 
 const Callout = React.forwardRef<HTMLDivElement, CalloutProps>(
-  ({ className, tone, density, icon, title, action, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "inline",
+      tone,
+      density,
+      icon,
+      title,
+      action,
+      markdown,
+      contentMeasure = "wide",
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const role = tone === "danger" || tone === "warning" ? "alert" : "status";
+    const hasBody = Boolean(children || markdown);
     return (
       <div
         ref={ref}
         data-slot="callout"
+        data-variant={variant}
         data-tone={tone ?? "info"}
         role={role}
         aria-live={role === "alert" ? "assertive" : "polite"}
-        className={cn(calloutVariants({ tone, density }), className)}
+        className={cn(calloutVariants({ variant, tone, density }), className)}
         {...props}
       >
         {icon ? (
@@ -82,17 +108,37 @@ const Callout = React.forwardRef<HTMLDivElement, CalloutProps>(
             {icon}
           </span>
         ) : null}
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className={cn("flex min-w-0 flex-1 flex-col", variant === "text" ? "gap-2" : "gap-1")}>
           {title ? (
             <p className="m-0 font-semibold leading-tight text-[length:inherit]">{title}</p>
           ) : null}
-          {children ? (
+          {variant === "text" && hasBody ? (
+            children ? (
+              <TextContent
+                asChild
+                data-slot="callout-text-content"
+                measure={contentMeasure}
+                size={density === "compact" ? "sm" : "default"}
+              >
+                <div>{children}</div>
+              </TextContent>
+            ) : (
+              <MarkDownRenderer
+                markdown={markdown ?? ""}
+                className="space-y-2 text-[length:inherit]"
+              />
+            )
+          ) : children ? (
             <div className="m-0 leading-snug text-[length:inherit] text-[var(--hud-text-2)]">
               {children}
             </div>
           ) : null}
         </div>
-        {action ? <div className="ml-1 shrink-0">{action}</div> : null}
+        {action ? (
+          <div data-slot="callout-action" className="ml-1 shrink-0">
+            {action}
+          </div>
+        ) : null}
       </div>
     );
   },
