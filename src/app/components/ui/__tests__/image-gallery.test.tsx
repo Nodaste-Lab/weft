@@ -124,6 +124,24 @@ describe('ImageGallery', () => {
     expect(container.querySelector('[data-slot="image-gallery-autoplay"]')).toBeNull();
   });
 
+  it('clamps carousel position when items shrink', () => {
+    const { rerender } = render(
+      <ImageGallery aria-label="Dynamic carousel gallery" items={galleryItems} layout="carousel" />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next image' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next image' }));
+    expect(screen.getByText('3 of 3')).toBeInTheDocument();
+
+    rerender(
+      <ImageGallery aria-label="Dynamic carousel gallery" items={galleryItems.slice(0, 2)} layout="carousel" />,
+    );
+
+    expect(screen.getByText('2 of 2')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Previous image' }));
+    expect(screen.getByText('1 of 2')).toBeInTheDocument();
+  });
+
   it('renders an empty labeled gallery without implicit placeholder text', () => {
     const { container } = render(
       <ImageGallery aria-label="Empty gallery" items={[]} />,
@@ -134,12 +152,12 @@ describe('ImageGallery', () => {
     expect(screen.queryByText(/empty/i)).not.toBeInTheDocument();
   });
 
-  it('renders no implicit interactive, fallback, lightbox, or carousel controls for static layouts', () => {
+  it('renders no implicit interactive, empty-state, lightbox, or carousel controls for static layouts', () => {
     const { container } = render(
       <ImageGallery aria-label="Static gallery" items={galleryItems} layout="simple-grid" />,
     );
 
-    expect(container.querySelector('[data-slot="image-gallery-fallback"]')).toBeNull();
+    expect(container.querySelector('[data-slot="image-gallery-empty-state"]')).toBeNull();
     expect(container.querySelector('[data-slot="image-gallery-lightbox"]')).toBeNull();
     expect(container.querySelector('[data-slot="image-gallery-carousel"]')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();

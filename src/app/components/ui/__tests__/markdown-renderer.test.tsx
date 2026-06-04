@@ -58,12 +58,44 @@ describe('MarkDownRenderer', () => {
     expect(within(codeBlock as HTMLElement).getByText(/const answer = 42;/)).toBeInTheDocument();
   });
 
+  it('preserves language-less fenced code formatting', () => {
+    const { container } = render(
+      <MarkDownRenderer markdown={'```\nline one\n  indented line\n```'} />,
+    );
+
+    const codeBlock = container.querySelector('[data-slot="code-block"]');
+    expect(codeBlock).not.toBeNull();
+    expect(codeBlock).not.toHaveAttribute('data-language');
+    expect((codeBlock as HTMLElement).querySelector('[data-slot="code-block-code"]')?.textContent).toBe('line one\n  indented line');
+    expect(container.querySelector('[data-slot="markdown-renderer-inline-code"]')).toBeNull();
+  });
+
+  it('preserves angle-bracket prose while skipping raw HTML content', () => {
+    render(
+      <MarkDownRenderer markdown="The type is Map<String, Int> and the placeholder is <your-api-key>." />,
+    );
+
+    expect(screen.getByText(/The type is Map/)).toHaveTextContent('The type is Map<String, Int> and the placeholder is <your-api-key>.');
+  });
+
+  it('preserves paired XML-like prose while removing known raw HTML pairs', () => {
+    render(
+      <MarkDownRenderer markdown="Use <foo>value</foo> as prose before <script>alert(1)</script>." />,
+    );
+
+    expect(screen.getByText(/Use/)).toHaveTextContent('Use <foo>value</foo> as prose before .');
+    expect(screen.queryByText('alert(1)')).not.toBeInTheDocument();
+  });
+
   it('blocks images and skips raw HTML content', () => {
     const { container } = render(
       <MarkDownRenderer
         markdown={[
           '![Map preview](https://example.com/map.png)',
           '<button onclick="alert(1)">unsafe</button>',
+          '<script>',
+          'alert(1)',
+          '</script>',
           '<iframe srcdoc="<script>alert(1)</script>"></iframe>',
         ].join('\n')}
       />,
@@ -71,6 +103,7 @@ describe('MarkDownRenderer', () => {
 
     expect(screen.getByText('[image: Map preview]')).toHaveAttribute('data-blocked-image', 'true');
     expect(screen.queryByText('unsafe')).not.toBeInTheDocument();
+    expect(screen.queryByText('alert(1)')).not.toBeInTheDocument();
     expect(container.querySelector('iframe')).toBeNull();
     expect(container.querySelector('button')).toBeNull();
   });

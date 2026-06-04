@@ -45,11 +45,15 @@ describe('FollowUp generated-response components', () => {
     const onSelect = vi.fn();
     const { rerender } = render(
       <div role="list">
-        <FollowUpItem id="act" label="Use this prompt" detail="Runs when selected." onSelect={onSelect} />
+        <FollowUpItem id="act" label="Use this prompt" detail="Runs when selected." selected onSelect={onSelect} />
       </div>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Use this prompt' }));
+    const action = screen.getByRole('button', { name: 'Use this prompt' });
+    expect(action).toHaveClass('min-h-[var(--weft-touch-target)]');
+    expect(action).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(action);
     expect(onSelect).toHaveBeenCalledWith('act');
 
     rerender(

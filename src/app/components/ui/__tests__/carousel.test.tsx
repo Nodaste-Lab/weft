@@ -8,7 +8,7 @@ const carouselItems: CarouselItemData[] = [
     id: 'brief',
     label: 'Briefing',
     description: 'Review the source material.',
-    content: <p>Choose the transcript and confirm citations.</p>,
+    content: <p>Choose the transcript and verify citations.</p>,
   },
   {
     id: 'draft',
@@ -45,8 +45,27 @@ describe('Carousel', () => {
 
     expect(screen.getByText('Briefing')).toHaveAttribute('data-slot', 'carousel-slide-label');
     expect(screen.getByText('Review the source material.')).toHaveAttribute('data-slot', 'carousel-slide-description');
-    expect(screen.getByText('Choose the transcript and confirm citations.')).toBeInTheDocument();
+    expect(screen.getByText('Choose the transcript and verify citations.')).toBeInTheDocument();
     expect(screen.getByText('1 of 3')).toHaveAttribute('data-slot', 'carousel-position');
+  });
+
+  it('uses explicit accessible slide labels for JSX labels', () => {
+    render(
+      <Carousel
+        aria-label="JSX workflow"
+        items={[
+          {
+            id: 'jsx-label',
+            label: <span>Visual label</span>,
+            ariaLabel: 'Accessible visual label',
+            content: <p>Slide body.</p>,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole('group', { name: 'Slide 1 of 1: Accessible visual label' })).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: /\[object Object\]/ })).toBeNull();
   });
 
   it('moves with previous and next controls while disabling boundaries', () => {

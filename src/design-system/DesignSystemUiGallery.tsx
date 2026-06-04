@@ -905,7 +905,7 @@ export function DesignSystemUiGallery({
               {
                 id: 'sources',
                 label: 'Sources',
-                description: 'Confirm the material that grounds the handoff.',
+                description: 'Review the material that grounds the handoff.',
                 content: (
                   <TextContent size="sm" measure="wide">
                     Use Carousel for short ordered content, not for image-only galleries or autoplaying promotion.

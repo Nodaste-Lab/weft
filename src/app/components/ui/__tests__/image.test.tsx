@@ -74,13 +74,13 @@ describe('Image', () => {
     expect(image).toHaveAttribute('draggable', 'false');
   });
 
-  it('renders no implicit caption, fallback, or interactive control', () => {
+  it('renders no implicit caption, empty-state, or interactive control', () => {
     const { container } = render(
       <Image src="/images/plain.png" alt="Plain content image" />,
     );
 
     expect(container.querySelector('figcaption')).toBeNull();
-    expect(container.querySelector('[data-slot="image-fallback"]')).toBeNull();
+    expect(container.querySelector('[data-slot="image-empty-state"]')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByRole('link')).toBeNull();
   });

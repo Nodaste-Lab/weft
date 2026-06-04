@@ -45,8 +45,8 @@ const captionToneClasses: Record<ImageBlockCaptionTone, string> = {
 /*
  * ImageBlock — semantic single-image media block.
  *
- * Galleries, upload handling, fallback/error UI, lightboxes, and interactive
- * wrappers belong to composed surfaces. This primitive owns figure/caption shape.
+ * Galleries, upload handling, error UI, lightboxes, and interactive wrappers
+ * belong to composed surfaces. This primitive owns figure/caption shape.
  */
 function ImageBlock({
   className,

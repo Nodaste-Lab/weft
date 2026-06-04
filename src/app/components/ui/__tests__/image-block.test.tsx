@@ -73,7 +73,7 @@ describe('ImageBlock', () => {
     expect(caption).toHaveAttribute('data-tone', 'muted');
   });
 
-  it('renders no implicit fallback, upload control, link, or gallery behavior', () => {
+  it('renders no implicit empty-state, upload control, link, or gallery behavior', () => {
     const { container } = render(
       <ImageBlock
         src="/images/plain.png"
@@ -82,7 +82,7 @@ describe('ImageBlock', () => {
       />,
     );
 
-    expect(container.querySelector('[data-slot="image-block-fallback"]')).toBeNull();
+    expect(container.querySelector('[data-slot="image-block-empty-state"]')).toBeNull();
     expect(container.querySelector('[data-slot="image-gallery"]')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByRole('link')).toBeNull();

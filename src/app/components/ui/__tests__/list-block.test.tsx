@@ -45,11 +45,15 @@ describe('List generated-response components', () => {
     const onSelect = vi.fn();
     const { rerender } = render(
       <ul aria-label="Action item">
-        <ListItem id="brief" label="Create brief" detail="Draft a concise summary." onSelect={onSelect} />
+        <ListItem id="brief" label="Create brief" detail="Draft a concise summary." selected onSelect={onSelect} />
       </ul>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Create brief' }));
+    const action = screen.getByRole('button', { name: 'Create brief' });
+    expect(action).toHaveClass('min-h-[var(--weft-touch-target)]');
+    expect(action).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(action);
     expect(onSelect).toHaveBeenCalledWith('brief');
 
     rerender(

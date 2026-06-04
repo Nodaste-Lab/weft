@@ -44,21 +44,61 @@ function languageFromClassName(className: string | undefined): string | undefine
   return className?.split(/\s+/).find((name) => name.startsWith("language-"))?.replace(/^language-/, "");
 }
 
-function stripRawHtmlLines(markdown: string): string {
+const RAW_HTML_TAGS = [
+  "a",
+  "button",
+  "details",
+  "div",
+  "form",
+  "iframe",
+  "img",
+  "input",
+  "object",
+  "script",
+  "span",
+  "style",
+  "summary",
+];
+const RAW_HTML_PAIR_PATTERN = new RegExp(
+  `<(${RAW_HTML_TAGS.join("|")})(?:\\s[^>]*)?>[\\s\\S]*?<\\/\\1>`,
+  "gi",
+);
+const RAW_HTML_TAG_PATTERN = new RegExp(`</?(?:${RAW_HTML_TAGS.join("|")})(?:\\s[^>]*)?>`, "gi");
+
+function sanitizeRawHtml(markdown: string): string {
+  const sanitizeText = (text: string) => text
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<!doctype[^>]*>/gi, "")
+    .replace(RAW_HTML_PAIR_PATTERN, "")
+    .replace(RAW_HTML_TAG_PATTERN, "")
+    .replace(/<([A-Za-z][A-Za-z0-9-]*)>/g, "&lt;$1&gt;")
+    .replace(/<\/([A-Za-z][A-Za-z0-9-]*)>/g, "&lt;/$1&gt;");
+
   let inFence = false;
-  return markdown
-    .split("\n")
-    .filter((line) => {
-      if (/^\s*(```|~~~)/.test(line)) {
-        inFence = !inFence;
-        return true;
+  let pending = "";
+  let output = "";
+
+  for (const line of markdown.split("\n")) {
+    if (/^\s*(```|~~~)/.test(line)) {
+      if (!inFence) {
+        output += sanitizeText(pending);
+        pending = "";
       }
-      if (inFence) {
-        return true;
-      }
-      return !/(<\/?[A-Za-z][^>]*>|<!--|<!doctype)/i.test(line);
-    })
-    .join("\n");
+      output += `${line}\n`;
+      inFence = !inFence;
+    } else if (inFence) {
+      output += `${line}\n`;
+    } else {
+      pending += `${line}\n`;
+    }
+  }
+
+  if (inFence) {
+    return output.replace(/\n$/, "");
+  }
+
+  output += sanitizeText(pending);
+  return output.replace(/\n$/, "");
 }
 
 function SafeLink({ href, children, className, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
@@ -90,7 +130,7 @@ function SafeLink({ href, children, className, ...props }: AnchorHTMLAttributes<
  * default. Keep richer parsing/sanitizing policy outside this primitive.
  */
 function MarkDownRenderer({ className, markdown, ...props }: MarkDownRendererProps) {
-  const safeMarkdown = stripRawHtmlLines(markdown);
+  const safeMarkdown = sanitizeRawHtml(markdown);
 
   return (
     <div
@@ -145,10 +185,12 @@ function MarkDownRenderer({ className, markdown, ...props }: MarkDownRendererPro
           ),
           code: ({ children, className }) => {
             const language = languageFromClassName(className);
-            if (language) {
+            const code = extractText(children);
+            const isBlockCode = Boolean(language) || code.includes("\n");
+            if (isBlockCode) {
               return (
                 <CodeBlock
-                  code={extractText(children).replace(/\n$/, "")}
+                  code={code.replace(/\n$/, "")}
                   language={language}
                   data-markdown-code-block="true"
                 />

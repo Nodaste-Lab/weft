@@ -135,6 +135,10 @@ function ImageGallery({
   const isCarousel = layout === "carousel";
   const isMasonry = layout === "masonry";
 
+  React.useEffect(() => {
+    setActiveIndex((current) => (items.length > 0 ? Math.min(current, items.length - 1) : 0));
+  }, [items.length]);
+
   return (
     <section
       role="region"

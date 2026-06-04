@@ -50,8 +50,9 @@ const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             variant="ghost"
             size="sm"
             data-slot="list-item-action"
+            aria-pressed={selected}
             disabled={disabled}
-            className="h-auto min-h-0 w-full justify-start p-0 text-left text-[var(--hud-text-1)] hover:bg-transparent"
+            className="h-auto min-h-[var(--weft-touch-target)] w-full justify-start px-2 py-1 text-left text-[var(--hud-text-1)] hover:bg-transparent"
             onClick={() => onSelect?.(id)}
           >
             <span data-slot="list-item-label" className="min-w-0 text-sm font-semibold leading-tight">

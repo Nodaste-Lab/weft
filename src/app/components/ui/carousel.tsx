@@ -9,6 +9,7 @@ export type CarouselItemData = {
   id: string;
   content: React.ReactNode;
   label?: React.ReactNode;
+  ariaLabel?: string;
   description?: React.ReactNode;
 };
 
@@ -32,13 +33,21 @@ function clampIndex(index: number, itemCount: number) {
   return Math.min(Math.max(index, 0), itemCount - 1);
 }
 
+function labelText(label: React.ReactNode): string | undefined {
+  if (typeof label === "string" || typeof label === "number") {
+    return String(label);
+  }
+  return undefined;
+}
+
 function slideLabel(item: CarouselItemData | undefined, activeIndex: number, itemCount: number) {
   const position = `Slide ${itemCount ? activeIndex + 1 : 0} of ${itemCount}`;
-  if (!item?.label) {
+  const accessibleLabel = item?.ariaLabel ?? labelText(item?.label);
+  if (!accessibleLabel) {
     return position;
   }
 
-  return `${position}: ${String(item.label)}`;
+  return `${position}: ${accessibleLabel}`;
 }
 
 const Carousel = React.forwardRef<HTMLElement, CarouselProps>(

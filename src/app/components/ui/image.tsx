@@ -39,7 +39,7 @@ const aspectRatioClasses: Record<ImageAspectRatio, string | undefined> = {
 /*
  * Image — display-only content image primitive.
  *
- * Captions, fallbacks, uploads, galleries, and interactive media behavior belong
+ * Captions, empty states, uploads, galleries, and interactive media behavior belong
  * to composed primitives. This component only owns the tokenized image surface.
  */
 function Image({
