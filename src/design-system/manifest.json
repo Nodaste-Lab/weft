@@ -789,6 +789,13 @@
       "showcase": true
     },
     {
+      "id": "steps-item",
+      "path": "src/app/components/ui/steps-item.tsx",
+      "category": "data-display",
+      "summary": "Single display-only step row with marker, status, label, description, metadata, and connector slots.",
+      "showcase": true
+    },
+    {
       "id": "steps",
       "path": "src/app/components/ui/steps.tsx",
       "category": "data-display",

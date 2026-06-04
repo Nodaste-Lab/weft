@@ -196,6 +196,7 @@ import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
 import { Steps } from '../app/components/ui/steps';
+import { StepsItem } from '../app/components/ui/steps-item';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
 import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
@@ -278,6 +279,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'stack',
   'stat-row',
   'status-icon-row',
+  'steps-item',
   'steps',
   'switch',
   'table',
@@ -2079,10 +2081,47 @@ export function DesignSystemUiGallery({
             ]}
           />
           <TextContent size="sm" tone="muted" measure="wide">
-            Steps owns the ordered process container. NOD-848 owns whether a separately exported
-            StepsItem component is needed.
+            Steps owns the ordered process container and composes StepsItem for each row.
           </TextContent>
         </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="steps-item"
+        title="StepsItem"
+        summary="Single display-only step row with marker, status, metadata, and connector slots."
+      >
+        <ol
+          aria-label="StepsItem examples"
+          className="m-0 flex w-full max-w-md list-none flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3 [font-family:var(--weft-font-sans)]"
+        >
+          <StepsItem
+            id="done"
+            index={0}
+            label="Choose source"
+            description="Pick the vault note or transcript to process."
+            status="complete"
+            meta="Done"
+            showConnector
+          />
+          <StepsItem
+            id="now"
+            index={1}
+            label="Review draft"
+            description="Check citations and next actions before sharing."
+            status="current"
+            meta="Now"
+            showConnector
+          />
+          <StepsItem
+            id="blocked"
+            index={2}
+            label="Sync to vault"
+            description="Blocked until the vault reconnects."
+            status="error"
+            meta="Needs attention"
+          />
+        </ol>
       </PrimitiveCard>
 
       <PrimitiveCard
