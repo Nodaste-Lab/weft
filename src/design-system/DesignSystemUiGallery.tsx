@@ -194,6 +194,7 @@ import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
+import { Steps } from '../app/components/ui/steps';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
 import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
@@ -275,6 +276,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'stack',
   'stat-row',
   'status-icon-row',
+  'steps',
   'switch',
   'table',
   'tabs',
@@ -1986,6 +1988,50 @@ export function DesignSystemUiGallery({
             detail="ccore Clerk sync is off for this build."
           />
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="steps"
+        title="Steps"
+        summary="Ordered process and progress sequence with complete/current/pending/error states."
+      >
+        <Stack gap="sm" className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <Steps
+            aria-label="Briefing progress"
+            items={[
+              {
+                id: 'source',
+                label: 'Choose source',
+                description: 'Pick the vault note or transcript to process.',
+                status: 'complete',
+                meta: 'Done',
+              },
+              {
+                id: 'review',
+                label: 'Review draft',
+                description: 'Check citations and next steps.',
+                status: 'current',
+                meta: 'Now',
+              },
+              {
+                id: 'share',
+                label: 'Share summary',
+                description: 'Send the final handoff.',
+                status: 'pending',
+              },
+              {
+                id: 'sync',
+                label: 'Sync to vault',
+                description: 'Blocked until the vault reconnects.',
+                status: 'error',
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Steps owns the ordered process container. NOD-848 owns whether a separately exported
+            StepsItem component is needed.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard

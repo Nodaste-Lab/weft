@@ -782,6 +782,13 @@
       "showcase": true
     },
     {
+      "id": "steps",
+      "path": "src/app/components/ui/steps.tsx",
+      "category": "data-display",
+      "summary": "Ordered process and progress sequence with complete/current/pending/error step states.",
+      "showcase": true
+    },
+    {
       "id": "switch",
       "path": "src/app/components/ui/switch.tsx",
       "category": "toggles",
