@@ -5,8 +5,8 @@ import { cn } from "./utils";
 /*
  * StatRow — label-value pair for compact readouts.
  *
- * Used in PartyStats (HP / AC / temp HP), SessionContext (participant stats),
- * BattleTracker (threat levels), and recap detail sections. Consolidates the
+ * Used in SessionContext participant stats, source status summaries, and recap
+ * detail sections. Consolidates the
  * "muted label left, medium-weight value right" pattern.
  *
  * The `value` slot accepts strings, numbers, or arbitrary nodes (e.g. a Badge

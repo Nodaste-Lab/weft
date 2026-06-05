@@ -2332,7 +2332,7 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="vault-sheet-match-row"
         title="Vault Sheet Match Row"
-        summary="Sheet match row used by the BattleTracker vault search results (staging + in-combat). Name + confidence pill + HP/AC summary + file path + Add button."
+        summary="Vault search result row with name, confidence pill, structured metadata, file path, and Add button."
       >
         <div className="flex w-full max-w-lg flex-col">
           <VaultSheetMatchRow
@@ -2352,7 +2352,7 @@ export function DesignSystemUiGallery({
               parsedData: { hp: 65, ac: 15 },
             }}
             onAdd={() => undefined}
-            addLabel="Add to Combat"
+            addLabel="Add to workspace"
           />
         </div>
       </PrimitiveCard>
