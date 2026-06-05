@@ -89,20 +89,6 @@
       "showcase": true
     },
     {
-      "id": "battle-combatant-summary-row.figma",
-      "path": "src/app/components/ui/battle-combatant-summary-row.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for BattleCombatantSummaryRow.",
-      "showcase": false
-    },
-    {
-      "id": "battle-combatant-summary-row",
-      "path": "src/app/components/ui/battle-combatant-summary-row.tsx",
-      "category": "data-display",
-      "summary": "Initiative badge, name + combatant-type dot, AC readout, initiative reorder controls, and remove — row 1 of Battle Tracker combatant cards.",
-      "showcase": true
-    },
-    {
       "id": "breadcrumb",
       "path": "src/app/components/ui/breadcrumb.tsx",
       "category": "navigation",
@@ -173,20 +159,6 @@
       "showcase": true
     },
     {
-      "id": "combatant-type-dot.figma",
-      "path": "src/app/components/ui/combatant-type-dot.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for CombatantTypeDot.",
-      "showcase": false
-    },
-    {
-      "id": "combatant-type-dot",
-      "path": "src/app/components/ui/combatant-type-dot.tsx",
-      "category": "data-display",
-      "summary": "Round dot that color-codes a combatant's type (enemy/ally/player). Default 7px to match BattleTracker chrome; pulsing wrapper variant for TPK warning banner.",
-      "showcase": true
-    },
-    {
       "id": "command-category-tag.figma",
       "path": "src/app/components/ui/command-category-tag.figma.tsx",
       "category": "code-connect",
@@ -219,20 +191,6 @@
       "path": "src/app/components/ui/context-menu.tsx",
       "category": "menus",
       "summary": "Right-click or long-press contextual menu components.",
-      "showcase": true
-    },
-    {
-      "id": "death-save-dot.figma",
-      "path": "src/app/components/ui/death-save-dot.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for DeathSaveDot.",
-      "showcase": false
-    },
-    {
-      "id": "death-save-dot",
-      "path": "src/app/components/ui/death-save-dot.tsx",
-      "category": "data-display",
-      "summary": "8×8 success/fail dot used inside the death-save row for downed PCs in BattleTracker. Color follows kind + filled state.",
       "showcase": true
     },
     {
@@ -303,20 +261,6 @@
       "path": "src/app/components/ui/hover-card.tsx",
       "category": "overlay",
       "summary": "Preview card that opens on hover or focus.",
-      "showcase": true
-    },
-    {
-      "id": "hp-bar-track.figma",
-      "path": "src/app/components/ui/hp-bar-track.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for HpBarTrack.",
-      "showcase": false
-    },
-    {
-      "id": "hp-bar-track",
-      "path": "src/app/components/ui/hp-bar-track.tsx",
-      "category": "data-display",
-      "summary": "HP bar track + temp-HP sliver + numeric readout for combatant rows. Auto-tones to positive/warning/danger by hp/maxHp ratio.",
       "showcase": true
     },
     {
@@ -562,20 +506,6 @@
       "path": "src/app/components/ui/panel-header.tsx",
       "category": "layout",
       "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button.",
-      "showcase": true
-    },
-    {
-      "id": "party-combatant-accordion.figma",
-      "path": "src/app/components/ui/party-combatant-accordion.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for PartyCombatantAccordion.",
-      "showcase": false
-    },
-    {
-      "id": "party-combatant-accordion",
-      "path": "src/app/components/ui/party-combatant-accordion.tsx",
-      "category": "disclosure",
-      "summary": "Party roster row shell with tappable header and expandable bordered body; optional non-interactive header.",
       "showcase": true
     },
     {
@@ -925,7 +855,7 @@
       "id": "vault-sheet-match-row",
       "path": "src/app/components/ui/vault-sheet-match-row.tsx",
       "category": "data-display",
-      "summary": "Sheet match row used by the BattleTracker vault search results (staging + in-combat). Name + confidence pill + HP/AC summary + file path + Add button.",
+      "summary": "Vault search result row with name, confidence pill, structured metadata, file path, and Add button.",
       "showcase": true
     }
   ],

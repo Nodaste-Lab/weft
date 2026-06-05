@@ -11,13 +11,11 @@ import { CustomPanelsSection } from '../app/components/panels/CustomPanelsSectio
 import { ModeManagerSection } from '../app/components/panels/ModeManagerSection';
 import { MyAccountSection } from '../app/components/panels/MyAccountSection';
 import { NoteCard } from '../app/components/panels/NoteCard';
-import { SheetResolutionCard } from '../app/components/panels/SheetResolutionCard';
 import { TranscriptionPanel } from '../app/components/panels/TranscriptionPanel';
 import { CustomPanelRuntime } from '../app/panel-builder/CustomPanelRuntime';
 import { createDefaultCustomPanelDefinition } from '../app/panel-builder/types';
 import { buildDefaultPanels } from '../app/mode/panelRegistry';
 import type { Mode } from '../app/mode/types';
-import { PlayerSheetService } from '../app/services/playerSheetService';
 
 const AUDIT_DOC_PATH = 'docs/DESIGN_SYSTEM_UNDOCUMENTED_PATTERNS_AUDIT.md';
 
@@ -28,18 +26,16 @@ function makePreviewMode(): Mode {
   return {
     id: PREVIEW_MODE_ID,
     displayName: 'Design system preview',
-    icon: '🎲',
-    template: 'ttrpg',
-    panels: buildDefaultPanels('ttrpg'),
+    icon: 'Briefcase',
+    template: 'productivity',
+    panels: buildDefaultPanels('productivity'),
     vaultSources: [],
-    recapPromptVariant: 'ttrpg',
+    recapPromptVariant: 'productivity',
     isPreset: false,
     createdAt: now,
     updatedAt: now,
   };
 }
-
-const sheetServicePreview = new PlayerSheetService();
 
 function hudGlassShellStyle(maxHeight: number): CSSProperties {
   return {
@@ -165,18 +161,6 @@ function UndocumentedPatternsLivePreviewInner() {
         <NoteCardLiveDemo />
       </div>
 
-      <PatternSubheading>Sheet resolution / linking card</PatternSubheading>
-      <div data-palette="hud-glass" style={{ ...hudGlassShellStyle(360), padding: 12 }}>
-        <SheetResolutionCard
-          participant={{ id: 'ds-participant', name: 'Morgan', role: 'Player' }}
-          sourcePaths={[]}
-          existingParty={[]}
-          sheetService={sheetServicePreview}
-          vaultConnected={false}
-          onLinkCharacter={() => undefined}
-          onUnlink={() => undefined}
-        />
-      </div>
     </div>
   );
 }

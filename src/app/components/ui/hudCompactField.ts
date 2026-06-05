@@ -3,8 +3,8 @@ import { cn } from "./utils";
 /*
  * HUD_COMPACT_INPUT_CLASS — shared dense field styling for HUD panels.
  *
- * Use for compact in-panel inputs (Battle Tracker initiative, Party Stats HP
- * delta, Lore search, Sheet resolution, etc.) where the workspace-grade
+ * Use for compact in-panel inputs (source filters, inline edits, Lore search,
+ * sheet resolution, etc.) where the workspace-grade
  * `HUD_FIELD_CLASS` from ModeWorkspaceCreatePage is too tall. Tokens come
  * from the HUD layer (--hud-input-bg, --hud-border, --radius-xs, --text-xs)
  * with the Weft sans family and HUD accent focus ring.

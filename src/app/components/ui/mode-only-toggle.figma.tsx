@@ -10,7 +10,7 @@ figma.connect(
       active: figma.boolean('Active'),
     },
     example: ({ active }) => (
-      <ModeOnlyToggle active={active} label="Use only in TTRPG mode" onToggle={() => {}} />
+      <ModeOnlyToggle active={active} label="Use only in Productivity mode" onToggle={() => {}} />
     ),
   },
 );

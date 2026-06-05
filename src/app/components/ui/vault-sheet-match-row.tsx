@@ -5,10 +5,9 @@ import { Button } from "./button";
 import { cn } from "./utils";
 
 /*
- * VaultSheetMatchRow — sheet match row used by the BattleTracker vault
- * search results (both staging and in-combat phases).
+ * VaultSheetMatchRow — vault search result row for source-backed records.
  *
- * Renders the match name, confidence pill, HP/AC summary, file path,
+ * Renders the match name, confidence pill, structured metadata, file path,
  * and an "Add" button that calls back with the original `match` value.
  *
  * Confidence tone tokens:
