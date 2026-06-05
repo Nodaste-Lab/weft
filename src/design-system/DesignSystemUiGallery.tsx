@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
+import designSystemManifest from './manifest.json';
 import {
   Accordion,
   AccordionContent,
@@ -43,7 +44,9 @@ import {
   CardHeader,
   CardTitle,
 } from '../app/components/ui/card';
+import { Carousel } from '../app/components/ui/carousel';
 import { Checkbox } from '../app/components/ui/checkbox';
+import { CodeBlock } from '../app/components/ui/code-block';
 import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
 import {
   Collapsible,
@@ -80,6 +83,8 @@ import {
   FormLabel,
   FormMessage,
 } from '../app/components/ui/form';
+import { FollowUpBlock } from '../app/components/ui/follow-up-block';
+import { FollowUpItem } from '../app/components/ui/follow-up-item';
 import {
   HoverCard,
   HoverCardContent,
@@ -148,6 +153,7 @@ import {
 } from '../app/components/ui/sidebar';
 import { Skeleton } from '../app/components/ui/skeleton';
 import { Slider } from '../app/components/ui/slider';
+import { Stack } from '../app/components/ui/stack';
 import { Switch } from '../app/components/ui/switch';
 import {
   Table,
@@ -158,6 +164,7 @@ import {
   TableRow,
 } from '../app/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../app/components/ui/tabs';
+import { TextContent } from '../app/components/ui/text-content';
 import { Textarea } from '../app/components/ui/textarea';
 import { TranscriptListItemFrame } from '../app/components/ui/transcript-list-item-frame';
 import { Toggle } from '../app/components/ui/toggle';
@@ -183,13 +190,23 @@ import { SettingsModuleShell } from '../app/components/ui/settings-module-shell'
 import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-group';
 import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
 import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
+import { Image } from '../app/components/ui/image';
+import { ImageBlock } from '../app/components/ui/image-block';
+import { ImageGallery } from '../app/components/ui/image-gallery';
+import { ListBlock } from '../app/components/ui/list-block';
+import { ListItem } from '../app/components/ui/list-item';
 import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
+import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
+import { SectionBlock } from '../app/components/ui/section-block';
+import { SectionItem } from '../app/components/ui/section-item';
+import { Steps } from '../app/components/ui/steps';
+import { StepsItem } from '../app/components/ui/steps-item';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
 import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
-/** Every `uiPrimitives[].id` from `manifest.json`, in registry order. */
+/** Every component id from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
   'action-button-row',
@@ -206,7 +223,9 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'calendar',
   'callout',
   'card',
+  'carousel',
   'checkbox',
+  'code-block',
   'collapsible',
   'combatant-type-dot',
   'command-category-tag',
@@ -217,6 +236,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'dropdown-menu',
   'empty-state',
   'eyebrow-label',
+  'follow-up-block',
+  'follow-up-item',
   'form',
   'hover-card',
   'hp-bar-track',
@@ -227,10 +248,16 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'hud-toggle-switch',
   'HudIssueCallout',
   'HudIssueToast',
+  'image-block',
+  'image-gallery',
+  'image',
   'inline-edit-list-row',
   'input',
   'label',
+  'list-block',
+  'list-item',
   'lore-search-result-row',
+  'markdown-renderer',
   'menubar',
   'metric-tile',
   'mode-only-toggle',
@@ -249,6 +276,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'repeat-list-field-column',
   'resizable',
   'scroll-area',
+  'section-block',
+  'section-item',
   'select',
   'separator',
   'settings-module-shell',
@@ -259,11 +288,15 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'skeleton',
   'slider',
   'source-pill',
+  'stack',
   'stat-row',
   'status-icon-row',
+  'steps-item',
+  'steps',
   'switch',
   'table',
   'tabs',
+  'text-content',
   'textarea',
   'toggle-group',
   'toggle',
@@ -271,6 +304,96 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'transcript-list-item-frame',
   'vault-sheet-match-row',
 ] as const;
+
+const primitiveCategoryById = new Map(
+  designSystemManifest.uiPrimitives.map((primitive) => [primitive.id, primitive.category]),
+);
+
+function capitalizePrimitiveWord(word: string): string {
+  return word.length > 0 ? `${word[0].toUpperCase()}${word.slice(1)}` : word;
+}
+
+function primitiveDisplayTitle(id: string): string {
+  if (id.startsWith('Hud') || id.startsWith('HUD')) {
+    return id;
+  }
+  if (id.startsWith('hud-')) {
+    return `HUD ${id.slice(4).split('-').map(capitalizePrimitiveWord).join(' ')}`;
+  }
+  return id.split('-').map(capitalizePrimitiveWord).join(' ');
+}
+
+const ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS = [...SHOWCASED_PRIMITIVE_IDS].sort((a, b) =>
+  primitiveDisplayTitle(a).localeCompare(primitiveDisplayTitle(b), undefined, { sensitivity: 'base' }),
+);
+
+const showcasedPrimitiveDisplayOrderById = new Map(
+  ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS.map((id, index) => [id, index]),
+);
+
+const primitiveCategoryLabels: Record<string, string> = {
+  actions: 'Actions',
+  'code-connect': 'Code Connect',
+  'data-display': 'Data Display',
+  disclosure: 'Disclosure',
+  feedback: 'Feedback',
+  forms: 'Forms',
+  inputs: 'Inputs',
+  layout: 'Layout',
+  media: 'Media',
+  menus: 'Menus',
+  navigation: 'Navigation',
+  overlay: 'Overlays',
+  toggles: 'Toggles',
+  typography: 'Typography',
+};
+
+const galleryCategoryOrder = [
+  'actions',
+  'feedback',
+  'inputs',
+  'forms',
+  'layout',
+  'media',
+  'overlay',
+  'menus',
+  'navigation',
+  'typography',
+  'data-display',
+  'toggles',
+  'disclosure',
+] as const;
+
+function categoryGroupsForIds(ids: readonly string[]) {
+  return galleryCategoryOrder.map((category) => ({
+    category,
+    label: primitiveCategoryLabels[category] ?? category,
+    ids: ids.filter((id) => primitiveCategoryById.get(id) === category),
+  }))
+  .filter((group) => group.ids.length > 0);
+}
+
+const PrimitiveVisibilityContext = React.createContext<ReadonlySet<string> | null>(null);
+
+const componentShelfAnchorByCategory: Record<string, string> = {
+  actions: 'component-shelf-actions',
+  'data-display': 'component-shelf-data-display',
+  disclosure: 'component-shelf-disclosure',
+  feedback: 'component-shelf-feedback',
+  forms: 'component-shelf-inputs-forms',
+  inputs: 'component-shelf-inputs-forms',
+  layout: 'component-shelf-layout',
+  media: 'component-shelf-media',
+  menus: 'component-shelf-menus',
+  navigation: 'component-shelf-navigation',
+  overlay: 'component-shelf-overlays',
+  toggles: 'component-shelf-toggles',
+  typography: 'component-shelf-typography',
+};
+
+function ownerAnchorForComponent(id: string): string {
+  return id;
+}
 
 function PartyCombatantAccordionDemo() {
   const [open, setOpen] = React.useState(true);
@@ -484,7 +607,15 @@ function HudToggleSwitchDemo() {
   );
 }
 
-export function DesignSystemUiGallery() {
+type DesignSystemUiGalleryProps = {
+  ids?: readonly string[];
+  showCategoryLinks?: boolean;
+};
+
+export function DesignSystemUiGallery({
+  ids = ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS,
+  showCategoryLinks = true,
+}: DesignSystemUiGalleryProps) {
   const [switchOn, setSwitchOn] = React.useState(true);
   const [toggleOn, setToggleOn] = React.useState(true);
   const [radioValue, setRadioValue] = React.useState('manual');
@@ -496,29 +627,48 @@ export function DesignSystemUiGallery() {
   const form = useForm<{ title: string }>({
     defaultValues: { title: 'Brindlewick arc' },
   });
+  const visibleIds = React.useMemo(() => new Set(ids), [ids]);
+  const showcasedCategoryGroups = React.useMemo(() => categoryGroupsForIds(ids), [ids]);
 
   return (
-    <div style={galleryStyle}>
-      <PrimitiveCard
-        id="accordion"
-        title="Accordion"
-        summary="Expandable sections with trigger and content primitives."
-      >
-        <Accordion type="single" collapsible className="w-full max-w-md">
-          <AccordionItem value="one">
-            <AccordionTrigger className="text-sm">Session goals</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground text-xs">
-              Keep scenes tight and spotlight player choices.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="two">
-            <AccordionTrigger className="text-sm">Safety tools</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground text-xs">
-              Lines, veils, and pause available at any time.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </PrimitiveCard>
+    <PrimitiveVisibilityContext.Provider value={visibleIds}>
+      <div style={galleryPageStyle}>
+        {showCategoryLinks ? (
+          <div style={categoryShelfStyle} aria-label="Component categories">
+            {showcasedCategoryGroups.map((group) => (
+              <a
+                key={group.category}
+                href={`#${componentShelfAnchorByCategory[group.category] ?? `${group.ids[0]}-example`}`}
+                aria-label={`${group.label} component docs`}
+                style={categoryShelfLinkStyle}
+              >
+                <span style={categoryShelfLabelStyle}>{group.label}</span>
+                <span style={categoryShelfCountStyle}>{group.ids.length}</span>
+              </a>
+            ))}
+          </div>
+        ) : null}
+        <div style={galleryStyle}>
+        <PrimitiveCard
+          id="accordion"
+          title="Accordion"
+        summary="Expandable sections with trigger and content components."
+        >
+          <Accordion type="single" collapsible className="w-full max-w-md">
+            <AccordionItem value="one">
+              <AccordionTrigger className="text-sm">Session goals</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-xs">
+                Keep scenes tight and spotlight player choices.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="two">
+              <AccordionTrigger className="text-sm">Safety tools</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-xs">
+                Lines, veils, and pause available at any time.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </PrimitiveCard>
 
       <PrimitiveCard
         id="alert-dialog"
@@ -649,7 +799,7 @@ export function DesignSystemUiGallery() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Primitives</BreadcrumbPage>
+                <BreadcrumbPage>Components</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -687,12 +837,27 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="callout"
         title="Callout"
-        summary="Inline message panel — denser than Alert, generic for help notes, status banners, and panel-level hints."
+        summary="Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints."
       >
         <div className="flex w-full max-w-md flex-col gap-2">
           <Callout tone="info" title="Recap queued">
             Generation will resume the next time the mode opens.
           </Callout>
+          <Callout
+            variant="text"
+            tone="info"
+            title="Client handoff"
+            action={<Button type="button" size="sm" variant="secondary">Review</Button>}
+          >
+            Keep the summary short, cite the source note, and show the next action before sharing.
+          </Callout>
+          <Callout
+            variant="text"
+            tone="warning"
+            density="compact"
+            title="Review generated notes"
+            markdown="Check the [source note](/vault/session-12) before sharing. Raw HTML is skipped by MarkDownRenderer."
+          />
           <Callout tone="warning" density="compact" title="Add an OpenAI API key">
             Open App Settings → AI providers to enable transcription.
           </Callout>
@@ -729,6 +894,55 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="carousel"
+        title="Carousel"
+        summary="Generic content carousel with accessible slide semantics and bounded controls."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <Carousel
+            aria-label="Client handoff carousel"
+            items={[
+              {
+                id: 'sources',
+                label: 'Sources',
+                description: 'Review the material that grounds the handoff.',
+                content: (
+                  <TextContent size="sm" measure="wide">
+                    Use Carousel for short ordered content, not for image-only galleries or autoplaying promotion.
+                  </TextContent>
+                ),
+              },
+              {
+                id: 'review',
+                label: 'Review',
+                description: 'Keep the human check in front of generated copy.',
+                content: (
+                  <Stack direction="horizontal" gap="xs" wrap>
+                    <Badge variant="secondary">Citations</Badge>
+                    <Badge variant="outline">Risks</Badge>
+                    <Badge variant="outline">Next actions</Badge>
+                  </Stack>
+                ),
+              },
+              {
+                id: 'share',
+                label: 'Share',
+                description: 'Move only reviewed material to the client vault.',
+                content: (
+                  <Button type="button" size="sm" variant="secondary">
+                    Open handoff
+                  </Button>
+                ),
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Carousel owns generic slide navigation. Use ImageGallery layout=&quot;carousel&quot; for image collections.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="checkbox"
         title="Checkbox"
         summary="Boolean control for lists, filters, and confirmation steps."
@@ -737,6 +951,29 @@ export function DesignSystemUiGallery() {
           <Checkbox defaultChecked />
           <span>Include vault sources</span>
         </label>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="code-block"
+        title="Code Block"
+        summary="Tokenized plain-text code block for generated snippets and diagnostics."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <CodeBlock
+            label="Install command"
+            language="shell"
+            code="npm run mac:dev:web"
+            onCopy={() => undefined}
+            copyLabel="Copy install command"
+          />
+          <CodeBlock
+            label="Diagnostic output"
+            language="text"
+            wrap
+            density="compact"
+            code="CodeBlock displays already-safe plain text only. Markdown parsing, HTML rendering, and syntax highlighting belong to MarkDownRenderer."
+          />
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -867,7 +1104,7 @@ export function DesignSystemUiGallery() {
             <DialogHeader>
               <DialogTitle>Publish recap</DialogTitle>
               <DialogDescription>
-                This dialog demonstrates the shared modal treatment used by design-system primitives.
+                This dialog demonstrates the shared modal treatment used by design-system components.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -929,6 +1166,51 @@ export function DesignSystemUiGallery() {
             </Button>
           </form>
         </Form>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="follow-up-block"
+        title="FollowUpBlock"
+        summary="Generated-response suggestion container that composes FollowUpItem without adding chat state."
+      >
+        <FollowUpBlock
+          aria-label="Suggested follow-ups"
+          title="Suggested next prompts"
+          description="Generated suggestions stay reviewable and explicit."
+          className="w-full max-w-md"
+          items={[
+            {
+              id: 'brief',
+              label: 'Summarize the source note',
+              detail: 'Create a short reviewable brief.',
+            },
+            {
+              id: 'risks',
+              label: 'Show risks',
+              detail: 'List blockers before sharing.',
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="follow-up-item"
+        title="FollowUpItem"
+        summary="Generated-response follow-up suggestion item with display-only and optional action semantics."
+      >
+        <div role="list" aria-label="Follow-up item examples" className="flex w-full max-w-md flex-col gap-2">
+          <FollowUpItem
+            id="display"
+            label="Explain the next action"
+            detail="Display-only suggestion with no implicit interaction."
+          />
+          <FollowUpItem
+            id="action"
+            label="Draft a client handoff"
+            detail="Actionable only because an onSelect handler is provided."
+            onSelect={() => undefined}
+          />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1103,6 +1385,147 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="image-block"
+        title="Image Block"
+        summary="Semantic figure wrapper that composes Image with an optional visible caption."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <ImageBlock
+            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Cpath%20d='M64%20292%20L198%20158%20L294%20234%20L428%20108%20L588%20292Z'%20fill='%2389d37f'/%3E%3Ccircle%20cx='486'%20cy='96'%20r='46'%20fill='%23f3d36b'/%3E%3C/svg%3E"
+            alt="Stylized valley illustration with a green ridge and yellow sun"
+            caption="Use ImageBlock when a single image and caption should travel together as one semantic figure."
+            aspectRatio="video"
+            bordered
+            radius="lg"
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Use Image for bare content images, ImageBlock for one image with optional caption,
+            and reserve ImageGallery for collections. Captions should stay visible and concise.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="image-gallery"
+        title="Image Gallery"
+        summary="Accessible responsive media collection that composes Image and ImageBlock."
+      >
+        <Stack gap="sm" className="w-full max-w-2xl">
+          <ImageGallery
+            aria-label="Sample media references"
+            layout="simple-grid"
+            columns="3"
+            gap="sm"
+            items={[
+              {
+                id: 'ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Abstract green ridge on a dark field',
+                caption: 'Captioned media item',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%231f2937'/%3E%3Ccircle%20cx='320'%20cy='180'%20r='92'%20fill='%237cc4ff'/%3E%3C/svg%3E",
+                alt: 'Blue moon study on a dark field',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'sun',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Ccircle%20cx='210'%20cy='132'%20r='64'%20fill='%23f3d36b'/%3E%3Cpath%20d='M0%20300%20L180%20210%20L340%20280%20L520%20185%20L640%20248%20L640%20360%20L0%20360Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Yellow sun over a green valley',
+                caption: 'Second caption',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <ImageGallery
+            aria-label="Masonry media references"
+            layout="masonry"
+            columns="3"
+            gap="sm"
+            items={[
+              {
+                id: 'masonry-ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Wide green ridge study',
+                caption: 'Wide item',
+                aspectRatio: 'video',
+                bordered: true,
+                span: 'wide',
+              },
+              {
+                id: 'masonry-moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20360%20640'%3E%3Crect%20width='360'%20height='640'%20fill='%231f2937'/%3E%3Ccircle%20cx='180'%20cy='190'%20r='84'%20fill='%237cc4ff'/%3E%3Cpath%20d='M40%20540%20L180%20320%20L320%20540Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Tall blue moon study',
+                aspectRatio: 'portrait',
+                bordered: true,
+                span: 'tall',
+              },
+              {
+                id: 'masonry-sun',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23212b38'/%3E%3Ccircle%20cx='210'%20cy='132'%20r='64'%20fill='%23f3d36b'/%3E%3Cpath%20d='M0%20300%20L180%20210%20L340%20280%20L520%20185%20L640%20248%20L640%20360%20L0%20360Z'%20fill='%2389d37f'/%3E%3C/svg%3E",
+                alt: 'Yellow sun over a green valley',
+                caption: 'Default item',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <ImageGallery
+            aria-label="Carousel media references"
+            layout="carousel"
+            items={[
+              {
+                id: 'carousel-ridge',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E",
+                alt: 'Carousel ridge reference',
+                caption: 'Carousel item 1',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+              {
+                id: 'carousel-moon',
+                src: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%231f2937'/%3E%3Ccircle%20cx='320'%20cy='180'%20r='92'%20fill='%237cc4ff'/%3E%3C/svg%3E",
+                alt: 'Carousel blue moon reference',
+                aspectRatio: 'video',
+                bordered: true,
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            ImageGallery supports simple grid, masonry-style grid, and carousel layouts.
+            It preserves DOM order for static layouts, keeps carousel controls visible, and
+            stays narrow: no lightbox, autoplay, upload, reorder, or selection behavior.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="image"
+        title="Image"
+        summary="Tokenized content image component with required alt text, fit/radius controls, and predictable loading defaults."
+      >
+        <Stack gap="sm" className="w-full max-w-md">
+          <Image
+            src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20640%20360'%3E%3Crect%20width='640'%20height='360'%20fill='%23233443'/%3E%3Ccircle%20cx='180'%20cy='145'%20r='64'%20fill='%237cc4ff'/%3E%3Cpath%20d='M80%20300%20L250%20180%20L330%20240%20L450%20135%20L600%20300Z'%20fill='%23c8df72'/%3E%3C/svg%3E"
+            alt="Abstract landscape preview with a blue moon and green ridge"
+            aspectRatio="video"
+            bordered
+            radius="lg"
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Use Image for meaningful content images that need alt text. Pass `alt=""` only
+            when the caller intentionally marks the image decorative; captions and media
+            collections belong to ImageBlock and ImageGallery.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="inline-edit-list-row"
         title="Inline Edit List Row"
         summary="Editable text row with optional index badge / leading icon, click-to-edit body, and hover edit + delete affordances. Used in recap beats + mysteries."
@@ -1148,6 +1571,53 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="list-block"
+        title="ListBlock"
+        summary="Generated-response option list container that composes ListItem without replacing HUD domain rows."
+      >
+        <ListBlock
+          aria-label="Generated options"
+          title="Choose an output"
+          description="Generated choices stay explicit and reviewable."
+          className="w-full max-w-md"
+          selectionMode="single"
+          items={[
+            {
+              id: 'brief',
+              label: 'Create brief',
+              detail: 'Draft a concise summary.',
+            },
+            {
+              id: 'tasks',
+              label: 'Extract tasks',
+              detail: 'Find follow-up actions.',
+              selected: true,
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="list-item"
+        title="ListItem"
+        summary="Generated-response option item with display-only and optional action semantics."
+      >
+        <ul aria-label="List item examples" className="m-0 flex w-full max-w-md list-none flex-col gap-2 p-0">
+          <ListItem
+            id="display"
+            label="Display-only choice"
+            detail="No action handler means no implicit button."
+          />
+          <ListItem
+            id="action"
+            label="Use this generated choice"
+            detail="Actionable only when a handler is provided."
+            onSelect={() => undefined}
+          />
+        </ul>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="lore-search-result-row"
         title="Lore Search Result Row"
         summary="Vault search hit with Obsidian link, relevance strip, excerpt, and copy-path control."
@@ -1167,6 +1637,38 @@ export function DesignSystemUiGallery() {
             copiedPath={null}
             onCopyPath={() => {}}
           />
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="markdown-renderer"
+        title="MarkDownRenderer"
+        summary="Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code components."
+      >
+        <div className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <MarkDownRenderer
+            markdown={[
+              '### Morning summary',
+              '',
+              'The party found `three clues` near the east gate.',
+              '',
+              '- Safe list item',
+              '- [Safe link](https://example.com)',
+              '- [Blocked link](javascript:alert(1))',
+              '',
+              '```ts',
+              'const clues = 3;',
+              '```',
+              '',
+              '![Map preview](https://example.com/map.png)',
+              '<button onclick="alert(1)">unsafe</button>',
+            ].join('\n')}
+          />
+          <TextContent size="sm" tone="muted" measure="wide" className="mt-3">
+            Accessibility: render real headings, paragraphs, lists, links, and code blocks from trusted
+            markdown structure. Consumers own heading hierarchy; unsafe links become inert text, images
+            become alt-text placeholders, and raw HTML is skipped.
+          </TextContent>
         </div>
       </PrimitiveCard>
 
@@ -1471,6 +1973,56 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="section-block"
+        title="SectionBlock"
+        summary="Generated-response section container that composes foldable SectionItem rows."
+      >
+        <SectionBlock
+          aria-label="Generated sections"
+          title="Generated brief"
+          description="Grouped output for human review."
+          className="w-full max-w-md"
+          items={[
+            {
+              id: 'summary',
+              label: 'Summary',
+              meta: '2 notes',
+              defaultOpen: true,
+              content: <TextContent size="sm">Generated summary stays reviewable before sharing.</TextContent>,
+            },
+            {
+              id: 'risks',
+              label: 'Risks',
+              meta: '1 blocker',
+              content: <TextContent size="sm">Vault sync is stale.</TextContent>,
+            },
+          ]}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="section-item"
+        title="SectionItem"
+        summary="Generated-response foldable section item with trigger, metadata, and content slots."
+      >
+        <ul aria-label="Section item examples" className="m-0 flex w-full max-w-md list-none flex-col gap-2 p-0">
+          <SectionItem
+            id="open"
+            label="Open generated section"
+            meta="Ready"
+            defaultOpen
+            content={<TextContent size="sm">Use SectionItem for foldable generated output, not domain panel shells.</TextContent>}
+          />
+          <SectionItem
+            id="closed"
+            label="Collapsed generated section"
+            meta="Optional"
+            content={<TextContent size="sm">Closed content remains available through the trigger.</TextContent>}
+          />
+        </ul>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="select"
         title="Select"
         summary="Composed dropdown with a trigger and portal-backed content."
@@ -1530,7 +2082,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="sheet"
         title="Sheet"
-        summary="Edge-mounted drawer built on dialog primitives."
+        summary="Edge-mounted drawer built on dialog components."
       >
         <Sheet>
           <SheetTrigger asChild>
@@ -1552,7 +2104,7 @@ export function DesignSystemUiGallery() {
       <PrimitiveCard
         id="sidebar"
         title="Sidebar"
-        summary="Layout primitives for a persistent rail and main inset."
+        summary="Layout components for a persistent rail and main inset."
       >
         <SidebarProvider defaultOpen className="min-h-[132px]">
           <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border">
@@ -1617,6 +2169,30 @@ export function DesignSystemUiGallery() {
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="stack"
+        title="Stack"
+        summary="Tokenized flex stack for neutral vertical or horizontal child layout."
+      >
+        <Stack className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <Stack gap="xs">
+            <span className="text-sm font-semibold text-[var(--hud-text-1)]">Session checklist</span>
+            <span className="text-xs text-[var(--hud-text-2)]">
+              Use Stack for spacing and alignment only; keep lists, forms, and navigation semantic at the caller.
+            </span>
+          </Stack>
+          <Stack direction="horizontal" gap="sm" align="center" wrap>
+            <Badge variant="secondary">Briefing</Badge>
+            <Badge variant="outline">Transcript</Badge>
+            <Badge variant="outline">Vault</Badge>
+          </Stack>
+          <Stack direction="horizontal" gap="sm" align="center" justify="between">
+            <span className="text-xs text-[var(--hud-text-2)]">Keyboard order follows DOM order.</span>
+            <Button size="sm" variant="secondary">Review</Button>
+          </Stack>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="status-icon-row"
         title="Status Icon Row"
         summary="Leading-icon + title + detail row for status inside SettingsModuleShell bodies (device-login status, ccore runtime row, agent-plugin install status). Tone-aware title accent."
@@ -1641,6 +2217,87 @@ export function DesignSystemUiGallery() {
             detail="ccore Clerk sync is off for this build."
           />
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="steps"
+        title="Steps"
+        summary="Ordered process and progress sequence with complete/current/pending/error states."
+      >
+        <Stack gap="sm" className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <Steps
+            aria-label="Briefing progress"
+            items={[
+              {
+                id: 'source',
+                label: 'Choose source',
+                description: 'Pick the vault note or transcript to process.',
+                status: 'complete',
+                meta: 'Done',
+              },
+              {
+                id: 'review',
+                label: 'Review draft',
+                description: 'Check citations and next steps.',
+                status: 'current',
+                meta: 'Now',
+              },
+              {
+                id: 'share',
+                label: 'Share summary',
+                description: 'Send the final handoff.',
+                status: 'pending',
+              },
+              {
+                id: 'sync',
+                label: 'Sync to vault',
+                description: 'Blocked until the vault reconnects.',
+                status: 'error',
+              },
+            ]}
+          />
+          <TextContent size="sm" tone="muted" measure="wide">
+            Steps owns the ordered process container and composes StepsItem for each row.
+          </TextContent>
+        </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="steps-item"
+        title="StepsItem"
+        summary="Single display-only step row with marker, status, metadata, and connector slots."
+      >
+        <ol
+          aria-label="StepsItem examples"
+          className="m-0 flex w-full max-w-md list-none flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3 [font-family:var(--weft-font-sans)]"
+        >
+          <StepsItem
+            id="done"
+            index={0}
+            label="Choose source"
+            description="Pick the vault note or transcript to process."
+            status="complete"
+            meta="Done"
+            showConnector
+          />
+          <StepsItem
+            id="now"
+            index={1}
+            label="Review draft"
+            description="Check citations and next actions before sharing."
+            status="current"
+            meta="Now"
+            showConnector
+          />
+          <StepsItem
+            id="blocked"
+            index={2}
+            label="Sync to vault"
+            description="Blocked until the vault reconnects."
+            status="error"
+            meta="Needs attention"
+          />
+        </ol>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1696,6 +2353,27 @@ export function DesignSystemUiGallery() {
             <p style={metaTextStyle}>Session prep content lives in a sibling tab panel.</p>
           </TabsContent>
         </Tabs>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="text-content"
+        title="Text Content"
+        summary="Readable generated copy component with bounded size, weight, tone, and measure variants."
+      >
+        <Stack gap="sm" className="w-full max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
+          <TextContent asChild size="lg" weight="semibold" tone="strong" measure="narrow">
+            <h3>Generated session summary</h3>
+          </TextContent>
+          <TextContent>
+            The party followed the signal through the east gate and found three fresh cart tracks near the old watch post.
+          </TextContent>
+          <TextContent size="sm" tone="muted" measure="narrow">
+            Use TextContent for readable generated copy. Keep headings, lists, and captions semantic at the caller.
+          </TextContent>
+          <TextContent weight="medium" tone="accent" measure="none">
+            Tone is decorative unless adjacent text carries the meaning.
+          </TextContent>
+        </Stack>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1819,7 +2497,9 @@ export function DesignSystemUiGallery() {
           />
         </div>
       </PrimitiveCard>
+      </div>
     </div>
+    </PrimitiveVisibilityContext.Provider>
   );
 }
 
@@ -1834,10 +2514,21 @@ function PrimitiveCard({
   summary: string;
   children: ReactNode;
 }) {
+  const category = primitiveCategoryById.get(id) ?? 'uncategorized';
+  const label = primitiveCategoryLabels[category] ?? category;
+  const ownerAnchor = ownerAnchorForComponent(id);
+  const visibleIds = React.useContext(PrimitiveVisibilityContext);
+
+  if (visibleIds && !visibleIds.has(id)) {
+    return null;
+  }
+
   return (
     <section
       id={`${id}-example`}
+      data-component-category={category}
       style={{
+        order: showcasedPrimitiveDisplayOrderById.get(id) ?? 0,
         border: '1px solid var(--hud-border)',
         borderRadius: 'var(--radius-sm)',
         background: 'var(--hud-surface-raised)',
@@ -1849,19 +2540,80 @@ function PrimitiveCard({
       <div style={{ display: 'grid', gap: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <span style={titleStyle}>{title}</span>
-          <code style={codeStyle}>{id}</code>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={categoryBadgeStyle}>{label}</span>
+            <code style={codeStyle}>{id}</code>
+          </div>
         </div>
         <p style={summaryStyle}>{summary}</p>
+        <a
+          href={`#${ownerAnchor}`}
+          data-gallery-owner-link={id}
+          style={ownerLinkStyle}
+          aria-label={`${title} taxonomy owner docs`}
+        >
+          Owner docs
+        </a>
       </div>
       <div style={exampleSurfaceStyle}>{children}</div>
     </section>
   );
 }
 
+const galleryPageStyle: CSSProperties = {
+  display: 'grid',
+  gap: 16,
+};
+
+const categoryShelfStyle: CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 8,
+};
+
+const categoryShelfLinkStyle: CSSProperties = {
+  alignItems: 'center',
+  background: 'var(--hud-section-fill-medium)',
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-pill)',
+  color: 'var(--hud-text-2)',
+  display: 'inline-flex',
+  gap: 6,
+  padding: '4px 9px',
+  textDecoration: 'none',
+};
+
+const categoryShelfLabelStyle: CSSProperties = {
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 10,
+  fontWeight: 700,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+};
+
+const categoryShelfCountStyle: CSSProperties = {
+  color: 'var(--hud-text-3)',
+  fontFamily: 'var(--weft-font-mono)',
+  fontSize: 10,
+};
+
 const galleryStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
   gap: 14,
+};
+
+const categoryBadgeStyle: CSSProperties = {
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-pill)',
+  color: 'var(--hud-text-3)',
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 9,
+  fontWeight: 700,
+  letterSpacing: '0.08em',
+  padding: '2px 6px',
+  textTransform: 'uppercase',
+  whiteSpace: 'nowrap',
 };
 
 const exampleSurfaceStyle: CSSProperties = {
@@ -1906,6 +2658,14 @@ const summaryStyle: CSSProperties = {
   color: 'var(--hud-text-2)',
   fontSize: 12,
   lineHeight: 1.5,
+};
+
+const ownerLinkStyle: CSSProperties = {
+  color: 'var(--primary)',
+  fontFamily: 'var(--weft-font-sans)',
+  fontSize: 11,
+  fontWeight: 700,
+  textDecoration: 'none',
 };
 
 const metaTextStyle: CSSProperties = {

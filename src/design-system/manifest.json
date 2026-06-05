@@ -8,7 +8,7 @@
       "id": "accordion",
       "path": "src/app/components/ui/accordion.tsx",
       "category": "disclosure",
-      "summary": "Expandable sections with trigger and content primitives.",
+      "summary": "Expandable sections with trigger and content components.",
       "showcase": true
     },
     {
@@ -43,7 +43,7 @@
       "id": "alert-dialog",
       "path": "src/app/components/ui/alert-dialog.tsx",
       "category": "overlay",
-      "summary": "Confirmation dialog primitives for destructive or blocking actions.",
+      "summary": "Confirmation dialog components for destructive or blocking actions.",
       "showcase": true
     },
     {
@@ -78,7 +78,7 @@
       "id": "avatar",
       "path": "src/app/components/ui/avatar.tsx",
       "category": "data-display",
-      "summary": "Avatar container, image, and fallback primitives.",
+      "summary": "Avatar container, image, and fallback components.",
       "showcase": true
     },
     {
@@ -113,7 +113,7 @@
       "id": "button",
       "path": "src/app/components/ui/button.tsx",
       "category": "actions",
-      "summary": "Primary action primitive with variant and size options.",
+      "summary": "Primary action component with variant and size options.",
       "showcase": true
     },
     {
@@ -134,7 +134,7 @@
       "id": "callout",
       "path": "src/app/components/ui/callout.tsx",
       "category": "feedback",
-      "summary": "Inline message panel — denser than Alert, generic for help notes, status banners, and panel-level hints. Supports info/warning/danger/positive/muted tones.",
+      "summary": "Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints. Supports info/warning/danger/positive/muted tones.",
       "showcase": true
     },
     {
@@ -145,10 +145,24 @@
       "showcase": true
     },
     {
+      "id": "carousel",
+      "path": "src/app/components/ui/carousel.tsx",
+      "category": "layout",
+      "summary": "Generic content carousel with accessible slide semantics, previous/next controls, and bounded keyboard navigation.",
+      "showcase": true
+    },
+    {
       "id": "checkbox",
       "path": "src/app/components/ui/checkbox.tsx",
       "category": "toggles",
       "summary": "Boolean checkbox control with checked indicator.",
+      "showcase": true
+    },
+    {
+      "id": "code-block",
+      "path": "src/app/components/ui/code-block.tsx",
+      "category": "data-display",
+      "summary": "Tokenized plain-text code block for generated snippets and diagnostics.",
       "showcase": true
     },
     {
@@ -204,7 +218,7 @@
       "id": "context-menu",
       "path": "src/app/components/ui/context-menu.tsx",
       "category": "menus",
-      "summary": "Right-click or long-press contextual menu primitives.",
+      "summary": "Right-click or long-press contextual menu components.",
       "showcase": true
     },
     {
@@ -225,7 +239,7 @@
       "id": "dialog",
       "path": "src/app/components/ui/dialog.tsx",
       "category": "overlay",
-      "summary": "Modal dialog primitives for blocking workflows.",
+      "summary": "Modal dialog components for blocking workflows.",
       "showcase": true
     },
     {
@@ -261,6 +275,20 @@
       "path": "src/app/components/ui/eyebrow-label.tsx",
       "category": "feedback",
       "summary": "Uppercase tracked-out section label. Picks up Weft mono font automatically under data-palette='weft'.",
+      "showcase": true
+    },
+    {
+      "id": "follow-up-block",
+      "path": "src/app/components/ui/follow-up-block.tsx",
+      "category": "actions",
+      "summary": "Generated-response follow-up suggestion container that composes FollowUpItem without adding chat state.",
+      "showcase": true
+    },
+    {
+      "id": "follow-up-item",
+      "path": "src/app/components/ui/follow-up-item.tsx",
+      "category": "actions",
+      "summary": "Generated-response follow-up suggestion item with display-only and optional action semantics.",
       "showcase": true
     },
     {
@@ -365,14 +393,35 @@
       "id": "HudIssueCallout",
       "path": "src/app/components/ui/HudIssueCallout.tsx",
       "category": "feedback",
-      "summary": "Shared HUD issue primitive that renders structured failure callouts with source attribution and next-action copy.",
+      "summary": "Shared HUD issue component that renders structured failure callouts with source attribution and next-action copy.",
       "showcase": true
     },
     {
       "id": "HudIssueToast",
       "path": "src/app/components/ui/HudIssueToast.tsx",
       "category": "feedback",
-      "summary": "Global toast primitive for panel-level data-load failures with source attribution and remediation guidance.",
+      "summary": "Global toast component for panel-level data-load failures with source attribution and remediation guidance.",
+      "showcase": true
+    },
+    {
+      "id": "image-block",
+      "path": "src/app/components/ui/image-block.tsx",
+      "category": "media",
+      "summary": "Semantic figure wrapper that composes Image with an optional visible caption.",
+      "showcase": true
+    },
+    {
+      "id": "image-gallery",
+      "path": "src/app/components/ui/image-gallery.tsx",
+      "category": "media",
+      "summary": "Accessible responsive media collection that composes Image and ImageBlock.",
+      "showcase": true
+    },
+    {
+      "id": "image",
+      "path": "src/app/components/ui/image.tsx",
+      "category": "media",
+      "summary": "Tokenized content image component with required alt text, fit/radius controls, and predictable loading defaults.",
       "showcase": true
     },
     {
@@ -400,7 +449,21 @@
       "id": "label",
       "path": "src/app/components/ui/label.tsx",
       "category": "inputs",
-      "summary": "Text label primitive for form fields and controls.",
+      "summary": "Text label component for form fields and controls.",
+      "showcase": true
+    },
+    {
+      "id": "list-block",
+      "path": "src/app/components/ui/list-block.tsx",
+      "category": "actions",
+      "summary": "Generated-response option list container that composes ListItem without replacing HUD domain rows.",
+      "showcase": true
+    },
+    {
+      "id": "list-item",
+      "path": "src/app/components/ui/list-item.tsx",
+      "category": "actions",
+      "summary": "Generated-response option list item with display-only and optional action semantics.",
       "showcase": true
     },
     {
@@ -415,6 +478,13 @@
       "path": "src/app/components/ui/lore-search-result-row.tsx",
       "category": "data-display",
       "summary": "Lore vault search result row with Obsidian link, relevance bar, excerpt, and copy-path control.",
+      "showcase": true
+    },
+    {
+      "id": "markdown-renderer",
+      "path": "src/app/components/ui/markdown-renderer.tsx",
+      "category": "data-display",
+      "summary": "Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code components.",
       "showcase": true
     },
     {
@@ -603,7 +673,7 @@
       "id": "resizable",
       "path": "src/app/components/ui/resizable.tsx",
       "category": "layout",
-      "summary": "Resizable panel group primitives built on react-resizable-panels.",
+      "summary": "Resizable panel group components built on react-resizable-panels.",
       "showcase": true
     },
     {
@@ -611,6 +681,20 @@
       "path": "src/app/components/ui/scroll-area.tsx",
       "category": "layout",
       "summary": "Custom scrollable container with styled scrollbars.",
+      "showcase": true
+    },
+    {
+      "id": "section-block",
+      "path": "src/app/components/ui/section-block.tsx",
+      "category": "disclosure",
+      "summary": "Generated-response section container that composes foldable SectionItem rows.",
+      "showcase": true
+    },
+    {
+      "id": "section-item",
+      "path": "src/app/components/ui/section-item.tsx",
+      "category": "disclosure",
+      "summary": "Generated-response foldable section item with trigger, metadata, and content slots.",
       "showcase": true
     },
     {
@@ -645,7 +729,7 @@
       "id": "sheet",
       "path": "src/app/components/ui/sheet.tsx",
       "category": "overlay",
-      "summary": "Edge-mounted drawer surface built on dialog primitives.",
+      "summary": "Edge-mounted drawer surface built on dialog components.",
       "showcase": true
     },
     {
@@ -712,6 +796,13 @@
       "showcase": true
     },
     {
+      "id": "stack",
+      "path": "src/app/components/ui/stack.tsx",
+      "category": "layout",
+      "summary": "Tokenized flex stack for neutral vertical or horizontal child layout.",
+      "showcase": true
+    },
+    {
       "id": "stat-row.figma",
       "path": "src/app/components/ui/stat-row.figma.tsx",
       "category": "code-connect",
@@ -740,6 +831,20 @@
       "showcase": true
     },
     {
+      "id": "steps-item",
+      "path": "src/app/components/ui/steps-item.tsx",
+      "category": "data-display",
+      "summary": "Single display-only step row with marker, status, label, description, metadata, and connector slots.",
+      "showcase": true
+    },
+    {
+      "id": "steps",
+      "path": "src/app/components/ui/steps.tsx",
+      "category": "data-display",
+      "summary": "Ordered process and progress sequence with complete/current/pending/error step states.",
+      "showcase": true
+    },
+    {
       "id": "switch",
       "path": "src/app/components/ui/switch.tsx",
       "category": "toggles",
@@ -758,6 +863,13 @@
       "path": "src/app/components/ui/tabs.tsx",
       "category": "disclosure",
       "summary": "Tabbed navigation and content regions.",
+      "showcase": true
+    },
+    {
+      "id": "text-content",
+      "path": "src/app/components/ui/text-content.tsx",
+      "category": "typography",
+      "summary": "Readable generated copy component with bounded size, weight, tone, and measure variants.",
       "showcase": true
     },
     {
@@ -826,7 +938,7 @@
     {
       "id": "utils",
       "path": "src/app/components/ui/utils.ts",
-      "summary": "Shared class name merge helper used by UI primitives."
+      "summary": "Shared class name merge helper used by UI components."
     }
   ],
   "panelBuilder": {
@@ -860,48 +972,119 @@
     "intentMap": [
       {
         "intent": "status rows",
-        "primitives": ["badge", "callout", "attention-ticket-card"],
-        "tokens": ["--hud-surface-raised", "--hud-border", "--hud-text-2"]
+        "primitives": [
+          "badge",
+          "callout",
+          "attention-ticket-card"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--hud-text-2"
+        ]
       },
       {
         "intent": "metric tiles",
-        "primitives": ["card", "badge"],
-        "tokens": ["--hud-surface-raised", "--hud-text-1", "--hud-text-3"]
+        "primitives": [
+          "card",
+          "badge"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-text-1",
+          "--hud-text-3"
+        ]
       },
       {
         "intent": "callouts",
-        "primitives": ["callout", "alert"],
-        "tokens": ["--primary", "--hud-border", "--hud-text-2"]
+        "primitives": [
+          "callout",
+          "alert"
+        ],
+        "tokens": [
+          "--primary",
+          "--hud-border",
+          "--hud-text-2"
+        ]
       },
       {
         "intent": "action rows",
-        "primitives": ["button", "action-button-row"],
-        "tokens": ["--primary", "--hud-text-1", "--hud-border"]
+        "primitives": [
+          "button",
+          "action-button-row"
+        ],
+        "tokens": [
+          "--primary",
+          "--hud-text-1",
+          "--hud-border"
+        ]
       },
       {
         "intent": "compact fields",
-        "primitives": ["input", "textarea", "select", "checkbox"],
-        "tokens": ["--hud-surface-raised", "--hud-border", "--hud-text-1"]
+        "primitives": [
+          "input",
+          "textarea",
+          "select",
+          "checkbox"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--hud-text-1"
+        ]
       },
       {
         "intent": "lists and empty states",
-        "primitives": ["empty-state", "badge", "callout"],
-        "tokens": ["--hud-text-2", "--hud-text-3", "--hud-border"]
+        "primitives": [
+          "empty-state",
+          "badge",
+          "callout"
+        ],
+        "tokens": [
+          "--hud-text-2",
+          "--hud-text-3",
+          "--hud-border"
+        ]
       },
       {
         "intent": "dense list detail",
-        "primitives": ["button", "badge", "card"],
-        "tokens": ["--hud-surface-raised", "--hud-border", "--primary", "--hud-text-3"]
+        "primitives": [
+          "button",
+          "badge",
+          "card"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--primary",
+          "--hud-text-3"
+        ]
       },
       {
         "intent": "package trust metadata",
-        "primitives": ["badge", "callout", "dropdown-menu"],
-        "tokens": ["--hud-warning", "--hud-positive", "--hud-text-2"]
+        "primitives": [
+          "badge",
+          "callout",
+          "dropdown-menu"
+        ],
+        "tokens": [
+          "--hud-warning",
+          "--hud-positive",
+          "--hud-text-2"
+        ]
       },
       {
         "intent": "agent validation checklist",
-        "primitives": ["checkbox", "callout", "button"],
-        "tokens": ["--hud-border", "--hud-text-2", "--primary"]
+        "primitives": [
+          "checkbox",
+          "callout",
+          "button"
+        ],
+        "tokens": [
+          "--hud-border",
+          "--hud-text-2",
+          "--primary"
+        ]
       }
     ]
   }
