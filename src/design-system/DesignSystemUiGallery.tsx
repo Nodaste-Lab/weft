@@ -25,7 +25,6 @@ import { AspectRatio } from '../app/components/ui/aspect-ratio';
 import { AttentionTicketCard } from '../app/components/ui/attention-ticket-card';
 import { Avatar, AvatarFallback } from '../app/components/ui/avatar';
 import { Badge } from '../app/components/ui/badge';
-import { BattleCombatantSummaryRow } from '../app/components/ui/battle-combatant-summary-row';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -173,7 +172,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/to
 import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
 import { HudIssueToast } from '../app/components/ui/HudIssueToast';
 import { Callout } from '../app/components/ui/callout';
-import { HpBarTrack } from '../app/components/ui/hp-bar-track';
 import { HudListRow, HudListRowMeta, HudListRowTitle } from '../app/components/ui/hud-list-row';
 import { HudMetaCaption } from '../app/components/ui/hud-meta-caption';
 import { HudPopoverDropdown } from '../app/components/ui/hud-popover-dropdown';
@@ -181,11 +179,8 @@ import { HudQuickCommandFooter } from '../app/components/ui/hud-quick-command-fo
 import { HudToggleSwitch } from '../app/components/ui/hud-toggle-switch';
 import { MetricTile } from '../app/components/ui/metric-tile';
 import { ModeOnlyToggle } from '../app/components/ui/mode-only-toggle';
-import { CombatantTypeDot } from '../app/components/ui/combatant-type-dot';
 import { ConditionChipStrip } from '../app/components/ui/condition-chip-strip';
-import { DeathSaveDot } from '../app/components/ui/death-save-dot';
 import { PanelBlockShell } from '../app/components/ui/panel-block-shell';
-import { PartyCombatantAccordion } from '../app/components/ui/party-combatant-accordion';
 import { SettingsModuleShell } from '../app/components/ui/settings-module-shell';
 import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-group';
 import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
@@ -217,7 +212,6 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'attention-ticket-card',
   'avatar',
   'badge',
-  'battle-combatant-summary-row',
   'breadcrumb',
   'button',
   'calendar',
@@ -227,11 +221,9 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'checkbox',
   'code-block',
   'collapsible',
-  'combatant-type-dot',
   'command-category-tag',
   'condition-chip-strip',
   'context-menu',
-  'death-save-dot',
   'dialog',
   'dropdown-menu',
   'empty-state',
@@ -240,7 +232,6 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'follow-up-item',
   'form',
   'hover-card',
-  'hp-bar-track',
   'hud-list-row',
   'hud-meta-caption',
   'hud-popover-dropdown',
@@ -265,7 +256,6 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'pagination',
   'panel-block-shell',
   'panel-header',
-  'party-combatant-accordion',
   'period-chip-row',
   'pill-toggle-group',
   'popover',
@@ -393,47 +383,6 @@ const componentShelfAnchorByCategory: Record<string, string> = {
 
 function ownerAnchorForComponent(id: string): string {
   return id;
-}
-
-function PartyCombatantAccordionDemo() {
-  const [open, setOpen] = React.useState(true);
-  return (
-    <div className="flex w-full max-w-md flex-col overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
-      <PartyCombatantAccordion
-        expanded={open}
-        expandRegionId="gallery-party-1"
-        header={
-          <>
-            <button
-              type="button"
-              className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-[var(--radius-sm)] border-0 bg-transparent p-0 text-left outline-none hover:bg-[var(--hud-tint-1)] focus-visible:ring-2 focus-visible:ring-ring"
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-controls="gallery-party-1"
-            >
-              <div className="size-2 shrink-0 rounded-[var(--radius-pill)] bg-[var(--hud-positive)] shadow-[0_0_6px_var(--hud-positive)]" aria-hidden />
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold text-[var(--hud-text-1)]">Mira Ashvale</div>
-                <div className="text-[length:var(--text-xs)] text-muted-foreground">Ranger 5</div>
-              </div>
-              <span className="shrink-0 text-[length:var(--text-xs)] text-muted-foreground" aria-hidden>
-                {open ? '▴' : '▾'}
-              </span>
-            </button>
-          </>
-        }
-      >
-        <p className="text-[length:var(--text-xs)] leading-[1.45] text-[var(--hud-text-2)]">
-          Expanded HP editor, conditions, and stat grid render in this panel in production.
-        </p>
-      </PartyCombatantAccordion>
-      <PartyCombatantAccordion
-        expanded={false}
-        className="border-b-0"
-        header={<span className="text-[length:var(--text-xs)] text-muted-foreground">Static row (no expand control in demo)</span>}
-      />
-    </div>
-  );
 }
 
 function AttentionTicketCardDemo() {
@@ -761,29 +710,6 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
-        id="battle-combatant-summary-row"
-        title="Battle Combatant Summary Row"
-        summary="Initiative pill, name + type dot + deck/dead affordances, AC, reorder column, remove — Battle Tracker row 1."
-      >
-        <div className="max-w-md rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
-          <BattleCombatantSummaryRow
-            initiative={14}
-            name="Shadow griffon"
-            combatantType="enemy"
-            isActive
-            isOnDeck={false}
-            isDead={false}
-            ac={16}
-            onReorderUp={() => {}}
-            onReorderDown={() => {}}
-            onRemove={() => {}}
-            disableReorderUp={false}
-            disableReorderDown={false}
-          />
-        </div>
-      </PrimitiveCard>
-
-      <PrimitiveCard
         id="breadcrumb"
         title="Breadcrumb"
         summary="Hierarchical trail with links, separators, and current page."
@@ -996,31 +922,6 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
-        id="combatant-type-dot"
-        title="Combatant Type Dot"
-        summary="Round dot that color-codes a combatant's type (enemy/ally/player). Default 7px; pulsing wrapper variant for TPK warning banner."
-      >
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <CombatantTypeDot type="player" />
-            <span className="text-xs text-muted-foreground">player</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CombatantTypeDot type="ally" />
-            <span className="text-xs text-muted-foreground">ally</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CombatantTypeDot type="enemy" />
-            <span className="text-xs text-muted-foreground">enemy</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CombatantTypeDot type="enemy" pulsing />
-            <span className="text-xs text-muted-foreground">enemy · pulsing</span>
-          </div>
-        </div>
-      </PrimitiveCard>
-
-      <PrimitiveCard
         id="command-category-tag"
         title="Command Category Tag"
         summary="Tone-colored reference label for NLP quick-command categories (5e palette)."
@@ -1068,27 +969,6 @@ export function DesignSystemUiGallery({
             <ContextMenuItem>Paste</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
-      </PrimitiveCard>
-
-      <PrimitiveCard
-        id="death-save-dot"
-        title="Death Save Dot"
-        summary="8×8 success/fail dot used inside the death-save row for downed PCs. Color follows kind + filled state."
-      >
-        <div className="flex flex-col gap-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <span>successes:</span>
-            <DeathSaveDot kind="success" filled />
-            <DeathSaveDot kind="success" filled />
-            <DeathSaveDot kind="success" filled={false} />
-          </div>
-          <div className="flex items-center gap-1">
-            <span>failures:</span>
-            <DeathSaveDot kind="fail" filled />
-            <DeathSaveDot kind="fail" filled={false} />
-            <DeathSaveDot kind="fail" filled={false} />
-          </div>
-        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1229,19 +1109,6 @@ export function DesignSystemUiGallery({
             <p className="text-muted-foreground mt-1">Investigator · Lantern guild</p>
           </HoverCardContent>
         </HoverCard>
-      </PrimitiveCard>
-
-      <PrimitiveCard
-        id="hp-bar-track"
-        title="HP Bar Track"
-        summary="HP bar track + temp-HP sliver + readout — auto-tones positive/warning/danger from hp/maxHp."
-      >
-        <div className="flex w-full max-w-md flex-col gap-3">
-          <HpBarTrack hp={42} maxHp={50} />
-          <HpBarTrack hp={18} maxHp={50} variant="track" tempHp={6} />
-          <HpBarTrack hp={4} maxHp={50} variant="thick" tempHp={2} />
-          <HpBarTrack hp={0} maxHp={0} tone="muted" showReadout={false} />
-        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1714,7 +1581,7 @@ export function DesignSystemUiGallery({
         summary="“Use only in {mode} mode” control for vault paths, OpenAI key scope, and transcription (Session Context + App Settings)."
       >
         <div className="flex flex-col gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-3">
-          <ModeOnlyToggle active={false} label="Use only in TTRPG mode" onToggle={() => {}} />
+          <ModeOnlyToggle active={false} label="Use only in Productivity mode" onToggle={() => {}} />
           <ModeOnlyToggle active label="Use only in Productivity mode" onToggle={() => {}} />
         </div>
       </PrimitiveCard>
@@ -1824,14 +1691,6 @@ export function DesignSystemUiGallery({
             </div>
           </PanelBlockShell>
         </div>
-      </PrimitiveCard>
-
-      <PrimitiveCard
-        id="party-combatant-accordion"
-        title="Party Combatant Accordion"
-        summary="Roster row shell — header row triggers expand; optional non-interactive header; bordered body stack."
-      >
-        <PartyCombatantAccordionDemo />
       </PrimitiveCard>
 
       <PrimitiveCard
