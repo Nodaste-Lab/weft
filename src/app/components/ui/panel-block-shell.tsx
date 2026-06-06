@@ -113,16 +113,20 @@ const PanelBlockShell = React.forwardRef<HTMLElement, PanelBlockShellProps>(
             data-signal-header
             data-slot="panel-block-shell-header"
             className={cn(
-              "flex items-center gap-2 px-3 py-2",
-              "text-[length:var(--text-xs)] text-[var(--hud-text-1)]",
-              seamless
-                ? "border-b-0 flex-wrap gap-y-1"
-                : "border-b border-[var(--hud-border)]",
+              customHeader
+                ? "w-full p-0"
+                : cn(
+                    "flex items-center gap-2 px-3 py-2",
+                    "text-[length:var(--text-xs)] text-[var(--hud-text-1)]",
+                    seamless
+                      ? "border-b-0 flex-wrap gap-y-1"
+                      : "border-b border-[var(--hud-border)]",
+                  ),
               headerClassName,
             )}
           >
             {customHeader ? (
-              <>{customHeader}</>
+              <div className="w-full min-w-0">{customHeader}</div>
             ) : collapsible ? (
               <button
                 type="button"
