@@ -46,6 +46,14 @@ import {
 import { Carousel } from '../app/components/ui/carousel';
 import { Checkbox } from '../app/components/ui/checkbox';
 import { CodeBlock } from '../app/components/ui/code-block';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../app/components/ui/command';
 import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
 import {
   Collapsible,
@@ -148,7 +156,11 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
 } from '../app/components/ui/sidebar';
 import { Skeleton } from '../app/components/ui/skeleton';
 import { Slider } from '../app/components/ui/slider';
@@ -221,6 +233,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'checkbox',
   'code-block',
   'collapsible',
+  'command',
   'command-category-tag',
   'condition-chip-strip',
   'context-menu',
@@ -919,6 +932,24 @@ export function DesignSystemUiGallery({
             </p>
           </CollapsibleContent>
         </Collapsible>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="command"
+        title="Command"
+        summary="Keyboard-friendly command list for pickers, quick actions, and searchable catalogs."
+      >
+        <Command className="w-full max-w-sm border shadow-sm">
+          <CommandInput placeholder="Search panels..." aria-label="Search panels" />
+          <CommandList>
+            <CommandEmpty>No panels found.</CommandEmpty>
+            <CommandGroup heading="Widgets">
+              <CommandItem value="signals">Signals</CommandItem>
+              <CommandItem value="notes">Notes</CommandItem>
+              <CommandItem value="transcription">Transcription</CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1967,12 +1998,20 @@ export function DesignSystemUiGallery({
       >
         <SidebarProvider defaultOpen className="min-h-[132px]">
           <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border">
-            <Sidebar collapsible="none" className="border-sidebar-border w-36 border-r">
+            <Sidebar collapsible="icon" className="border-sidebar-border border-r">
               <SidebarHeader>
-                <span className="text-sidebar-foreground px-2 text-xs font-medium">Nav</span>
+                <span className="text-sidebar-foreground px-2 text-xs font-medium group-data-[collapsible=icon]:hidden">Nav</span>
+                <SidebarTrigger />
               </SidebarHeader>
               <SidebarContent>
-                <p className="text-sidebar-foreground/80 px-2 text-xs">Sessions</p>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton>
+                      <Sparkles className="size-4" aria-hidden="true" focusable="false" />
+                      <span>Sessions</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
               </SidebarContent>
             </Sidebar>
             <div

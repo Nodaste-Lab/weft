@@ -173,6 +173,13 @@
       "showcase": true
     },
     {
+      "id": "command",
+      "path": "src/app/components/ui/command.tsx",
+      "category": "menus",
+      "summary": "Keyboard-friendly command list for searchable pickers and quick actions.",
+      "showcase": true
+    },
+    {
       "id": "condition-chip-strip.figma",
       "path": "src/app/components/ui/condition-chip-strip.figma.tsx",
       "category": "code-connect",
