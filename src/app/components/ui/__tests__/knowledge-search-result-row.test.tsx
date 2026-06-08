@@ -43,6 +43,20 @@ describe('KnowledgeSearchResultRow', () => {
     expect(screen.queryByText('82%')).not.toBeInTheDocument();
   });
 
+  it('renders display labels for preserved category ids', () => {
+    render(
+      <KnowledgeSearchResultRow
+        result={{ ...result, categories: ['lore'] }}
+        obsidianHref="#"
+        isBrowseMode
+        copiedPath={null}
+        onCopyPath={() => undefined}
+      />
+    );
+    expect(screen.getByText('Knowledge')).toBeInTheDocument();
+    expect(screen.queryByText('lore')).not.toBeInTheDocument();
+  });
+
   it('calls onCopyPath when copy is clicked', () => {
     const onCopyPath = vi.fn();
     render(
