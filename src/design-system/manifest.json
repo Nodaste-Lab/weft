@@ -309,7 +309,7 @@
       "id": "hud-popover-dropdown",
       "path": "src/app/components/ui/hud-popover-dropdown.tsx",
       "category": "menus",
-      "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + campaign dropdown.",
+      "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + project dropdown.",
       "showcase": true
     },
     {

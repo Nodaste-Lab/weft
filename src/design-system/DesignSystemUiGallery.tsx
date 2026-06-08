@@ -1188,7 +1188,7 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="hud-popover-dropdown"
         title="HUD Popover Dropdown"
-        summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the campaign dropdown."
+        summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the project dropdown."
       >
         <HudPopoverDropdownDemo />
       </PrimitiveCard>
@@ -1452,8 +1452,8 @@ export function DesignSystemUiGallery({
         summary="Single-line fields with labels and tokenized focus states."
       >
         <div style={fieldStackStyle}>
-          <Label htmlFor="ds-campaign-name">Campaign name</Label>
-          <Input id="ds-campaign-name" defaultValue="The Iron Lantern" />
+          <Label htmlFor="ds-project-name">Project name</Label>
+          <Input id="ds-project-name" defaultValue="Q1 Launch Plan" />
         </div>
       </PrimitiveCard>
 
