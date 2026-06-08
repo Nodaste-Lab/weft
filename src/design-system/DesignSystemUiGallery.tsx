@@ -1303,7 +1303,7 @@ export function DesignSystemUiGallery({
             severity: 'error',
             title: 'Workstreams unavailable',
             detail: 'C-Core did not return a healthy browser status response.',
-            nextAction: 'Confirm the local C-Core runtime is running, then refresh.',
+            nextAction: 'Check that the local C-Core runtime is running, then refresh.',
           }}
           actions={[
             { kind: 'support-bundle', label: 'Email support with bundle' },

@@ -76,6 +76,12 @@ const Button = React.forwardRef<
         ? "blocked"
         : "idle";
   const isDisabled = disabled || loading;
+  const content = asChild ? children : (
+    <>
+      {loading ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
+      {children}
+    </>
+  );
 
   return (
     <Comp
@@ -88,8 +94,7 @@ const Button = React.forwardRef<
       className={cn(buttonVariants({ variant, interactionState, size, className }))}
       {...props}
     >
-      {loading ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
-      {children}
+      {content}
     </Comp>
   );
 });

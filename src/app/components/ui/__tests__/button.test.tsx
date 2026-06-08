@@ -75,4 +75,17 @@ describe('Button interaction states', () => {
     expect(button).toHaveAttribute('data-state', 'loading');
     expect(button).not.toHaveAttribute('aria-disabled');
   });
+
+  it('keeps asChild compatible with Radix Slot single-child semantics', () => {
+    render(
+      <Button asChild>
+        <a href="/settings">Open settings</a>
+      </Button>,
+    );
+
+    const link = screen.getByRole('link', { name: 'Open settings' });
+    expect(link).toHaveAttribute('href', '/settings');
+    expect(link).toHaveAttribute('data-slot', 'button');
+    expect(link).toHaveAttribute('data-state', 'idle');
+  });
 });
