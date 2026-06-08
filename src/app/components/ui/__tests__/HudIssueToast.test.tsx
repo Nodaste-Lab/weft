@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { HudIssueToast } from '../HudIssueToast';
 import type { HudIssue } from '../../../runtime/hudIssue';
+import type { HudIssueToastAction } from '../../../runtime/hudIssueToastActions';
 
 const issue: HudIssue = {
   reason: 'connection_failed',
@@ -38,5 +39,42 @@ describe('HudIssueToast', () => {
     render(<HudIssueToast issue={issue} onDismiss={onDismiss} />);
     screen.getByRole('button', { name: /dismiss notification/i }).click();
     expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders and dispatches toast actions', () => {
+    const onAction = vi.fn();
+    const actions: HudIssueToastAction[] = [
+      { kind: 'support-bundle', label: 'Export support bundle' },
+      { kind: 'open-settings', section: 'spaces', label: 'Report in Spaces' },
+    ];
+
+    render(
+      <HudIssueToast
+        issue={issue}
+        actions={actions}
+        onAction={onAction}
+        onDismiss={() => {}}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /export support bundle/i }));
+    fireEvent.click(screen.getByRole('button', { name: /report in spaces/i }));
+
+    expect(onAction).toHaveBeenNthCalledWith(1, actions[0]);
+    expect(onAction).toHaveBeenNthCalledWith(2, actions[1]);
+  });
+
+  it('shows action feedback copy', () => {
+    render(
+      <HudIssueToast
+        issue={issue}
+        statusCopy="Follow the save dialog."
+        errorCopy="Support bundle export is available in the Heddle desktop app."
+        onDismiss={() => {}}
+      />,
+    );
+
+    expect(screen.getByText('Follow the save dialog.')).toBeInTheDocument();
+    expect(screen.getAllByRole('alert').some((node) => /support bundle export/i.test(node.textContent ?? ''))).toBe(true);
   });
 });

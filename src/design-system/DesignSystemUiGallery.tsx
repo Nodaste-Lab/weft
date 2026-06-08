@@ -1292,19 +1292,23 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="HudIssueToast"
         title="HUD Issue Toast"
-        summary="Global toast surface for panel-level data-load failures with source attribution and next-action guidance."
+        summary="Global toast surface for panel-level C-Core data-load failures with support-bundle and Spaces report actions."
       >
         <HudIssueToast
           issue={{
             reason: 'connection_failed',
-            source: 'integration',
-            sourceLabel: 'Linear',
+            source: 'ccore',
+            sourceLabel: 'C-Core runtime',
             scope: 'panel',
             severity: 'error',
-            title: 'Ticket updates unavailable',
-            detail: 'Linear is not reachable from this mode right now.',
-            nextAction: 'Reconnect Linear in settings and refresh this panel.',
+            title: 'Workstreams unavailable',
+            detail: 'C-Core did not return a healthy browser status response.',
+            nextAction: 'Confirm the local C-Core runtime is running, then refresh.',
           }}
+          actions={[
+            { kind: 'support-bundle', label: 'Export support bundle' },
+            { kind: 'open-settings', section: 'spaces', label: 'Report in Spaces' },
+          ]}
           onDismiss={() => undefined}
         />
       </PrimitiveCard>
