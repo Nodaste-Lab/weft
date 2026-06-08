@@ -202,7 +202,7 @@ import { ImageBlock } from '../app/components/ui/image-block';
 import { ImageGallery } from '../app/components/ui/image-gallery';
 import { ListBlock } from '../app/components/ui/list-block';
 import { ListItem } from '../app/components/ui/list-item';
-import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
+import { KnowledgeSearchResultRow } from '../app/components/ui/knowledge-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
@@ -257,10 +257,10 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'image',
   'inline-edit-list-row',
   'input',
+  'knowledge-search-result-row',
   'label',
   'list-block',
   'list-item',
-  'lore-search-result-row',
   'markdown-renderer',
   'menubar',
   'metric-tile',
@@ -1516,16 +1516,16 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
-        id="lore-search-result-row"
-        title="Lore Search Result Row"
+        id="knowledge-search-result-row"
+        title="Knowledge Search Result Row"
         summary="Vault search hit with Obsidian link, relevance strip, excerpt, and copy-path control."
       >
         <div className="max-w-md overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
-          <LoreSearchResultRow
+          <KnowledgeSearchResultRow
             result={{
               id: 'demo',
               title: 'The Seal of Kervahn',
-              path: 'lore/artifacts/seal.md',
+              path: 'knowledge/artifacts/seal.md',
               excerpt: 'A wax seal carried by the envoy…',
               relevance: 91,
               categories: ['artifact'],

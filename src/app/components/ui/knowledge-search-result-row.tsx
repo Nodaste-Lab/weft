@@ -11,7 +11,7 @@ function relevanceToneColor(r: number) {
   return "var(--hud-text-3)";
 }
 
-export interface LoreSearchResultRowModel {
+export interface KnowledgeSearchResultRowModel {
   id: string;
   title: string;
   path: string;
@@ -20,19 +20,19 @@ export interface LoreSearchResultRowModel {
   categories: string[];
 }
 
-interface LoreSearchResultRowProps {
-  result: LoreSearchResultRowModel;
+interface KnowledgeSearchResultRowProps {
+  result: KnowledgeSearchResultRowModel;
   obsidianHref: string;
   isBrowseMode: boolean;
   copiedPath: string | null;
   onCopyPath: (path: string, e: React.MouseEvent) => void;
 }
 
-const LoreSearchResultRow = React.forwardRef<HTMLDivElement, LoreSearchResultRowProps>(
+const KnowledgeSearchResultRow = React.forwardRef<HTMLDivElement, KnowledgeSearchResultRowProps>(
   ({ result: r, obsidianHref, isBrowseMode, copiedPath, onCopyPath }, ref) => {
     const relColor = relevanceToneColor(r.relevance);
     return (
-      <div ref={ref} data-slot="lore-search-result-row" className="relative border-b border-[var(--hud-border)]">
+      <div ref={ref} data-slot="knowledge-search-result-row" className="relative border-b border-[var(--hud-border)]">
         <a
           href={obsidianHref}
           aria-label={`Open ${r.title} in Obsidian`}
@@ -112,7 +112,7 @@ const LoreSearchResultRow = React.forwardRef<HTMLDivElement, LoreSearchResultRow
     );
   },
 );
-LoreSearchResultRow.displayName = "LoreSearchResultRow";
+KnowledgeSearchResultRow.displayName = "KnowledgeSearchResultRow";
 
-export { LoreSearchResultRow, relevanceToneColor };
-export type { LoreSearchResultRowProps };
+export { KnowledgeSearchResultRow, relevanceToneColor };
+export type { KnowledgeSearchResultRowProps };

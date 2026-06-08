@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { LoreSearchResultRow } from '../lore-search-result-row';
+import { KnowledgeSearchResultRow } from '../knowledge-search-result-row';
 
 const result = {
   id: '1',
@@ -12,10 +12,10 @@ const result = {
   categories: ['session'],
 };
 
-describe('LoreSearchResultRow', () => {
+describe('KnowledgeSearchResultRow', () => {
   it('renders data-slot and open link', () => {
     const { container } = render(
-      <LoreSearchResultRow
+      <KnowledgeSearchResultRow
         result={result}
         obsidianHref="obsidian://open"
         isBrowseMode={false}
@@ -23,7 +23,7 @@ describe('LoreSearchResultRow', () => {
         onCopyPath={() => undefined}
       />
     );
-    expect(container.querySelector('[data-slot="lore-search-result-row"]')).toBeTruthy();
+    expect(container.querySelector('[data-slot="knowledge-search-result-row"]')).toBeTruthy();
     expect(screen.getByRole('link', { name: /open tomb notes in obsidian/i })).toHaveAttribute(
       'href',
       'obsidian://open',
@@ -32,7 +32,7 @@ describe('LoreSearchResultRow', () => {
 
   it('hides relevance bar in browse mode', () => {
     render(
-      <LoreSearchResultRow
+      <KnowledgeSearchResultRow
         result={result}
         obsidianHref="#"
         isBrowseMode
@@ -46,7 +46,7 @@ describe('LoreSearchResultRow', () => {
   it('calls onCopyPath when copy is clicked', () => {
     const onCopyPath = vi.fn();
     render(
-      <LoreSearchResultRow
+      <KnowledgeSearchResultRow
         result={result}
         obsidianHref="#"
         isBrowseMode={false}
