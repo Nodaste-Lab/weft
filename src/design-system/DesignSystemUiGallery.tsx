@@ -747,15 +747,42 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="button"
         title="Button"
-        summary="Primary action with variants and icon support."
+        summary="Primary action with variants, icon support, and explicit interaction states."
       >
         <div style={rowStyle}>
           <Button>Primary</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
           <Button size="icon" aria-label="Magic action">
             <Sparkles size={14} />
           </Button>
+        </div>
+        <div className="mt-5 grid gap-3">
+          <div className="text-xs font-semibold text-muted-foreground">Interaction states</div>
+          <div className="grid gap-3">
+            {[
+              { label: 'Primary', variant: undefined },
+              { label: 'Outline', variant: 'outline' as const },
+              { label: 'Secondary', variant: 'secondary' as const },
+              { label: 'Destructive', variant: 'destructive' as const },
+            ].map((row) => (
+              <div key={row.label} className="grid grid-cols-[6rem_1fr] items-center gap-3">
+                <span className="text-xs text-muted-foreground">{row.label}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant={row.variant}>Enabled</Button>
+                  <Button variant={row.variant} blocked>Blocked</Button>
+                  <Button variant={row.variant} disabled>Disabled</Button>
+                  <Button variant={row.variant} loading>Loading</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-1 text-xs text-muted-foreground">
+            <p><strong className="text-foreground">Blocked:</strong> clickable with <code>aria-disabled</code>; use when the click should explain missing input.</p>
+            <p><strong className="text-foreground">Disabled:</strong> native disabled; use when the action is impossible or unavailable.</p>
+            <p><strong className="text-foreground">Loading:</strong> native disabled with <code>aria-busy</code> and spinner; use while async work is in progress.</p>
+          </div>
         </div>
       </PrimitiveCard>
 

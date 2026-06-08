@@ -99,7 +99,7 @@
       "id": "button",
       "path": "src/app/components/ui/button.tsx",
       "category": "actions",
-      "summary": "Primary action component with variant and size options.",
+      "summary": "Primary action component with variant, size, disabled, blocked, and loading state options.",
       "showcase": true
     },
     {
