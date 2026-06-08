@@ -44,7 +44,7 @@ describe('HudIssueToast', () => {
   it('renders and dispatches toast actions', () => {
     const onAction = vi.fn();
     const actions: HudIssueToastAction[] = [
-      { kind: 'support-bundle', label: 'Export support bundle' },
+      { kind: 'support-bundle', label: 'Email support with bundle' },
       { kind: 'open-settings', section: 'spaces', label: 'Report in Spaces' },
     ];
 
@@ -57,7 +57,7 @@ describe('HudIssueToast', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /export support bundle/i }));
+    fireEvent.click(screen.getByRole('button', { name: /email support with bundle/i }));
     fireEvent.click(screen.getByRole('button', { name: /report in spaces/i }));
 
     expect(onAction).toHaveBeenNthCalledWith(1, actions[0]);
@@ -68,13 +68,13 @@ describe('HudIssueToast', () => {
     render(
       <HudIssueToast
         issue={issue}
-        statusCopy="Follow the save dialog."
-        errorCopy="Support bundle export is available in the Heddle desktop app."
+        statusCopy="Follow the save dialog to create a support email with the bundle attached."
+        errorCopy="Creating a support email with a bundle is available in the Heddle desktop app."
         onDismiss={() => {}}
       />,
     );
 
-    expect(screen.getByText('Follow the save dialog.')).toBeInTheDocument();
-    expect(screen.getAllByRole('alert').some((node) => /support bundle export/i.test(node.textContent ?? ''))).toBe(true);
+    expect(screen.getByText('Follow the save dialog to create a support email with the bundle attached.')).toBeInTheDocument();
+    expect(screen.getAllByRole('alert').some((node) => /support email with a bundle/i.test(node.textContent ?? ''))).toBe(true);
   });
 });

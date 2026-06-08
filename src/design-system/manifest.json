@@ -351,7 +351,7 @@
       "id": "HudIssueToast",
       "path": "src/app/components/ui/HudIssueToast.tsx",
       "category": "feedback",
-      "summary": "Global toast component for panel-level C-Core data-load failures with source attribution, support-bundle export, and Spaces report actions.",
+      "summary": "Global toast component for panel-level C-Core data-load failures with source attribution, support email with bundle, and Spaces report actions.",
       "showcase": true
     },
     {

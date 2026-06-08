@@ -1306,7 +1306,7 @@ export function DesignSystemUiGallery({
             nextAction: 'Confirm the local C-Core runtime is running, then refresh.',
           }}
           actions={[
-            { kind: 'support-bundle', label: 'Export support bundle' },
+            { kind: 'support-bundle', label: 'Email support with bundle' },
             { kind: 'open-settings', section: 'spaces', label: 'Report in Spaces' },
           ]}
           onDismiss={() => undefined}
