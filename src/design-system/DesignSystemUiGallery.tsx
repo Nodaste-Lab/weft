@@ -1555,11 +1555,11 @@ export function DesignSystemUiGallery({
           <KnowledgeSearchResultRow
             result={{
               id: 'demo',
-              title: 'The Seal of Kervahn',
-              path: 'knowledge/artifacts/seal.md',
-              excerpt: 'A wax seal carried by the envoy…',
+              title: 'Launch Brief',
+              path: 'reference/launch-brief.md',
+              excerpt: 'A concise brief for the release operator…',
               relevance: 91,
-              categories: ['artifact'],
+              categories: ['reference'],
             }}
             obsidianHref="#"
             isBrowseMode={false}

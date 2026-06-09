@@ -4,11 +4,11 @@ import { KnowledgeSearchResultRow } from './knowledge-search-result-row';
 
 const SAMPLE = {
   id: '1',
-  title: 'Ancient Tomb',
-  path: 'knowledge/places/tomb.md',
-  excerpt: 'A buried ruin beneath the salt flats…',
+  title: 'Launch Brief',
+  path: 'reference/launch-brief.md',
+  excerpt: 'A concise brief for the release operator…',
   relevance: 88,
-  categories: ['place'],
+  categories: ['reference'],
 };
 
 figma.connect(
