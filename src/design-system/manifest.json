@@ -99,7 +99,7 @@
       "id": "button",
       "path": "src/app/components/ui/button.tsx",
       "category": "actions",
-      "summary": "Primary action component with variant and size options.",
+      "summary": "Primary action component with variant, size, disabled, blocked, and loading state options.",
       "showcase": true
     },
     {
@@ -351,7 +351,7 @@
       "id": "HudIssueToast",
       "path": "src/app/components/ui/HudIssueToast.tsx",
       "category": "feedback",
-      "summary": "Global toast component for panel-level data-load failures with source attribution and remediation guidance.",
+      "summary": "Global toast component for panel-level C-Core data-load failures with source attribution, support email with bundle, and Spaces report actions.",
       "showcase": true
     },
     {

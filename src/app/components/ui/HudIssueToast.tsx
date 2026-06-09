@@ -2,10 +2,17 @@ import type { CSSProperties, ReactNode } from 'react';
 import { X } from 'lucide-react';
 import type { HudIssue, HudIssueSeverity } from '../../runtime/hudIssue';
 import { resolveHudIssueSourceLabel } from '../../runtime/hudIssue';
+import type { HudIssueToastAction } from '../../runtime/hudIssueToastActions';
+import { Button } from './button';
 
 interface HudIssueToastProps {
   issue: HudIssue;
   onDismiss: () => void;
+  actions?: HudIssueToastAction[];
+  busyActionKind?: HudIssueToastAction['kind'] | null;
+  statusCopy?: string | null;
+  errorCopy?: string | null;
+  onAction?: (action: HudIssueToastAction) => void;
 }
 
 function severityColors(severity: HudIssueSeverity): {
@@ -51,7 +58,15 @@ function truncateDetail(detail: string): string {
   return `${detail.slice(0, 177)}...`;
 }
 
-export function HudIssueToast({ issue, onDismiss }: HudIssueToastProps): ReactNode {
+export function HudIssueToast({
+  issue,
+  onDismiss,
+  actions = [],
+  busyActionKind = null,
+  statusCopy = null,
+  errorCopy = null,
+  onAction,
+}: HudIssueToastProps): ReactNode {
   const colors = severityColors(issue.severity);
   const sourceLabel = resolveHudIssueSourceLabel(issue);
 
@@ -115,6 +130,34 @@ export function HudIssueToast({ issue, onDismiss }: HudIssueToastProps): ReactNo
         <div style={{ marginTop: 3, fontSize: 'var(--text-xs)', color: 'var(--hud-text-2)', lineHeight: 1.45 }}>
           <strong style={{ fontWeight: 600 }}>Next:</strong> {issue.nextAction}
         </div>
+        {actions.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+            {actions.map((action) => (
+              <Button
+                key={`${action.kind}-${action.label}`}
+                type="button"
+                variant={action.kind === 'support-bundle' ? 'default' : 'outline'}
+                size="sm"
+                loading={busyActionKind === action.kind}
+                data-testid={`hud-issue-toast-action-${action.kind}`}
+                className="h-7 px-2 text-[11px]"
+                onClick={() => onAction?.(action)}
+              >
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        ) : null}
+        {statusCopy ? (
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--hud-positive)', lineHeight: 1.45 }} aria-live="polite">
+            {statusCopy}
+          </div>
+        ) : null}
+        {errorCopy ? (
+          <div style={{ marginTop: 6, fontSize: 10, color: 'var(--hud-danger)', lineHeight: 1.45 }} role="alert">
+            {errorCopy}
+          </div>
+        ) : null}
       </div>
       <button
         type="button"
