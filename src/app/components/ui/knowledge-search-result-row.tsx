@@ -4,6 +4,13 @@ import { Copy, ExternalLink, FileText } from "lucide-react";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { cn } from "./utils";
+import { SEARCH_CATEGORIES } from "../../services/vaultSearchService";
+
+const CATEGORY_LABELS = new Map(SEARCH_CATEGORIES.map(({ id, label }) => [id, label]));
+
+function getCategoryLabel(categoryId: string) {
+  return CATEGORY_LABELS.get(categoryId) ?? categoryId;
+}
 
 function relevanceToneColor(r: number) {
   if (r >= 90) return "var(--hud-positive)";
@@ -11,7 +18,7 @@ function relevanceToneColor(r: number) {
   return "var(--hud-text-3)";
 }
 
-export interface LoreSearchResultRowModel {
+export interface KnowledgeSearchResultRowModel {
   id: string;
   title: string;
   path: string;
@@ -20,19 +27,20 @@ export interface LoreSearchResultRowModel {
   categories: string[];
 }
 
-interface LoreSearchResultRowProps {
-  result: LoreSearchResultRowModel;
+interface KnowledgeSearchResultRowProps {
+  result: KnowledgeSearchResultRowModel;
   obsidianHref: string;
   isBrowseMode: boolean;
   copiedPath: string | null;
   onCopyPath: (path: string, e: React.MouseEvent) => void;
 }
 
-const LoreSearchResultRow = React.forwardRef<HTMLDivElement, LoreSearchResultRowProps>(
+const KnowledgeSearchResultRow = React.forwardRef<HTMLDivElement, KnowledgeSearchResultRowProps>(
   ({ result: r, obsidianHref, isBrowseMode, copiedPath, onCopyPath }, ref) => {
     const relColor = relevanceToneColor(r.relevance);
+    const categoryLabels = r.categories.slice(0, 2).map(getCategoryLabel);
     return (
-      <div ref={ref} data-slot="lore-search-result-row" className="relative border-b border-[var(--hud-border)]">
+      <div ref={ref} data-slot="knowledge-search-result-row" className="relative border-b border-[var(--hud-border)]">
         <a
           href={obsidianHref}
           aria-label={`Open ${r.title} in Obsidian`}
@@ -51,12 +59,12 @@ const LoreSearchResultRow = React.forwardRef<HTMLDivElement, LoreSearchResultRow
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] text-muted-foreground [font-family:var(--weft-font-mono)]">{r.path}</span>
-                {r.categories.length > 0 && (
+                {categoryLabels.length > 0 && (
                   <Badge
                     variant="outline"
                     className="h-auto rounded-[var(--radius-xs)] border-transparent bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] px-1 py-0 text-[9px] font-medium text-primary"
                   >
-                    {r.categories.slice(0, 2).join(", ")}
+                    {categoryLabels.join(", ")}
                   </Badge>
                 )}
               </div>
@@ -112,7 +120,7 @@ const LoreSearchResultRow = React.forwardRef<HTMLDivElement, LoreSearchResultRow
     );
   },
 );
-LoreSearchResultRow.displayName = "LoreSearchResultRow";
+KnowledgeSearchResultRow.displayName = "KnowledgeSearchResultRow";
 
-export { LoreSearchResultRow, relevanceToneColor };
-export type { LoreSearchResultRowProps };
+export { KnowledgeSearchResultRow, relevanceToneColor };
+export type { KnowledgeSearchResultRowProps };
