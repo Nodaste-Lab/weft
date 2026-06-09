@@ -99,7 +99,7 @@
       "id": "button",
       "path": "src/app/components/ui/button.tsx",
       "category": "actions",
-      "summary": "Primary action component with variant and size options.",
+      "summary": "Primary action component with variant, size, disabled, blocked, and loading state options.",
       "showcase": true
     },
     {
@@ -309,7 +309,7 @@
       "id": "hud-popover-dropdown",
       "path": "src/app/components/ui/hud-popover-dropdown.tsx",
       "category": "menus",
-      "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + campaign dropdown.",
+      "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + project dropdown.",
       "showcase": true
     },
     {
@@ -351,7 +351,7 @@
       "id": "HudIssueToast",
       "path": "src/app/components/ui/HudIssueToast.tsx",
       "category": "feedback",
-      "summary": "Global toast component for panel-level data-load failures with source attribution and remediation guidance.",
+      "summary": "Global toast component for panel-level C-Core data-load failures with source attribution, support email with bundle, and Spaces report actions.",
       "showcase": true
     },
     {
@@ -397,6 +397,20 @@
       "showcase": true
     },
     {
+      "id": "knowledge-search-result-row.figma",
+      "path": "src/app/components/ui/knowledge-search-result-row.figma.tsx",
+      "category": "code-connect",
+      "summary": "Figma Code Connect mapping for KnowledgeSearchResultRow.",
+      "showcase": false
+    },
+    {
+      "id": "knowledge-search-result-row",
+      "path": "src/app/components/ui/knowledge-search-result-row.tsx",
+      "category": "data-display",
+      "summary": "Knowledge search result row with Obsidian link, relevance bar, excerpt, and copy-path control.",
+      "showcase": true
+    },
+    {
       "id": "label",
       "path": "src/app/components/ui/label.tsx",
       "category": "inputs",
@@ -415,20 +429,6 @@
       "path": "src/app/components/ui/list-item.tsx",
       "category": "actions",
       "summary": "Generated-response option list item with display-only and optional action semantics.",
-      "showcase": true
-    },
-    {
-      "id": "lore-search-result-row.figma",
-      "path": "src/app/components/ui/lore-search-result-row.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for LoreSearchResultRow.",
-      "showcase": false
-    },
-    {
-      "id": "lore-search-result-row",
-      "path": "src/app/components/ui/lore-search-result-row.tsx",
-      "category": "data-display",
-      "summary": "Lore vault search result row with Obsidian link, relevance bar, excerpt, and copy-path control.",
       "showcase": true
     },
     {

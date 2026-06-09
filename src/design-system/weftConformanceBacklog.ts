@@ -57,7 +57,7 @@ export const WEFT_CONFORMANCE_BACKLOG: WeftConformanceRow[] = [
       'EyebrowLabel (already consumed)',
       'SettingsModuleShell (#settings-module-shell) — adopted on Keyboard Shortcuts + Agent Plugins sections (2026-05-14)',
       'HudToggleSwitch (#hud-toggle-switch) — adopted (2026-05-12); local helper retired in favor of the ui/ primitive',
-      'HudPopoverDropdown (#hud-popover-dropdown) — adopted at RoleSelector + campaign dropdown (2026-05-14)',
+      'HudPopoverDropdown (#hud-popover-dropdown) — adopted at RoleSelector + project dropdown (2026-05-14)',
       'ModeOnlyToggle (#mode-only-toggle) — vault path / OpenAI / transcription scope (2026-05-14)',
       'ProviderStatusBadge (#provider-status-badge) — local transcription provider row status (2026-05-14)',
       'Callout (#callout) — primitive ready for non-theme help notes',

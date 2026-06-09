@@ -202,7 +202,7 @@ import { ImageBlock } from '../app/components/ui/image-block';
 import { ImageGallery } from '../app/components/ui/image-gallery';
 import { ListBlock } from '../app/components/ui/list-block';
 import { ListItem } from '../app/components/ui/list-item';
-import { LoreSearchResultRow } from '../app/components/ui/lore-search-result-row';
+import { KnowledgeSearchResultRow } from '../app/components/ui/knowledge-search-result-row';
 import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
 import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
 import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
@@ -257,10 +257,10 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'image',
   'inline-edit-list-row',
   'input',
+  'knowledge-search-result-row',
   'label',
   'list-block',
   'list-item',
-  'lore-search-result-row',
   'markdown-renderer',
   'menubar',
   'metric-tile',
@@ -747,15 +747,42 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="button"
         title="Button"
-        summary="Primary action with variants and icon support."
+        summary="Primary action with variants, icon support, and explicit interaction states."
       >
         <div style={rowStyle}>
           <Button>Primary</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
           <Button size="icon" aria-label="Magic action">
             <Sparkles size={14} />
           </Button>
+        </div>
+        <div className="mt-5 grid gap-3">
+          <div className="text-xs font-semibold text-muted-foreground">Interaction states</div>
+          <div className="grid gap-3">
+            {[
+              { label: 'Primary', variant: undefined },
+              { label: 'Outline', variant: 'outline' as const },
+              { label: 'Secondary', variant: 'secondary' as const },
+              { label: 'Destructive', variant: 'destructive' as const },
+            ].map((row) => (
+              <div key={row.label} className="grid grid-cols-[6rem_1fr] items-center gap-3">
+                <span className="text-xs text-muted-foreground">{row.label}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant={row.variant}>Enabled</Button>
+                  <Button variant={row.variant} blocked>Blocked</Button>
+                  <Button variant={row.variant} disabled>Disabled</Button>
+                  <Button variant={row.variant} loading>Loading</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-1 text-xs text-muted-foreground">
+            <p><strong className="text-foreground">Blocked:</strong> clickable with <code>aria-disabled</code>; use when the click should explain missing input.</p>
+            <p><strong className="text-foreground">Disabled:</strong> native disabled; use when the action is impossible or unavailable.</p>
+            <p><strong className="text-foreground">Loading:</strong> native disabled with <code>aria-busy</code> and spinner; use while async work is in progress.</p>
+          </div>
         </div>
       </PrimitiveCard>
 
@@ -1188,7 +1215,7 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="hud-popover-dropdown"
         title="HUD Popover Dropdown"
-        summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the campaign dropdown."
+        summary="Anchored popover wrapper that pairs a trigger element with absolute-positioned content. Handles outside-click + Escape dismissal. Drives RoleSelector and the project dropdown."
       >
         <HudPopoverDropdownDemo />
       </PrimitiveCard>
@@ -1265,19 +1292,23 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="HudIssueToast"
         title="HUD Issue Toast"
-        summary="Global toast surface for panel-level data-load failures with source attribution and next-action guidance."
+        summary="Global toast surface for panel-level C-Core data-load failures with support-bundle and Spaces report actions."
       >
         <HudIssueToast
           issue={{
             reason: 'connection_failed',
-            source: 'integration',
-            sourceLabel: 'Linear',
+            source: 'ccore',
+            sourceLabel: 'C-Core runtime',
             scope: 'panel',
             severity: 'error',
-            title: 'Ticket updates unavailable',
-            detail: 'Linear is not reachable from this mode right now.',
-            nextAction: 'Reconnect Linear in settings and refresh this panel.',
+            title: 'Workstreams unavailable',
+            detail: 'C-Core did not return a healthy browser status response.',
+            nextAction: 'Check that the local C-Core runtime is running, then refresh.',
           }}
+          actions={[
+            { kind: 'support-bundle', label: 'Email support with bundle' },
+            { kind: 'open-settings', section: 'spaces', label: 'Report in Spaces' },
+          ]}
           onDismiss={() => undefined}
         />
       </PrimitiveCard>
@@ -1452,8 +1483,8 @@ export function DesignSystemUiGallery({
         summary="Single-line fields with labels and tokenized focus states."
       >
         <div style={fieldStackStyle}>
-          <Label htmlFor="ds-campaign-name">Campaign name</Label>
-          <Input id="ds-campaign-name" defaultValue="The Iron Lantern" />
+          <Label htmlFor="ds-project-name">Project name</Label>
+          <Input id="ds-project-name" defaultValue="Q1 Launch Plan" />
         </div>
       </PrimitiveCard>
 
@@ -1516,16 +1547,16 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
-        id="lore-search-result-row"
-        title="Lore Search Result Row"
+        id="knowledge-search-result-row"
+        title="Knowledge Search Result Row"
         summary="Vault search hit with Obsidian link, relevance strip, excerpt, and copy-path control."
       >
         <div className="max-w-md overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
-          <LoreSearchResultRow
+          <KnowledgeSearchResultRow
             result={{
               id: 'demo',
               title: 'The Seal of Kervahn',
-              path: 'lore/artifacts/seal.md',
+              path: 'knowledge/artifacts/seal.md',
               excerpt: 'A wax seal carried by the envoy…',
               relevance: 91,
               categories: ['artifact'],

@@ -6,7 +6,7 @@ import { cn } from "./utils";
  * SourcePill — small monospace pill for file paths and origin tags.
  *
  * Used in SignalRow (file references), Session Context (configured sources),
- * Lore Search (result origins). The mono font is bound by the Weft type
+ * Knowledge Search (result origins). The mono font is bound by the Weft type
  * rule for any text under [data-palette="weft"], but this primitive owns the
  * pill geometry — small, bordered, paper background, minimal padding — so
  * source attribution is visually consistent everywhere it appears.

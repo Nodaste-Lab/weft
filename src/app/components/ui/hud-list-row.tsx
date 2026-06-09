@@ -5,7 +5,7 @@ import { cn } from "./utils";
 /*
  * HudListRow — leading-media + title-stack + trailing-actions list row.
  *
- * Used by SignalRow, MyAccount campaign lists, ticket update rows, and
+ * Used by SignalRow, MyAccount project lists, ticket update rows, and
  * any other dense list where the row chrome (border, padding, hover,
  * state accent stripe) is the same but the body content varies.
  *

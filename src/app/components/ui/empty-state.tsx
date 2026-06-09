@@ -6,7 +6,7 @@ import { cn } from "./utils";
  * EmptyState — centered icon + heading + description placeholder.
  *
  * Used by Session Recap before generation, Notes before any note exists,
- * Lore Search before a query, and other "nothing to show yet" surfaces.
+ * Knowledge Search before a query, and other "nothing to show yet" surfaces.
  *
  * The description is optional. The `tone` variant covers the common cases:
  *   - "default" → neutral muted message ("Click Generate to build a recap")
