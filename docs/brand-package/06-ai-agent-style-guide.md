@@ -44,12 +44,12 @@ audience: LLMs and agents producing copy for Heddle surfaces
 
 **Success line — with context:**
 ```
-✓ personal space attached · account_rooted · 2 devices
+✓ Private space attached · account_rooted · 2 devices
 ```
 
 **Progress:**
 ```
-→ syncing personal space…
+→ syncing Private space…
 → attached 4 / 7 spaces
 ```
 
@@ -95,21 +95,21 @@ audience: LLMs and agents producing copy for Heddle surfaces
 
 **Steady state:**
 ```
-Personal · synced · 2m ago
+Private · synced · 2m ago
 Studio · synced · just now
 DocT · 4 drafts
 ```
 
 **In-progress:**
 ```
-Personal · syncing…
+Private · syncing…
 Studio · attaching
 ```
 
 **Needs attention:**
 ```
 Studio · can't attach · needs an invite
-Personal · stale · 6h since last sync
+Private · stale · 6h since last sync
 ```
 
 **Error:**
@@ -120,7 +120,7 @@ Studio · forbidden · ask the owner
 
 ### Anti-patterns
 
-- `Your personal space has been successfully synchronized!` — too long, too formal, end punctuation
+- `Your Private space has been successfully synchronized!` — too long, too formal, end punctuation
 - `✨ All synced up!` — emoji + cheerleading
 - `Syncing your files, please wait...` — "please" and ellipsis together read as nagging
 
@@ -160,7 +160,7 @@ Your account is how Heddle recognizes you across machines.
 ```
 ## You're set
 
-Heddle is running in the background. Your personal space will sync quietly from here.
+Heddle is running in the background. Your Private space will sync quietly from here.
 
 - Check status anytime with `heddle health`
 - Shared spaces appear automatically after a space owner grants your Clerk account access
@@ -239,7 +239,7 @@ Not urgent. This machine needs a fresh Clerk-backed session before it can sync a
 
 ## 🟢 Resolved since Friday
 
-- Personal space cut over to `account_rooted` on Friday at 11:42
+- Private space cut over to `account_rooted` on Friday at 11:42
 - 37 files synced overnight, all clean
 
 ---
@@ -311,7 +311,7 @@ A quiet layer that keeps your spaces, docs, and signals in the right order — a
 ## Spaces that sync themselves
 
 - One install, one account, every machine attached in seconds
-- Personal and shared spaces, encrypted end-to-end
+- Private and shared spaces, encrypted end-to-end
 - Background sync — no menu to open, no button to click
 ```
 
@@ -357,7 +357,7 @@ Pingback here when you have a take.
 
 **Before:** "🎉 Congratulations! Your Heddle account has been successfully created and you're now ready to start your Heddle journey!"
 
-**After:** "Your account is set up. Heddle is syncing your personal space now — give it a minute and you're good to go."
+**After:** "Your account is set up. Heddle is syncing your Private space now — give it a minute and you're good to go."
 
 ### Rewrite 2 — error
 
@@ -365,7 +365,7 @@ Pingback here when you have a take.
 
 **After:**
 ```
-Heddle couldn't sync your personal space.
+Heddle couldn't sync your Private space.
 The node service isn't responding — it may not be running.
 
 Try: brew services restart ccore
@@ -382,7 +382,7 @@ Then: heddle health
 
 **Before:** "Your personal workspace has finished synchronizing all pending changes just now."
 
-**After:** `Personal · synced · just now`
+**After:** `Private · synced · just now`
 
 ### Rewrite 5 — marketing hero
 

@@ -106,7 +106,7 @@ Same intent, different surface.
 Every error leads with **what broke** in a sentence a human can read, *then* the technical detail. Not the other way around.
 
 ```
-Heddle couldn't sync your personal space.
+Heddle couldn't sync your Private space.
 The node service isn't responding — it may not be running.
 
 Try: brew services restart ccore
