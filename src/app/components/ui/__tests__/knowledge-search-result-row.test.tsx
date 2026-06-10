@@ -5,11 +5,11 @@ import { KnowledgeSearchResultRow } from '../knowledge-search-result-row';
 
 const result = {
   id: '1',
-  title: 'Tomb Notes',
-  path: 'session/tomb.md',
-  excerpt: 'The party found a seal…',
+  title: 'Launch Notes',
+  path: 'meetings/launch.md',
+  excerpt: 'The team confirmed the launch plan…',
   relevance: 82,
-  categories: ['session'],
+  categories: ['meetings'],
 };
 
 describe('KnowledgeSearchResultRow', () => {
@@ -24,7 +24,7 @@ describe('KnowledgeSearchResultRow', () => {
       />
     );
     expect(container.querySelector('[data-slot="knowledge-search-result-row"]')).toBeTruthy();
-    expect(screen.getByRole('link', { name: /open tomb notes in obsidian/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /open launch notes in obsidian/i })).toHaveAttribute(
       'href',
       'obsidian://open',
     );
@@ -43,18 +43,18 @@ describe('KnowledgeSearchResultRow', () => {
     expect(screen.queryByText('82%')).not.toBeInTheDocument();
   });
 
-  it('renders display labels for preserved category ids', () => {
+  it('renders display labels for category ids', () => {
     render(
       <KnowledgeSearchResultRow
-        result={{ ...result, categories: ['lore'] }}
+        result={{ ...result, categories: ['reference'] }}
         obsidianHref="#"
         isBrowseMode
         copiedPath={null}
         onCopyPath={() => undefined}
       />
     );
-    expect(screen.getByText('Knowledge')).toBeInTheDocument();
-    expect(screen.queryByText('lore')).not.toBeInTheDocument();
+    expect(screen.getByText('Reference')).toBeInTheDocument();
+    expect(screen.queryByText('reference')).not.toBeInTheDocument();
   });
 
   it('calls onCopyPath when copy is clicked', () => {
@@ -68,7 +68,7 @@ describe('KnowledgeSearchResultRow', () => {
         onCopyPath={onCopyPath}
       />
     );
-    fireEvent.click(screen.getByRole('button', { name: /copy path session\/tomb/i }));
+    fireEvent.click(screen.getByRole('button', { name: /copy path meetings\/launch/i }));
     expect(onCopyPath).toHaveBeenCalled();
   });
 });

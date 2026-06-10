@@ -174,7 +174,7 @@ Empty states have three jobs — in this order:
 
 ```
 No spaces yet.
-Your personal space appears automatically after heddle init.
+Your Private space appears automatically after heddle init.
 Run it now: heddle init
 ```
 
