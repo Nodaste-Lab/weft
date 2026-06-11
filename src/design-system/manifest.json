@@ -891,6 +891,7 @@
       "toggle",
       "submit-button",
       "output",
+      "data-list",
       "signal-list",
       "signal-filters",
       "signal-stats"
