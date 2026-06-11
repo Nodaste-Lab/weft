@@ -27,6 +27,7 @@ Use this folder as the single source of truth for anyone (human or agent) writin
 - [[07-illustration-style]] — engraving / etching aesthetic foundations + Weft palette mapping
 - [[08-image-generation-prompts]] — **prompt handbook** (overrides any other prompt guidance for graphic creation; includes per-asset templates + QC checklist)
 - [[09-app-primitives]] — Weft extension for the Heddle app: density mode, shadcn → Weft token bridge, per-primitive anatomy for all 41 UI primitives
+- [[10-language-index]] + `language-index.json` — term-level registry for canonical labels, alternatives, avoid lists, surface rules, and feedback history
 - `landing-page.html` · `design-system.html` — rendered references on Weft
 - `assets/` — SVG marks and lockups
 
