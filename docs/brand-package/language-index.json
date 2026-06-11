@@ -1,0 +1,661 @@
+{
+  "version": 1,
+  "updated": "2026-06-11",
+  "terms": [
+    {
+      "id": "sync-degraded",
+      "canonical": "degraded sync",
+      "status": "review",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "sync warning",
+        "needs attention"
+      ],
+      "avoid": [
+        "unhealthy",
+        "broken sync"
+      ],
+      "definition": "Non-blocking sync warnings; space still usable.",
+      "example": "Studio - sync warning - 2 saved changes need review",
+      "anti_example": "Studio space is degraded and unhealthy.",
+      "rationale": "Operator term from catalog and validation; soften in HUD microcopy and avoid on marketing surfaces.",
+      "related": [
+        "quarantine",
+        "space-sync-status"
+      ],
+      "code_refs": [
+        "docs/ERROR_INVENTORY.md",
+        "src/app/services/sourceValidationService.ts",
+        "src/app/services/ccoreSpaceSourcePicker.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from alpha source validation and error inventory."
+        }
+      ]
+    },
+    {
+      "id": "quarantine",
+      "canonical": "needs review",
+      "status": "review",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed-with-context",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "held aside",
+        "saved change needs review"
+      ],
+      "avoid": [
+        "quarantined envelope",
+        "bad envelope"
+      ],
+      "definition": "A saved sync change has been held aside until the user or support reviews recovery steps.",
+      "example": "One saved change needs review.",
+      "anti_example": "This quarantined sync envelope is bad.",
+      "rationale": "Quarantine is a useful diagnostic mechanism name, but product copy should explain the held change and next action.",
+      "related": [
+        "sync-degraded",
+        "recovery-space"
+      ],
+      "code_refs": [
+        "src/app/services/sourceValidationService.ts",
+        "src/app/services/ccoreSpaceSourcePicker.ts",
+        "src/app/components/panels/SpacesPreferencesPanel.tsx"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Marked review because product still needs to decide whether quarantine remains visible to end users."
+        }
+      ]
+    },
+    {
+      "id": "space-sync-status",
+      "canonical": "space sync status",
+      "status": "review",
+      "surfaces": {
+        "ui": "preferred",
+        "website": "allowed-with-context",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "sync status",
+        "space status"
+      ],
+      "avoid": [
+        "space health on website",
+        "unhealthy space"
+      ],
+      "definition": "The current sync and access state for a Heddle space.",
+      "example": "Review space sync status here, then send diagnostics.",
+      "anti_example": "Space Health proves the space is healthy.",
+      "rationale": "Status language is less clinical and handles partial states better than health language.",
+      "related": [
+        "sync-degraded",
+        "blocked-source",
+        "unreachable-source"
+      ],
+      "code_refs": [
+        "docs/ERROR_INVENTORY.md",
+        "src/app/components/panels/SpaceHealthReportSection.tsx"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Marked review because the product name Space Health may be renamed."
+        }
+      ]
+    },
+    {
+      "id": "recovery-space",
+      "canonical": "recovery space",
+      "status": "allowed",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "recovered space",
+        "new recovery copy"
+      ],
+      "avoid": [
+        "restore target",
+        "backup clone"
+      ],
+      "definition": "A new space created from an import archive for safe inspection or deliberate sync enablement.",
+      "example": "Restore into a new recovery space.",
+      "anti_example": "Restore over this backup clone.",
+      "rationale": "The Settings import path creates a new space before writes and is not an existing-destination restore.",
+      "related": [
+        "local-reset",
+        "space"
+      ],
+      "code_refs": [
+        "docs/SPACE_BACKUP_EXPORT_IMPORT_RUNBOOK.md",
+        "src/app/services/backupExportImportService.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from backup/export/import runbook and tests."
+        }
+      ]
+    },
+    {
+      "id": "blocked-source",
+      "canonical": "blocked",
+      "status": "allowed-with-context",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "blocked until access is fixed",
+        "cannot continue"
+      ],
+      "avoid": [
+        "broken",
+        "dead"
+      ],
+      "definition": "A source, space, runtime, or action cannot proceed until a blocker is resolved.",
+      "example": "Studio - blocked until access is verified.",
+      "anti_example": "Studio is broken.",
+      "rationale": "Blocked is accurate when paired with a cause and next action.",
+      "related": [
+        "space-sync-status",
+        "authority"
+      ],
+      "code_refs": [
+        "docs/ERROR_INVENTORY.md",
+        "src/app/services/sourceValidationService.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from source validation and error inventory."
+        }
+      ]
+    },
+    {
+      "id": "unreachable-source",
+      "canonical": "unreachable",
+      "status": "allowed",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "cannot reach",
+        "not responding"
+      ],
+      "avoid": [
+        "dead",
+        "missing forever"
+      ],
+      "definition": "Heddle cannot reach a path, runtime, or selected space right now.",
+      "example": "Heddle cannot reach this source. Check access, then revalidate.",
+      "anti_example": "This source is dead.",
+      "rationale": "Unreachable is concrete and reversible; copy should lead with the next check.",
+      "related": [
+        "blocked-source",
+        "node"
+      ],
+      "code_refs": [
+        "docs/ERROR_INVENTORY.md",
+        "src/app/services/sourceValidationService.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from source and space validation statuses."
+        }
+      ]
+    },
+    {
+      "id": "local-reset",
+      "canonical": "reset local state",
+      "status": "review",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed-with-context",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "local reset",
+        "reset this machine"
+      ],
+      "avoid": [
+        "factory reset",
+        "wipe everything"
+      ],
+      "definition": "A destructive recovery action scoped to local Heddle state on this machine.",
+      "example": "Reset local state on this machine.",
+      "anti_example": "Factory reset Heddle everywhere.",
+      "rationale": "The copy must make local scope clear and avoid implying account or cloud deletion.",
+      "related": [
+        "recovery-space"
+      ],
+      "code_refs": [
+        "src/app/components/LocalResetDialog.tsx",
+        "src/app/services/localResetService.ts",
+        "native/macos/SpriteHUD/SpriteHUD/LocalResetCoordinator.swift"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Marked review pending alignment with LocalResetDialog wording."
+        }
+      ]
+    },
+    {
+      "id": "substrate",
+      "canonical": "background service",
+      "status": "avoid",
+      "surfaces": {
+        "ui": "avoid",
+        "website": "avoid",
+        "cli": "internal-only",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "service",
+        "local node",
+        "context store"
+      ],
+      "avoid": [
+        "substrate",
+        "context substrate"
+      ],
+      "definition": "Internal architecture language for the context/sync layer.",
+      "example": "The Heddle service keeps syncing in the background.",
+      "anti_example": "The context substrate is unavailable.",
+      "rationale": "Substrate is not plainspoken user-facing language; name the mechanism instead.",
+      "related": [
+        "node",
+        "space"
+      ],
+      "code_refs": [
+        "docs/brand-package/01-brand-overview.md",
+        "docs/brand-package/05-copy-guidance.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Explicitly avoid for user-facing surfaces per post-alpha positioning."
+        }
+      ]
+    },
+    {
+      "id": "weaving-metaphor",
+      "canonical": "thread metaphor",
+      "status": "allowed-with-context",
+      "surfaces": {
+        "ui": "avoid",
+        "website": "allowed-with-context",
+        "cli": "avoid",
+        "marketing": "allowed-with-context"
+      },
+      "synonyms": [
+        "loom",
+        "thread",
+        "weaving"
+      ],
+      "avoid": [
+        "loom error copy",
+        "woven status"
+      ],
+      "definition": "Brand metaphor drawn from heddles, looms, and threads.",
+      "example": "Heddle holds your work in context.",
+      "anti_example": "This source fell off the loom.",
+      "rationale": "The metaphor belongs in brand, illustration, and website narrative, not error, Settings, CLI, or status copy.",
+      "related": [
+        "space",
+        "seamless"
+      ],
+      "code_refs": [
+        "docs/brand-package/01-brand-overview.md",
+        "docs/brand-package/07-illustration-style.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from March positioning and illustration guidance."
+        }
+      ]
+    },
+    {
+      "id": "ai-powered",
+      "canonical": "uses a model",
+      "status": "avoid",
+      "surfaces": {
+        "ui": "avoid",
+        "website": "avoid",
+        "cli": "avoid",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "runs an agent",
+        "model-backed"
+      ],
+      "avoid": [
+        "AI-powered",
+        "powered by AI"
+      ],
+      "definition": "Puffery shorthand that hides the actual model or agent behavior.",
+      "example": "This step uses a model to draft a summary.",
+      "anti_example": "Heddle is an AI-powered context platform.",
+      "rationale": "Copy guidance bans broad AI claims; specify the capability.",
+      "related": [
+        "intelligent",
+        "seamless"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from copy guidance avoid list."
+        }
+      ]
+    },
+    {
+      "id": "intelligent",
+      "canonical": "context-aware",
+      "status": "avoid",
+      "surfaces": {
+        "ui": "avoid",
+        "website": "avoid",
+        "cli": "avoid",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "specific behavior",
+        "context-aware"
+      ],
+      "avoid": [
+        "intelligent platform",
+        "smart magic"
+      ],
+      "definition": "Broad adjective that should be replaced by the specific thing Heddle knows or does.",
+      "example": "Heddle uses the selected space context for this draft.",
+      "anti_example": "Heddle is an intelligent assistant.",
+      "rationale": "The word overclaims and removes useful detail.",
+      "related": [
+        "ai-powered",
+        "seamless"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from copy guidance avoid list."
+        }
+      ]
+    },
+    {
+      "id": "seamless",
+      "canonical": "quiet background sync",
+      "status": "avoid",
+      "surfaces": {
+        "ui": "avoid",
+        "website": "avoid",
+        "cli": "avoid",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "quiet",
+        "background",
+        "no setup"
+      ],
+      "avoid": [
+        "seamless",
+        "frictionless"
+      ],
+      "definition": "A vague ease claim that should become a concrete setup or background-behavior claim.",
+      "example": "Background sync runs after sign-in.",
+      "anti_example": "Heddle seamlessly integrates with your workflow.",
+      "rationale": "Copy guidance bans seamless because it hides the real interaction and can dismiss user effort.",
+      "related": [
+        "ai-powered",
+        "weaving-metaphor"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from copy guidance avoid list."
+        }
+      ]
+    },
+    {
+      "id": "space",
+      "canonical": "space",
+      "status": "preferred",
+      "surfaces": {
+        "ui": "preferred",
+        "website": "preferred",
+        "cli": "preferred",
+        "marketing": "preferred"
+      },
+      "synonyms": [
+        "Personal space",
+        "shared space"
+      ],
+      "avoid": [
+        "workspace",
+        "vault as generic sync unit"
+      ],
+      "definition": "The Heddle sync unit noun for personal, studio, and shared contexts.",
+      "example": "Your Private space will sync quietly from here.",
+      "anti_example": "Your workspace vault will synchronize.",
+      "rationale": "Space is already the preferred noun in copy guidance and agent examples.",
+      "related": [
+        "attach",
+        "account-grant"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from preferred vocabulary."
+        }
+      ]
+    },
+    {
+      "id": "attach",
+      "canonical": "attach",
+      "status": "preferred",
+      "surfaces": {
+        "ui": "preferred",
+        "website": "allowed",
+        "cli": "preferred",
+        "marketing": "allowed"
+      },
+      "synonyms": [
+        "join an existing space",
+        "attached locally"
+      ],
+      "avoid": [
+        "bind",
+        "onboard a machine"
+      ],
+      "definition": "The action where a machine joins an existing Heddle space.",
+      "example": "Heddle attaches existing spaces automatically.",
+      "anti_example": "Bind this machine to the workspace.",
+      "rationale": "Attach is short, concrete, and established in CLI/HUD examples.",
+      "related": [
+        "space",
+        "account-grant"
+      ],
+      "code_refs": [
+        "docs/brand-package/04-voice-and-tone.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from preferred vocabulary and agent examples."
+        }
+      ]
+    },
+    {
+      "id": "account-grant",
+      "canonical": "account grant",
+      "status": "preferred",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "allowed-with-context",
+        "cli": "preferred",
+        "marketing": "allowed-with-context"
+      },
+      "synonyms": [
+        "owner-granted access",
+        "grant your Clerk account access"
+      ],
+      "avoid": [
+        "invite as the only noun",
+        "permission magic"
+      ],
+      "definition": "Owner-created shared-space access for a Clerk account or email.",
+      "example": "Ask a space owner to grant your Clerk account access.",
+      "anti_example": "The invite grants magic access.",
+      "rationale": "Account grant distinguishes access policy from invitation messaging.",
+      "related": [
+        "space",
+        "attach",
+        "authority"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from preferred vocabulary."
+        }
+      ]
+    },
+    {
+      "id": "node",
+      "canonical": "node",
+      "status": "allowed-with-context",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "allowed",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "background service",
+        "Heddle service"
+      ],
+      "avoid": [
+        "daemon in UI",
+        "substrate"
+      ],
+      "definition": "The background service that runs local Heddle/ccore work.",
+      "example": "The Heddle service is not responding.",
+      "anti_example": "The substrate daemon failed.",
+      "rationale": "CLI/docs can use node; HUD and support should name the Heddle service first.",
+      "related": [
+        "substrate",
+        "unreachable-source"
+      ],
+      "code_refs": [
+        "docs/brand-package/05-copy-guidance.md",
+        "docs/brand-package/06-ai-agent-style-guide.md",
+        "src/app/services/localRuntimeDiscovery.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Seed from preferred vocabulary and runtime examples."
+        }
+      ]
+    },
+    {
+      "id": "authority",
+      "canonical": "access proof",
+      "status": "review",
+      "surfaces": {
+        "ui": "allowed-with-context",
+        "website": "avoid",
+        "cli": "internal-only",
+        "marketing": "avoid"
+      },
+      "synonyms": [
+        "membership proof",
+        "access check",
+        "producer proof"
+      ],
+      "avoid": [
+        "authority in HUD copy",
+        "canonical authority"
+      ],
+      "definition": "Diagnostic proof that a producer, account, or machine can safely read or write a space.",
+      "example": "Heddle could not verify membership for this space.",
+      "anti_example": "Canonical authority failed.",
+      "rationale": "Authority/canonical terms are useful diagnostics but obscure normal user actions.",
+      "related": [
+        "account-grant",
+        "blocked-source"
+      ],
+      "code_refs": [
+        "src/app/services/sourceValidationService.ts",
+        "src/app/services/accountSharingService.ts"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-11",
+          "author": "Symphony",
+          "note": "Added from issue problem statement about internal terms leaking into user-visible strings."
+        }
+      ]
+    }
+  ]
+}
