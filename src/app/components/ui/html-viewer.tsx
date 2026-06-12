@@ -21,19 +21,21 @@ export type HtmlViewerProps = Omit<
 
 /*
  * Strict, script-free policy for displaying arbitrary/agent-produced HTML:
- * markup, inline styles, and images render; scripts, network, and form
- * submission are all denied. Paired with a fully restricted iframe sandbox.
+ * markup, inline styles, and inline data images/media render; scripts, network,
+ * navigation, and form submission are all denied. Paired with a fully
+ * restricted iframe sandbox.
  */
 const HTML_VIEWER_CSP = [
   "default-src 'none'",
-  "img-src data: https:",
-  "media-src data: https:",
+  "img-src data:",
+  "media-src data:",
   "style-src 'unsafe-inline'",
   "font-src data:",
   "script-src 'none'",
   "connect-src 'none'",
   "form-action 'none'",
   "base-uri 'none'",
+  "navigate-to 'none'",
 ].join("; ");
 
 export function buildHtmlViewerSrcDoc(html: string): string {
@@ -69,9 +71,10 @@ export function buildHtmlViewerSrcDoc(html: string): string {
  *
  * Renders the HTML inside a fully sandboxed iframe (empty `sandbox`, so no
  * `allow-scripts` and no `allow-same-origin`) with a strict `script-src 'none'`
- * CSP, so arbitrary or agent-produced markup displays faithfully — styles,
- * images, layout — without executing scripts or reaching the host page. The
- * raw source can be inspected via the shared ContentViewer toggle.
+ * CSP, so arbitrary or agent-produced markup displays safely — inline styles,
+ * data images, layout — without executing scripts, navigating, making network
+ * requests, or reaching the host page. The raw source can be inspected via the
+ * shared ContentViewer toggle.
  */
 function HtmlViewer({
   className,
@@ -100,6 +103,7 @@ function HtmlViewer({
         title={frameTitle}
         srcDoc={srcDoc}
         sandbox=""
+        referrerPolicy="no-referrer"
         className="h-full min-h-64 w-full border-0 bg-transparent"
       />
     </ContentViewer>

@@ -4,12 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { HtmlViewer, buildHtmlViewerSrcDoc } from '../html-viewer';
 
 describe('buildHtmlViewerSrcDoc', () => {
-  it('embeds the html inside a script-free CSP document', () => {
+  it('embeds the html inside a script-free, network-free CSP document', () => {
     const doc = buildHtmlViewerSrcDoc('<h1>Title</h1>');
     expect(doc).toContain('<h1>Title</h1>');
     expect(doc).toContain('Content-Security-Policy');
     expect(doc).toContain("script-src 'none'");
     expect(doc).toContain("default-src 'none'");
+    expect(doc).toContain("connect-src 'none'");
+    expect(doc).toContain("navigate-to 'none'");
+    expect(doc).toContain('img-src data:');
+    expect(doc).not.toContain('img-src data: https:');
   });
 });
 
@@ -20,6 +24,7 @@ describe('HtmlViewer', () => {
     const frame = screen.getByTitle('Preview') as HTMLIFrameElement;
     // Empty sandbox = most restrictive: no allow-scripts, no allow-same-origin.
     expect(frame.getAttribute('sandbox')).toBe('');
+    expect(frame.getAttribute('referrerpolicy')).toBe('no-referrer');
     const srcdoc = frame.getAttribute('srcdoc') ?? '';
     expect(srcdoc).toContain('<p>hello-html</p>');
     expect(srcdoc).toContain("script-src 'none'");
