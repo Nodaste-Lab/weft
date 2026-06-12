@@ -915,7 +915,8 @@
       "data-list",
       "signal-list",
       "signal-filters",
-      "signal-stats"
+      "signal-stats",
+      "content-viewer"
     ],
     "previewTemplates": [
       "session-recap"
