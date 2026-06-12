@@ -194,6 +194,13 @@
       "showcase": true
     },
     {
+      "id": "content-viewer",
+      "path": "src/app/components/ui/content-viewer.tsx",
+      "category": "data-display",
+      "summary": "Read-only viewer shell with a Rendered / Source toggle, copy action, and empty state shared by the format viewers.",
+      "showcase": true
+    },
+    {
       "id": "context-menu",
       "path": "src/app/components/ui/context-menu.tsx",
       "category": "menus",
@@ -268,6 +275,13 @@
       "path": "src/app/components/ui/hover-card.tsx",
       "category": "overlay",
       "summary": "Preview card that opens on hover or focus.",
+      "showcase": true
+    },
+    {
+      "id": "html-viewer",
+      "path": "src/app/components/ui/html-viewer.tsx",
+      "category": "data-display",
+      "summary": "Read-only HTML viewer that renders a passed-in HTML string inside a fully sandboxed, script-free iframe.",
       "showcase": true
     },
     {
@@ -436,6 +450,13 @@
       "path": "src/app/components/ui/markdown-renderer.tsx",
       "category": "data-display",
       "summary": "Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code components.",
+      "showcase": true
+    },
+    {
+      "id": "markdown-viewer",
+      "path": "src/app/components/ui/markdown-viewer.tsx",
+      "category": "data-display",
+      "summary": "Read-only Markdown viewer pairing the ContentViewer chrome with the safe MarkDownRenderer.",
       "showcase": true
     },
     {
@@ -891,6 +912,7 @@
       "toggle",
       "submit-button",
       "output",
+      "data-list",
       "signal-list",
       "signal-filters",
       "signal-stats"
