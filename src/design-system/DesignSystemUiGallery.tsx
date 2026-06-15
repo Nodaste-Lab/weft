@@ -46,6 +46,9 @@ import {
 import { Carousel } from '../app/components/ui/carousel';
 import { Checkbox } from '../app/components/ui/checkbox';
 import { CodeBlock } from '../app/components/ui/code-block';
+import { ContentViewer } from '../app/components/ui/content-viewer';
+import { HtmlViewer } from '../app/components/ui/html-viewer';
+import { MarkdownViewer } from '../app/components/ui/markdown-viewer';
 import {
   Command,
   CommandEmpty,
@@ -236,6 +239,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'command',
   'command-category-tag',
   'condition-chip-strip',
+  'content-viewer',
   'context-menu',
   'dialog',
   'dropdown-menu',
@@ -245,6 +249,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'follow-up-item',
   'form',
   'hover-card',
+  'html-viewer',
   'hud-list-row',
   'hud-meta-caption',
   'hud-popover-dropdown',
@@ -262,6 +267,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'list-block',
   'list-item',
   'markdown-renderer',
+  'markdown-viewer',
   'menubar',
   'metric-tile',
   'mode-only-toggle',
@@ -1599,6 +1605,60 @@ export function DesignSystemUiGallery({
             become alt-text placeholders, and raw HTML is skipped.
           </TextContent>
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="content-viewer"
+        title="ContentViewer"
+        summary="Read-only viewer shell with a Rendered / Source toggle, copy action, and empty state shared by the format viewers."
+      >
+        <ContentViewer
+          source={'Plain rendered output.\n\nToggle to Source to see the raw string, or Copy to grab it.'}
+          sourceLanguage="text"
+          className="h-56 w-full max-w-md"
+        >
+          <div className="p-3 text-xs text-[var(--hud-text-2)]">
+            <p className="m-0">Plain rendered output.</p>
+            <p className="m-0 mt-2">
+              Toggle to Source to see the raw string, or Copy to grab it. Each format viewer
+              plugs its own renderer into this shell.
+            </p>
+          </div>
+        </ContentViewer>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="html-viewer"
+        title="HtmlViewer"
+        summary="Read-only HTML viewer that renders a passed-in HTML string inside a fully sandboxed, script-free iframe."
+      >
+        <HtmlViewer
+          className="h-64 w-full max-w-md"
+          html={`<h2>Release checklist</h2>
+<p>Markup, inline styles, and images render &mdash; <strong>scripts never run</strong>.</p>
+<ul><li>Fully sandboxed iframe</li><li>Strict <code>script-src 'none'</code> policy</li></ul>
+<p style="color:teal">Inline styles are honored.</p>`}
+        />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="markdown-viewer"
+        title="MarkdownViewer"
+        summary="Read-only Markdown viewer pairing the ContentViewer chrome with the safe MarkDownRenderer."
+      >
+        <MarkdownViewer
+          className="h-64 w-full max-w-md"
+          markdown={[
+            '### Release notes',
+            '',
+            'Shipping the **viewer** widgets:',
+            '',
+            '- HTML viewer',
+            '- Markdown viewer',
+            '',
+            '[Safe link](https://example.com) · `inline code`',
+          ].join('\n')}
+        />
       </PrimitiveCard>
 
       <PrimitiveCard
