@@ -2088,7 +2088,10 @@ export function DesignSystemUiGallery({
         summary="Layout components for a persistent rail and main inset."
       >
         <SidebarProvider defaultOpen className="min-h-[132px]">
-          <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border">
+          {/* `Sidebar` renders position:fixed; the transform makes this wrapper a
+              containing block so the example's rail resolves to this box (and is
+              clipped by overflow-hidden) instead of floating over the whole page. */}
+          <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border [transform:translateZ(0)]">
             <Sidebar collapsible="icon" className="border-sidebar-border border-r">
               <SidebarHeader>
                 <span className="text-sidebar-foreground px-2 text-xs font-medium group-data-[collapsible=icon]:hidden">Nav</span>
