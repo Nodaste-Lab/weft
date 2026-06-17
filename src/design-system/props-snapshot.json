@@ -267,6 +267,10 @@
             "optional": true,
             "union": null
           },
+          "pressed": {
+            "optional": true,
+            "union": null
+          },
           "size": {
             "optional": true,
             "union": [
@@ -1652,7 +1656,20 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "indeterminate": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "lg",
+              "sm"
+            ]
+          }
+        },
         "native": []
       }
     },
