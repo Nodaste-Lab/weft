@@ -12,9 +12,19 @@ const alertVariants = cva(
         destructive:
           "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
       },
+      // Tone — match Callout's severity range so an info/positive alert doesn't
+      // get hand-rolled. `none` leaves the variant's own treatment.
+      tone: {
+        none: "",
+        info: "border-[color-mix(in_srgb,var(--hud-info)_40%,transparent)] [&>svg]:text-[var(--hud-info)]",
+        warning: "border-[color-mix(in_srgb,var(--hud-warning)_40%,transparent)] [&>svg]:text-[var(--hud-warning)]",
+        danger: "border-[color-mix(in_srgb,var(--hud-danger)_40%,transparent)] [&>svg]:text-[var(--hud-danger)]",
+        positive: "border-[color-mix(in_srgb,var(--hud-positive)_40%,transparent)] [&>svg]:text-[var(--hud-positive)]",
+      },
     },
     defaultVariants: {
       variant: "default",
+      tone: "none",
     },
   },
 );
@@ -22,13 +32,14 @@ const alertVariants = cva(
 function Alert({
   className,
   variant,
+  tone,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
   return (
     <div
       data-slot="alert"
       role="alert"
-      className={cn(alertVariants({ variant }), className)}
+      className={cn(alertVariants({ variant, tone }), className)}
       {...props}
     />
   );

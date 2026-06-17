@@ -18,9 +18,20 @@ const badgeVariants = cva(
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       },
+      // Severity tone — pairs with variant="outline" for priority/status pills
+      // (urgent/high/etc.) so they don't get hand-rolled. `none` is the default
+      // and leaves the variant's own color untouched.
+      tone: {
+        none: "",
+        info: "border-[color-mix(in_srgb,var(--hud-info)_45%,transparent)] text-[var(--hud-info)]",
+        warning: "border-[color-mix(in_srgb,var(--hud-warning)_45%,transparent)] text-[var(--hud-warning)]",
+        danger: "border-[color-mix(in_srgb,var(--hud-danger)_45%,transparent)] text-[var(--hud-danger)]",
+        positive: "border-[color-mix(in_srgb,var(--hud-positive)_45%,transparent)] text-[var(--hud-positive)]",
+      },
     },
     defaultVariants: {
       variant: "default",
+      tone: "none",
     },
   },
 );

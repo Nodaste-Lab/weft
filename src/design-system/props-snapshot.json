@@ -40,12 +40,29 @@
       "version": "1.0.0",
       "surface": {
         "variants": {
+          "tone": [
+            "danger",
+            "info",
+            "none",
+            "positive",
+            "warning"
+          ],
           "variant": [
             "default",
             "destructive"
           ]
         },
         "props": {
+          "tone": {
+            "optional": true,
+            "union": [
+              "danger",
+              "info",
+              "none",
+              "positive",
+              "warning"
+            ]
+          },
           "variant": {
             "optional": true,
             "union": [
@@ -155,6 +172,13 @@
       "version": "1.0.0",
       "surface": {
         "variants": {
+          "tone": [
+            "danger",
+            "info",
+            "none",
+            "positive",
+            "warning"
+          ],
           "variant": [
             "default",
             "destructive",
@@ -166,6 +190,16 @@
           "asChild": {
             "optional": true,
             "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "danger",
+              "info",
+              "none",
+              "positive",
+              "warning"
+            ]
           },
           "variant": {
             "optional": true,
@@ -583,10 +617,7 @@
           },
           "tone": {
             "optional": true,
-            "union": [
-              "default",
-              "warning"
-            ]
+            "union": null
           }
         },
         "native": [
