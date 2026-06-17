@@ -1014,7 +1014,8 @@
       "content-viewer",
       "component",
       "stack",
-      "repeat"
+      "repeat",
+      "section"
     ],
     "previewTemplates": [
       "session-recap"
