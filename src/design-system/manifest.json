@@ -1013,7 +1013,8 @@
       "signal-stats",
       "content-viewer",
       "component",
-      "stack"
+      "stack",
+      "repeat"
     ],
     "previewTemplates": [
       "session-recap"
