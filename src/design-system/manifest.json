@@ -1011,7 +1011,8 @@
       "signal-list",
       "signal-filters",
       "signal-stats",
-      "content-viewer"
+      "content-viewer",
+      "component"
     ],
     "previewTemplates": [
       "session-recap"
