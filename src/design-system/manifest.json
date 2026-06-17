@@ -1012,7 +1012,8 @@
       "signal-filters",
       "signal-stats",
       "content-viewer",
-      "component"
+      "component",
+      "stack"
     ],
     "previewTemplates": [
       "session-recap"
