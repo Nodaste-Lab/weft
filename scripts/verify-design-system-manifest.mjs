@@ -76,10 +76,26 @@ function extractUnionMembers(source, typeName) {
   return Array.from(match[1].matchAll(/'([^']+)'/g)).map((entry) => entry[1]);
 }
 
+const SEMVER = /^\d+\.\d+\.\d+$/;
+
+function ensureVersions(entries) {
+  if (!SEMVER.test(manifest.designSystemVersion ?? '')) {
+    fail(`designSystemVersion must be semver "x.y.z"; found "${manifest.designSystemVersion ?? '(none)'}".`);
+  }
+  const missing = entries.filter((entry) => entry.showcase && !SEMVER.test(entry.version ?? ''));
+  if (missing.length) {
+    fail([
+      'Showcase components must declare a semver `version` in src/design-system/manifest.json:',
+      ...missing.map((entry) => `- ${entry.id}: "${entry.version ?? '(none)'}"`),
+    ].join('\n'));
+  }
+}
+
 const manifestPrimitiveIds = manifest.uiPrimitives.map((entry) => entry.id);
 const actualPrimitiveIds = readUiPrimitiveIds();
 
 ensureUiPathsMatch(manifest.uiPrimitives);
+ensureVersions(manifest.uiPrimitives);
 compareOrderedList('uiPrimitives', actualPrimitiveIds, manifestPrimitiveIds);
 
 const panelTypesSource = readFileSync(panelTypesPath, 'utf8');

@@ -1,4 +1,5 @@
 {
+  "designSystemVersion": "0.1.0",
   "tokens": {
     "theme": "src/styles/theme.css",
     "tailwind": "src/styles/tailwind.css"
@@ -9,7 +10,8 @@
       "path": "src/app/components/ui/accordion.tsx",
       "category": "disclosure",
       "summary": "Expandable sections with trigger and content components.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "action-button-row.figma",
@@ -23,7 +25,8 @@
       "path": "src/app/components/ui/action-button-row.tsx",
       "category": "actions",
       "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "add-item-button.figma",
@@ -37,28 +40,32 @@
       "path": "src/app/components/ui/add-item-button.tsx",
       "category": "actions",
       "summary": "Dashed-border 'add item' trigger for editable list footers.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "alert-dialog",
       "path": "src/app/components/ui/alert-dialog.tsx",
       "category": "overlay",
       "summary": "Confirmation dialog components for destructive or blocking actions.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "alert",
       "path": "src/app/components/ui/alert.tsx",
       "category": "feedback",
       "summary": "Inline callout container for status and messaging states.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "aspect-ratio",
       "path": "src/app/components/ui/aspect-ratio.tsx",
       "category": "layout",
       "summary": "Layout helper for locking media and surfaces to a ratio.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "attention-ticket-card.figma",
@@ -72,42 +79,48 @@
       "path": "src/app/components/ui/attention-ticket-card.tsx",
       "category": "data-display",
       "summary": "Ticketing attention row with reason pill, title, snippet, expand toggle, and optional expanded body slot.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "avatar",
       "path": "src/app/components/ui/avatar.tsx",
       "category": "data-display",
       "summary": "Avatar container, image, and fallback components.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "badge",
       "path": "src/app/components/ui/badge.tsx",
       "category": "feedback",
       "summary": "Compact pill label for statuses, counts, and tags.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "breadcrumb",
       "path": "src/app/components/ui/breadcrumb.tsx",
       "category": "navigation",
       "summary": "Breadcrumb navigation items and separators.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "button",
       "path": "src/app/components/ui/button.tsx",
       "category": "actions",
       "summary": "Primary action component with variant, size, disabled, blocked, and loading state options.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "calendar",
       "path": "src/app/components/ui/calendar.tsx",
       "category": "inputs",
       "summary": "Calendar date picker surface based on react-day-picker.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "callout.figma",
@@ -121,42 +134,48 @@
       "path": "src/app/components/ui/callout.tsx",
       "category": "feedback",
       "summary": "Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints. Supports info/warning/danger/positive/muted tones.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "card",
       "path": "src/app/components/ui/card.tsx",
       "category": "layout",
       "summary": "Card shell with header, content, and footer slots.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "carousel",
       "path": "src/app/components/ui/carousel.tsx",
       "category": "layout",
       "summary": "Generic content carousel with accessible slide semantics, previous/next controls, and bounded keyboard navigation.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "checkbox",
       "path": "src/app/components/ui/checkbox.tsx",
       "category": "toggles",
       "summary": "Boolean checkbox control with checked indicator.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "code-block",
       "path": "src/app/components/ui/code-block.tsx",
       "category": "data-display",
       "summary": "Tokenized plain-text code block for generated snippets and diagnostics.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "collapsible",
       "path": "src/app/components/ui/collapsible.tsx",
       "category": "disclosure",
       "summary": "Open or close hidden content without leaving the page.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "command-category-tag.figma",
@@ -170,14 +189,16 @@
       "path": "src/app/components/ui/command-category-tag.tsx",
       "category": "data-display",
       "summary": "Tone-colored label for NLP quick-command reference categories (5e).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "command",
       "path": "src/app/components/ui/command.tsx",
       "category": "menus",
       "summary": "Keyboard-friendly command list for searchable pickers and quick actions.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "condition-chip-strip.figma",
@@ -191,35 +212,40 @@
       "path": "src/app/components/ui/condition-chip-strip.tsx",
       "category": "data-display",
       "summary": "Flex-wrap row scaffold for combatant condition chips plus add-control slot.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "content-viewer",
       "path": "src/app/components/ui/content-viewer.tsx",
       "category": "data-display",
       "summary": "Read-only viewer shell with a Rendered / Source toggle, copy action, and empty state shared by the format viewers.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "context-menu",
       "path": "src/app/components/ui/context-menu.tsx",
       "category": "menus",
       "summary": "Right-click or long-press contextual menu components.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "dialog",
       "path": "src/app/components/ui/dialog.tsx",
       "category": "overlay",
       "summary": "Modal dialog components for blocking workflows.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "dropdown-menu",
       "path": "src/app/components/ui/dropdown-menu.tsx",
       "category": "menus",
       "summary": "Triggered action menus with items, labels, and separators.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "empty-state.figma",
@@ -233,7 +259,8 @@
       "path": "src/app/components/ui/empty-state.tsx",
       "category": "feedback",
       "summary": "Centered icon + title + description + action slot for 'nothing to show yet' surfaces.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "eyebrow-label.figma",
@@ -247,42 +274,48 @@
       "path": "src/app/components/ui/eyebrow-label.tsx",
       "category": "feedback",
       "summary": "Uppercase tracked-out section label. Picks up Weft mono font automatically under data-palette='weft'.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "follow-up-block",
       "path": "src/app/components/ui/follow-up-block.tsx",
       "category": "actions",
       "summary": "Generated-response follow-up suggestion container that composes FollowUpItem without adding chat state.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "follow-up-item",
       "path": "src/app/components/ui/follow-up-item.tsx",
       "category": "actions",
       "summary": "Generated-response follow-up suggestion item with display-only and optional action semantics.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "form",
       "path": "src/app/components/ui/form.tsx",
       "category": "forms",
       "summary": "Form field helpers built on labels and slots.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hover-card",
       "path": "src/app/components/ui/hover-card.tsx",
       "category": "overlay",
       "summary": "Preview card that opens on hover or focus.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "html-viewer",
       "path": "src/app/components/ui/html-viewer.tsx",
       "category": "data-display",
       "summary": "Read-only HTML viewer that renders a passed-in HTML string inside a fully sandboxed, script-free iframe.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hud-list-row.figma",
@@ -296,7 +329,8 @@
       "path": "src/app/components/ui/hud-list-row.tsx",
       "category": "data-display",
       "summary": "Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active). Used by SignalRow, account lists, ticket updates.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hud-meta-caption.figma",
@@ -310,7 +344,8 @@
       "path": "src/app/components/ui/hud-meta-caption.tsx",
       "category": "typography",
       "summary": "Muted micro-label for HUD timestamps and secondary meta (notes rows, recap rails).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hud-popover-dropdown.figma",
@@ -324,7 +359,8 @@
       "path": "src/app/components/ui/hud-popover-dropdown.tsx",
       "category": "menus",
       "summary": "Anchored popover dropdown wrapper with trigger + content slots, outside-click + Escape dismissal, and align / width variants. Used by RoleSelector + project dropdown.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hud-quick-command-footer.figma",
@@ -338,7 +374,8 @@
       "path": "src/app/components/ui/hud-quick-command-footer.tsx",
       "category": "layout",
       "summary": "Sticky HUD footer shell for NLP quick-command panels (lift shadow, top border, surface fill).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "hud-toggle-switch.figma",
@@ -352,42 +389,48 @@
       "path": "src/app/components/ui/hud-toggle-switch.tsx",
       "category": "toggles",
       "summary": "HUD-density binary toggle (34×18). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "HudIssueCallout",
       "path": "src/app/components/ui/HudIssueCallout.tsx",
       "category": "feedback",
       "summary": "Shared HUD issue component that renders structured failure callouts with source attribution and next-action copy.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "HudIssueToast",
       "path": "src/app/components/ui/HudIssueToast.tsx",
       "category": "feedback",
       "summary": "Global toast component for panel-level C-Core data-load failures with source attribution, support email with bundle, and Spaces report actions.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "image-block",
       "path": "src/app/components/ui/image-block.tsx",
       "category": "media",
       "summary": "Semantic figure wrapper that composes Image with an optional visible caption.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "image-gallery",
       "path": "src/app/components/ui/image-gallery.tsx",
       "category": "media",
       "summary": "Accessible responsive media collection that composes Image and ImageBlock.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "image",
       "path": "src/app/components/ui/image.tsx",
       "category": "media",
       "summary": "Tokenized content image component with required alt text, fit/radius controls, and predictable loading defaults.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "inline-edit-list-row.figma",
@@ -401,14 +444,16 @@
       "path": "src/app/components/ui/inline-edit-list-row.tsx",
       "category": "data-display",
       "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Used in recap beats + mysteries.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "input",
       "path": "src/app/components/ui/input.tsx",
       "category": "inputs",
       "summary": "Single-line text input with tokenized focus and error states.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "knowledge-search-result-row.figma",
@@ -422,49 +467,56 @@
       "path": "src/app/components/ui/knowledge-search-result-row.tsx",
       "category": "data-display",
       "summary": "Knowledge search result row with Obsidian link, relevance bar, excerpt, and copy-path control.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "label",
       "path": "src/app/components/ui/label.tsx",
       "category": "inputs",
       "summary": "Text label component for form fields and controls.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "list-block",
       "path": "src/app/components/ui/list-block.tsx",
       "category": "actions",
       "summary": "Generated-response option list container that composes ListItem without replacing HUD domain rows.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "list-item",
       "path": "src/app/components/ui/list-item.tsx",
       "category": "actions",
       "summary": "Generated-response option list item with display-only and optional action semantics.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "markdown-renderer",
       "path": "src/app/components/ui/markdown-renderer.tsx",
       "category": "data-display",
       "summary": "Constrained markdown renderer with safe links, skipped raw HTML, blocked images, and Weft typography/code components.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "markdown-viewer",
       "path": "src/app/components/ui/markdown-viewer.tsx",
       "category": "data-display",
       "summary": "Read-only Markdown viewer pairing the ContentViewer chrome with the safe MarkDownRenderer.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "menubar",
       "path": "src/app/components/ui/menubar.tsx",
       "category": "menus",
       "summary": "Persistent menubar with nested menu content.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "metric-tile.figma",
@@ -478,7 +530,8 @@
       "path": "src/app/components/ui/metric-tile.tsx",
       "category": "data-display",
       "summary": "Label-over-value tile with tone-aware value (default/danger/warning/positive/muted/info). Used in Signal stats and other dashboard-style HUD readouts.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "mode-only-toggle.figma",
@@ -492,21 +545,24 @@
       "path": "src/app/components/ui/mode-only-toggle.tsx",
       "category": "toggles",
       "summary": "Compact “use only in this mode” switch + label for vault paths, API keys, and transcription scope.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "navigation-menu",
       "path": "src/app/components/ui/navigation-menu.tsx",
       "category": "navigation",
       "summary": "Navigation menu with viewport and animated content.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "pagination",
       "path": "src/app/components/ui/pagination.tsx",
       "category": "navigation",
       "summary": "Pagination controls for multi-page collections.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "panel-block-shell.figma",
@@ -520,7 +576,8 @@
       "path": "src/app/components/ui/panel-block-shell.tsx",
       "category": "layout",
       "summary": "Outer chrome for custom panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "panel-header.figma",
@@ -534,7 +591,8 @@
       "path": "src/app/components/ui/panel-header.tsx",
       "category": "layout",
       "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "period-chip-row.figma",
@@ -548,7 +606,8 @@
       "path": "src/app/components/ui/period-chip-row.tsx",
       "category": "layout",
       "summary": "Flex-wrap row for recap period / date-window preset chips.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "pill-toggle-group.figma",
@@ -562,21 +621,24 @@
       "path": "src/app/components/ui/pill-toggle-group.tsx",
       "category": "toggles",
       "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup — used for period and mode selectors.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "popover",
       "path": "src/app/components/ui/popover.tsx",
       "category": "overlay",
       "summary": "Anchored floating surface for lightweight workflows.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "progress",
       "path": "src/app/components/ui/progress.tsx",
       "category": "feedback",
       "summary": "Progress indicator for completion or loading state.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "provider-status-badge.figma",
@@ -590,14 +652,16 @@
       "path": "src/app/components/ui/provider-status-badge.tsx",
       "category": "data-display",
       "summary": "Dense capsule for local transcription provider status (ready / checking / running / unavailable / error).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "radio-group",
       "path": "src/app/components/ui/radio-group.tsx",
       "category": "toggles",
       "summary": "Single-choice selection group using radio items.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "recap-section-shell.figma",
@@ -611,7 +675,8 @@
       "path": "src/app/components/ui/recap-section-shell.tsx",
       "category": "layout",
       "summary": "Collapsible section shell with icon + uppercase title + count pill and chevron, used to wrap each recap section.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "repeat-list-field-column.figma",
@@ -625,49 +690,56 @@
       "path": "src/app/components/ui/repeat-list-field-column.tsx",
       "category": "layout",
       "summary": "Label + control column for repeat-list grids in custom panel runtime.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "resizable",
       "path": "src/app/components/ui/resizable.tsx",
       "category": "layout",
       "summary": "Resizable panel group components built on react-resizable-panels.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "scroll-area",
       "path": "src/app/components/ui/scroll-area.tsx",
       "category": "layout",
       "summary": "Custom scrollable container with styled scrollbars.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "section-block",
       "path": "src/app/components/ui/section-block.tsx",
       "category": "disclosure",
       "summary": "Generated-response section container that composes foldable SectionItem rows.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "section-item",
       "path": "src/app/components/ui/section-item.tsx",
       "category": "disclosure",
       "summary": "Generated-response foldable section item with trigger, metadata, and content slots.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "select",
       "path": "src/app/components/ui/select.tsx",
       "category": "inputs",
       "summary": "Composable select menu with trigger, content, and items.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "separator",
       "path": "src/app/components/ui/separator.tsx",
       "category": "layout",
       "summary": "Visual divider for separating related content groups.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "settings-module-shell.figma",
@@ -681,21 +753,24 @@
       "path": "src/app/components/ui/settings-module-shell.tsx",
       "category": "layout",
       "summary": "Bordered settings card — eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "sheet",
       "path": "src/app/components/ui/sheet.tsx",
       "category": "overlay",
       "summary": "Edge-mounted drawer surface built on dialog components.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "sidebar",
       "path": "src/app/components/ui/sidebar.tsx",
       "category": "layout",
       "summary": "Sidebar composition helpers for application layouts.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "signal-filter-chip-group.figma",
@@ -709,7 +784,8 @@
       "path": "src/app/components/ui/signal-filter-chip-group.tsx",
       "category": "data-display",
       "summary": "Label + flex-wrap row of toggle Button chips. Used by SignalFiltersRuntime for timeframe / priority / source / sender groups; supports single- and multi-select via isActive / onToggle callbacks.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "signal-group-collapsible.figma",
@@ -723,21 +799,24 @@
       "path": "src/app/components/ui/signal-group-collapsible.tsx",
       "category": "disclosure",
       "summary": "Collapse-toggle header + body for grouped signal lists. Owns chevron, uppercase label, count meta, ARIA wiring, and data-signal-group marker; consumer controls collapsed state.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "skeleton",
       "path": "src/app/components/ui/skeleton.tsx",
       "category": "feedback",
       "summary": "Placeholder shimmer block for loading states.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "slider",
       "path": "src/app/components/ui/slider.tsx",
       "category": "inputs",
       "summary": "Continuous range slider with one or more thumbs.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "source-pill.figma",
@@ -751,14 +830,16 @@
       "path": "src/app/components/ui/source-pill.tsx",
       "category": "data-display",
       "summary": "Small monospace pill for file paths and origin tags. Inherits Weft mono font under data-palette='weft'.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "stack",
       "path": "src/app/components/ui/stack.tsx",
       "category": "layout",
       "summary": "Tokenized flex stack for neutral vertical or horizontal child layout.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "stat-row.figma",
@@ -772,7 +853,8 @@
       "path": "src/app/components/ui/stat-row.tsx",
       "category": "data-display",
       "summary": "Label-on-left, value-on-right key/value row with optional hint badge.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "status-icon-row.figma",
@@ -786,77 +868,88 @@
       "path": "src/app/components/ui/status-icon-row.tsx",
       "category": "data-display",
       "summary": "Leading-icon + title + detail status row used inside SettingsModuleShell bodies (device-login status, ccore runtime row, agent-plugin install status). Tone-aware title accent.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "steps-item",
       "path": "src/app/components/ui/steps-item.tsx",
       "category": "data-display",
       "summary": "Single display-only step row with marker, status, label, description, metadata, and connector slots.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "steps",
       "path": "src/app/components/ui/steps.tsx",
       "category": "data-display",
       "summary": "Ordered process and progress sequence with complete/current/pending/error step states.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "switch",
       "path": "src/app/components/ui/switch.tsx",
       "category": "toggles",
       "summary": "Binary on or off switch with track and thumb.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "table",
       "path": "src/app/components/ui/table.tsx",
       "category": "data-display",
       "summary": "Table wrappers for headers, rows, cells, and captions.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "tabs",
       "path": "src/app/components/ui/tabs.tsx",
       "category": "disclosure",
       "summary": "Tabbed navigation and content regions.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "text-content",
       "path": "src/app/components/ui/text-content.tsx",
       "category": "typography",
       "summary": "Readable generated copy component with bounded size, weight, tone, and measure variants.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "textarea",
       "path": "src/app/components/ui/textarea.tsx",
       "category": "inputs",
       "summary": "Multi-line text field with tokenized focus styling.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "toggle-group",
       "path": "src/app/components/ui/toggle-group.tsx",
       "category": "toggles",
       "summary": "Coordinated group of toggle buttons for single or multi select.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "toggle",
       "path": "src/app/components/ui/toggle.tsx",
       "category": "toggles",
       "summary": "Pressed-state toggle button for formatting or filters.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "tooltip",
       "path": "src/app/components/ui/tooltip.tsx",
       "category": "overlay",
       "summary": "Hover or focus hint surface with provider and content.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "transcript-list-item-frame.figma",
@@ -870,7 +963,8 @@
       "path": "src/app/components/ui/transcript-list-item-frame.tsx",
       "category": "layout",
       "summary": "Transcript / highlight / pinned line shell — header meta row, body text, optional footer (tags + speaker select).",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "vault-sheet-match-row.figma",
@@ -884,7 +978,8 @@
       "path": "src/app/components/ui/vault-sheet-match-row.tsx",
       "category": "data-display",
       "summary": "Vault search result row with name, confidence pill, structured metadata, file path, and Add button.",
-      "showcase": true
+      "showcase": true,
+      "version": "1.0.0"
     }
   ],
   "uiUtilities": [

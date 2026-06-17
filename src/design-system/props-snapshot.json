@@ -1,0 +1,2441 @@
+{
+  "designSystemVersion": "0.1.0",
+  "components": {
+    "accordion": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "action-button-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "align": {
+            "optional": true,
+            "union": [
+              "between",
+              "end",
+              "start"
+            ]
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "add-item-button": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "alert": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "variant": [
+            "default",
+            "destructive"
+          ]
+        },
+        "props": {
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive"
+            ]
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "alert-dialog": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "overlayClassName": {
+            "optional": true,
+            "union": null
+          },
+          "overlayStyle": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "aspect-ratio": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "attention-ticket-card": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "children": {
+            "optional": true,
+            "union": null
+          },
+          "expanded": {
+            "optional": false,
+            "union": null
+          },
+          "issueUrl": {
+            "optional": true,
+            "union": null
+          },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          },
+          "openInProviderAriaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "projectLabel": {
+            "optional": true,
+            "union": null
+          },
+          "reasonColor": {
+            "optional": false,
+            "union": null
+          },
+          "reasonLabel": {
+            "optional": false,
+            "union": null
+          },
+          "reasonText": {
+            "optional": false,
+            "union": null
+          },
+          "snippet": {
+            "optional": true,
+            "union": null
+          },
+          "timestampLabel": {
+            "optional": false,
+            "union": null
+          },
+          "title": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "avatar": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "badge": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "variant": [
+            "default",
+            "destructive",
+            "outline",
+            "secondary"
+          ]
+        },
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive",
+              "outline",
+              "secondary"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "breadcrumb": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "a",
+          "li",
+          "nav",
+          "ol",
+          "span"
+        ]
+      }
+    },
+    "button": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "size": [
+            "default",
+            "icon",
+            "lg",
+            "sm"
+          ],
+          "variant": [
+            "default",
+            "destructive",
+            "ghost",
+            "link",
+            "outline",
+            "secondary"
+          ]
+        },
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          },
+          "blocked": {
+            "optional": true,
+            "union": null
+          },
+          "loading": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "icon",
+              "lg",
+              "sm"
+            ]
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive",
+              "ghost",
+              "link",
+              "outline",
+              "secondary"
+            ]
+          }
+        },
+        "native": [
+          "button"
+        ]
+      }
+    },
+    "calendar": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "callout": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "density": [
+            "compact",
+            "default"
+          ],
+          "tone": [
+            "danger",
+            "info",
+            "muted",
+            "positive",
+            "warning"
+          ],
+          "variant": [
+            "inline",
+            "text"
+          ]
+        },
+        "props": {
+          "action": {
+            "optional": true,
+            "union": null
+          },
+          "contentMeasure": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": [
+              "compact",
+              "default"
+            ]
+          },
+          "icon": {
+            "optional": true,
+            "union": null
+          },
+          "markdown": {
+            "optional": true,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "danger",
+              "info",
+              "muted",
+              "positive",
+              "warning"
+            ]
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "inline",
+              "text"
+            ]
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "card": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "carousel": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "initialIndex": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "showPosition": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "checkbox": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "code-block": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "code": {
+            "optional": false,
+            "union": null
+          },
+          "copyLabel": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": true,
+            "union": null
+          },
+          "language": {
+            "optional": true,
+            "union": null
+          },
+          "onCopy": {
+            "optional": true,
+            "union": null
+          },
+          "wrap": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "collapsible": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "command": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "command-category-tag": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "tone": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "condition-chip-strip": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "content-viewer": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "defaultView": {
+            "optional": true,
+            "union": null
+          },
+          "emptyLabel": {
+            "optional": true,
+            "union": null
+          },
+          "onCopySource": {
+            "optional": true,
+            "union": null
+          },
+          "showCopy": {
+            "optional": true,
+            "union": null
+          },
+          "showSourceToggle": {
+            "optional": true,
+            "union": null
+          },
+          "source": {
+            "optional": false,
+            "union": null
+          },
+          "sourceLanguage": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "context-menu": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "inset": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "dialog": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "dropdown-menu": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "inset": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "empty-state": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "action": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "icon": {
+            "optional": true,
+            "union": null
+          },
+          "title": {
+            "optional": false,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "default",
+              "warning"
+            ]
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "eyebrow-label": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "size": [
+            "default",
+            "lg",
+            "sm"
+          ],
+          "tone": [
+            "accent",
+            "default",
+            "muted"
+          ]
+        },
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          },
+          "icon": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "lg",
+              "sm"
+            ]
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "accent",
+              "default",
+              "muted"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "follow-up-block": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "title": {
+            "optional": true,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "follow-up-item": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "detail": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onSelect": {
+            "optional": true,
+            "union": null
+          },
+          "selected": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "form": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div",
+          "p"
+        ]
+      }
+    },
+    "hover-card": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "html-viewer": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "emptyLabel": {
+            "optional": true,
+            "union": null
+          },
+          "frameTitle": {
+            "optional": true,
+            "union": null
+          },
+          "html": {
+            "optional": false,
+            "union": null
+          },
+          "showCopy": {
+            "optional": true,
+            "union": null
+          },
+          "showSourceToggle": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "hud-list-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "as": {
+            "optional": true,
+            "union": [
+              "button",
+              "div",
+              "li"
+            ]
+          },
+          "bodyClassName": {
+            "optional": true,
+            "union": null
+          },
+          "children": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "divider": {
+            "optional": true,
+            "union": null
+          },
+          "emphasis": {
+            "optional": true,
+            "union": null
+          },
+          "interactive": {
+            "optional": true,
+            "union": null
+          },
+          "leading": {
+            "optional": true,
+            "union": null
+          },
+          "onSelect": {
+            "optional": true,
+            "union": null
+          },
+          "state": {
+            "optional": true,
+            "union": null
+          },
+          "trailing": {
+            "optional": true,
+            "union": null
+          },
+          "truncate": {
+            "optional": true,
+            "union": null
+          },
+          "type": {
+            "optional": true,
+            "union": [
+              "button",
+              "reset",
+              "submit"
+            ]
+          }
+        },
+        "native": [
+          "button",
+          "div",
+          "li"
+        ]
+      }
+    },
+    "hud-meta-caption": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "hud-popover-dropdown": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "align": {
+            "optional": true,
+            "union": null
+          },
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "contentAriaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "contentClassName": {
+            "optional": true,
+            "union": null
+          },
+          "contentRole": {
+            "optional": true,
+            "union": [
+              "dialog",
+              "listbox",
+              "menu",
+              "region"
+            ]
+          },
+          "offset": {
+            "optional": true,
+            "union": null
+          },
+          "onOpenChange": {
+            "optional": false,
+            "union": null
+          },
+          "open": {
+            "optional": false,
+            "union": null
+          },
+          "trigger": {
+            "optional": false,
+            "union": null
+          },
+          "width": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "hud-quick-command-footer": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "footerBar": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "hud-toggle-switch": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "active": {
+            "optional": false,
+            "union": null
+          },
+          "ariaLabel": {
+            "optional": false,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": true,
+            "union": null
+          },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "HudIssueCallout": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "action": {
+            "optional": true,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "issue": {
+            "optional": false,
+            "union": null
+          },
+          "style": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "HudIssueToast": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "actions": {
+            "optional": true,
+            "union": null
+          },
+          "busyActionKind": {
+            "optional": true,
+            "union": null
+          },
+          "errorCopy": {
+            "optional": true,
+            "union": null
+          },
+          "issue": {
+            "optional": false,
+            "union": null
+          },
+          "onAction": {
+            "optional": true,
+            "union": null
+          },
+          "onDismiss": {
+            "optional": false,
+            "union": null
+          },
+          "statusCopy": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "image": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "alt": {
+            "optional": false,
+            "union": null
+          },
+          "aspectRatio": {
+            "optional": true,
+            "union": null
+          },
+          "bordered": {
+            "optional": true,
+            "union": null
+          },
+          "fit": {
+            "optional": true,
+            "union": null
+          },
+          "radius": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "img"
+        ]
+      }
+    },
+    "image-block": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "align": {
+            "optional": true,
+            "union": null
+          },
+          "alt": {
+            "optional": false,
+            "union": null
+          },
+          "aspectRatio": {
+            "optional": true,
+            "union": null
+          },
+          "bordered": {
+            "optional": true,
+            "union": null
+          },
+          "caption": {
+            "optional": true,
+            "union": null
+          },
+          "captionClassName": {
+            "optional": true,
+            "union": null
+          },
+          "captionTone": {
+            "optional": true,
+            "union": null
+          },
+          "fit": {
+            "optional": true,
+            "union": null
+          },
+          "imageClassName": {
+            "optional": true,
+            "union": null
+          },
+          "imageProps": {
+            "optional": true,
+            "union": null
+          },
+          "radius": {
+            "optional": true,
+            "union": null
+          },
+          "src": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "figure"
+        ]
+      }
+    },
+    "image-gallery": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "captionTone": {
+            "optional": true,
+            "union": null
+          },
+          "columns": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "gap": {
+            "optional": true,
+            "union": null
+          },
+          "imageClassName": {
+            "optional": true,
+            "union": null
+          },
+          "item": {
+            "optional": false,
+            "union": null
+          },
+          "itemClassName": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "layout": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "inline-edit-list-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "as": {
+            "optional": true,
+            "union": [
+              "div",
+              "li"
+            ]
+          },
+          "deleteAriaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "editAriaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "index": {
+            "optional": false,
+            "union": null
+          },
+          "italic": {
+            "optional": true,
+            "union": null
+          },
+          "leadingIcon": {
+            "optional": true,
+            "union": null
+          },
+          "onDelete": {
+            "optional": false,
+            "union": null
+          },
+          "rows": {
+            "optional": true,
+            "union": null
+          },
+          "showIndex": {
+            "optional": true,
+            "union": null
+          },
+          "text": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "input": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "knowledge-search-result-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "copiedPath": {
+            "optional": false,
+            "union": null
+          },
+          "isBrowseMode": {
+            "optional": false,
+            "union": null
+          },
+          "obsidianHref": {
+            "optional": false,
+            "union": null
+          },
+          "onCopyPath": {
+            "optional": false,
+            "union": null
+          },
+          "result": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "label": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "list-block": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "selectionMode": {
+            "optional": true,
+            "union": null
+          },
+          "title": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "list-item": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "detail": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onSelect": {
+            "optional": true,
+            "union": null
+          },
+          "selected": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "li"
+        ]
+      }
+    },
+    "markdown-renderer": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "markdown": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "markdown-viewer": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "emptyLabel": {
+            "optional": true,
+            "union": null
+          },
+          "markdown": {
+            "optional": false,
+            "union": null
+          },
+          "showCopy": {
+            "optional": true,
+            "union": null
+          },
+          "showSourceToggle": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "menubar": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "inset": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "destructive"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "metric-tile": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "density": [
+            "compact",
+            "default",
+            "relaxed"
+          ],
+          "orientation": [
+            "column",
+            "row"
+          ]
+        },
+        "props": {
+          "density": {
+            "optional": true,
+            "union": [
+              "compact",
+              "default",
+              "relaxed"
+            ]
+          },
+          "fullWidth": {
+            "optional": true,
+            "union": null
+          },
+          "hint": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "orientation": {
+            "optional": true,
+            "union": [
+              "column",
+              "row"
+            ]
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          },
+          "valueSize": {
+            "optional": true,
+            "union": null
+          },
+          "valueTone": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "mode-only-toggle": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "active": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "button"
+        ]
+      }
+    },
+    "navigation-menu": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "viewport": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "pagination": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "isActive": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "a",
+          "li",
+          "nav",
+          "span",
+          "ul"
+        ]
+      }
+    },
+    "panel-block-shell": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "activeCountText": {
+            "optional": true,
+            "union": null
+          },
+          "bodyClassName": {
+            "optional": true,
+            "union": null
+          },
+          "collapsible": {
+            "optional": true,
+            "union": null
+          },
+          "customHeader": {
+            "optional": true,
+            "union": null
+          },
+          "defaultCollapsed": {
+            "optional": true,
+            "union": null
+          },
+          "headerClassName": {
+            "optional": true,
+            "union": null
+          },
+          "headerRight": {
+            "optional": true,
+            "union": null
+          },
+          "headless": {
+            "optional": true,
+            "union": null
+          },
+          "onSelect": {
+            "optional": true,
+            "union": null
+          },
+          "seamless": {
+            "optional": true,
+            "union": null
+          },
+          "sectionLabel": {
+            "optional": true,
+            "union": null
+          },
+          "selected": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "panel-header": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "icon": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "button",
+          "div"
+        ]
+      }
+    },
+    "period-chip-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "pill-toggle-group": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "onValueChange": {
+            "optional": false,
+            "union": null
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "button",
+          "div"
+        ]
+      }
+    },
+    "popover": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "progress": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "provider-status-badge": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "status": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "radio-group": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "recap-section-shell": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "count": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "headerId": {
+            "optional": true,
+            "union": null
+          },
+          "icon": {
+            "optional": true,
+            "union": null
+          },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          },
+          "open": {
+            "optional": false,
+            "union": null
+          },
+          "panelId": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "repeat-list-field-column": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "label"
+        ]
+      }
+    },
+    "resizable": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "withHandle": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "scroll-area": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "section-block": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "title": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "section-item": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "content": {
+            "optional": false,
+            "union": null
+          },
+          "defaultOpen": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "meta": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "li"
+        ]
+      }
+    },
+    "select": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "sm"
+            ]
+          }
+        },
+        "native": []
+      }
+    },
+    "separator": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "settings-module-shell": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "actions": {
+            "optional": true,
+            "union": null
+          },
+          "bodyClassName": {
+            "optional": true,
+            "union": null
+          },
+          "collapsed": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "eyebrow": {
+            "optional": true,
+            "union": null
+          },
+          "footer": {
+            "optional": true,
+            "union": null
+          },
+          "footerClassName": {
+            "optional": true,
+            "union": null
+          },
+          "headerClassName": {
+            "optional": true,
+            "union": null
+          },
+          "title": {
+            "optional": false,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "section"
+        ]
+      }
+    },
+    "sheet": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "sidebar": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "size": [
+            "default",
+            "lg",
+            "sm"
+          ],
+          "variant": [
+            "default",
+            "outline"
+          ]
+        },
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          },
+          "collapsible": {
+            "optional": true,
+            "union": [
+              "icon",
+              "none",
+              "offcanvas"
+            ]
+          },
+          "defaultOpen": {
+            "optional": true,
+            "union": null
+          },
+          "isActive": {
+            "optional": true,
+            "union": null
+          },
+          "isMobile": {
+            "optional": false,
+            "union": null
+          },
+          "onOpenChange": {
+            "optional": true,
+            "union": null
+          },
+          "open": {
+            "optional": true,
+            "union": null
+          },
+          "openMobile": {
+            "optional": false,
+            "union": null
+          },
+          "setOpen": {
+            "optional": false,
+            "union": null
+          },
+          "setOpenMobile": {
+            "optional": false,
+            "union": null
+          },
+          "showIcon": {
+            "optional": true,
+            "union": null
+          },
+          "showOnHover": {
+            "optional": true,
+            "union": null
+          },
+          "side": {
+            "optional": true,
+            "union": [
+              "left",
+              "right"
+            ]
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "md",
+              "sm"
+            ]
+          },
+          "state": {
+            "optional": false,
+            "union": [
+              "collapsed",
+              "expanded"
+            ]
+          },
+          "toggleSidebar": {
+            "optional": false,
+            "union": null
+          },
+          "tooltip": {
+            "optional": true,
+            "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "floating",
+              "inset",
+              "sidebar"
+            ]
+          }
+        },
+        "native": [
+          "a",
+          "button",
+          "div",
+          "li",
+          "main",
+          "ul"
+        ]
+      }
+    },
+    "signal-filter-chip-group": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "chipClassName": {
+            "optional": true,
+            "union": null
+          },
+          "groupAriaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "isActive": {
+            "optional": false,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "labelId": {
+            "optional": true,
+            "union": null
+          },
+          "options": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "signal-group-collapsible": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "bodyClassName": {
+            "optional": true,
+            "union": null
+          },
+          "bodyId": {
+            "optional": true,
+            "union": null
+          },
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "collapsed": {
+            "optional": false,
+            "union": null
+          },
+          "count": {
+            "optional": true,
+            "union": null
+          },
+          "groupKey": {
+            "optional": false,
+            "union": null
+          },
+          "headerActions": {
+            "optional": true,
+            "union": null
+          },
+          "headerClassName": {
+            "optional": true,
+            "union": null
+          },
+          "inlinePaddingX": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          },
+          "testId": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "skeleton": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "slider": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "thumbLabels": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "source-pill": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "stack": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "align": {
+            "optional": true,
+            "union": null
+          },
+          "direction": {
+            "optional": true,
+            "union": null
+          },
+          "gap": {
+            "optional": true,
+            "union": null
+          },
+          "justify": {
+            "optional": true,
+            "union": null
+          },
+          "wrap": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "stat-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "hint": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "status-icon-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "actions": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "detail": {
+            "optional": true,
+            "union": null
+          },
+          "icon": {
+            "optional": false,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "steps": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "orientation": {
+            "optional": true,
+            "union": null
+          },
+          "showConnectors": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "ol"
+        ]
+      }
+    },
+    "steps-item": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": false,
+            "union": null
+          },
+          "index": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "meta": {
+            "optional": true,
+            "union": null
+          },
+          "orientation": {
+            "optional": true,
+            "union": null
+          },
+          "showConnector": {
+            "optional": true,
+            "union": null
+          },
+          "status": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "li"
+        ]
+      }
+    },
+    "switch": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "table": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "caption",
+          "table",
+          "tbody",
+          "td",
+          "tfoot",
+          "th",
+          "thead",
+          "tr"
+        ]
+      }
+    },
+    "tabs": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "text-content": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "asChild": {
+            "optional": true,
+            "union": null
+          },
+          "measure": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": null
+          },
+          "weight": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "p"
+        ]
+      }
+    },
+    "textarea": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": [
+          "textarea"
+        ]
+      }
+    },
+    "toggle": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "size": [
+            "default",
+            "lg",
+            "sm"
+          ],
+          "variant": [
+            "default",
+            "outline"
+          ]
+        },
+        "props": {
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "lg",
+              "sm"
+            ]
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "outline"
+            ]
+          }
+        },
+        "native": []
+      }
+    },
+    "toggle-group": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "tooltip": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {},
+        "native": []
+      }
+    },
+    "transcript-list-item-frame": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "body": {
+            "optional": false,
+            "union": null
+          },
+          "footer": {
+            "optional": true,
+            "union": null
+          },
+          "header": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    },
+    "vault-sheet-match-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "actionIcon": {
+            "optional": true,
+            "union": null
+          },
+          "actionVariant": {
+            "optional": true,
+            "union": null
+          },
+          "addLabel": {
+            "optional": true,
+            "union": null
+          },
+          "ariaLabel": {
+            "optional": true,
+            "union": null
+          },
+          "match": {
+            "optional": false,
+            "union": null
+          },
+          "onAdd": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
+        ]
+      }
+    }
+  }
+}
