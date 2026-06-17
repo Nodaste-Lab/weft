@@ -44,13 +44,31 @@ export function isTokenFile(filePath) {
  * `var(--hud-warning, #f5b942)` is reported separately as a fallback
  * antipattern by callers, not here). Returns `[{ line, value }]`, 1-based.
  */
+/**
+ * True when `marker` appears inside a `//` or `/* … *\/` comment on the line —
+ * not in a string literal or prose. Prevents an unrelated mention of the marker
+ * (or a literal that happens to contain it) from silently suppressing the gate.
+ */
+export function lineHasIgnoreMarker(line, marker = 'ds-raw-color-ok') {
+  const idx = line.indexOf(marker);
+  if (idx < 0) return false;
+  const before = line.slice(0, idx);
+  return before.includes('//') || before.includes('/*');
+}
+
 export function findRawColors(source) {
   const out = [];
   const lines = String(source).split('\n');
+  // Legitimate color *data* opts out via a `ds-raw-color-ok` comment, or a
+  // `ds-raw-color-ok-start` / `ds-raw-color-ok-end` comment block.
+  let inIgnore = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    if (lineHasIgnoreMarker(line, 'ds-raw-color-ok-start')) inIgnore = true;
+    if (lineHasIgnoreMarker(line, 'ds-raw-color-ok-end')) inIgnore = false;
     const trimmed = line.trimStart();
     if (trimmed.startsWith('//') || trimmed.startsWith('*')) continue;
+    if (inIgnore || lineHasIgnoreMarker(line, 'ds-raw-color-ok')) continue;
     RAW_COLOR_PATTERN_GLOBAL.lastIndex = 0;
     let m;
     while ((m = RAW_COLOR_PATTERN_GLOBAL.exec(line)) !== null) {

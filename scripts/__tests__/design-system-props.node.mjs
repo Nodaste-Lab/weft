@@ -28,6 +28,14 @@ test('extractSurface tolerates thin wrappers with no custom contract (card)', ()
   assert.deepEqual(s.props, {});
 });
 
+test('an own prop is not clobbered by a sibling Omit of the same name (callout.title)', () => {
+  // Regression: `interface CalloutProps extends Omit<ComponentProps<"div">, "title">, ...`
+  // declares its own `title` — the Omit must only strip the native title, not the own one.
+  const s = extractSurface(ui('callout'));
+  assert.ok('title' in s.props, 'callout.title must survive Omit<…, "title">');
+  assert.deepEqual(s.variants.tone, ['danger', 'info', 'muted', 'positive', 'warning']);
+});
+
 test('diffSurface flags removed variant option as breaking', () => {
   const a = { variants: { variant: ['default', 'ghost'] }, props: {}, native: [] };
   const b = { variants: { variant: ['default'] }, props: {}, native: [] };

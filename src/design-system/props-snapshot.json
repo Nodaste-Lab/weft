@@ -311,6 +311,10 @@
             "optional": true,
             "union": null
           },
+          "title": {
+            "optional": true,
+            "union": null
+          },
           "tone": {
             "optional": true,
             "union": [
@@ -1188,6 +1192,10 @@
             "optional": false,
             "union": null
           },
+          "onUpdate": {
+            "optional": false,
+            "union": null
+          },
           "rows": {
             "optional": true,
             "union": null
@@ -1544,6 +1552,10 @@
           "selected": {
             "optional": true,
             "union": null
+          },
+          "title": {
+            "optional": true,
+            "union": null
           }
         },
         "native": [
@@ -1667,6 +1679,10 @@
           },
           "panelId": {
             "optional": true,
+            "union": null
+          },
+          "title": {
+            "optional": false,
             "union": null
           }
         },
@@ -1994,6 +2010,10 @@
             "optional": true,
             "union": null
           },
+          "onToggle": {
+            "optional": false,
+            "union": null
+          },
           "options": {
             "optional": false,
             "union": null
@@ -2168,6 +2188,10 @@
             "union": null
           },
           "icon": {
+            "optional": false,
+            "union": null
+          },
+          "title": {
             "optional": false,
             "union": null
           },

@@ -149,8 +149,14 @@ export function extractSurface(filePath) {
         const beforeProps = new Set(Object.keys(props));
         const beforeVar = new Set(Object.keys(variants));
         walkType(args[0]);
+        // Scope the add/remove to keys the inner type contributed (not in
+        // `before…`), so a same-named prop from a sibling intersection member is
+        // never clobbered (e.g. `{ title } & Omit<X, "title">` keeps `title`).
         if (name === 'Omit') {
-          for (const k of keys) { delete props[k]; delete variants[k]; }
+          for (const k of keys) {
+            if (!beforeProps.has(k)) delete props[k];
+            if (!beforeVar.has(k)) delete variants[k];
+          }
         } else {
           for (const k of Object.keys(props)) if (!beforeProps.has(k) && !keys.includes(k)) delete props[k];
           for (const k of Object.keys(variants)) if (!beforeVar.has(k) && !keys.includes(k)) delete variants[k];
@@ -174,6 +180,10 @@ export function extractSurface(filePath) {
   };
 
   for (const node of propTypeNodes) {
+    // Reset per top-level type: `seenAlias` only guards against cycles WITHIN one
+    // type's expansion, so a helper alias shared by two *Props types is expanded
+    // for both rather than skipped on the second.
+    seenAlias.clear();
     if (ts.isInterfaceDeclaration(node)) {
       addMembers(node.members);
       if (node.heritageClauses) for (const h of node.heritageClauses) h.types.forEach(walkType);

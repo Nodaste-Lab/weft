@@ -26,6 +26,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST = join(ROOT, 'src/design-system/manifest.json');
 const SNAPSHOT = join(ROOT, 'src/design-system/props-snapshot.json');
 const WRITE = process.argv.includes('--write');
+// --force re-baselines past the breaking-change guard. Use ONLY when the
+// EXTRACTOR itself changed (so the old snapshot is incomparable, not when a
+// component's contract changed); the snapshot diff is reviewed in the PR.
+const FORCE = process.argv.includes('--force');
 
 const major = (v) => Number.parseInt(String(v).split('.')[0], 10);
 
@@ -92,9 +96,12 @@ function runWrite() {
       violations.push(`  ${id} (v${old.version}): breaking contract change without a major bump:\n` + breaking.map((b) => `      - ${b}`).join('\n'));
     }
   }
-  if (violations.length) {
-    console.error('Refusing to write snapshot — breaking changes need a major version bump in manifest.json:\n' + violations.join('\n'));
+  if (violations.length && !FORCE) {
+    console.error('Refusing to write snapshot — breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
     process.exit(1);
+  }
+  if (violations.length && FORCE) {
+    console.warn('--force: re-baselining past the breaking-change guard for:\n' + violations.join('\n'));
   }
   writeFileSync(SNAPSHOT, JSON.stringify(live, null, 2) + '\n');
   console.log(`Wrote ${SNAPSHOT} (${Object.keys(live.components).length} components, DS v${live.designSystemVersion}).`);

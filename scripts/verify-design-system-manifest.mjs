@@ -76,7 +76,8 @@ function extractUnionMembers(source, typeName) {
   return Array.from(match[1].matchAll(/'([^']+)'/g)).map((entry) => entry[1]);
 }
 
-const SEMVER = /^\d+\.\d+\.\d+$/;
+// x.y.z with optional SemVer prerelease (-beta.1) and build (+sha) metadata.
+const SEMVER = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 
 function ensureVersions(entries) {
   if (!SEMVER.test(manifest.designSystemVersion ?? '')) {
