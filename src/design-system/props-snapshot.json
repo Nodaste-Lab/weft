@@ -1253,8 +1253,15 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
-        "native": []
+        "props": {
+          "state": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "input"
+        ]
       }
     },
     "knowledge-search-result-row": {
@@ -2395,7 +2402,12 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "state": {
+            "optional": true,
+            "union": null
+          }
+        },
         "native": [
           "textarea"
         ]
