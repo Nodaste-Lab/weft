@@ -54,6 +54,11 @@ export function findRawColors(source) {
     RAW_COLOR_PATTERN_GLOBAL.lastIndex = 0;
     let m;
     while ((m = RAW_COLOR_PATTERN_GLOBAL.exec(line)) !== null) {
+      // `hsl(var(--x))` / `rgb(var(--x))` are token-based, not raw colors —
+      // a functional notation wrapping a var() reads its channels from a token.
+      if (m[0].endsWith('(') && line.slice(m.index + m[0].length).trimStart().startsWith('var(')) {
+        continue;
+      }
       out.push({ line: i + 1, value: m[0] });
     }
   }
