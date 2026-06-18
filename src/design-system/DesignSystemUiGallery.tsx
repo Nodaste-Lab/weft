@@ -843,24 +843,42 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="card"
         title="Card"
-        summary="Card shell with header, content, and footer slots."
+        summary="Card shell with header, content, and footer slots. The density axis (default | compact) tightens header/content/footer padding in lockstep for dense dashboards."
       >
-        <Card className="max-w-sm">
-          <CardHeader>
-            <CardTitle className="text-base">Party note</CardTitle>
-            <CardDescription className="text-xs">
-              Styling matches raised surfaces in the HUD.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-muted-foreground text-xs">
-            Short body copy goes here.
-          </CardContent>
-          <CardFooter>
-            <Button size="sm" variant="secondary">
-              Action
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="flex flex-wrap items-start gap-3">
+          <Card className="max-w-sm">
+            <CardHeader>
+              <CardTitle className="text-base">Party note</CardTitle>
+              <CardDescription className="text-xs">
+                Styling matches raised surfaces in the HUD.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-muted-foreground text-xs">
+              Short body copy goes here.
+            </CardContent>
+            <CardFooter>
+              <Button size="sm" variant="secondary">
+                Action
+              </Button>
+            </CardFooter>
+          </Card>
+          <Card density="compact" className="max-w-sm">
+            <CardHeader>
+              <CardTitle className="text-base">Compact density</CardTitle>
+              <CardDescription className="text-xs">
+                Same slots, tighter padding for dense panels.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-muted-foreground text-xs">
+              Short body copy goes here.
+            </CardContent>
+            <CardFooter>
+              <Button size="sm" variant="secondary">
+                Action
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1862,18 +1880,40 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="radio-group"
         title="Radio Group"
-        summary="Single-choice selection for mutually exclusive modes."
+        summary="Single-choice selection for mutually exclusive modes. The state axis (default | error | disabled) matches Input/Select; error/disabled apply to the whole group and cascade to its items."
       >
-        <RadioGroup value={radioValue} onValueChange={setRadioValue}>
-          <label style={checkRowStyle}>
-            <RadioGroupItem value="manual" id="ds-radio-manual" />
-            <span>Manual review</span>
-          </label>
-          <label style={checkRowStyle}>
-            <RadioGroupItem value="auto" id="ds-radio-auto" />
-            <span>Auto-publish</span>
-          </label>
-        </RadioGroup>
+        <div className="flex flex-wrap items-start gap-6">
+          <RadioGroup value={radioValue} onValueChange={setRadioValue}>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+          <RadioGroup defaultValue="manual" state="error">
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-err-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-err-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+          <RadioGroup defaultValue="manual" state="disabled">
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-dis-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-dis-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2304,26 +2344,46 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="table"
         title="Table"
-        summary="Structured rows and cells for tabular data."
+        summary="Structured rows and cells for tabular data. The density axis (default | compact) tightens row height + cell padding for dense data panels."
       >
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Player</TableHead>
-              <TableHead>Role</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">Mara</TableCell>
-              <TableCell>Cleric</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Jun</TableCell>
-              <TableCell>Rogue</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <div className="flex w-full flex-col gap-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Player</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Mara</TableCell>
+                <TableCell>Cleric</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Jun</TableCell>
+                <TableCell>Rogue</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table density="compact">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Player</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Mara</TableCell>
+                <TableCell>Cleric</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Jun</TableCell>
+                <TableCell>Rogue</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard

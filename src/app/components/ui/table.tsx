@@ -4,18 +4,35 @@ import * as React from "react";
 
 import { cn } from "./utils";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+type TableDensity = "default" | "compact";
+
+/*
+ * Density axis (compact|default). `Table` publishes its density to the cells
+ * (`TableHead` / `TableCell`) via context so row height + cell padding tighten
+ * together — dense data panels can pack rows without per-cell overrides.
+ * `default` keeps the original spacing, so this is additive.
+ */
+const TableDensityContext = React.createContext<TableDensity>("default");
+
+function Table({
+  className,
+  density = "default",
+  ...props
+}: React.ComponentProps<"table"> & { density?: TableDensity }) {
   return (
-    <div
-      data-slot="table-container"
-      className="relative w-full overflow-x-auto"
-    >
-      <table
-        data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
-        {...props}
-      />
-    </div>
+    <TableDensityContext.Provider value={density}>
+      <div
+        data-slot="table-container"
+        className="relative w-full overflow-x-auto"
+      >
+        <table
+          data-slot="table"
+          data-density={density}
+          className={cn("w-full caption-bottom text-sm", className)}
+          {...props}
+        />
+      </div>
+    </TableDensityContext.Provider>
   );
 }
 
@@ -66,11 +83,13 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 }
 
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+  const density = React.useContext(TableDensityContext);
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-foreground px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        density === "compact" ? "h-8" : "h-10",
         className,
       )}
       {...props}
@@ -79,11 +98,13 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 }
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+  const density = React.useContext(TableDensityContext);
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        density === "compact" ? "px-2 py-1" : "p-2",
         className,
       )}
       {...props}
@@ -114,3 +135,4 @@ export {
   TableCell,
   TableCaption,
 };
+export type { TableDensity };

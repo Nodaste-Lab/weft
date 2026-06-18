@@ -380,7 +380,12 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          }
+        },
         "native": [
           "div"
         ]
@@ -1715,7 +1720,12 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "state": {
+            "optional": true,
+            "union": null
+          }
+        },
         "native": []
       }
     },
@@ -2370,7 +2380,12 @@
       "version": "1.0.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "density": {
+            "optional": true,
+            "union": null
+          }
+        },
         "native": [
           "caption",
           "table",
