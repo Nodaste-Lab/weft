@@ -2493,41 +2493,6 @@
           "div"
         ]
       }
-    },
-    "vault-sheet-match-row": {
-      "version": "1.0.0",
-      "surface": {
-        "variants": {},
-        "props": {
-          "actionIcon": {
-            "optional": true,
-            "union": null
-          },
-          "actionVariant": {
-            "optional": true,
-            "union": null
-          },
-          "addLabel": {
-            "optional": true,
-            "union": null
-          },
-          "ariaLabel": {
-            "optional": true,
-            "union": null
-          },
-          "match": {
-            "optional": false,
-            "union": null
-          },
-          "onAdd": {
-            "optional": false,
-            "union": null
-          }
-        },
-        "native": [
-          "div"
-        ]
-      }
     }
   }
 }

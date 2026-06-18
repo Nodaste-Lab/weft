@@ -965,21 +965,6 @@
       "summary": "Transcript / highlight / pinned line shell — header meta row, body text, optional footer (tags + speaker select).",
       "showcase": true,
       "version": "1.0.0"
-    },
-    {
-      "id": "vault-sheet-match-row.figma",
-      "path": "src/app/components/ui/vault-sheet-match-row.figma.tsx",
-      "category": "code-connect",
-      "summary": "Figma Code Connect mapping for VaultSheetMatchRow.",
-      "showcase": false
-    },
-    {
-      "id": "vault-sheet-match-row",
-      "path": "src/app/components/ui/vault-sheet-match-row.tsx",
-      "category": "data-display",
-      "summary": "Vault search result row with name, confidence pill, structured metadata, file path, and Add button.",
-      "showcase": true,
-      "version": "1.0.0"
     }
   ],
   "uiUtilities": [

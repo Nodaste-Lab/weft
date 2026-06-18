@@ -214,7 +214,6 @@ import { SectionItem } from '../app/components/ui/section-item';
 import { Steps } from '../app/components/ui/steps';
 import { StepsItem } from '../app/components/ui/steps-item';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
-import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
 /** Every component id from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
@@ -311,7 +310,6 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'toggle',
   'tooltip',
   'transcript-list-item-frame',
-  'vault-sheet-match-row',
 ] as const;
 
 const primitiveCategoryById = new Map(
@@ -2462,33 +2460,6 @@ export function DesignSystemUiGallery({
         </Tooltip>
       </PrimitiveCard>
 
-      <PrimitiveCard
-        id="vault-sheet-match-row"
-        title="Vault Sheet Match Row"
-        summary="Vault search result row with name, confidence pill, structured metadata, file path, and Add button."
-      >
-        <div className="flex w-full max-w-lg flex-col">
-          <VaultSheetMatchRow
-            match={{
-              characterName: 'Aboleth',
-              confidence: 'exact',
-              filePath: 'monsters/aboleth.md',
-              parsedData: { hp: 135, ac: 17 },
-            }}
-            onAdd={() => undefined}
-          />
-          <VaultSheetMatchRow
-            match={{
-              characterName: 'Bandit Captain',
-              confidence: 'partial',
-              filePath: 'monsters/bandit-captain.md',
-              parsedData: { hp: 65, ac: 15 },
-            }}
-            onAdd={() => undefined}
-            addLabel="Add to workspace"
-          />
-        </div>
-      </PrimitiveCard>
       </div>
     </div>
     </PrimitiveVisibilityContext.Provider>
