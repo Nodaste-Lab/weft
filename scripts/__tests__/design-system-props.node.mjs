@@ -16,14 +16,23 @@ test('extractSurface reads cva variants and own props (button)', () => {
   assert.deepEqual(s.native, ['button']);
 });
 
-test('extractSurface captures required props and literal unions (empty-state)', () => {
+test('extractSurface captures required props and resolves a named-alias union (empty-state)', () => {
   const s = extractSurface(ui('empty-state'));
   assert.equal(s.props.title.optional, false, 'title is required');
-  assert.deepEqual(s.props.tone.union, ['default', 'warning']);
+  // `tone?: EmptyStateTone` — the extractor resolves the same-file type alias to its
+  // literal value set, so a union declared as a named alias is captured like an inline one.
+  assert.deepEqual(s.props.tone.union, ['danger', 'default', 'info', 'positive', 'warning']);
 });
 
-test('extractSurface tolerates thin wrappers with no custom contract (card)', () => {
+test('extractSurface resolves a same-file type-alias union on a prop (card.density)', () => {
   const s = extractSurface(ui('card'));
+  assert.deepEqual(s.variants, {});
+  // `density?: CardDensity` resolves to its literal union.
+  assert.deepEqual(s.props.density.union, ['compact', 'default']);
+});
+
+test('extractSurface tolerates thin wrappers with no custom contract (separator)', () => {
+  const s = extractSurface(ui('separator'));
   assert.deepEqual(s.variants, {});
   assert.deepEqual(s.props, {});
 });

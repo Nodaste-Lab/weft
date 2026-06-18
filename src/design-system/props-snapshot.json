@@ -383,7 +383,10 @@
         "props": {
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           }
         },
         "native": [
@@ -398,7 +401,10 @@
         "props": {
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "initialIndex": {
             "optional": true,
@@ -441,7 +447,10 @@
           },
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "label": {
             "optional": true,
@@ -517,7 +526,10 @@
           },
           "defaultView": {
             "optional": true,
-            "union": null
+            "union": [
+              "rendered",
+              "source"
+            ]
           },
           "emptyLabel": {
             "optional": true,
@@ -626,7 +638,13 @@
           },
           "tone": {
             "optional": true,
-            "union": null
+            "union": [
+              "danger",
+              "default",
+              "info",
+              "positive",
+              "warning"
+            ]
           }
         },
         "native": [
@@ -687,7 +705,10 @@
         "props": {
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "description": {
             "optional": true,
@@ -703,7 +724,11 @@
           },
           "tone": {
             "optional": true,
-            "union": null
+            "union": [
+              "accent",
+              "default",
+              "muted"
+            ]
           }
         },
         "native": [
@@ -803,7 +828,10 @@
         "props": {
           "align": {
             "optional": true,
-            "union": null
+            "union": [
+              "center",
+              "start"
+            ]
           },
           "as": {
             "optional": true,
@@ -823,7 +851,10 @@
           },
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "divider": {
             "optional": true,
@@ -855,7 +886,13 @@
           },
           "state": {
             "optional": true,
-            "union": null
+            "union": [
+              "active",
+              "default",
+              "overdue",
+              "resolved",
+              "unread"
+            ]
           },
           "trailing": {
             "optional": true,
@@ -902,7 +939,10 @@
         "props": {
           "align": {
             "optional": true,
-            "union": null
+            "union": [
+              "end",
+              "start"
+            ]
           },
           "children": {
             "optional": false,
@@ -947,7 +987,10 @@
           },
           "width": {
             "optional": true,
-            "union": null
+            "union": [
+              "auto",
+              "trigger"
+            ]
           }
         },
         "native": []
@@ -1003,7 +1046,10 @@
           },
           "size": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "sm"
+            ]
           }
         },
         "native": []
@@ -1032,7 +1078,10 @@
           },
           "variant": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "standard"
+            ]
           }
         },
         "native": []
@@ -1086,7 +1135,12 @@
           },
           "aspectRatio": {
             "optional": true,
-            "union": null
+            "union": [
+              "auto",
+              "portrait",
+              "square",
+              "video"
+            ]
           },
           "bordered": {
             "optional": true,
@@ -1094,11 +1148,22 @@
           },
           "fit": {
             "optional": true,
-            "union": null
+            "union": [
+              "contain",
+              "cover",
+              "fill",
+              "none"
+            ]
           },
           "radius": {
             "optional": true,
-            "union": null
+            "union": [
+              "full",
+              "lg",
+              "md",
+              "none",
+              "sm"
+            ]
           }
         },
         "native": [
@@ -1113,7 +1178,11 @@
         "props": {
           "align": {
             "optional": true,
-            "union": null
+            "union": [
+              "center",
+              "start",
+              "stretch"
+            ]
           },
           "alt": {
             "optional": false,
@@ -1137,7 +1206,11 @@
           },
           "captionTone": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "muted",
+              "strong"
+            ]
           },
           "fit": {
             "optional": true,
@@ -1176,15 +1249,27 @@
           },
           "columns": {
             "optional": true,
-            "union": null
+            "union": [
+              "1",
+              "2",
+              "3",
+              "auto"
+            ]
           },
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "gap": {
             "optional": true,
-            "union": null
+            "union": [
+              "lg",
+              "md",
+              "sm"
+            ]
           },
           "imageClassName": {
             "optional": true,
@@ -1204,7 +1289,11 @@
           },
           "layout": {
             "optional": true,
-            "union": null
+            "union": [
+              "carousel",
+              "masonry",
+              "simple-grid"
+            ]
           }
         },
         "native": [
@@ -1277,7 +1366,12 @@
         "props": {
           "state": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "disabled",
+              "error",
+              "readonly"
+            ]
           }
         },
         "native": [
@@ -1337,7 +1431,11 @@
           },
           "selectionMode": {
             "optional": true,
-            "union": null
+            "union": [
+              "multiple",
+              "none",
+              "single"
+            ]
           },
           "title": {
             "optional": true,
@@ -1723,7 +1821,11 @@
         "props": {
           "state": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "disabled",
+              "error"
+            ]
           }
         },
         "native": []
@@ -1740,7 +1842,10 @@
           },
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "headerId": {
             "optional": true,
@@ -1941,7 +2046,11 @@
           },
           "tone": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "inset",
+              "subtle"
+            ]
           }
         },
         "native": [
@@ -2212,19 +2321,42 @@
         "props": {
           "align": {
             "optional": true,
-            "union": null
+            "union": [
+              "baseline",
+              "center",
+              "end",
+              "start",
+              "stretch"
+            ]
           },
           "direction": {
             "optional": true,
-            "union": null
+            "union": [
+              "horizontal",
+              "vertical"
+            ]
           },
           "gap": {
             "optional": true,
-            "union": null
+            "union": [
+              "lg",
+              "md",
+              "none",
+              "sm",
+              "xl",
+              "xs"
+            ]
           },
           "justify": {
             "optional": true,
-            "union": null
+            "union": [
+              "around",
+              "between",
+              "center",
+              "end",
+              "evenly",
+              "start"
+            ]
           },
           "wrap": {
             "optional": true,
@@ -2270,7 +2402,10 @@
           },
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "detail": {
             "optional": true,
@@ -2286,7 +2421,13 @@
           },
           "tone": {
             "optional": true,
-            "union": null
+            "union": [
+              "danger",
+              "info",
+              "muted",
+              "success",
+              "warning"
+            ]
           }
         },
         "native": [
@@ -2328,7 +2469,10 @@
         "props": {
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           },
           "description": {
             "optional": true,
@@ -2352,7 +2496,10 @@
           },
           "orientation": {
             "optional": true,
-            "union": null
+            "union": [
+              "horizontal",
+              "vertical"
+            ]
           },
           "showConnector": {
             "optional": true,
@@ -2360,7 +2507,12 @@
           },
           "status": {
             "optional": true,
-            "union": null
+            "union": [
+              "complete",
+              "current",
+              "error",
+              "pending"
+            ]
           }
         },
         "native": [
@@ -2383,7 +2535,10 @@
         "props": {
           "density": {
             "optional": true,
-            "union": null
+            "union": [
+              "compact",
+              "default"
+            ]
           }
         },
         "native": [
@@ -2417,19 +2572,38 @@
           },
           "measure": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "narrow",
+              "none",
+              "wide"
+            ]
           },
           "size": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "lg",
+              "sm"
+            ]
           },
           "tone": {
             "optional": true,
-            "union": null
+            "union": [
+              "accent",
+              "danger",
+              "default",
+              "muted",
+              "strong"
+            ]
           },
           "weight": {
             "optional": true,
-            "union": null
+            "union": [
+              "medium",
+              "regular",
+              "semibold"
+            ]
           }
         },
         "native": [
@@ -2444,7 +2618,12 @@
         "props": {
           "state": {
             "optional": true,
-            "union": null
+            "union": [
+              "default",
+              "disabled",
+              "error",
+              "readonly"
+            ]
           }
         },
         "native": [

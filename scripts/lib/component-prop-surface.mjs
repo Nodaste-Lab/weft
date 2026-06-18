@@ -119,10 +119,28 @@ export function extractSurface(filePath) {
 
   const addProp = (name, optional, union) => { props[name] = { optional, union }; };
 
+  // Literal union for a prop's type, resolving a same-file type-alias reference
+  // (`tone?: EmptyStateTone` -> the alias's `"a" | "b"`) so a union declared as a
+  // named alias is captured just like an inline one. Only local aliases are
+  // followed; imported/global types stay `null`. Cycle-guarded.
+  const resolveUnion = (typeNode, seen = new Set()) => {
+    if (!typeNode) return null;
+    const direct = unionLiterals(typeNode);
+    if (direct) return direct;
+    if (ts.isTypeReferenceNode(typeNode)) {
+      const name = typeNode.typeName.getText();
+      if (typeAliases[name] && !seen.has(name)) {
+        seen.add(name);
+        return resolveUnion(typeAliases[name], seen);
+      }
+    }
+    return null;
+  };
+
   const addMembers = (members) => {
     for (const member of members) {
       if (ts.isPropertySignature(member) && member.name && (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name))) {
-        addProp(member.name.text, !!member.questionToken, unionLiterals(member.type));
+        addProp(member.name.text, !!member.questionToken, resolveUnion(member.type));
       }
     }
   };
