@@ -796,6 +796,10 @@
       "surface": {
         "variants": {},
         "props": {
+          "align": {
+            "optional": true,
+            "union": null
+          },
           "as": {
             "optional": true,
             "union": [
@@ -824,11 +828,19 @@
             "optional": true,
             "union": null
           },
+          "frame": {
+            "optional": true,
+            "union": null
+          },
           "interactive": {
             "optional": true,
             "union": null
           },
           "leading": {
+            "optional": true,
+            "union": null
+          },
+          "leadingClassName": {
             "optional": true,
             "union": null
           },
@@ -841,6 +853,10 @@
             "union": null
           },
           "trailing": {
+            "optional": true,
+            "union": null
+          },
+          "trailingClassName": {
             "optional": true,
             "union": null
           },
