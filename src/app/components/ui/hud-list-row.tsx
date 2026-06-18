@@ -5,6 +5,14 @@ import { cn } from "./utils";
 /*
  * HudListRow — leading-media + title-stack + trailing-actions list row.
  *
+ * CANONICAL ROW PRIMITIVE. Reach for this first for any generic list row.
+ * The leading/body(children)/trailing slots cover most cases — prefer composing
+ * them over hand-rolling a new row or adding another bespoke `*-row` component.
+ * The remaining specialized rows (status-icon-row, attention-ticket-card,
+ * knowledge-search-result-row, inline-edit-list-row) exist only for affordances
+ * this doesn't yet own (icon tile, expand, relevance bar, inline edit); fold them
+ * in here as those affordances are generalized, rather than adding more variants.
+ *
  * Used by SignalRow, MyAccount project lists, ticket update rows, and
  * any other dense list where the row chrome (border, padding, hover,
  * state accent stripe) is the same but the body content varies.
