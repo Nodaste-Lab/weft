@@ -8,10 +8,14 @@ import { cn } from "./utils";
  * CANONICAL ROW PRIMITIVE. Reach for this first for any generic list row.
  * The leading/body(children)/trailing slots cover most cases — prefer composing
  * them over hand-rolling a new row or adding another bespoke `*-row` component.
- * The remaining specialized rows (status-icon-row, attention-ticket-card,
- * knowledge-search-result-row, inline-edit-list-row) exist only for affordances
- * this doesn't yet own (icon tile, expand, relevance bar, inline edit); fold them
- * in here as those affordances are generalized, rather than adding more variants.
+ *
+ * status-icon-row, inline-edit-list-row, and attention-ticket-card are now thin
+ * specializations that COMPOSE this primitive (frame={false}) — they add only
+ * their unique affordance (icon tile, inline edit, expand) on top of the shared
+ * leading/body/trailing layout. Build new specialized rows the same way. The
+ * only standalone rows left are knowledge-search-result-row (relevance bar +
+ * excerpt) and stat-row (label/value pair), whose layouts aren't row-shaped;
+ * fold anything else in here rather than adding another variant.
  *
  * Used by SignalRow, MyAccount project lists, ticket update rows, and
  * any other dense list where the row chrome (border, padding, hover,
