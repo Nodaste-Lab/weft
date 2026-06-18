@@ -1,8 +1,17 @@
 import * as React from "react";
 import { Pencil, X } from "lucide-react";
 import { Textarea } from "./textarea";
+import { HudListRow } from "./hud-list-row";
 import { cn } from "./utils";
 
+/*
+ * InlineEditListRow — click-to-edit text row with hover edit/delete actions.
+ *
+ * A specialization of the canonical HudListRow (frame=false): HudListRow owns the
+ * leading/body/trailing layout; this component owns the inline-edit behavior
+ * (click to edit, Enter/Escape, commit-on-blur, hover-revealed actions). Public
+ * API + data-slots + visual unchanged.
+ */
 interface InlineEditListRowProps extends Omit<React.ComponentProps<"div">, "onUpdate"> {
   text: string;
   onUpdate: (next: string) => void;
@@ -47,7 +56,6 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
     },
     ref,
   ) => {
-    const ElementTag = as;
     const [editing, setEditing] = React.useState(false);
     const [draft, setDraft] = React.useState(text);
     const [hovered, setHovered] = React.useState(false);
@@ -68,17 +76,27 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
       setEditing(true);
     };
 
+    const leading =
+      showIndex || leadingIcon ? (
+        <>
+          {showIndex ? <IndexBadge index={index} /> : null}
+          {leadingIcon ? <span className="shrink-0">{leadingIcon}</span> : null}
+        </>
+      ) : undefined;
+
     if (editing) {
       return (
-        <ElementTag
-          ref={ref as React.Ref<HTMLDivElement & HTMLLIElement>}
+        <HudListRow
+          ref={ref}
+          as={as}
+          frame={false}
           data-slot="inline-edit-list-row"
           data-state="editing"
-          className={cn("flex items-start gap-2", as === "li" ? "list-none" : "", className)}
+          className={className}
+          leadingClassName="pt-0"
+          leading={leading}
           {...props}
         >
-          {showIndex && <IndexBadge index={index} />}
-          {leadingIcon && <span className="mt-0.5 shrink-0">{leadingIcon}</span>}
           <Textarea
             autoFocus
             value={draft}
@@ -97,57 +115,59 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
             aria-label={editAriaLabel}
             rows={rows}
           />
-        </ElementTag>
+        </HudListRow>
       );
     }
 
     return (
-      <ElementTag
-        ref={ref as React.Ref<HTMLDivElement & HTMLLIElement>}
+      <HudListRow
+        ref={ref}
+        as={as}
+        frame={false}
         data-slot="inline-edit-list-row"
         data-state="idle"
-        className={cn("flex items-start gap-2", as === "li" ? "list-none" : "", className)}
+        className={className}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        leadingClassName="pt-0"
+        leading={leading}
+        trailingClassName={cn(
+          "gap-0.5 transition-opacity duration-150",
+          hovered ? "pointer-events-auto opacity-70" : "pointer-events-none opacity-0",
+        )}
+        trailing={
+          <>
+            <button
+              type="button"
+              onClick={startEdit}
+              aria-label={editAriaLabel}
+              className="flex shrink-0 cursor-pointer items-center border-0 bg-transparent p-0.5 text-[var(--hud-text-3)] hover:text-[var(--primary)]"
+            >
+              <Pencil size={10} />
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              aria-label={deleteAriaLabel}
+              className="flex shrink-0 cursor-pointer items-center border-0 bg-transparent p-0.5 text-[var(--hud-text-3)] hover:text-[var(--hud-danger)]"
+            >
+              <X size={10} />
+            </button>
+          </>
+        }
         {...props}
       >
-        {showIndex && <IndexBadge index={index} />}
-        {leadingIcon && <span className="mt-px shrink-0">{leadingIcon}</span>}
         <span
           data-slot="inline-edit-list-row-body"
           onClick={startEdit}
           className={cn(
-            "flex-1 cursor-text text-[length:var(--text-xs)] leading-[1.55] text-[var(--hud-text-2)] [font-family:var(--weft-font-sans)]",
+            "cursor-text text-[length:var(--text-xs)] leading-[1.55] text-[var(--hud-text-2)] [font-family:var(--weft-font-sans)]",
             italic && "italic",
           )}
         >
           {text}
         </span>
-        <div
-          data-slot="inline-edit-list-row-actions"
-          className={cn(
-            "flex shrink-0 gap-0.5 transition-opacity duration-150",
-            hovered ? "pointer-events-auto opacity-70" : "pointer-events-none opacity-0",
-          )}
-        >
-          <button
-            type="button"
-            onClick={startEdit}
-            aria-label={editAriaLabel}
-            className="flex shrink-0 cursor-pointer items-center border-0 bg-transparent p-0.5 text-[var(--hud-text-3)] hover:text-[var(--primary)]"
-          >
-            <Pencil size={10} />
-          </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            aria-label={deleteAriaLabel}
-            className="flex shrink-0 cursor-pointer items-center border-0 bg-transparent p-0.5 text-[var(--hud-text-3)] hover:text-[var(--hud-danger)]"
-          >
-            <X size={10} />
-          </button>
-        </div>
-      </ElementTag>
+      </HudListRow>
     );
   },
 );
