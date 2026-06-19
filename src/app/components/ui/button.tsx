@@ -51,6 +51,8 @@ type ButtonProps = React.ComponentProps<"button"> &
     asChild?: boolean;
     blocked?: boolean;
     loading?: boolean;
+    /** Toggle/selected state — applies aria-pressed + a pressed visual. */
+    pressed?: boolean;
   };
 
 const Button = React.forwardRef<
@@ -63,6 +65,7 @@ const Button = React.forwardRef<
   className,
   disabled,
   loading = false,
+  pressed,
   size,
   variant,
   ...props
@@ -88,10 +91,12 @@ const Button = React.forwardRef<
       ref={ref}
       data-slot="button"
       data-state={interactionState}
+      data-pressed={pressed ? true : undefined}
       aria-busy={loading ? true : undefined}
+      aria-pressed={pressed === undefined ? undefined : pressed}
       aria-disabled={!isDisabled && blocked ? true : undefined}
       disabled={isDisabled}
-      className={cn(buttonVariants({ variant, interactionState, size, className }))}
+      className={cn(buttonVariants({ variant, interactionState, size, className }), pressed ? "bg-accent text-accent-foreground" : null)}
       {...props}
     >
       {content}

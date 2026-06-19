@@ -5,6 +5,18 @@ import { cn } from "./utils";
 /*
  * HudListRow — leading-media + title-stack + trailing-actions list row.
  *
+ * CANONICAL ROW PRIMITIVE. Reach for this first for any generic list row.
+ * The leading/body(children)/trailing slots cover most cases — prefer composing
+ * them over hand-rolling a new row or adding another bespoke `*-row` component.
+ *
+ * status-icon-row, inline-edit-list-row, and attention-ticket-card are now thin
+ * specializations that COMPOSE this primitive (frame={false}) — they add only
+ * their unique affordance (icon tile, inline edit, expand) on top of the shared
+ * leading/body/trailing layout. Build new specialized rows the same way. The
+ * only standalone rows left are knowledge-search-result-row (relevance bar +
+ * excerpt) and stat-row (label/value pair), whose layouts aren't row-shaped;
+ * fold anything else in here rather than adding another variant.
+ *
  * Used by SignalRow, MyAccount project lists, ticket update rows, and
  * any other dense list where the row chrome (border, padding, hover,
  * state accent stripe) is the same but the body content varies.
@@ -27,6 +39,7 @@ import { cn } from "./utils";
 
 type HudListRowState = "default" | "unread" | "overdue" | "resolved" | "active";
 type HudListRowDensity = "compact" | "default";
+type HudListRowAlign = "start" | "center";
 
 type HudListRowOwnProps = {
   state?: HudListRowState;
@@ -35,8 +48,20 @@ type HudListRowOwnProps = {
   trailing?: React.ReactNode;
   /** Extra classes for the middle column wrapper (`hud-list-row-body`). */
   bodyClassName?: string;
+  /** Extra classes for the leading / trailing slot wrappers. */
+  leadingClassName?: string;
+  trailingClassName?: string;
   divider?: boolean;
   interactive?: boolean;
+  /**
+   * Row chrome. `true` (default) = the card frame (left accent stripe, density
+   * padding, divider, state background). `false` = a plain flex layout row (no
+   * frame/padding) — for borderless rows that bring their own spacing, so this
+   * primitive can host them too (status-icon, inline-edit, etc.).
+   */
+  frame?: boolean;
+  /** Vertical alignment of the slots. `start` (default) or `center`. */
+  align?: HudListRowAlign;
   /** Use native button for row-level expand / navigate actions (a11y). */
   as?: "div" | "button" | "li";
   /** When `as="button"`, forwarded to the element (default `"button"`). */
@@ -74,8 +99,12 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
       leading,
       trailing,
       bodyClassName,
+      leadingClassName,
+      trailingClassName,
       divider = true,
       interactive,
+      frame = true,
+      align = "start",
       as = "div",
       type = "button",
       onSelect,
@@ -93,10 +122,16 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
       : onClick;
 
     const commonClassName = cn(
-      "flex w-full items-start border-l-2 transition-colors",
-      DENSITY_PADDING[density],
-      STATE_ACCENT[state],
-      divider && "border-b border-[var(--hud-border)]",
+      "flex w-full transition-colors",
+      align === "center" ? "items-center" : "items-start",
+      frame
+        ? cn(
+            "border-l-2",
+            DENSITY_PADDING[density],
+            STATE_ACCENT[state],
+            divider && "border-b border-[var(--hud-border)]",
+          )
+        : "gap-2",
       interactive && "cursor-pointer hover:bg-[var(--hud-surface-hover)]",
       className,
     );
@@ -119,7 +154,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
           {...(props as React.ComponentPropsWithoutRef<"button">)}
         >
           {leading ? (
-            <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
+            <div data-slot="hud-list-row-leading" className={cn("flex shrink-0 items-center pt-0.5", leadingClassName)}>
               {leading}
             </div>
           ) : null}
@@ -130,7 +165,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
             {children}
           </div>
           {trailing ? (
-            <div data-slot="hud-list-row-trailing" className="flex shrink-0 items-center gap-1">
+            <div data-slot="hud-list-row-trailing" className={cn("flex shrink-0 items-center gap-1", trailingClassName)}>
               {trailing}
             </div>
           ) : null}
@@ -150,7 +185,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
           {...(props as React.ComponentPropsWithoutRef<"li">)}
         >
           {leading ? (
-            <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
+            <div data-slot="hud-list-row-leading" className={cn("flex shrink-0 items-center pt-0.5", leadingClassName)}>
               {leading}
             </div>
           ) : null}
@@ -161,7 +196,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
             {children}
           </div>
           {trailing ? (
-            <div data-slot="hud-list-row-trailing" className="flex shrink-0 items-center gap-1">
+            <div data-slot="hud-list-row-trailing" className={cn("flex shrink-0 items-center gap-1", trailingClassName)}>
               {trailing}
             </div>
           ) : null}
@@ -180,7 +215,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
         {...(props as React.ComponentPropsWithoutRef<"div">)}
       >
         {leading ? (
-          <div data-slot="hud-list-row-leading" className="flex shrink-0 items-center pt-0.5">
+          <div data-slot="hud-list-row-leading" className={cn("flex shrink-0 items-center pt-0.5", leadingClassName)}>
             {leading}
           </div>
         ) : null}
@@ -191,7 +226,7 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
           {children}
         </div>
         {trailing ? (
-          <div data-slot="hud-list-row-trailing" className="flex shrink-0 items-center gap-1">
+          <div data-slot="hud-list-row-trailing" className={cn("flex shrink-0 items-center gap-1", trailingClassName)}>
             {trailing}
           </div>
         ) : null}

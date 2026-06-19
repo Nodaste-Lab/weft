@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 
 import { Badge } from "./badge";
+import { HudListRow } from "./hud-list-row";
 import { cn } from "./utils";
 
 export interface AttentionTicketCardProps {
@@ -22,6 +23,13 @@ export interface AttentionTicketCardProps {
   openInProviderAriaLabel?: string;
 }
 
+/*
+ * AttentionTicketCard — an expandable ticket row. The collapsed header is the
+ * canonical HudListRow (frame=false button) carrying the reason pill / title /
+ * reasonText / snippet body + a trailing open-in-provider link and chevron;
+ * this component owns the expand/collapse + expanded-region chrome. Public API,
+ * data-slot, and visual unchanged.
+ */
 const AttentionTicketCard = React.forwardRef<HTMLDivElement, AttentionTicketCardProps>(
   (
     {
@@ -52,57 +60,56 @@ const AttentionTicketCard = React.forwardRef<HTMLDivElement, AttentionTicketCard
           className,
         )}
       >
-        <button
-          type="button"
-          onClick={onToggle}
-          className="flex w-full items-start gap-2.5 border-0 bg-transparent px-3 py-2.5 text-left text-foreground"
-        >
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                variant="outline"
-                className="h-auto whitespace-nowrap rounded-[var(--radius-pill)] border-transparent px-1.5 py-0.5 text-[11px]"
-                style={{
-                  background: `${reasonColor}20`,
-                  color: reasonColor,
-                }}
-              >
-                {reasonLabel}
-              </Badge>
-              {projectLabel ? (
-                <span className="text-[11px] text-muted-foreground">{projectLabel}</span>
+        <HudListRow
+          as="button"
+          frame={false}
+          onSelect={onToggle}
+          className="px-3 py-2.5 gap-2.5 text-foreground"
+          bodyClassName="gap-1"
+          trailing={
+            <>
+              {issueUrl ? (
+                <a
+                  href={issueUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex size-6 items-center justify-center rounded-[var(--radius)] text-muted-foreground no-underline"
+                  title={openInProviderAriaLabel}
+                  aria-label={openInProviderAriaLabel}
+                >
+                  <ExternalLink size={12} />
+                </a>
               ) : null}
-              <span className="ml-auto text-[11px] text-muted-foreground">{timestampLabel}</span>
+              {expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
+            </>
+          }
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              variant="outline"
+              className="h-auto whitespace-nowrap rounded-[var(--radius-pill)] border-transparent px-1.5 py-0.5 text-[11px]"
+              style={{
+                background: `${reasonColor}20`,
+                color: reasonColor,
+              }}
+            >
+              {reasonLabel}
+            </Badge>
+            {projectLabel ? <span className="text-[11px] text-muted-foreground">{projectLabel}</span> : null}
+            <span className="ml-auto text-[11px] text-muted-foreground">{timestampLabel}</span>
+          </div>
+
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium">{title}</div>
+
+          <div className="text-xs text-[var(--hud-text-2)]">{reasonText}</div>
+
+          {snippet ? (
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[11px] italic text-muted-foreground">
+              &ldquo;{snippet}&rdquo;
             </div>
-
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-medium">{title}</div>
-
-            <div className="text-xs text-[var(--hud-text-2)]">{reasonText}</div>
-
-            {snippet ? (
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[11px] italic text-muted-foreground">
-                &ldquo;{snippet}&rdquo;
-              </div>
-            ) : null}
-          </div>
-
-          <div className="flex shrink-0 items-center gap-1">
-            {issueUrl ? (
-              <a
-                href={issueUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex size-6 items-center justify-center rounded-[var(--radius)] text-muted-foreground no-underline"
-                title={openInProviderAriaLabel}
-                aria-label={openInProviderAriaLabel}
-              >
-                <ExternalLink size={12} />
-              </a>
-            ) : null}
-            {expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
-          </div>
-        </button>
+          ) : null}
+        </HudListRow>
         {expanded ? <div className="px-3 pb-3">{children}</div> : null}
       </div>
     );

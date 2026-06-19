@@ -214,7 +214,6 @@ import { SectionItem } from '../app/components/ui/section-item';
 import { Steps } from '../app/components/ui/steps';
 import { StepsItem } from '../app/components/ui/steps-item';
 import { StatusIconRow } from '../app/components/ui/status-icon-row';
-import { VaultSheetMatchRow } from '../app/components/ui/vault-sheet-match-row';
 
 /** Every component id from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [
@@ -311,7 +310,6 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'toggle',
   'tooltip',
   'transcript-list-item-frame',
-  'vault-sheet-match-row',
 ] as const;
 
 const primitiveCategoryById = new Map(
@@ -845,24 +843,42 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="card"
         title="Card"
-        summary="Card shell with header, content, and footer slots."
+        summary="Card shell with header, content, and footer slots. The density axis (default | compact) tightens header/content/footer padding in lockstep for dense dashboards."
       >
-        <Card className="max-w-sm">
-          <CardHeader>
-            <CardTitle className="text-base">Party note</CardTitle>
-            <CardDescription className="text-xs">
-              Styling matches raised surfaces in the HUD.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-muted-foreground text-xs">
-            Short body copy goes here.
-          </CardContent>
-          <CardFooter>
-            <Button size="sm" variant="secondary">
-              Action
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="flex flex-wrap items-start gap-3">
+          <Card className="max-w-sm">
+            <CardHeader>
+              <CardTitle className="text-base">Party note</CardTitle>
+              <CardDescription className="text-xs">
+                Styling matches raised surfaces in the HUD.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-muted-foreground text-xs">
+              Short body copy goes here.
+            </CardContent>
+            <CardFooter>
+              <Button size="sm" variant="secondary">
+                Action
+              </Button>
+            </CardFooter>
+          </Card>
+          <Card density="compact" className="max-w-sm">
+            <CardHeader>
+              <CardTitle className="text-base">Compact density</CardTitle>
+              <CardDescription className="text-xs">
+                Same slots, tighter padding for dense panels.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-muted-foreground text-xs">
+              Short body copy goes here.
+            </CardContent>
+            <CardFooter>
+              <Button size="sm" variant="secondary">
+                Action
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1864,18 +1880,40 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="radio-group"
         title="Radio Group"
-        summary="Single-choice selection for mutually exclusive modes."
+        summary="Single-choice selection for mutually exclusive modes. The state axis (default | error | disabled) matches Input/Select; error/disabled apply to the whole group and cascade to its items."
       >
-        <RadioGroup value={radioValue} onValueChange={setRadioValue}>
-          <label style={checkRowStyle}>
-            <RadioGroupItem value="manual" id="ds-radio-manual" />
-            <span>Manual review</span>
-          </label>
-          <label style={checkRowStyle}>
-            <RadioGroupItem value="auto" id="ds-radio-auto" />
-            <span>Auto-publish</span>
-          </label>
-        </RadioGroup>
+        <div className="flex flex-wrap items-start gap-6">
+          <RadioGroup value={radioValue} onValueChange={setRadioValue}>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+          <RadioGroup defaultValue="manual" state="error">
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-err-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-err-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+          <RadioGroup defaultValue="manual" state="disabled">
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="manual" id="ds-radio-dis-manual" />
+              <span>Manual review</span>
+            </label>
+            <label style={checkRowStyle}>
+              <RadioGroupItem value="auto" id="ds-radio-dis-auto" />
+              <span>Auto-publish</span>
+            </label>
+          </RadioGroup>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2088,7 +2126,10 @@ export function DesignSystemUiGallery({
         summary="Layout components for a persistent rail and main inset."
       >
         <SidebarProvider defaultOpen className="min-h-[132px]">
-          <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border">
+          {/* `Sidebar` renders position:fixed; the transform makes this wrapper a
+              containing block so the example's rail resolves to this box (and is
+              clipped by overflow-hidden) instead of floating over the whole page. */}
+          <div className="flex min-h-[132px] w-full overflow-hidden rounded-md border [transform:translateZ(0)]">
             <Sidebar collapsible="icon" className="border-sidebar-border border-r">
               <SidebarHeader>
                 <span className="text-sidebar-foreground px-2 text-xs font-medium group-data-[collapsible=icon]:hidden">Nav</span>
@@ -2303,26 +2344,46 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="table"
         title="Table"
-        summary="Structured rows and cells for tabular data."
+        summary="Structured rows and cells for tabular data. The density axis (default | compact) tightens row height + cell padding for dense data panels."
       >
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Player</TableHead>
-              <TableHead>Role</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">Mara</TableCell>
-              <TableCell>Cleric</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Jun</TableCell>
-              <TableCell>Rogue</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <div className="flex w-full flex-col gap-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Player</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Mara</TableCell>
+                <TableCell>Cleric</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Jun</TableCell>
+                <TableCell>Rogue</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <Table density="compact">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Player</TableHead>
+                <TableHead>Role</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Mara</TableCell>
+                <TableCell>Cleric</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Jun</TableCell>
+                <TableCell>Rogue</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2459,33 +2520,6 @@ export function DesignSystemUiGallery({
         </Tooltip>
       </PrimitiveCard>
 
-      <PrimitiveCard
-        id="vault-sheet-match-row"
-        title="Vault Sheet Match Row"
-        summary="Vault search result row with name, confidence pill, structured metadata, file path, and Add button."
-      >
-        <div className="flex w-full max-w-lg flex-col">
-          <VaultSheetMatchRow
-            match={{
-              characterName: 'Aboleth',
-              confidence: 'exact',
-              filePath: 'monsters/aboleth.md',
-              parsedData: { hp: 135, ac: 17 },
-            }}
-            onAdd={() => undefined}
-          />
-          <VaultSheetMatchRow
-            match={{
-              characterName: 'Bandit Captain',
-              confidence: 'partial',
-              filePath: 'monsters/bandit-captain.md',
-              parsedData: { hp: 65, ac: 15 },
-            }}
-            onAdd={() => undefined}
-            addLabel="Add to workspace"
-          />
-        </div>
-      </PrimitiveCard>
       </div>
     </div>
     </PrimitiveVisibilityContext.Provider>
