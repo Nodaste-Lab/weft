@@ -967,6 +967,14 @@
       "version": "1.0.0"
     }
   ],
+  "removedUiPrimitives": [
+    {
+      "id": "vault-sheet-match-row",
+      "removedIn": "0.1.0",
+      "replacement": "hud-list-row",
+      "reason": "Superseded by the canonical HudListRow primitive during the panel rebuild."
+    }
+  ],
   "uiUtilities": [
     {
       "id": "use-mobile",

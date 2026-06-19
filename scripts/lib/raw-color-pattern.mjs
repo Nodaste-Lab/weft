@@ -17,10 +17,10 @@
  * Kept byte-compatible with packageValidator.ts's FORBIDDEN raw-color pattern
  * (which also bans `rgb`/`rgba`); `hsl` is added here for CSS coverage.
  */
-export const RAW_COLOR_PATTERN = /(?<!&)#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\(/;
+export const RAW_COLOR_PATTERN = /(?<!&)#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\(/i;
 
 /** Global variant for iterating every match on a line. */
-export const RAW_COLOR_PATTERN_GLOBAL = new RegExp(RAW_COLOR_PATTERN.source, 'g');
+export const RAW_COLOR_PATTERN_GLOBAL = new RegExp(RAW_COLOR_PATTERN.source, `${RAW_COLOR_PATTERN.flags}g`);
 
 /**
  * The ONLY files allowed to contain raw colors: the token-definition layer.
@@ -89,7 +89,7 @@ export function findRawColors(source) {
  */
 export function findTokenHexFallbacks(source) {
   const out = [];
-  const re = /var\(\s*--[\w-]+\s*,\s*(#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\([^)]*\))/g;
+  const re = /var\(\s*--[\w-]+\s*,\s*(#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\([^)]*\))/gi;
   const lines = String(source).split('\n');
   for (let i = 0; i < lines.length; i++) {
     re.lastIndex = 0;

@@ -18,13 +18,16 @@
  * you cannot land a breaking one without a major bump.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { extractSurface } from './lib/component-prop-surface.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST = join(ROOT, 'src/design-system/manifest.json');
 const SNAPSHOT = join(ROOT, 'src/design-system/props-snapshot.json');
+const MANIFEST_REPO_PATH = relative(ROOT, MANIFEST).replaceAll('\\', '/');
+const SNAPSHOT_REPO_PATH = relative(ROOT, SNAPSHOT).replaceAll('\\', '/');
 const WRITE = process.argv.includes('--write');
 // --force re-baselines past the breaking-change guard. Use ONLY when the
 // EXTRACTOR itself changed (so the old snapshot is incomparable, not when a
@@ -33,18 +36,20 @@ const FORCE = process.argv.includes('--force');
 
 const major = (v) => Number.parseInt(String(v).split('.')[0], 10);
 
-function showcaseComponents() {
-  const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
+function readCurrentManifest() {
+  return JSON.parse(readFileSync(MANIFEST, 'utf8'));
+}
+
+function showcaseComponents(manifest = readCurrentManifest()) {
   return manifest.uiPrimitives
     .filter((e) => e.showcase)
     .map((e) => ({ id: e.id, path: join(ROOT, e.path), version: e.version }))
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
-function liveSnapshot() {
-  const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
+function liveSnapshot(manifest = readCurrentManifest()) {
   const components = {};
-  for (const c of showcaseComponents()) components[c.id] = { version: c.version, surface: extractSurface(c.path) };
+  for (const c of showcaseComponents(manifest)) components[c.id] = { version: c.version, surface: extractSurface(c.path) };
   return { designSystemVersion: manifest.designSystemVersion, components };
 }
 
@@ -78,10 +83,104 @@ export function diffSurface(oldS, newS) {
     else breaking.push(`required prop '${name}' added`);
   }
   for (const n of oldS.native ?? []) if (!(newS.native ?? []).includes(n)) breaking.push(`native element '${n}' removed`);
+  for (const n of newS.native ?? []) if (!(oldS.native ?? []).includes(n)) additive.push(`native element '${n}' added`);
   return { breaking, additive };
 }
 
 const surfaceEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+export function surfaceVersionViolations(id, oldEntry, newEntry) {
+  if (!oldEntry || surfaceEqual(oldEntry.surface, newEntry.surface)) return [];
+  const { breaking, additive } = diffSurface(oldEntry.surface, newEntry.surface);
+  const violations = [];
+  if (oldEntry.version === newEntry.version) {
+    violations.push(
+      `  ${id} (v${oldEntry.version}): contract surface changed without a version bump:\n` +
+      [...breaking, ...additive].map((b) => `      - ${b}`).join('\n')
+    );
+  } else if (breaking.length && major(newEntry.version) === major(oldEntry.version)) {
+    violations.push(
+      `  ${id} (v${oldEntry.version} -> v${newEntry.version}): breaking contract change without a major bump:\n` +
+      breaking.map((b) => `      - ${b}`).join('\n')
+    );
+  }
+  return violations;
+}
+
+function removedUiPrimitiveTombstones(manifest) {
+  const records = Array.isArray(manifest.removedUiPrimitives) ? manifest.removedUiPrimitives : [];
+  return new Map(records.filter((record) => record && typeof record.id === 'string').map((record) => [record.id, record]));
+}
+
+function tombstoneIssues(id, record) {
+  const issues = [];
+  if (!record) {
+    issues.push(`  ${id}: removed showcase component missing removedUiPrimitives tombstone`);
+    return issues;
+  }
+  for (const field of ['removedIn', 'reason']) {
+    if (typeof record[field] !== 'string' || record[field].trim().length === 0) {
+      issues.push(`  ${id}: removedUiPrimitives tombstone requires non-empty ${field}`);
+    }
+  }
+  return issues;
+}
+
+export function baseManifestRemovalViolations(baseManifest, currentManifest) {
+  const violations = [];
+  const currentIds = new Set((currentManifest.uiPrimitives ?? []).map((entry) => entry.id));
+  const tombstones = removedUiPrimitiveTombstones(currentManifest);
+  for (const entry of baseManifest.uiPrimitives ?? []) {
+    if (!entry.showcase || currentIds.has(entry.id)) continue;
+    violations.push(...tombstoneIssues(entry.id, tombstones.get(entry.id)));
+  }
+  return violations;
+}
+
+export function baseSnapshotVersionViolations(baseSnapshot, committedSnapshot, currentManifest = readCurrentManifest()) {
+  const violations = [];
+  const tombstones = removedUiPrimitiveTombstones(currentManifest);
+  for (const [id, old] of Object.entries(baseSnapshot.components ?? {})) {
+    const entry = committedSnapshot.components?.[id];
+    if (!entry) {
+      violations.push(...tombstoneIssues(id, tombstones.get(id)));
+      continue;
+    }
+    violations.push(...surfaceVersionViolations(id, old, entry));
+  }
+  return violations;
+}
+
+function gitShowJson(ref, repoPath) {
+  try {
+    return JSON.parse(execFileSync('git', ['show', `${ref}:${repoPath}`], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+  } catch {
+    return null;
+  }
+}
+
+function baseRefs() {
+  const candidates = [];
+  if (process.env.GITHUB_BASE_REF) candidates.push(`origin/${process.env.GITHUB_BASE_REF}`);
+  candidates.push('origin/develop');
+  return candidates;
+}
+
+function readBaseSnapshot() {
+  for (const ref of baseRefs()) {
+    const snapshot = gitShowJson(ref, SNAPSHOT_REPO_PATH);
+    if (snapshot?.components) return snapshot;
+  }
+  return null;
+}
+
+function readBaseManifest() {
+  for (const ref of baseRefs()) {
+    const manifest = gitShowJson(ref, MANIFEST_REPO_PATH);
+    if (manifest?.uiPrimitives) return manifest;
+  }
+  return null;
+}
 
 function runWrite() {
   const live = liveSnapshot();
@@ -91,13 +190,10 @@ function runWrite() {
     const old = prior.components?.[id];
     if (!old) continue;
     if (surfaceEqual(old.surface, entry.surface)) continue;
-    const { breaking } = diffSurface(old.surface, entry.surface);
-    if (breaking.length && major(entry.version) === major(old.version)) {
-      violations.push(`  ${id} (v${old.version}): breaking contract change without a major bump:\n` + breaking.map((b) => `      - ${b}`).join('\n'));
-    }
+    violations.push(...surfaceVersionViolations(id, old, entry));
   }
   if (violations.length && !FORCE) {
-    console.error('Refusing to write snapshot — breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
+    console.error('Refusing to write snapshot — contract surface changes need a component version bump, and breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
     process.exit(1);
   }
   if (violations.length && FORCE) {
@@ -112,10 +208,15 @@ function runVerify() {
     console.error(`Missing ${SNAPSHOT}. Run: node scripts/design-system-props.mjs --write`);
     process.exit(1);
   }
+  const currentManifest = readCurrentManifest();
   const committed = JSON.parse(readFileSync(SNAPSHOT, 'utf8'));
-  const live = liveSnapshot();
+  const live = liveSnapshot(currentManifest);
+  const baseSnapshot = readBaseSnapshot();
+  const baseManifest = readBaseManifest();
   const problems = [];
-  const breakingNoBump = [];
+  const versionViolations = baseSnapshot
+    ? baseSnapshotVersionViolations(baseSnapshot, committed, currentManifest)
+    : baseManifest ? baseManifestRemovalViolations(baseManifest, currentManifest) : [];
   const ids = new Set([...Object.keys(committed.components ?? {}), ...Object.keys(live.components)]);
   for (const id of [...ids].sort()) {
     const c = committed.components?.[id];
@@ -125,18 +226,15 @@ function runVerify() {
     const sameSurface = surfaceEqual(c.surface, l.surface);
     if (sameSurface && c.version === l.version) continue;
     if (!sameSurface) {
-      const { breaking } = diffSurface(c.surface, l.surface);
-      if (breaking.length && major(c.version) === major(l.version)) {
-        breakingNoBump.push(`  ${id} (v${c.version}): BREAKING contract change without a major bump:\n` + breaking.map((b) => `      - ${b}`).join('\n'));
-      }
+      versionViolations.push(...surfaceVersionViolations(id, c, l));
     }
     problems.push(`  ${id}: snapshot out of date (surface or version changed)`);
   }
   if (live.designSystemVersion !== committed.designSystemVersion) {
     problems.push(`  designSystemVersion: snapshot ${committed.designSystemVersion} != manifest ${live.designSystemVersion}`);
   }
-  if (breakingNoBump.length) {
-    console.error('Design-system prop-contract gate FAILED — breaking changes need a major version bump:\n' + breakingNoBump.join('\n') + '\n');
+  if (versionViolations.length) {
+    console.error('Design-system prop-contract gate FAILED — contract surface changes need a component version bump, and breaking changes need a major version bump:\n' + versionViolations.join('\n') + '\n');
     process.exit(1);
   }
   if (problems.length) {

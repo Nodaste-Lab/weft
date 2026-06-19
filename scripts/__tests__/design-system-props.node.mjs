@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { extractSurface } from '../lib/component-prop-surface.mjs';
-import { diffSurface } from '../design-system-props.mjs';
+import { diffSurface, surfaceVersionViolations, baseSnapshotVersionViolations, baseManifestRemovalViolations } from '../design-system-props.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const ui = (id) => join(ROOT, 'src/app/components/ui', `${id}.tsx`);
@@ -87,4 +87,54 @@ test('identical surfaces produce no diff', () => {
   const { breaking, additive } = diffSurface(s, JSON.parse(JSON.stringify(s)));
   assert.equal(breaking.length, 0);
   assert.equal(additive.length, 0);
+});
+
+test('surfaceVersionViolations requires a version bump for additive changes', () => {
+  const oldEntry = { version: '1.2.3', surface: { variants: {}, props: {}, native: [] } };
+  const newEntry = { version: '1.2.3', surface: { variants: {}, props: { tone: { optional: true, union: ['info'] } }, native: [] } };
+  const violations = surfaceVersionViolations('badge', oldEntry, newEntry);
+  assert.equal(violations.length, 1);
+  assert.match(violations[0], /without a version bump/);
+});
+
+test('baseSnapshotVersionViolations catches a rebaselined snapshot without a version bump', () => {
+  const base = { components: { badge: { version: '1.2.3', surface: { variants: {}, props: {}, native: [] } } } };
+  const committed = { components: { badge: { version: '1.2.3', surface: { variants: {}, props: { tone: { optional: true, union: ['info'] } }, native: [] } } } };
+  const violations = baseSnapshotVersionViolations(base, committed);
+  assert.equal(violations.length, 1);
+  assert.match(violations[0], /without a version bump/);
+});
+
+test('baseSnapshotVersionViolations requires tombstones for removed snapshot components', () => {
+  const base = { components: { badge: { version: '1.2.3', surface: { variants: {}, props: {}, native: [] } } } };
+  const committed = { components: {} };
+  const currentManifest = { removedUiPrimitives: [] };
+  const violations = baseSnapshotVersionViolations(base, committed, currentManifest);
+  assert.equal(violations.length, 1);
+  assert.match(violations[0], /badge: removed showcase component missing removedUiPrimitives tombstone/);
+});
+
+test('surfaceVersionViolations requires a major bump for breaking changes', () => {
+  const oldEntry = { version: '1.2.3', surface: { variants: { tone: ['info', 'danger'] }, props: {}, native: [] } };
+  const newEntry = { version: '1.3.0', surface: { variants: { tone: ['info'] }, props: {}, native: [] } };
+  const violations = surfaceVersionViolations('badge', oldEntry, newEntry);
+  assert.equal(violations.length, 1);
+  assert.match(violations[0], /without a major bump/);
+});
+
+test('baseManifestRemovalViolations requires tombstones for removed showcase primitives', () => {
+  const base = { uiPrimitives: [{ id: 'removed-row', showcase: true }, { id: 'kept-row', showcase: true }] };
+  const current = { uiPrimitives: [{ id: 'kept-row', showcase: true }] };
+  const violations = baseManifestRemovalViolations(base, current);
+  assert.equal(violations.length, 1);
+  assert.match(violations[0], /removed-row: removed showcase component missing removedUiPrimitives tombstone/);
+});
+
+test('baseManifestRemovalViolations accepts explicit removed primitive tombstones', () => {
+  const base = { uiPrimitives: [{ id: 'removed-row', showcase: true }] };
+  const current = {
+    uiPrimitives: [],
+    removedUiPrimitives: [{ id: 'removed-row', removedIn: '1.2.0', reason: 'Replaced by canonical row.' }],
+  };
+  assert.deepEqual(baseManifestRemovalViolations(base, current), []);
 });
