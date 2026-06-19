@@ -17,6 +17,16 @@ import { cn } from "./utils";
  * empty states can prompt the user toward the unblocking action without
  * each panel rebuilding its own button strip.
  */
+export type EmptyStateTone = "default" | "info" | "warning" | "danger" | "positive";
+
+const TONE_CLASS: Record<EmptyStateTone, string | undefined> = {
+  default: undefined,
+  info: "text-[var(--hud-info)]",
+  warning: "text-[var(--hud-warning)]",
+  danger: "text-[var(--hud-danger)]",
+  positive: "text-[var(--hud-positive)]",
+};
+
 function EmptyState({
   className,
   icon,
@@ -30,8 +40,9 @@ function EmptyState({
   title: React.ReactNode;
   description?: React.ReactNode;
   action?: React.ReactNode;
-  tone?: "default" | "warning";
+  tone?: EmptyStateTone;
 }) {
+  const toneClass = TONE_CLASS[tone];
   return (
     <div
       data-slot="empty-state"
@@ -46,7 +57,7 @@ function EmptyState({
         <span
           className={cn(
             "inline-flex items-center justify-center text-muted-foreground/60 [&>svg]:size-7",
-            tone === "warning" && "text-[var(--hud-warning)]",
+            toneClass,
           )}
           aria-hidden="true"
         >
@@ -58,7 +69,7 @@ function EmptyState({
         <p
           className={cn(
             "m-0 max-w-sm text-xs text-muted-foreground",
-            tone === "warning" && "text-[var(--hud-warning)]",
+            toneClass,
           )}
         >
           {description}

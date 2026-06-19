@@ -729,6 +729,15 @@ One breakpoint at 900px.
 
 ---
 
+## Enforcement in the product (HUD panels)
+
+The HUD ships these rules as **lint gates**, not conventions: tokens-only (no raw
+hex/`rgb()`/`rgba()`/`hsl()` outside the token files), component-first (no native
+controls in panels), renders in light + dark, and version-pinned design-system
+components with a gated public prop surface. A violation fails `npm run
+linux:check` and CI. See `docs/panel-authoring/DESIGN_SYSTEM.md` for the
+author-facing rules and the exact commands.
+
 ## Open questions
 
 - Dark-mode rollout — the design system page toggles correctly; landing page hasn't been wired yet and needs `--weft-mark` tokenized before it can flip.
