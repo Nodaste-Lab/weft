@@ -185,6 +185,8 @@
   --hud-danger-bg-strong:          rgba(248, 113, 113, 0.22);
   --hud-positive-bg-soft:          rgba( 90, 195, 130, 0.14);
   --hud-info-bg-soft:              rgba(196, 181, 253, 0.14);
+  --hud-warning-border:            rgba(245, 158,  11, 0.35);
+  --hud-danger-border:             rgba(248, 113, 113, 0.35);
 }
 
 :root[data-theme="dark"][data-palette="weft"],
@@ -222,6 +224,8 @@
   --hud-danger-bg-strong:     rgba(248, 113, 113, 0.22);
   --hud-positive-bg-soft:     rgba( 90, 195, 130, 0.14);
   --hud-info-bg-soft:         rgba(147, 197, 253, 0.14);
+  --hud-warning-border:       rgba(245, 158,  11, 0.35);
+  --hud-danger-border:        rgba(248, 113, 113, 0.35);
 }
 
 /* ── Density: compact (app density — WCAG 2.5.8 AA target floor) ─────────── */
@@ -425,6 +429,8 @@
   --hud-danger-bg-strong:     rgba(239, 68, 68, 0.16);
   --hud-positive-bg-soft:     rgba(58, 122, 74, 0.10);
   --hud-info-bg-soft:         rgba(96, 165, 250, 0.10);
+  --hud-warning-border:       rgba(217, 119, 6, 0.35);
+  --hud-danger-border:        rgba(239, 68, 68, 0.35);
 }
 
 /* Hide the user's wallpaper image when Weft is active so the cream canvas reads

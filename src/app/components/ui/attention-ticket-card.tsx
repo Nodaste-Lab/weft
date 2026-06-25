@@ -55,35 +55,25 @@ const AttentionTicketCard = React.forwardRef<HTMLDivElement, AttentionTicketCard
         data-slot="attention-ticket-card"
         data-state={expanded ? "expanded" : "collapsed"}
         className={cn(
-          "border-b border-[var(--hud-border)]",
+          "relative border-b border-[var(--hud-border)]",
           expanded && "bg-[color-mix(in_srgb,var(--primary)_5%,transparent)]",
           className,
         )}
       >
+        {/*
+         * The toggle is the whole row (HudListRow as="button"). The
+         * open-in-provider link is a SIBLING overlay, never nested inside the
+         * button — nesting one interactive control inside another is an a11y
+         * violation (axe `nested-interactive`). When the link is present the row
+         * reserves right padding so its content does not run under the link.
+         */}
         <HudListRow
           as="button"
           frame={false}
           onSelect={onToggle}
-          className="px-3 py-2.5 gap-2.5 text-foreground"
+          className={cn("px-3 py-2.5 gap-2.5 text-foreground", issueUrl && "pr-9")}
           bodyClassName="gap-1"
-          trailing={
-            <>
-              {issueUrl ? (
-                <a
-                  href={issueUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex size-6 items-center justify-center rounded-[var(--radius)] text-muted-foreground no-underline"
-                  title={openInProviderAriaLabel}
-                  aria-label={openInProviderAriaLabel}
-                >
-                  <ExternalLink size={12} />
-                </a>
-              ) : null}
-              {expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
-            </>
-          }
+          trailing={expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
         >
           <div className="flex flex-wrap items-center gap-2">
             <Badge
@@ -110,6 +100,19 @@ const AttentionTicketCard = React.forwardRef<HTMLDivElement, AttentionTicketCard
             </div>
           ) : null}
         </HudListRow>
+        {issueUrl ? (
+          <a
+            href={issueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-7 top-2 z-10 flex size-6 items-center justify-center rounded-[var(--radius)] text-muted-foreground no-underline"
+            title={openInProviderAriaLabel}
+            aria-label={openInProviderAriaLabel}
+          >
+            <ExternalLink size={12} />
+          </a>
+        ) : null}
         {expanded ? <div className="px-3 pb-3">{children}</div> : null}
       </div>
     );

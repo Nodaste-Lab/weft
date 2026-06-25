@@ -2702,7 +2702,7 @@ const codeStyle: CSSProperties = {
   color: 'var(--primary)',
   fontSize: 11,
   fontFamily: 'monospace',
-  background: 'rgba(127,86,217,0.12)',
+  background: 'var(--hud-primary-tint-medium)',
   border: '1px solid var(--hud-border-accent)',
   borderRadius: 'var(--radius-xs)',
   padding: '1px 5px',
