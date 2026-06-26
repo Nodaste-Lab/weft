@@ -432,6 +432,69 @@
         "native": []
       }
     },
+    "chip": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "selected": [
+            "false",
+            "true"
+          ],
+          "size": [
+            "md",
+            "sm"
+          ],
+          "tone": [
+            "danger",
+            "info",
+            "none",
+            "positive",
+            "warning"
+          ]
+        },
+        "props": {
+          "onRemove": {
+            "optional": true,
+            "union": null
+          },
+          "onSelect": {
+            "optional": true,
+            "union": null
+          },
+          "removeLabel": {
+            "optional": true,
+            "union": null
+          },
+          "selected": {
+            "optional": true,
+            "union": [
+              "false",
+              "true"
+            ]
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "md",
+              "sm"
+            ]
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "danger",
+              "info",
+              "none",
+              "positive",
+              "warning"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
     "code-block": {
       "version": "1.0.0",
       "surface": {
@@ -1360,7 +1423,7 @@
       }
     },
     "input": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {
@@ -1371,6 +1434,13 @@
               "disabled",
               "error",
               "readonly"
+            ]
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "default",
+              "inline"
             ]
           }
         },
@@ -2671,6 +2741,59 @@
         "variants": {},
         "props": {},
         "native": []
+      }
+    },
+    "toolbar": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {
+          "density": [
+            "compact",
+            "default",
+            "spacious"
+          ],
+          "divider": [
+            "bottom",
+            "none",
+            "top"
+          ],
+          "justify": [
+            "between",
+            "center",
+            "end",
+            "start"
+          ]
+        },
+        "props": {
+          "density": {
+            "optional": true,
+            "union": [
+              "compact",
+              "default",
+              "spacious"
+            ]
+          },
+          "divider": {
+            "optional": true,
+            "union": [
+              "bottom",
+              "none",
+              "top"
+            ]
+          },
+          "justify": {
+            "optional": true,
+            "union": [
+              "between",
+              "center",
+              "end",
+              "start"
+            ]
+          }
+        },
+        "native": [
+          "div"
+        ]
       }
     },
     "tooltip": {

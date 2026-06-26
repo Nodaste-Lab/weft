@@ -45,6 +45,7 @@ import {
 } from '../app/components/ui/card';
 import { Carousel } from '../app/components/ui/carousel';
 import { Checkbox } from '../app/components/ui/checkbox';
+import { Chip } from '../app/components/ui/chip';
 import { CodeBlock } from '../app/components/ui/code-block';
 import { ContentViewer } from '../app/components/ui/content-viewer';
 import { HtmlViewer } from '../app/components/ui/html-viewer';
@@ -183,6 +184,7 @@ import { Textarea } from '../app/components/ui/textarea';
 import { TranscriptListItemFrame } from '../app/components/ui/transcript-list-item-frame';
 import { Toggle } from '../app/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
+import { Toolbar } from '../app/components/ui/toolbar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
 import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
 import { HudIssueToast } from '../app/components/ui/HudIssueToast';
@@ -233,6 +235,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'card',
   'carousel',
   'checkbox',
+  'chip',
   'code-block',
   'collapsible',
   'command',
@@ -308,6 +311,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'textarea',
   'toggle-group',
   'toggle',
+  'toolbar',
   'tooltip',
   'transcript-list-item-frame',
 ] as const;
@@ -1502,11 +1506,68 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="input"
         title="Input and Label"
-        summary="Single-line fields with labels and tokenized focus states."
+        summary="Single-line fields with labels and tokenized focus states, plus a chromeless inline variant."
       >
         <div style={fieldStackStyle}>
           <Label htmlFor="ds-project-name">Project name</Label>
           <Input id="ds-project-name" defaultValue="Q1 Launch Plan" />
+          <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+            variant="inline" — chromeless in-place editor (tab / row rename)
+          </span>
+          <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] px-2 py-1.5 text-[length:var(--text-sm)] text-[var(--hud-text-1)]">
+            <span aria-hidden="true">#</span>
+            <Input variant="inline" aria-label="Rename board" defaultValue="Launch board" />
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="chip"
+        title="Chip"
+        summary="Tone-aware removable tag with an optional toggle."
+      >
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Chip>Default</Chip>
+            <Chip tone="info">Scheduled</Chip>
+            <Chip tone="warning">Needs review</Chip>
+            <Chip tone="danger">Blocked</Chip>
+            <Chip tone="positive">Ready</Chip>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Chip tone="info" onRemove={() => undefined}>
+              source:email
+            </Chip>
+            <Chip tone="none" size="sm" onRemove={() => undefined}>
+              label:urgent
+            </Chip>
+            <Chip tone="positive" selected onSelect={() => undefined}>
+              From: alice
+            </Chip>
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="toolbar"
+        title="Toolbar"
+        summary="Horizontal action strip with role=toolbar, divider and density variants."
+      >
+        <div className="flex flex-col gap-3">
+          <Toolbar aria-label="Content view actions">
+            <Toggle aria-label="Rendered view" pressed>
+              Rendered
+            </Toggle>
+            <Toggle aria-label="Source view">Source</Toggle>
+          </Toolbar>
+          <Toolbar aria-label="Document actions" justify="between" density="compact">
+            <span className="text-[length:var(--text-xs)] uppercase tracking-[0.06em] text-[var(--hud-text-3)]">
+              README.md
+            </span>
+            <Button variant="ghost" size="sm">
+              Copy
+            </Button>
+          </Toolbar>
         </div>
       </PrimitiveCard>
 
