@@ -52,7 +52,7 @@ audience: humans and agents writing Heddle UI, website, CLI, and support copy
 | `ai-powered` | uses a model | avoid | avoid | avoid | avoid | AI-powered; powered by AI | runs an agent; uses a model |
 | `intelligent` | context-aware | avoid | avoid | avoid | avoid | intelligent platform | context-aware; specific behavior |
 | `seamless` | quiet background sync | avoid | avoid | avoid | avoid | seamless; frictionless | quiet; background; no setup |
-| `space` | space | preferred | preferred | preferred | preferred | workspace; vault as generic | Personal space; shared space |
+| `space` | space | preferred | preferred | preferred | preferred | workspace; vault as generic | Private space; shared space |
 | `attach` | attach | preferred | preferred | allowed | preferred | onboard a machine; bind | join an existing space |
 | `account-grant` | account grant | preferred | allowed-with-context | allowed-with-context | preferred | invite as the only noun; permission magic | owner-granted access |
 | `node` | node | allowed-with-context | allowed-with-context | avoid | allowed | daemon in UI; substrate | background service; Heddle service |

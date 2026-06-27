@@ -835,7 +835,7 @@ export function DesignSystemUiGallery({
             Vault unreachable — last sync 4h ago.
           </Callout>
           <Callout tone="positive" density="compact">
-            Saved. Local changes synced to the Personal vault.
+            Saved. Local changes synced to the Private vault.
           </Callout>
         </div>
       </PrimitiveCard>

@@ -475,14 +475,14 @@
         "marketing": "preferred"
       },
       "synonyms": [
-        "Personal space",
+        "Private space",
         "shared space"
       ],
       "avoid": [
         "workspace",
         "vault as generic sync unit"
       ],
-      "definition": "The Heddle sync unit noun for personal, studio, and shared contexts.",
+      "definition": "The Heddle sync unit noun for private, studio, and shared contexts.",
       "example": "Your Private space will sync quietly from here.",
       "anti_example": "Your workspace vault will synchronize.",
       "rationale": "Space is already the preferred noun in copy guidance and agent examples.",
