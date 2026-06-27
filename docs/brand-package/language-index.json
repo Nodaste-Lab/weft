@@ -524,7 +524,7 @@
       "definition": "The canonical synced workspace for the active account/organization context.",
       "example": "Your Private space is synced.",
       "anti_example": "Your Personal space is synced.",
-      "rationale": "NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. Personal remains only for legacy migration/history.",
+      "rationale": "NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. Personal is not current user-facing copy; it may still appear in legacy migration/history and non-user-facing internal compatibility-era/current implementation identifiers.",
       "related": [
         "space",
         "attach",
@@ -540,7 +540,7 @@
         {
           "date": "2026-06-27",
           "author": "agent",
-          "note": "Graduated NOD-977 and NOD-1102 Private-space implementation and terminology cleanup."
+          "note": "Graduated NOD-977 and NOD-1102 Private-space implementation and user-facing/default terminology cleanup while documenting remaining non-user-facing internal identifiers."
         }
       ]
     },

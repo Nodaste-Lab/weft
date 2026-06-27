@@ -165,8 +165,8 @@ Use as the canonical sync unit noun.
 Use for the canonical synced workspace for the active account/organization context.
 
 - **Say:** `Your Private space is synced`, `active Private space`, `Private space for Nodaste`
-- **Do not say:** `Personal space` for current product behavior, `personal workspace`, or copy implying individual ownership
-- **Rationale:** NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. `Personal` remains only for legacy migration/history, not current user-facing copy.
+- **Do not say:** `Personal space` as the current user-facing noun, `personal workspace`, or copy implying individual ownership
+- **Rationale:** NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. `Personal` is not current user-facing copy; it may still appear in legacy migration/history and non-user-facing internal compatibility-era/current implementation identifiers.
 - **Code refs:** `ccore/spec/architecture/private-space-ownership-v1.md`, `spec/architecture/private-space-ownership-implementation.md`, `src/app/services/accountSharingService.ts`, `plugins/heddle/scripts/lib/ccore.js`
 
 ### Attach
@@ -210,5 +210,5 @@ Avoid internal authority language unless the surface is diagnostic.
 Use this section for changes that affect term status, canonical labels, or surface rules.
 
 - `2026-06-11 - Symphony - Seeded v1 from alpha UI terminology, brand-package copy guidance, error inventory, source validation, and backup/import runbook.`
-- `2026-06-27 - agent - Added Private space as the canonical term for the current account/org default workspace; Personal space is legacy/history only.`
+- `2026-06-27 - agent - Added Private space as the canonical term for the current account/org default workspace; Personal space is not current user-facing copy, though legacy/history and internal implementation references remain.`
 - `YYYY-MM-DD - Author - Term ID: decision or ambiguity to resolve.`
