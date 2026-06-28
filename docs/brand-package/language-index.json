@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-06-11",
+  "updated": "2026-06-27",
   "terms": [
     {
       "id": "sync-degraded",
@@ -475,14 +475,14 @@
         "marketing": "preferred"
       },
       "synonyms": [
-        "Personal space",
+        "Private space",
         "shared space"
       ],
       "avoid": [
         "workspace",
         "vault as generic sync unit"
       ],
-      "definition": "The Heddle sync unit noun for personal, studio, and shared contexts.",
+      "definition": "The Heddle sync unit noun for private, studio, and shared contexts.",
       "example": "Your Private space will sync quietly from here.",
       "anti_example": "Your workspace vault will synchronize.",
       "rationale": "Space is already the preferred noun in copy guidance and agent examples.",
@@ -499,6 +499,48 @@
           "date": "2026-06-11",
           "author": "Symphony",
           "note": "Seed from preferred vocabulary."
+        }
+      ]
+    },
+    {
+      "id": "private-space",
+      "canonical": "Private space",
+      "status": "preferred",
+      "surfaces": {
+        "ui": "preferred",
+        "website": "allowed-with-context",
+        "cli": "preferred",
+        "marketing": "allowed-with-context"
+      },
+      "synonyms": [
+        "active Private space",
+        "account/org Private space"
+      ],
+      "avoid": [
+        "Personal space as current noun",
+        "personal workspace",
+        "individual-owned Private space"
+      ],
+      "definition": "The canonical synced workspace for the active account/organization context.",
+      "example": "Your Private space is synced.",
+      "anti_example": "Your Personal space is synced.",
+      "rationale": "NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. Personal is not current user-facing copy; it may still appear in legacy migration/history and non-user-facing internal compatibility-era/current implementation identifiers.",
+      "related": [
+        "space",
+        "attach",
+        "account-grant"
+      ],
+      "code_refs": [
+        "ccore/spec/architecture/private-space-ownership-v1.md",
+        "spec/architecture/private-space-ownership-implementation.md",
+        "src/app/services/accountSharingService.ts",
+        "plugins/heddle/scripts/lib/ccore.js"
+      ],
+      "feedback_log": [
+        {
+          "date": "2026-06-27",
+          "author": "agent",
+          "note": "Graduated NOD-977 and NOD-1102 Private-space implementation and user-facing/default terminology cleanup while documenting remaining non-user-facing internal identifiers."
         }
       ]
     },

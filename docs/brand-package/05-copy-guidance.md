@@ -72,7 +72,7 @@ Inline code for short identifiers; fenced code for anything multi-line or runnab
 
 ### Preferred
 
-- `space` — a Heddle sync unit (personal, studio, etc.)
+- `space` — a Heddle sync unit (private, studio, shared, etc.)
 - `sync` — the noun and verb for what Heddle does
 - `attach` — how a machine joins an existing space
 - `account grant` — owner-created shared-space access for a Clerk account or email

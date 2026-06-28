@@ -2,7 +2,7 @@
 linked_project: Heddle Branding
 type: language-index
 status: draft
-updated: 2026-06-11
+updated: 2026-06-27
 audience: humans and agents writing Heddle UI, website, CLI, and support copy
 ---
 
@@ -52,7 +52,8 @@ audience: humans and agents writing Heddle UI, website, CLI, and support copy
 | `ai-powered` | uses a model | avoid | avoid | avoid | avoid | AI-powered; powered by AI | runs an agent; uses a model |
 | `intelligent` | context-aware | avoid | avoid | avoid | avoid | intelligent platform | context-aware; specific behavior |
 | `seamless` | quiet background sync | avoid | avoid | avoid | avoid | seamless; frictionless | quiet; background; no setup |
-| `space` | space | preferred | preferred | preferred | preferred | workspace; vault as generic | Personal space; shared space |
+| `space` | space | preferred | preferred | preferred | preferred | workspace; vault as generic | Private space; shared space |
+| `private-space` | Private space | preferred | preferred | allowed-with-context | preferred | Personal space as current noun; personal workspace | active Private space; shared space |
 | `attach` | attach | preferred | preferred | allowed | preferred | onboard a machine; bind | join an existing space |
 | `account-grant` | account grant | preferred | allowed-with-context | allowed-with-context | preferred | invite as the only noun; permission magic | owner-granted access |
 | `node` | node | allowed-with-context | allowed-with-context | avoid | allowed | daemon in UI; substrate | background service; Heddle service |
@@ -159,6 +160,15 @@ Use as the canonical sync unit noun.
 - **Rationale:** `space` is already the preferred noun across copy guidance, onboarding examples, and source validation surfaces.
 - **Code refs:** `docs/brand-package/05-copy-guidance.md`, `docs/brand-package/06-ai-agent-style-guide.md`
 
+### Private space
+
+Use for the canonical synced workspace for the active account/organization context.
+
+- **Say:** `Your Private space is synced`, `active Private space`, `Private space for Nodaste`
+- **Do not say:** `Personal space` as the current user-facing noun, `personal workspace`, or copy implying individual ownership
+- **Rationale:** NOD-900/NOD-977 made the default workspace organization- or account-as-organization-custodied. `Personal` is not current user-facing copy; it may still appear in legacy migration/history and non-user-facing internal compatibility-era/current implementation identifiers.
+- **Code refs:** `ccore/spec/architecture/private-space-ownership-v1.md`, `spec/architecture/private-space-ownership-implementation.md`, `src/app/services/accountSharingService.ts`, `plugins/heddle/scripts/lib/ccore.js`
+
 ### Attach
 
 Use for a machine joining an existing space.
@@ -200,4 +210,5 @@ Avoid internal authority language unless the surface is diagnostic.
 Use this section for changes that affect term status, canonical labels, or surface rules.
 
 - `2026-06-11 - Symphony - Seeded v1 from alpha UI terminology, brand-package copy guidance, error inventory, source validation, and backup/import runbook.`
+- `2026-06-27 - agent - Added Private space as the canonical term for the current account/org default workspace; Personal space is not current user-facing copy, though legacy/history and internal implementation references remain.`
 - `YYYY-MM-DD - Author - Term ID: decision or ambiguity to resolve.`

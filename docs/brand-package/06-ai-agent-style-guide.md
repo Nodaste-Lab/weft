@@ -380,7 +380,7 @@ Then: heddle health
 
 ### Rewrite 4 — HUD line
 
-**Before:** "Your personal workspace has finished synchronizing all pending changes just now."
+**Before:** "Your Private space has finished synchronizing all pending changes just now."
 
 **After:** `Private · synced · just now`
 
