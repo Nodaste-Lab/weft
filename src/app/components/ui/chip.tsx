@@ -45,7 +45,7 @@ const chipVariants = cva(
 );
 
 const focusRing =
-  "outline-none rounded-[2px] focus-visible:ring-2 focus-visible:ring-[var(--weft-focus-ring)]";
+  "outline-none rounded-[2px] focus-visible:[box-shadow:var(--weft-focus-ring)]";
 
 export interface ChipProps
   extends Omit<React.ComponentProps<"span">, "onSelect">,
@@ -77,7 +77,7 @@ const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
             data-slot="chip-toggle"
             aria-pressed={selected ?? false}
             onClick={onSelect}
-            className={cn("inline-flex min-w-0 items-center bg-transparent text-inherit", focusRing)}
+            className={cn("inline-flex min-h-6 min-w-6 items-center justify-center bg-transparent text-inherit", focusRing)}
           >
             <span className="truncate">{children}</span>
           </button>
@@ -91,7 +91,7 @@ const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
             aria-label={removeLabel ?? (labelText ? `Remove ${labelText}` : "Remove")}
             onClick={onRemove}
             className={cn(
-              "inline-flex shrink-0 items-center justify-center text-current opacity-70 transition-opacity hover:opacity-100",
+              "inline-flex min-h-6 min-w-6 shrink-0 items-center justify-center text-current opacity-70 transition-opacity hover:opacity-100",
               focusRing,
             )}
           >

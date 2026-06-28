@@ -85,6 +85,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../app/components/ui/dropdown-menu';
+import { EmptyState } from '../app/components/ui/empty-state';
 import {
   Form,
   FormControl,
@@ -169,6 +170,7 @@ import {
 import { Skeleton } from '../app/components/ui/skeleton';
 import { Slider } from '../app/components/ui/slider';
 import { Stack } from '../app/components/ui/stack';
+import { StatRow } from '../app/components/ui/stat-row';
 import { Switch } from '../app/components/ui/switch';
 import {
   Table,
@@ -1095,6 +1097,18 @@ export function DesignSystemUiGallery({
             <DropdownMenuItem>Export log</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="empty-state"
+        title="Empty State"
+        summary="Centered no-content message with optional description and action slot."
+      >
+        <EmptyState
+          title="No notes yet"
+          description="Create a note to start capturing context for this workspace."
+          action={<Button type="button" size="sm">Create note</Button>}
+        />
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2281,6 +2295,18 @@ export function DesignSystemUiGallery({
             <Button size="sm" variant="secondary">Review</Button>
           </Stack>
         </Stack>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="stat-row"
+        title="Stat Row"
+        summary="Compact label-value readout for dense panel stats and status summaries."
+      >
+        <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <StatRow label="Sources" value="8" hint="indexed" />
+          <StatRow label="Open loops" value="3" />
+          <StatRow label="Updated" value="2m ago" />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard

@@ -71,7 +71,7 @@ const AttentionTicketCard = React.forwardRef<HTMLDivElement, AttentionTicketCard
           as="button"
           frame={false}
           onSelect={onToggle}
-          className={cn("px-3 py-2.5 gap-2.5 text-foreground", issueUrl && "pr-9")}
+          className={cn("px-3 py-2.5 gap-2.5 text-foreground", issueUrl && "pr-16")}
           bodyClassName="gap-1"
           trailing={expanded ? <ChevronUp size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
         >

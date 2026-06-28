@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           // inline: strip the form chrome (twMerge drops h-9/border/px-3/bg/etc.)
           // and inherit the host's font; keep a Weft focus ring for affordance.
           variant === "inline" &&
-            "h-auto rounded border-0 bg-transparent px-1 py-px text-[length:inherit] font-[inherit] text-inherit shadow-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:shadow-[0_0_0_2px_var(--weft-focus-ring)]",
+            "h-auto rounded border-0 bg-transparent px-1 py-px text-[length:inherit] font-[inherit] text-inherit shadow-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:[box-shadow:var(--weft-focus-ring)]",
           // readonly reads as filled-but-static, distinct from disabled's dimming.
           state === "readonly" && "cursor-default bg-muted/40",
           className,
