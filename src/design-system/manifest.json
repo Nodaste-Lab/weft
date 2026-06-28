@@ -162,6 +162,14 @@
       "version": "1.0.0"
     },
     {
+      "id": "chip",
+      "path": "src/app/components/ui/chip.tsx",
+      "category": "data-display",
+      "summary": "Tone-aware removable tag with an optional toggle.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "code-block",
       "path": "src/app/components/ui/code-block.tsx",
       "category": "data-display",
@@ -451,9 +459,9 @@
       "id": "input",
       "path": "src/app/components/ui/input.tsx",
       "category": "inputs",
-      "summary": "Single-line text input with tokenized focus and error states.",
+      "summary": "Single-line text input with tokenized focus and error states, plus a chromeless inline variant.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "knowledge-search-result-row.figma",
@@ -940,6 +948,14 @@
       "path": "src/app/components/ui/toggle.tsx",
       "category": "toggles",
       "summary": "Pressed-state toggle button for formatting or filters.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "toolbar",
+      "path": "src/app/components/ui/toolbar.tsx",
+      "category": "layout",
+      "summary": "Horizontal action strip with role=toolbar, divider and density variants.",
       "showcase": true,
       "version": "1.0.0"
     },

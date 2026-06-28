@@ -5,6 +5,7 @@ import {
   type HudIssueScope,
   type HudIssueSeverity,
 } from '../../runtime/hudIssue';
+import { Button } from './button';
 
 /**
  * Shared HUD issue presentation primitive.
@@ -56,7 +57,7 @@ function severityColors(severity: HudIssueSeverity): {
     case 'error':
       return {
         accent: 'var(--hud-danger)',
-        border: 'rgba(239, 68, 68, 0.32)',
+        border: 'var(--hud-danger-border)',
         background: 'var(--hud-danger-bg-strong)',
         icon: '!',
         role: 'alert',
@@ -64,7 +65,7 @@ function severityColors(severity: HudIssueSeverity): {
     case 'warning':
       return {
         accent: 'var(--hud-warning)',
-        border: 'rgba(251, 191, 36, 0.3)',
+        border: 'var(--hud-warning-border)',
         background: 'var(--hud-attention-bg-strong)',
         icon: '⚠',
         role: 'alert',
@@ -154,19 +155,6 @@ export function HudIssueCallout({
     lineHeight: 1.5,
   };
 
-  const buttonStyle: CSSProperties = {
-    marginTop: compact ? 4 : 8,
-    padding: compact ? '3px 8px' : '4px 10px',
-    fontSize: compact ? 10 : 11,
-    fontFamily: 'var(--weft-font-sans)',
-    color: colors.accent,
-    background: 'transparent',
-    border: `1px solid ${colors.accent}`,
-    borderRadius: 'var(--radius-sm)',
-    cursor: 'pointer',
-    justifySelf: 'start',
-  };
-
   return (
     <div
       data-testid="hud-issue-callout"
@@ -200,9 +188,16 @@ export function HudIssueCallout({
           </div>
         ) : null}
         {action ? (
-          <button type="button" onClick={action.onClick} style={buttonStyle}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={action.onClick}
+            className={compact ? 'mt-1 h-7 justify-self-start px-2 text-[10px]' : 'mt-2 justify-self-start'}
+            style={{ color: colors.accent, borderColor: colors.accent }}
+          >
             {action.label}
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

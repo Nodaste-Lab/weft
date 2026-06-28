@@ -26,7 +26,7 @@ function severityColors(severity: HudIssueSeverity): {
     case 'error':
       return {
         accent: 'var(--hud-danger)',
-        border: 'rgba(239, 68, 68, 0.35)',
+        border: 'var(--hud-danger-border)',
         background: 'var(--hud-danger-bg-strong)',
         icon: '!',
         role: 'alert',
@@ -34,7 +34,7 @@ function severityColors(severity: HudIssueSeverity): {
     case 'warning':
       return {
         accent: 'var(--hud-warning)',
-        border: 'rgba(251, 191, 36, 0.35)',
+        border: 'var(--hud-warning-border)',
         background: 'var(--hud-attention-bg-strong)',
         icon: '⚠',
         role: 'alert',
@@ -159,24 +159,16 @@ export function HudIssueToast({
           </div>
         ) : null}
       </div>
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         aria-label="Dismiss notification"
         onClick={onDismiss}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: 0,
-          background: 'transparent',
-          color: 'var(--hud-text-3)',
-          cursor: 'pointer',
-          padding: 0,
-          marginTop: 1,
-        }}
+        className="size-6 self-start text-[var(--hud-text-3)] hover:text-[var(--hud-text-1)]"
       >
         <X size={14} />
-      </button>
+      </Button>
     </div>
   );
 }
