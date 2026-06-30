@@ -374,6 +374,8 @@ Mounts before any section content. `pointer-events: none` so it never intercepts
 
 ## Components
 
+> **Code-backed panels** can't use the React/Tailwind components below (they render in a sandboxed iframe). They get a curated, namespaced plain-CSS counterpart — `src/styles/weft-components.css` (`weft-card`, `weft-btn`, `weft-input`, `weft-pill`, `weft-table`, the full form set…), injected into the panel iframe by the runtime. It's lifted from this doc's component CSS and stays token-only. See `docs/panel-authoring/CODE_BACKED_PANEL_PACKAGE.md` → Panel components.
+
 ### Nav
 
 Sticky top bar with backdrop blur and a `rgba(251, 248, 240, 0.78)` cream-tint fill. Holds the logo (left) and `.nav-meta` link cluster + `.pill` (right).

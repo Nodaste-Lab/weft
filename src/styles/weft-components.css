@@ -1,0 +1,245 @@
+/*
+ * Weft panel component layer — injected into the code-backed panel iframe
+ * alongside weft.css (see src/app/panel-packages/weftPanelTheme.ts).
+ *
+ * Weft's real components are React/Tailwind and a sandboxed panel iframe can't
+ * import them, so panels used to hand-roll every button/input from tokens. This
+ * is the curated, plain-CSS counterpart: namespaced `weft-*` classes lifted
+ * from docs/brand-package/design-system.html, so a panel writes
+ * `<input class="weft-input">` and gets the real Weft control — states, focus,
+ * a11y, light/dark — for free.
+ *
+ * Rules: token-only (every value reads var(--weft-*)); interactive controls use
+ * the density-aware --weft-control-* tokens so they tighten under
+ * data-density="compact"; renders in light + dark via the same token overrides
+ * as the rest of Weft. Namespaced to avoid colliding with a panel's own classes.
+ */
+
+/* ── Accessibility base: focus ring + reduced motion ──────────────────────── */
+:where(a, button, [tabindex], input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: var(--weft-focus-ring);
+  border-radius: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Card — paper surface, hairline rule, card radius ─────────────────────── */
+.weft-card {
+  background: var(--weft-paper);
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-card);
+  padding: var(--weft-space-4);
+  color: var(--weft-ink);
+}
+
+/* ── Eyebrow — mono section signifier with hairline ───────────────────────── */
+.weft-eyebrow {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--weft-font-mono);
+  font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--weft-link);
+}
+.weft-eyebrow::before {
+  content: ""; width: 40px; height: 1px;
+  background: var(--weft-blue); display: inline-block; flex: 0 0 auto;
+}
+
+/* ── Lede — muted intro paragraph ─────────────────────────────────────────── */
+.weft-lede {
+  font-family: var(--weft-font-sans);
+  font-size: 16px; line-height: 1.5; font-weight: 400;
+  color: var(--weft-muted);
+}
+.weft-lede strong { color: var(--weft-ink); font-weight: 600; }
+
+/* ── Heading — Fraunces display ───────────────────────────────────────────── */
+.weft-heading {
+  font-family: var(--weft-font-serif);
+  font-weight: 500; color: var(--weft-ink); line-height: 1.15;
+}
+
+/* ── Pill — yellow status/announcement chip with pulse dot ────────────────── */
+.weft-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; min-height: 24px;          /* AA touch target */
+  background: var(--weft-yellow); color: var(--weft-blue-ink);
+  border-radius: var(--weft-radius-pill);
+  font-family: var(--weft-font-mono);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.weft-pill::before {
+  content: ""; width: 6px; height: 6px;
+  border-radius: var(--weft-radius-dot); background: var(--weft-blue);
+  animation: weft-pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
+}
+@keyframes weft-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ── Tag — mono chip; .is-active for the selected state ───────────────────── */
+.weft-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--weft-font-mono);
+  font-size: 12px; padding: 7px 13px;
+  background: var(--weft-cream); border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-pill); color: var(--weft-ink);
+}
+.weft-tag.is-active { background: var(--weft-blue); color: var(--weft-yellow); border-color: var(--weft-link); }
+
+/* ── Button — blue slab primary, ghost variant ────────────────────────────── */
+.weft-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--weft-control-h);
+  padding: 0 var(--weft-control-pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--weft-radius-card);
+  background: var(--weft-blue); color: var(--weft-on-blue);
+  font-family: var(--weft-font-sans);
+  font-size: var(--weft-control-text); font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--weft-dur-fast) var(--weft-ease-out);
+}
+.weft-btn:hover:not(:disabled) { background: var(--weft-blue-deep); }
+.weft-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.weft-btn.is-ghost {
+  background: var(--weft-paper); color: var(--weft-ink);
+  border-color: var(--weft-rule);
+}
+.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-rule-strong); background: var(--weft-paper); }
+
+/* ── Form inputs ──────────────────────────────────────────────────────────── */
+.weft-field {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: var(--weft-space-5);
+  font-family: var(--weft-font-sans);
+}
+.weft-field-label {
+  font-family: var(--weft-font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--weft-muted);
+}
+.weft-field-label .weft-req { color: var(--weft-stop); margin-left: 2px; }
+.weft-field-hint { font-size: 13px; color: var(--weft-muted); line-height: 1.4; }
+.weft-field-hint.is-error { color: var(--weft-stop); }
+
+.weft-input, .weft-textarea, .weft-select {
+  width: 100%;
+  font-family: var(--weft-font-sans);
+  font-size: var(--weft-control-text); line-height: 1.4;
+  color: var(--weft-ink);
+  background: var(--weft-paper);
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-card);
+  padding: 11px var(--weft-control-pad-x);
+  min-height: var(--weft-control-h);
+  transition:
+    border-color var(--weft-dur-fast) var(--weft-ease-out),
+    background-color var(--weft-dur-fast) var(--weft-ease-out);
+}
+.weft-input::placeholder, .weft-textarea::placeholder { color: var(--weft-muted); }
+.weft-input:hover:not(:disabled),
+.weft-textarea:hover:not(:disabled),
+.weft-select:hover:not(:disabled) { border-color: var(--weft-rule-strong); }
+.weft-input[aria-invalid="true"],
+.weft-textarea[aria-invalid="true"],
+.weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }
+
+.weft-textarea { min-height: 96px; resize: vertical; }
+
+.weft-select {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%230B1020' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+:root[data-theme="dark"] .weft-select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
+}
+
+.weft-checkbox-wrap, .weft-radio-wrap {
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: var(--weft-control-h);
+  cursor: pointer;
+  font-family: var(--weft-font-sans);
+  font-size: 15px; color: var(--weft-ink);
+}
+.weft-checkbox, .weft-radio {
+  appearance: none; -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--weft-ink);
+  background: var(--weft-paper);
+  cursor: pointer; flex-shrink: 0; position: relative;
+  transition:
+    background-color var(--weft-dur-fast) var(--weft-ease-out),
+    border-color var(--weft-dur-fast) var(--weft-ease-out);
+}
+.weft-checkbox { border-radius: var(--weft-radius-chip); }
+.weft-radio { border-radius: var(--weft-radius-dot); }
+.weft-checkbox:hover:not(:disabled),
+.weft-radio:hover:not(:disabled) { border-color: var(--weft-blue); }
+.weft-checkbox:checked, .weft-radio:checked {
+  background-color: var(--weft-blue); border-color: var(--weft-blue);
+}
+.weft-checkbox:checked {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
+  background-repeat: no-repeat; background-position: center; background-size: 12px 12px;
+}
+.weft-radio:checked::after {
+  content: ""; position: absolute; inset: 4px;
+  border-radius: var(--weft-radius-dot); background: var(--weft-on-blue);
+}
+.weft-checkbox[aria-invalid="true"],
+.weft-radio[aria-invalid="true"] { border-color: var(--weft-stop); }
+
+.weft-field-group {
+  border: none; padding: 0; margin: 0 0 var(--weft-space-5);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.weft-field-group > legend {
+  font-family: var(--weft-font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--weft-muted);
+  margin-bottom: 4px; padding: 0;
+}
+
+/* ── Table — bordered paper list with hairline rows ───────────────────────── */
+.weft-table {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-card); overflow: hidden;
+  background: var(--weft-paper);
+}
+.weft-row {
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: var(--weft-space-4); align-items: center;
+  padding: var(--weft-space-4) var(--weft-space-5);
+  border-bottom: 1px solid var(--weft-rule);
+  text-align: left;
+}
+.weft-row:last-child { border-bottom: none; }
+.weft-row .weft-stage {
+  font-family: var(--weft-font-mono);
+  font-size: 11px; color: var(--weft-muted); letter-spacing: 0.1em;
+}
+.weft-row .weft-desc { font-size: 15px; color: var(--weft-ink); font-weight: 500; }
+.weft-row .weft-desc span {
+  display: block; font-size: 13px;
+  color: var(--weft-muted); font-weight: 400; margin-top: 4px;
+}
+.weft-row.is-here {
+  background: var(--weft-yellow-soft);
+  border-left: 3px solid var(--weft-yellow);
+}
+.weft-row.is-active { background: var(--weft-blue); }
+.weft-row.is-active .weft-stage { color: var(--weft-yellow); }
+.weft-row.is-active .weft-desc { color: var(--weft-on-blue); }
+.weft-row.is-active .weft-desc span { color: var(--weft-on-blue-muted); }
