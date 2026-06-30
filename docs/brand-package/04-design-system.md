@@ -145,6 +145,14 @@ Use once per headline at most. The gradient-to-transparent at 38–40% reads as 
 --weft-wrap-max:    1240px;  /* max content width */
 --weft-wrap-pad:    48px;    /* desktop gutter */
 --weft-wrap-pad-sm: 24px;    /* ≤900px gutter */
+
+/* Spacing scale — 4px base, fixed across density. Pick a step, not a pixel. */
+--weft-space-1: 4px;
+--weft-space-2: 8px;
+--weft-space-3: 12px;
+--weft-space-4: 16px;
+--weft-space-5: 24px;
+--weft-space-6: 32px;
 ```
 
 | Token / rule | Value |
@@ -152,10 +160,13 @@ Use once per headline at most. The gradient-to-transparent at 38–40% reads as 
 | `--weft-wrap-max` | `1240px` |
 | `--weft-wrap-pad` (desktop) | `48px` |
 | `--weft-wrap-pad-sm` (≤900px) | `24px` |
+| `--weft-space-1` … `--weft-space-6` | `4 / 8 / 12 / 16 / 24 / 32px` |
 | Section padding | `110px 0` (desktop), `80px 0` (≤900px) |
 | Hero padding | `120px 0 100px` (desktop), `60px 0 80px` (≤900px) |
 | CTA section padding | `140px 0` |
 | Section-head bottom margin | `72px` (desktop), `48px` (≤900px) |
+
+The `--weft-space-*` scale is the general-purpose gap/padding ladder (used by code-backed panels). It's fixed — density (`data-density="compact"`) tightens the control tokens above, not the spacing scale, so a step means the same thing in every context.
 
 ### Border radius
 

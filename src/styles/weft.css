@@ -89,6 +89,17 @@
   --weft-wrap-pad:     48px;
   --weft-wrap-pad-sm:  24px;
 
+  /* ── Spacing scale (4px base; fixed across density) ──────────────────────
+   * General-purpose gap/padding steps. Fixed (not density-aware) so a value
+   * means the same thing everywhere — pick a step, not a pixel. Code-backed
+   * panels author spacing against these (NOD-1122). */
+  --weft-space-1:  4px;
+  --weft-space-2:  8px;
+  --weft-space-3:  12px;
+  --weft-space-4:  16px;
+  --weft-space-5:  24px;
+  --weft-space-6:  32px;
+
   /* ── Density (marketing default — see [data-density="compact"] for app) ── */
   --weft-control-h:         44px;
   --weft-control-pad-x:     14px;
