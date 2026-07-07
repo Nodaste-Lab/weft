@@ -26,7 +26,10 @@ function compareOrderedList(label, actual, expected) {
     return;
   }
 
-  const lines = [`Design system manifest drift detected for ${label}.`];
+  const lines = [
+    `Design system manifest drift detected for ${label}.`,
+    'The code is the source of truth (src/app/components/ui/*.tsx files and the panel type unions); edit src/design-system/manifest.json by hand to match — there is no auto-fix mode.',
+  ];
   if (actualOnly.length) {
     lines.push(`- Add to manifest: ${actualOnly.join(', ')}`);
   }
