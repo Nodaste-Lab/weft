@@ -193,7 +193,7 @@ function runWrite() {
     violations.push(...surfaceVersionViolations(id, old, entry));
   }
   if (violations.length && !FORCE) {
-    console.error('Refusing to write snapshot — contract surface changes need a component version bump, and breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
+    console.error('Refusing to write snapshot — contract surface changes need a component version bump, and breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\nRecovery steps:\n  1. Bump the listed component version(s) in src/design-system/manifest.json (major bump for breaking changes).\n  2. Rerun: node scripts/design-system-props.mjs --write\n  3. Commit the updated src/design-system/props-snapshot.json together with manifest.json.\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
     process.exit(1);
   }
   if (violations.length && FORCE) {
@@ -238,7 +238,7 @@ function runVerify() {
     process.exit(1);
   }
   if (problems.length) {
-    console.error('Design-system prop-contract snapshot is out of date:\n' + problems.join('\n') + '\n\nRegenerate + commit: node scripts/design-system-props.mjs --write\n');
+    console.error('Design-system prop-contract snapshot is out of date:\n' + problems.join('\n') + '\n\nRegenerate: node scripts/design-system-props.mjs --write\nThen commit the updated src/design-system/props-snapshot.json. If --write refuses, bump the component version in src/design-system/manifest.json first (major bump for breaking changes) and rerun.\n');
     process.exit(1);
   }
   console.log(`Prop-contract snapshot OK (${Object.keys(live.components).length} components, DS v${live.designSystemVersion}).`);
