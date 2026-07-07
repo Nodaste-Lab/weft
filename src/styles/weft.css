@@ -30,7 +30,7 @@
   --weft-mark:         var(--weft-yellow);
   --weft-stop:         #a8382b;
   --weft-ok:           #3a7a4a;
-  --weft-warn:         #d97706;
+  --weft-warn:         #b45309;  /* amber-700 — AA as text: 5.02:1 on white, 4.73:1 on cream (was #d97706 at 3.19/3.00, fail). Feeds --hud-warning, used as small warning text across panels. */
   --weft-danger:       #ef4444;
   --weft-info:         #60a5fa;
 
@@ -180,7 +180,12 @@
   --weft-info:         #c4b5fd;
 
   --primary:                       var(--weft-blue);
+  /* Dark-mode primary is a LIGHT violet (violet-300), so on-primary text must be
+   * dark ink, not white. #1a0f33 (deep violet-ink) on #c4b5fd = 9.9:1 (AA).
+   * White would be 1.85:1 (fail) — the value inherited from the light block. */
+  --primary-foreground:            #1a0f33;
   --accent:                        var(--weft-blue);
+  --accent-foreground:             #1a0f33;
   --hud-border-accent:             var(--weft-blue);
   --hud-info:                      var(--weft-blue);
   --hud-glow:                      0 0 24px rgba(196, 181, 253, 0.32);
@@ -253,20 +258,25 @@
 }
 
 /* ── Palette alternative: heritage purple ──
- * Built around violet-400 (#a78bfa) as the primary — softer, more editorial
- * than the original Weave-purple, and aligned with the "bulk operations"
- * encoding so the same hue carries one consistent meaning across themes.
+ * Built around violet-600 (#7c3aed) as the primary — softer, more editorial
+ * than the original Weave-purple. The hue was deepened from violet-400 to clear
+ * WCAG AA: violet-400 primary/link failed on white and cream (2.72:1 / 2.56:1).
  *
- * Scale: violet-400 (primary) → violet-500 (deep) → violet-700 (ink).
+ * Scale: violet-600 (primary) → violet-700 (deep) → violet-800 (ink).
  * Mark + soft pull from the lighter end of the same ramp (200 + 50). */
 :root[data-palette="heritage-purple"] {
-  --weft-blue:                #a78bfa;  /* violet-400 — primary */
-  --weft-blue-deep:           #8b5cf6;  /* violet-500 — deep */
-  --weft-blue-ink:            #6d28d9;  /* violet-700 — ink */
+  /* WCAG AA calibration (light):
+   *   primary #7c3aed (violet-600) + white foreground = 5.70:1 (AA normal) —
+   *   was #a78bfa (violet-400) at 2.72:1 (fail).
+   *   link #6d28d9 (violet-700) on cream = 6.69:1 (AA normal), on paper 7.10:1 —
+   *   was violet-400 at ~2.56:1 (fail). */
+  --weft-blue:                #7c3aed;  /* violet-600 — primary (AA on white) */
+  --weft-blue-deep:           #6d28d9;  /* violet-700 — deep */
+  --weft-blue-ink:            #5b21b6;  /* violet-800 — ink */
   --weft-yellow:              #ddd6fe;  /* violet-200 — mark */
   --weft-yellow-soft:         #f5f3ff;  /* violet-50  — soft mark */
   --weft-mark:                var(--weft-yellow);
-  --weft-link:                var(--weft-blue);
+  --weft-link:                #6d28d9;  /* violet-700 — link text, AA on cream + paper */
   --weft-focus-ring-color:    var(--weft-blue);
 
   /* Bridge the shadcn flat tokens + the HUD namespace so components that read
