@@ -4,9 +4,13 @@ import { cn } from "./utils";
 
 type TextareaState = "default" | "error" | "disabled" | "readonly";
 
-function Textarea({ className, state, ...props }: React.ComponentProps<"textarea"> & { state?: TextareaState }) {
+const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.ComponentProps<"textarea"> & { state?: TextareaState }
+>(({ className, state, ...props }, ref) => {
   return (
     <textarea
+      ref={ref}
       data-slot="textarea"
       data-state={state}
       className={cn(
@@ -20,6 +24,8 @@ function Textarea({ className, state, ...props }: React.ComponentProps<"textarea
       readOnly={state === "readonly" ? true : props.readOnly}
     />
   );
-}
+});
+
+Textarea.displayName = "Textarea";
 
 export { Textarea };
