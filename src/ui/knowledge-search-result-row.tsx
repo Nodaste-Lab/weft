@@ -4,7 +4,7 @@ import { Copy, ExternalLink, FileText } from "lucide-react";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { cn } from "./utils";
-import { SEARCH_CATEGORIES } from "../../services/vaultSearchService";
+import { SEARCH_CATEGORIES } from "./knowledge-search-categories";
 
 const CATEGORY_LABELS = new Map(SEARCH_CATEGORIES.map(({ id, label }) => [id, label]));
 

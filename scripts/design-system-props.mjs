@@ -2,14 +2,14 @@
 /**
  * Workstream B / D2 — committed prop-contract snapshot + gate.
  *
- * The snapshot (src/design-system/props-snapshot.json) is the golden record of
+ * The snapshot (packages/weft/props-snapshot.json) is the golden record of
  * every showcase component's public prop surface plus the version it was taken
  * at. It's what makes per-panel version pins trustworthy: if a component's
  * contract changes, the snapshot must change too, and a *breaking* change must
  * come with a major version bump.
  *
- *   node scripts/design-system-props.mjs            # verify (CI gate)
- *   node scripts/design-system-props.mjs --write     # regenerate the snapshot
+ *   npm run design-system:props            # verify (CI gate)
+ *   npm run design-system:props:write      # regenerate the snapshot
  *
  * --write refuses to record a breaking surface change unless the component's
  * manifest `version` major was bumped (author-time guard). verify fails when the
@@ -24,10 +24,14 @@ import { dirname, join, relative } from 'node:path';
 import { extractSurface } from './lib/component-prop-surface.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const MANIFEST = join(ROOT, 'src/design-system/manifest.json');
-const SNAPSHOT = join(ROOT, 'src/design-system/props-snapshot.json');
-const MANIFEST_REPO_PATH = relative(ROOT, MANIFEST).replaceAll('\\', '/');
-const SNAPSHOT_REPO_PATH = relative(ROOT, SNAPSHOT).replaceAll('\\', '/');
+const MANIFEST = join(ROOT, 'manifest.json');
+const SNAPSHOT = join(ROOT, 'props-snapshot.json');
+// git show paths are repo-root-relative, not package-relative. While the
+// package lives inside the Heddle monorepo this is packages/weft/…; when the
+// package is extracted to its own repo these become plain 'manifest.json' /
+// 'props-snapshot.json'.
+const MANIFEST_REPO_PATH = 'packages/weft/manifest.json';
+const SNAPSHOT_REPO_PATH = 'packages/weft/props-snapshot.json';
 const WRITE = process.argv.includes('--write');
 // --force re-baselines past the breaking-change guard. Use ONLY when the
 // EXTRACTOR itself changed (so the old snapshot is incomparable, not when a
@@ -193,7 +197,7 @@ function runWrite() {
     violations.push(...surfaceVersionViolations(id, old, entry));
   }
   if (violations.length && !FORCE) {
-    console.error('Refusing to write snapshot — contract surface changes need a component version bump, and breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\nRecovery steps:\n  1. Bump the listed component version(s) in src/design-system/manifest.json (major bump for breaking changes).\n  2. Rerun: node scripts/design-system-props.mjs --write\n  3. Commit the updated src/design-system/props-snapshot.json together with manifest.json.\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
+    console.error('Refusing to write snapshot — contract surface changes need a component version bump, and breaking changes need a major version bump in manifest.json:\n' + violations.join('\n') + '\nRecovery steps:\n  1. Bump the listed component version(s) in packages/weft/manifest.json (major bump for breaking changes).\n  2. Rerun: npm run design-system:props:write\n  3. Commit the updated packages/weft/props-snapshot.json together with manifest.json.\n(Use --force only if the EXTRACTOR changed, not a component contract.)');
     process.exit(1);
   }
   if (violations.length && FORCE) {
@@ -205,7 +209,7 @@ function runWrite() {
 
 function runVerify() {
   if (!existsSync(SNAPSHOT)) {
-    console.error(`Missing ${SNAPSHOT}. Run: node scripts/design-system-props.mjs --write`);
+    console.error(`Missing ${SNAPSHOT}. Run: npm run design-system:props:write`);
     process.exit(1);
   }
   const currentManifest = readCurrentManifest();
@@ -238,7 +242,7 @@ function runVerify() {
     process.exit(1);
   }
   if (problems.length) {
-    console.error('Design-system prop-contract snapshot is out of date:\n' + problems.join('\n') + '\n\nRegenerate: node scripts/design-system-props.mjs --write\nThen commit the updated src/design-system/props-snapshot.json. If --write refuses, bump the component version in src/design-system/manifest.json first (major bump for breaking changes) and rerun.\n');
+    console.error('Design-system prop-contract snapshot is out of date:\n' + problems.join('\n') + '\n\nRegenerate: npm run design-system:props:write\nThen commit the updated packages/weft/props-snapshot.json. If --write refuses, bump the component version in packages/weft/manifest.json first (major bump for breaking changes) and rerun.\n');
     process.exit(1);
   }
   console.log(`Prop-contract snapshot OK (${Object.keys(live.components).length} components, DS v${live.designSystemVersion}).`);

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { EyebrowLabel } from '../eyebrow-label';
-import { expectA11yClean } from '../../../../test-support/ds-assert';
+import { expectA11yClean } from '../../test-support/ds-assert';
 
 describe('EyebrowLabel', () => {
   it('renders an accessible section label', async () => {

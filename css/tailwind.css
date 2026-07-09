@@ -1,0 +1,6 @@
+@import 'tailwindcss' source(none);
+/* Only the package's own components register here; consuming apps must add
+ * their own @source for their source tree (Heddle does in src/styles/index.css). */
+@source '../src/**/*.{ts,tsx}';
+
+@import 'tw-animate-css';

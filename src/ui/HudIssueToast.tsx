@@ -1,8 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { X } from 'lucide-react';
-import type { HudIssue, HudIssueSeverity } from '../../runtime/hudIssue';
-import { resolveHudIssueSourceLabel } from '../../runtime/hudIssue';
-import type { HudIssueToastAction } from '../../runtime/hudIssueToastActions';
+import type { HudIssue, HudIssueSeverity, HudIssueToastAction } from './hud-issue-contract';
+import { resolveHudIssueSourceLabel } from './hud-issue-contract';
 import { Button } from './button';
 
 interface HudIssueToastProps {

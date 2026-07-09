@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ActionButtonRow } from '../action-button-row';
 import { Button } from '../button';
-import { expectA11yClean } from '../../../../test-support/ds-assert';
+import { expectA11yClean } from '../../test-support/ds-assert';
 
 describe('ActionButtonRow', () => {
   it('renders accessible grouped actions', async () => {

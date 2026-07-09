@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { HudIssueCallout } from '../HudIssueCallout';
-import type { HudIssue } from '../../../runtime/hudIssue';
+import type { HudIssue } from '../hud-issue-contract';
 
 const baseIssue: HudIssue = {
   reason: 'fetch_failed',

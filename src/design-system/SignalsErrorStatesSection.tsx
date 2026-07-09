@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
+import { HudIssueCallout } from '@nodaste-lab/weft/src/ui/HudIssueCallout';
 import {
   buildProviderNotRegisteredIssue,
   buildSignalAgentIssue,

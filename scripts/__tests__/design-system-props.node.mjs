@@ -6,7 +6,7 @@ import { extractSurface } from '../lib/component-prop-surface.mjs';
 import { diffSurface, surfaceVersionViolations, baseSnapshotVersionViolations, baseManifestRemovalViolations } from '../design-system-props.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const ui = (id) => join(ROOT, 'src/app/components/ui', `${id}.tsx`);
+const ui = (id) => join(ROOT, 'src/ui', `${id}.tsx`);
 
 test('extractSurface reads cva variants and own props (button)', () => {
   const s = extractSurface(ui('button'));

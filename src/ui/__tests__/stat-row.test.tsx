@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { StatRow } from '../stat-row';
-import { expectA11yClean, expectNoRawColors } from '../../../../test-support/ds-assert';
+import { expectA11yClean, expectNoRawColors } from '../../test-support/ds-assert';
 
 describe('StatRow', () => {
   it('renders a label-value pair accessibly', async () => {

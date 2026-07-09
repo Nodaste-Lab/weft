@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { PanelHeader, PanelHeaderActions, PanelHeaderDismiss, PanelHeaderTitle } from '../panel-header';
 import { Button } from '../button';
-import { expectA11yClean } from '../../../../test-support/ds-assert';
+import { expectA11yClean } from '../../test-support/ds-assert';
 
 describe('PanelHeader', () => {
   it('renders title, actions, and dismiss control accessibly', async () => {

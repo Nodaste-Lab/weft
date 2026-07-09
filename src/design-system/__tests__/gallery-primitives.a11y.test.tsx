@@ -19,7 +19,7 @@ import {
   DesignSystemUiGallery,
   SHOWCASED_PRIMITIVE_IDS,
 } from '../DesignSystemUiGallery';
-import { expectA11yClean, expectNoRawColors } from '../../test-support/ds-assert';
+import { expectA11yClean, expectNoRawColors } from '@nodaste-lab/weft/src/test-support/ds-assert';
 
 // A handful of showcase primitives are demonstrated inline inside a composite
 // example rather than as their own `#{id}-example` card (e.g. stat-row appears

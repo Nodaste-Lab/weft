@@ -2,13 +2,13 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
-import designSystemManifest from './manifest.json';
+import designSystemManifest from '@nodaste-lab/weft/manifest.json';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../app/components/ui/accordion';
+} from '@nodaste-lab/weft/src/ui/accordion';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,12 +19,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../app/components/ui/alert-dialog';
-import { Alert, AlertDescription, AlertTitle } from '../app/components/ui/alert';
-import { AspectRatio } from '../app/components/ui/aspect-ratio';
-import { AttentionTicketCard } from '../app/components/ui/attention-ticket-card';
-import { Avatar, AvatarFallback } from '../app/components/ui/avatar';
-import { Badge } from '../app/components/ui/badge';
+} from '@nodaste-lab/weft/src/ui/alert-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@nodaste-lab/weft/src/ui/alert';
+import { AspectRatio } from '@nodaste-lab/weft/src/ui/aspect-ratio';
+import { AttentionTicketCard } from '@nodaste-lab/weft/src/ui/attention-ticket-card';
+import { Avatar, AvatarFallback } from '@nodaste-lab/weft/src/ui/avatar';
+import { Badge } from '@nodaste-lab/weft/src/ui/badge';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,9 +32,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '../app/components/ui/breadcrumb';
-import { Button } from '../app/components/ui/button';
-import { Calendar } from '../app/components/ui/calendar';
+} from '@nodaste-lab/weft/src/ui/breadcrumb';
+import { Button } from '@nodaste-lab/weft/src/ui/button';
+import { Calendar } from '@nodaste-lab/weft/src/ui/calendar';
 import {
   Card,
   CardContent,
@@ -42,14 +42,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '../app/components/ui/card';
-import { Carousel } from '../app/components/ui/carousel';
-import { Checkbox } from '../app/components/ui/checkbox';
-import { Chip } from '../app/components/ui/chip';
-import { CodeBlock } from '../app/components/ui/code-block';
-import { ContentViewer } from '../app/components/ui/content-viewer';
-import { HtmlViewer } from '../app/components/ui/html-viewer';
-import { MarkdownViewer } from '../app/components/ui/markdown-viewer';
+} from '@nodaste-lab/weft/src/ui/card';
+import { Carousel } from '@nodaste-lab/weft/src/ui/carousel';
+import { Checkbox } from '@nodaste-lab/weft/src/ui/checkbox';
+import { Chip } from '@nodaste-lab/weft/src/ui/chip';
+import { CodeBlock } from '@nodaste-lab/weft/src/ui/code-block';
+import { ContentViewer } from '@nodaste-lab/weft/src/ui/content-viewer';
+import { HtmlViewer } from '@nodaste-lab/weft/src/ui/html-viewer';
+import { MarkdownViewer } from '@nodaste-lab/weft/src/ui/markdown-viewer';
 import {
   Command,
   CommandEmpty,
@@ -57,19 +57,19 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../app/components/ui/command';
-import { CommandCategoryTag } from '../app/components/ui/command-category-tag';
+} from '@nodaste-lab/weft/src/ui/command';
+import { CommandCategoryTag } from '@nodaste-lab/weft/src/ui/command-category-tag';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '../app/components/ui/collapsible';
+} from '@nodaste-lab/weft/src/ui/collapsible';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from '../app/components/ui/context-menu';
+} from '@nodaste-lab/weft/src/ui/context-menu';
 import {
   Dialog,
   DialogContent,
@@ -78,14 +78,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../app/components/ui/dialog';
+} from '@nodaste-lab/weft/src/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../app/components/ui/dropdown-menu';
-import { EmptyState } from '../app/components/ui/empty-state';
+} from '@nodaste-lab/weft/src/ui/dropdown-menu';
+import { EmptyState } from '@nodaste-lab/weft/src/ui/empty-state';
 import {
   Form,
   FormControl,
@@ -94,23 +94,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../app/components/ui/form';
-import { FollowUpBlock } from '../app/components/ui/follow-up-block';
-import { FollowUpItem } from '../app/components/ui/follow-up-item';
+} from '@nodaste-lab/weft/src/ui/form';
+import { FollowUpBlock } from '@nodaste-lab/weft/src/ui/follow-up-block';
+import { FollowUpItem } from '@nodaste-lab/weft/src/ui/follow-up-item';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '../app/components/ui/hover-card';
-import { Input } from '../app/components/ui/input';
-import { Label } from '../app/components/ui/label';
+} from '@nodaste-lab/weft/src/ui/hover-card';
+import { Input } from '@nodaste-lab/weft/src/ui/input';
+import { Label } from '@nodaste-lab/weft/src/ui/label';
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from '../app/components/ui/menubar';
+} from '@nodaste-lab/weft/src/ui/menubar';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -118,7 +118,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '../app/components/ui/navigation-menu';
+} from '@nodaste-lab/weft/src/ui/navigation-menu';
 import {
   Pagination,
   PaginationContent,
@@ -127,28 +127,28 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '../app/components/ui/pagination';
-import { PeriodChipRow } from '../app/components/ui/period-chip-row';
+} from '@nodaste-lab/weft/src/ui/pagination';
+import { PeriodChipRow } from '@nodaste-lab/weft/src/ui/period-chip-row';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '../app/components/ui/popover';
-import { Progress } from '../app/components/ui/progress';
-import { ProviderStatusBadge } from '../app/components/ui/provider-status-badge';
+} from '@nodaste-lab/weft/src/ui/popover';
+import { Progress } from '@nodaste-lab/weft/src/ui/progress';
+import { ProviderStatusBadge } from '@nodaste-lab/weft/src/ui/provider-status-badge';
 import {
   RadioGroup,
   RadioGroupItem,
-} from '../app/components/ui/radio-group';
-import { ScrollArea } from '../app/components/ui/scroll-area';
+} from '@nodaste-lab/weft/src/ui/radio-group';
+import { ScrollArea } from '@nodaste-lab/weft/src/ui/scroll-area';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../app/components/ui/select';
-import { Separator } from '../app/components/ui/separator';
+} from '@nodaste-lab/weft/src/ui/select';
+import { Separator } from '@nodaste-lab/weft/src/ui/separator';
 import {
   Sheet,
   SheetContent,
@@ -156,7 +156,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '../app/components/ui/sheet';
+} from '@nodaste-lab/weft/src/ui/sheet';
 import {
   Sidebar,
   SidebarContent,
@@ -166,12 +166,12 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from '../app/components/ui/sidebar';
-import { Skeleton } from '../app/components/ui/skeleton';
-import { Slider } from '../app/components/ui/slider';
-import { Stack } from '../app/components/ui/stack';
-import { StatRow } from '../app/components/ui/stat-row';
-import { Switch } from '../app/components/ui/switch';
+} from '@nodaste-lab/weft/src/ui/sidebar';
+import { Skeleton } from '@nodaste-lab/weft/src/ui/skeleton';
+import { Slider } from '@nodaste-lab/weft/src/ui/slider';
+import { Stack } from '@nodaste-lab/weft/src/ui/stack';
+import { StatRow } from '@nodaste-lab/weft/src/ui/stat-row';
+import { Switch } from '@nodaste-lab/weft/src/ui/switch';
 import {
   Table,
   TableBody,
@@ -179,45 +179,45 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../app/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../app/components/ui/tabs';
-import { TextContent } from '../app/components/ui/text-content';
-import { Textarea } from '../app/components/ui/textarea';
-import { TranscriptListItemFrame } from '../app/components/ui/transcript-list-item-frame';
-import { Toggle } from '../app/components/ui/toggle';
-import { ToggleGroup, ToggleGroupItem } from '../app/components/ui/toggle-group';
-import { Toolbar } from '../app/components/ui/toolbar';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../app/components/ui/tooltip';
-import { HudIssueCallout } from '../app/components/ui/HudIssueCallout';
-import { HudIssueToast } from '../app/components/ui/HudIssueToast';
-import { Callout } from '../app/components/ui/callout';
-import { HudListRow, HudListRowMeta, HudListRowTitle } from '../app/components/ui/hud-list-row';
-import { HudMetaCaption } from '../app/components/ui/hud-meta-caption';
-import { HudPopoverDropdown } from '../app/components/ui/hud-popover-dropdown';
-import { HudQuickCommandFooter } from '../app/components/ui/hud-quick-command-footer';
-import { HudToggleSwitch } from '../app/components/ui/hud-toggle-switch';
-import { MetricTile } from '../app/components/ui/metric-tile';
-import { ModeOnlyToggle } from '../app/components/ui/mode-only-toggle';
-import { ConditionChipStrip } from '../app/components/ui/condition-chip-strip';
-import { PanelBlockShell } from '../app/components/ui/panel-block-shell';
-import { SettingsModuleShell } from '../app/components/ui/settings-module-shell';
-import { SignalFilterChipGroup } from '../app/components/ui/signal-filter-chip-group';
-import { SignalGroupCollapsible } from '../app/components/ui/signal-group-collapsible';
-import { InlineEditListRow } from '../app/components/ui/inline-edit-list-row';
-import { Image } from '../app/components/ui/image';
-import { ImageBlock } from '../app/components/ui/image-block';
-import { ImageGallery } from '../app/components/ui/image-gallery';
-import { ListBlock } from '../app/components/ui/list-block';
-import { ListItem } from '../app/components/ui/list-item';
-import { KnowledgeSearchResultRow } from '../app/components/ui/knowledge-search-result-row';
-import { MarkDownRenderer } from '../app/components/ui/markdown-renderer';
-import { RecapSectionShell } from '../app/components/ui/recap-section-shell';
-import { RepeatListFieldColumn } from '../app/components/ui/repeat-list-field-column';
-import { SectionBlock } from '../app/components/ui/section-block';
-import { SectionItem } from '../app/components/ui/section-item';
-import { Steps } from '../app/components/ui/steps';
-import { StepsItem } from '../app/components/ui/steps-item';
-import { StatusIconRow } from '../app/components/ui/status-icon-row';
+} from '@nodaste-lab/weft/src/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@nodaste-lab/weft/src/ui/tabs';
+import { TextContent } from '@nodaste-lab/weft/src/ui/text-content';
+import { Textarea } from '@nodaste-lab/weft/src/ui/textarea';
+import { TranscriptListItemFrame } from '@nodaste-lab/weft/src/ui/transcript-list-item-frame';
+import { Toggle } from '@nodaste-lab/weft/src/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@nodaste-lab/weft/src/ui/toggle-group';
+import { Toolbar } from '@nodaste-lab/weft/src/ui/toolbar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@nodaste-lab/weft/src/ui/tooltip';
+import { HudIssueCallout } from '@nodaste-lab/weft/src/ui/HudIssueCallout';
+import { HudIssueToast } from '@nodaste-lab/weft/src/ui/HudIssueToast';
+import { Callout } from '@nodaste-lab/weft/src/ui/callout';
+import { HudListRow, HudListRowMeta, HudListRowTitle } from '@nodaste-lab/weft/src/ui/hud-list-row';
+import { HudMetaCaption } from '@nodaste-lab/weft/src/ui/hud-meta-caption';
+import { HudPopoverDropdown } from '@nodaste-lab/weft/src/ui/hud-popover-dropdown';
+import { HudQuickCommandFooter } from '@nodaste-lab/weft/src/ui/hud-quick-command-footer';
+import { HudToggleSwitch } from '@nodaste-lab/weft/src/ui/hud-toggle-switch';
+import { MetricTile } from '@nodaste-lab/weft/src/ui/metric-tile';
+import { ModeOnlyToggle } from '@nodaste-lab/weft/src/ui/mode-only-toggle';
+import { ConditionChipStrip } from '@nodaste-lab/weft/src/ui/condition-chip-strip';
+import { PanelBlockShell } from '@nodaste-lab/weft/src/ui/panel-block-shell';
+import { SettingsModuleShell } from '@nodaste-lab/weft/src/ui/settings-module-shell';
+import { SignalFilterChipGroup } from '@nodaste-lab/weft/src/ui/signal-filter-chip-group';
+import { SignalGroupCollapsible } from '@nodaste-lab/weft/src/ui/signal-group-collapsible';
+import { InlineEditListRow } from '@nodaste-lab/weft/src/ui/inline-edit-list-row';
+import { Image } from '@nodaste-lab/weft/src/ui/image';
+import { ImageBlock } from '@nodaste-lab/weft/src/ui/image-block';
+import { ImageGallery } from '@nodaste-lab/weft/src/ui/image-gallery';
+import { ListBlock } from '@nodaste-lab/weft/src/ui/list-block';
+import { ListItem } from '@nodaste-lab/weft/src/ui/list-item';
+import { KnowledgeSearchResultRow } from '@nodaste-lab/weft/src/ui/knowledge-search-result-row';
+import { MarkDownRenderer } from '@nodaste-lab/weft/src/ui/markdown-renderer';
+import { RecapSectionShell } from '@nodaste-lab/weft/src/ui/recap-section-shell';
+import { RepeatListFieldColumn } from '@nodaste-lab/weft/src/ui/repeat-list-field-column';
+import { SectionBlock } from '@nodaste-lab/weft/src/ui/section-block';
+import { SectionItem } from '@nodaste-lab/weft/src/ui/section-item';
+import { Steps } from '@nodaste-lab/weft/src/ui/steps';
+import { StepsItem } from '@nodaste-lab/weft/src/ui/steps-item';
+import { StatusIconRow } from '@nodaste-lab/weft/src/ui/status-icon-row';
 
 /** Every component id from `manifest.json`, in registry order. */
 export const SHOWCASED_PRIMITIVE_IDS = [

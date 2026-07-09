@@ -2,8 +2,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { HudIssueToast } from '../HudIssueToast';
-import type { HudIssue } from '../../../runtime/hudIssue';
-import type { HudIssueToastAction } from '../../../runtime/hudIssueToastActions';
+import type { HudIssue } from '../hud-issue-contract';
+import type { HudIssueToastAction } from '../hud-issue-contract';
 
 const issue: HudIssue = {
   reason: 'connection_failed',

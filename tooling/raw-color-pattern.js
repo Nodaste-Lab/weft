@@ -1,8 +1,10 @@
 /**
- * Canonical raw-color detection shared by every design-system guard
- * (audit-design-system.mjs, panel-authoring-validator.mjs, and — mirrored —
- * src/app/panel-packages/packageValidator.ts). One definition so the rules
- * never drift.
+ * Canonical raw-color detection shared by every design-system guard —
+ * Heddle's audit-design-system.mjs / panel-authoring-validator.mjs (Node) and
+ * src/app/panel-packages/packageValidator.ts (browser) all import this module
+ * via `@nodaste-lab/weft/tooling/raw-colors`. One definition so the rules
+ * never drift; this file must stay dependency-free and runnable in both
+ * Node and browser bundles.
  *
  * Raw colors are only legal in the token-definition files; everywhere else,
  * code must read `var(--weft-*)` / `var(--hud-*)` tokens so it flips with the
@@ -14,8 +16,6 @@
  *  - hex (`#fff`, `#1a1a1a`, `#10b98180`) — the `(?<!&)` guard avoids HTML
  *    numeric entities like `&#10003;`.
  *  - functional notations: `rgb()`, `rgba()`, `hsl()`, `hsla()`.
- * Kept byte-compatible with packageValidator.ts's FORBIDDEN raw-color pattern
- * (which also bans `rgb`/`rgba`); `hsl` is added here for CSS coverage.
  */
 export const RAW_COLOR_PATTERN = /(?<!&)#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\(/i;
 
@@ -27,9 +27,14 @@ export const RAW_COLOR_PATTERN_GLOBAL = new RegExp(RAW_COLOR_PATTERN.source, `${
  * Paths are matched as suffixes against a posix-normalized file path.
  */
 export const TOKEN_FILE_ALLOWLIST = [
-  'src/styles/theme.css',
-  'src/styles/weft.css',
-  'src/styles/tailwind.css',
+  'packages/weft/css/theme.css',
+  'packages/weft/css/weft.css',
+  'packages/weft/css/tailwind.css',
+  // Suffix-matched fallbacks so the gate also works when this package is
+  // checked out standalone (post-extraction repo layout).
+  'css/theme.css',
+  'css/weft.css',
+  'css/tailwind.css',
 ];
 
 /** True when `filePath` is a sanctioned token-definition file. */

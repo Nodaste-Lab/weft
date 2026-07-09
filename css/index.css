@@ -1,0 +1,9 @@
+/* Ordered Weft bundle for consumers that want the whole system in one import.
+ * The order is load-bearing: weft-components.css must follow tailwind.css (its
+ * base resets outline) and weft.css (which defines --weft-focus-ring) so the
+ * global :focus-visible ring and prefers-reduced-motion reset win. */
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+@import './weft.css';
+@import './weft-components.css';

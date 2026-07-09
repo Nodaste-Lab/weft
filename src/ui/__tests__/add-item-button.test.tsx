@@ -2,7 +2,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { AddItemButton } from '../add-item-button';
-import { expectA11yClean } from '../../../../test-support/ds-assert';
+import { expectA11yClean } from '../../test-support/ds-assert';
 
 describe('AddItemButton', () => {
   it('renders an accessible add trigger', async () => {

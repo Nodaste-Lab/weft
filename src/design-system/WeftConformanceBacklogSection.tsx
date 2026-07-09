@@ -197,7 +197,7 @@ export function WeftConformanceBacklogSection() {
       >
         High-churn product surfaces from the mechanical audit (mostly dense <DsCode>style=&#123;&#125;</DsCode> layouts). Each row lists{' '}
         <strong style={{ color: 'var(--hud-text-1)' }}>what to adopt</strong> from{' '}
-        <DsCode>src/app/components/ui/</DsCode> and documented patterns, and <strong style={{ color: 'var(--hud-text-1)' }}>optional composites</strong>{' '}
+        <DsCode>packages/weft/src/ui/</DsCode> and documented patterns, and <strong style={{ color: 'var(--hud-text-1)' }}>optional composites</strong>{' '}
         to extract so panels behave consistently under Weft / HUD glass.
       </p>
 

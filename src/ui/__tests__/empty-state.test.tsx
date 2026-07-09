@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { EmptyState } from '../empty-state';
 import { Button } from '../button';
-import { expectA11yClean, expectNoRawColors } from '../../../../test-support/ds-assert';
+import { expectA11yClean, expectNoRawColors } from '../../test-support/ds-assert';
 
 describe('EmptyState', () => {
   it('renders accessible empty copy and action slot', async () => {

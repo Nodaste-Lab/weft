@@ -7,8 +7,8 @@ import { expect } from 'vitest';
 import { axe, toHaveNoViolations, type JestAxeConfigureOptions } from 'jest-axe';
 // The ONE canonical raw-color regex — shared with the static audit
 // (scripts/audit-design-system.mjs) so the runtime and build-time gates never
-// drift. Importing the .mjs lib keeps a single source of truth.
-import { RAW_COLOR_PATTERN_GLOBAL } from '../../scripts/lib/raw-color-pattern.mjs';
+// drift. Importing the package tooling keeps a single source of truth.
+import { RAW_COLOR_PATTERN_GLOBAL } from '../../tooling/raw-color-pattern.js';
 
 expect.extend(toHaveNoViolations);
 

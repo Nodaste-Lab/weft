@@ -1,0 +1,155 @@
+{
+  "panelBuilder": {
+    "blockTypes": [
+      "text-input",
+      "textarea",
+      "select",
+      "date-input",
+      "number-input",
+      "checkbox",
+      "repeat-list",
+      "tab-group",
+      "toggle",
+      "submit-button",
+      "output",
+      "data-list",
+      "signal-list",
+      "signal-filters",
+      "signal-stats",
+      "content-viewer",
+      "component",
+      "stack",
+      "repeat",
+      "section"
+    ],
+    "previewTemplates": [
+      "session-recap"
+    ]
+  },
+  "panelAuthoring": {
+    "tokenRules": [
+      "Use var(--weft-*), var(--hud-*), and existing shadcn/HUD semantic tokens.",
+      "Do not use raw hex, rgb, rgba, or one-off unprefixed CSS variables in generated packages.",
+      "Preserve visible focus, reduced-motion behavior, and compact HUD readability.",
+      "Prefer concise internal-product copy with one primary action per panel section."
+    ],
+    "intentMap": [
+      {
+        "intent": "status rows",
+        "primitives": [
+          "badge",
+          "callout",
+          "attention-ticket-card"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--hud-text-2"
+        ]
+      },
+      {
+        "intent": "metric tiles",
+        "primitives": [
+          "card",
+          "badge"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-text-1",
+          "--hud-text-3"
+        ]
+      },
+      {
+        "intent": "callouts",
+        "primitives": [
+          "callout",
+          "alert"
+        ],
+        "tokens": [
+          "--primary",
+          "--hud-border",
+          "--hud-text-2"
+        ]
+      },
+      {
+        "intent": "action rows",
+        "primitives": [
+          "button",
+          "action-button-row"
+        ],
+        "tokens": [
+          "--primary",
+          "--hud-text-1",
+          "--hud-border"
+        ]
+      },
+      {
+        "intent": "compact fields",
+        "primitives": [
+          "input",
+          "textarea",
+          "select",
+          "checkbox"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--hud-text-1"
+        ]
+      },
+      {
+        "intent": "lists and empty states",
+        "primitives": [
+          "empty-state",
+          "badge",
+          "callout"
+        ],
+        "tokens": [
+          "--hud-text-2",
+          "--hud-text-3",
+          "--hud-border"
+        ]
+      },
+      {
+        "intent": "dense list detail",
+        "primitives": [
+          "button",
+          "badge",
+          "card"
+        ],
+        "tokens": [
+          "--hud-surface-raised",
+          "--hud-border",
+          "--primary",
+          "--hud-text-3"
+        ]
+      },
+      {
+        "intent": "package trust metadata",
+        "primitives": [
+          "badge",
+          "callout",
+          "dropdown-menu"
+        ],
+        "tokens": [
+          "--hud-warning",
+          "--hud-positive",
+          "--hud-text-2"
+        ]
+      },
+      {
+        "intent": "agent validation checklist",
+        "primitives": [
+          "checkbox",
+          "callout",
+          "button"
+        ],
+        "tokens": [
+          "--hud-border",
+          "--hud-text-2",
+          "--primary"
+        ]
+      }
+    ]
+  }
+}

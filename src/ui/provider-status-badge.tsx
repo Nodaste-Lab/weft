@@ -1,8 +1,17 @@
 import * as React from "react";
 
-import type { ProviderStatus } from "../../settings/transcription";
-
 import { cn } from "./utils";
+
+/**
+ * Provider availability vocabulary. Owned here (the badge renders it); the
+ * app's settings/transcription.ts re-exports it for its consumers.
+ */
+export type ProviderStatus =
+  | 'available'
+  | 'unavailable'
+  | 'checking'
+  | 'running'
+  | 'error';
 
 const STATUS_CLASS: Record<
   ProviderStatus,

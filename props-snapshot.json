@@ -1876,7 +1876,13 @@
         "props": {
           "status": {
             "optional": false,
-            "union": null
+            "union": [
+              "available",
+              "checking",
+              "error",
+              "running",
+              "unavailable"
+            ]
           }
         },
         "native": [

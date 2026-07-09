@@ -4,7 +4,7 @@ import {
   type HudIssue,
   type HudIssueScope,
   type HudIssueSeverity,
-} from '../../runtime/hudIssue';
+} from './hud-issue-contract';
 import { Button } from './button';
 
 /**

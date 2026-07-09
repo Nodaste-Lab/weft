@@ -2,7 +2,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { PillToggleGroup, PillToggleGroupItem } from '../pill-toggle-group';
-import { expectA11yClean } from '../../../../test-support/ds-assert';
+import { expectA11yClean } from '../../test-support/ds-assert';
 
 describe('PillToggleGroup', () => {
   it('renders radio semantics and calls onValueChange', async () => {
