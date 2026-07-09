@@ -9,17 +9,17 @@ updated: 2026-04-20
 
 ## What Heddle is
 
-**Heddle is a prosumer package** — a shipped bundle of three things we already build:
+**Heddle is a team-focused context and collaboration layer** — a shipped bundle of three things we already build:
 
 - **CCore** — the context + sync substrate (the CLI being renamed to `heddle-cli`)
 - **HUD** — the ambient surface you glance at to know what's happening
 - **DocT** — the doc / knowledge layer
 
-One install. One account. Three surfaces that quietly work together.
+One working layer. One account direction. Three surfaces that quietly work together.
 
 ## Who it's for
 
-Prosumers and small teams who want an **always-on, trustworthy working layer** — people who keep a lot in their head, work across tools, and need something that holds context for them without demanding attention.
+Teams and collaborative operators who want an **always-on, trustworthy working layer** — people who coordinate across tools, teammates, documents, and agents, and need something that holds shared context without demanding attention.
 
 Not for: platform engineers evaluating infra, enterprise buyers comparing SaaS suites, or users who want a chat-first agent.
 
@@ -43,7 +43,7 @@ That's the brand posture:
 | We promise | We don't promise |
 |---|---|
 | Your context is held safely and surfaced at the right moment | Magic. Agents that read minds. |
-| One quiet surface across CCore, HUD, and DocT | A chat window that replaces your workflow |
+| One quiet working layer across CCore, HUD, and DocT | A chat window that replaces your workflow |
 | Honest state (what's synced, what's stale, what's blocked) | A black box that "just handles it" |
 | Respect for your attention | Notifications, badges, engagement hooks |
 
@@ -52,7 +52,7 @@ That's the brand posture:
 - **Not an agent** — Heddle is the *surface an agent works through*.
 - **Not a note-taking app** — Heddle is what holds the notes in right relation to everything else.
 - **Not "AI-first"** — it's **context-first**. AI uses the context; it isn't the product.
-- **Not a platform** — it's a quiet tool, even if it carries substantial infrastructure underneath.
+- **Not a generic platform pitch** — it's a quiet working layer, even if it carries substantial infrastructure underneath.
 
 ## Pillars that inform every surface
 
