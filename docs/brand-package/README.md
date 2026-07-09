@@ -8,7 +8,7 @@ owner: Katie
 
 # Heddle Brand Package
 
-A working brand kit for **Heddle** — the prosumer beta package that wraps CCore, HUD, and DocT together.
+A working brand kit for **Heddle** — the team-focused context and collaboration layer that brings CCore, HUD, and DocT together.
 
 Use this folder as the single source of truth for anyone (human or agent) writing copy, placing the logo, or shipping a surface under the Heddle name.
 
@@ -64,4 +64,4 @@ For the full token list and component catalog, see [[04-design-system]].
 - [[Heddle Branding]] — parent project note
 - [[Heddle Naming Clearance and Brand Risk Report - 2026-03-25]]
 - [[Heddle AI Status Follow-up - 2026-03-25]]
-- Decision Log `D-022` — Prosumer beta package is Heddle (CCore + HUD + DocT)
+- Decision Log `D-022` — Historical package-naming decision for Heddle (CCore + HUD + DocT)
