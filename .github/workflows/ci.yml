@@ -30,14 +30,14 @@ jobs:
         run: npm run tokens
       - name: CSS semantics + contrast contract
         run: npm run test:css-contract
-      - name: Exports-map contract (resolve every consumer specifier from the packed tarball)
-        run: npm run check:exports
       - name: Raw-color audit (tokens only outside css/)
         run: node scripts/check-raw-colors.mjs
       - name: Unit + a11y tests
         run: npx vitest run
       - name: Build (ESM bundle)
         run: npm run build
+      - name: Exports-map contract (resolve every consumer specifier from the packed tarball)
+        run: npm run check:exports
       - name: Pack smoke (tarball contains css/src/tooling/manifest)
         run: |
           npm pack --dry-run --json > /tmp/pack.json

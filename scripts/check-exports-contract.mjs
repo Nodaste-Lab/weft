@@ -5,7 +5,7 @@
 // an exports refactor must fail HERE, not in Heddle after a version bump.
 
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -33,6 +33,11 @@ const SPECIFIERS = [
   // built entry ("." resolves via dist)
   '@nodaste-lab/weft',
 ];
+
+if (!existsSync(join(ROOT, 'dist', 'index.js'))) {
+  console.error('dist/index.js missing — run "npm run build" first; the packed tarball must contain the built entry.');
+  process.exit(1);
+}
 
 const work = mkdtempSync(join(tmpdir(), 'weft-exports-'));
 try {
