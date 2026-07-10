@@ -115,6 +115,13 @@ consumers get.
 
 ## Known deferred items
 
+- **`--hud-*` transitional aliases: deprecation clock started 2026-07-10.**
+  Heddle's panel runtime still injects legacy `--hud-*` aliases
+  (weftPanelTheme.ts) and its panel validator warns on them. New authoring
+  must use `--weft-*` (or the bridged flat tokens). The alias layer is
+  scheduled to drop with **weft 1.0.0** — before then, Heddle's injected
+  aliases and any surviving panel usages must migrate.
+
 - `tsup` builds with `dts: false`: ~360 latent type errors inherited from the
   no-typecheck era (mostly tests). Enabling `.d.ts` generation is tracked
   work; don't add new type errors.

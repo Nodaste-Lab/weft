@@ -1,0 +1,9 @@
+{
+  "codeConnect": {
+    "parser": "react",
+    "include": ["src/ui/**/*.figma.tsx"],
+    "importPaths": {
+      "src/ui/*": "@nodaste-lab/weft/src/ui/*"
+    }
+  }
+}

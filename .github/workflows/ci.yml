@@ -65,3 +65,18 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
+
+  react-19-smoke:
+    # The peer range allows ^19 but the primitives were extracted on 18.3.1
+    # (and react-day-picker's own peers cap at 18). This job proves the suite
+    # under React 19 before any consumer imports the React entry on 19.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save react@19 react-dom@19 @types/react@19 2>/dev/null || npm install --no-save --legacy-peer-deps react@19 react-dom@19
+      - run: npx vitest run
