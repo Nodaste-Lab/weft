@@ -122,10 +122,10 @@ consumers get.
   scheduled to drop with **weft 1.0.0** — before then, Heddle's injected
   aliases and any surviving panel usages must migrate.
 
-- `tsup` builds with `dts: false`: ~360 latent type errors inherited from the
-  no-typecheck era (mostly tests). Enabling `.d.ts` generation is tracked
-  work; don't add new type errors.
-- React 19 peer range is declared but untested (react-day-picker peers cap at
-  18) — required homework before doct adopts the React entry.
+- `.d.ts` generation is ON as of 0.1.2 (`dts: true`) — the type surface is
+  part of the published contract now; CI fails on type errors in the
+  publishable graph. Don't add new ones.
+- React 19: the suite passes under React 19 in CI (react-19-smoke job);
+  react-day-picker's peer cap at 18 is a warning, not a breakage.
 - Dark High Contrast / `--chart-*` / `--sidebar-*` token coverage gaps are
   documented in the doct adoption ADR when it lands.
