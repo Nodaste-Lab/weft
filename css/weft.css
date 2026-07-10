@@ -156,7 +156,7 @@
  * Only the small set of tokens that flip is overridden. Brand colors and
  * the on-blue tier hold their values across modes.
  */
-:root[data-theme="dark"][data-palette="heritage-purple"] {
+:root[data-theme^="dark"][data-palette="heritage-purple"] {
   /* Heritage purple in dark mode — same surface flip as Weft, plus a slightly
    * brighter primary so violet-400 stays readable on deep navy paper.
    * Marks pull from the violet ramp's cooler end (violet-300) so the active
@@ -205,8 +205,8 @@
   --hud-danger-border:             rgba(248, 113, 113, 0.35);
 }
 
-:root[data-theme="dark"][data-palette="weft"],
-:root[data-theme="dark"]:not([data-palette]) {
+:root[data-theme^="dark"][data-palette="weft"],
+:root[data-theme^="dark"]:not([data-palette]) {
   --weft-cream:        #0b1020;
   --weft-paper:        #141a2e;
   --weft-ink:          #f4f1e8;
@@ -353,6 +353,10 @@
   --input:                       var(--weft-paper);
   --input-background:            var(--weft-paper);
   --ring:                        var(--weft-focus-ring-color);
+  --success:                     var(--weft-ok);
+  --success-foreground:          var(--weft-fixed-white);
+  --warning:                     var(--weft-warn);
+  --warning-foreground:          var(--weft-fixed-white);
 
   --radius:                      var(--weft-radius-card);
   --radius-sm:                   var(--weft-radius-chip);
@@ -505,7 +509,7 @@
  * selected — even on surfaces that don't use the bridged tokens directly.
  */
 :root[data-palette="weft"] body {
-  background: var(--weft-cream);
-  color: var(--weft-ink);
+  background: var(--background, var(--weft-cream));
+  color: var(--foreground, var(--weft-ink));
   font-family: var(--weft-font-sans);
 }
