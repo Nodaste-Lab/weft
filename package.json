@@ -1,7 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
@@ -41,7 +40,9 @@
     "verify": "node scripts/verify-design-system-manifest.mjs",
     "props": "node scripts/design-system-props.mjs",
     "props:write": "node scripts/design-system-props.mjs --write",
-    "test:props": "node --test scripts/__tests__/design-system-props.node.mjs"
+    "test:props": "node --test scripts/__tests__/design-system-props.node.mjs",
+    "test": "vitest run",
+    "changeset": "changeset"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",
@@ -99,6 +100,21 @@
   },
   "devDependencies": {
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@babel/parser": "^7.29.3",
+    "@changesets/cli": "^2.29.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest-axe": "^3.5.9",
+    "@vitejs/plugin-react": "4.7.0",
+    "jest-axe": "^10.0.0",
+    "jsdom": "^28.1.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "vitest": "^4.0.18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nodaste-Lab/weft.git"
   }
 }

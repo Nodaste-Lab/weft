@@ -30,8 +30,8 @@ const SNAPSHOT = join(ROOT, 'props-snapshot.json');
 // package lives inside the Heddle monorepo this is packages/weft/…; when the
 // package is extracted to its own repo these become plain 'manifest.json' /
 // 'props-snapshot.json'.
-const MANIFEST_REPO_PATH = 'packages/weft/manifest.json';
-const SNAPSHOT_REPO_PATH = 'packages/weft/props-snapshot.json';
+const MANIFEST_REPO_PATH = 'manifest.json';
+const SNAPSHOT_REPO_PATH = 'props-snapshot.json';
 const WRITE = process.argv.includes('--write');
 // --force re-baselines past the breaking-change guard. Use ONLY when the
 // EXTRACTOR itself changed (so the old snapshot is incomparable, not when a
@@ -166,7 +166,7 @@ function gitShowJson(ref, repoPath) {
 function baseRefs() {
   const candidates = [];
   if (process.env.GITHUB_BASE_REF) candidates.push(`origin/${process.env.GITHUB_BASE_REF}`);
-  candidates.push('origin/develop');
+  candidates.push('origin/main');
   return candidates;
 }
 

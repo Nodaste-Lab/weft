@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # design-system-props.mjs diffs the snapshot against the PR base ref
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Manifest verify (uiPrimitives ↔ src/ui, semver, version integrity)
+        run: npm run verify
+      - name: Prop-contract snapshot gate
+        run: npm run props
+      - name: Prop-gate unit tests
+        run: npm run test:props
+      - name: Pure token file invariant (weft.css stays injection-safe)
+        run: node scripts/check-pure-token-file.mjs
+      - name: Raw-color audit (tokens only outside css/)
+        run: node scripts/check-raw-colors.mjs
+      - name: Unit + a11y tests
+        run: npx vitest run
+      - name: Build (ESM bundle)
+        run: npm run build
+      - name: Pack smoke (tarball contains css/src/tooling/manifest)
+        run: |
+          npm pack --dry-run --json > /tmp/pack.json
+          node -e "
+            const files = require('/tmp/pack.json')[0].files.map(f => f.path);
+            for (const need of ['css/weft.css','css/weft-components.css','tooling/raw-color-pattern.js','manifest.json','props-snapshot.json','src/ui/button.tsx','dist/index.js']) {
+              if (!files.some(f => f === need)) { console.error('missing from tarball:', need); process.exit(1); }
+            }
+            console.log('tarball contents OK (' + files.length + ' files)');
+          "
