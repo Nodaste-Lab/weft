@@ -42,7 +42,12 @@
     "props:write": "node scripts/design-system-props.mjs --write",
     "test:props": "node --test scripts/__tests__/design-system-props.node.mjs",
     "test": "vitest run",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "site:dev": "vite --config site/vite.config.ts",
+    "site:build": "vite build --config site/vite.config.ts",
+    "site:preview": "vite preview --config site/vite.config.ts",
+    "test:visual": "npm run site:build && playwright test",
+    "test:visual:update": "npm run site:build && playwright test --update-snapshots"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",
@@ -111,7 +116,11 @@
     "jsdom": "^28.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "vite": "6.4.2",
+    "@playwright/test": "^1.61.1",
+    "tailwindcss": "4.1.12",
+    "@tailwindcss/vite": "4.1.12"
   },
   "repository": {
     "type": "git",
