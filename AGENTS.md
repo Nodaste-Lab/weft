@@ -98,6 +98,15 @@ CI runs all of these plus a pack smoke that asserts the tarball ships
    `npm run linux:check` + visual suite; refresh plan-reviewer's vendored
    copy with its `scripts/refresh-weft-tokens.mjs`.
 
+## Contract artifacts (update WITH the change, CI enforces)
+
+- Token values → `tokens-snapshot.json` (`npm run tokens:write`, requires a
+  version bump in the same change)
+- Prop surfaces → `props-snapshot.json` (`npm run props:write`)
+- Exports map → `scripts/check-exports-contract.mjs` SPECIFIERS list
+- Selector semantics (dark `^=` prefix, body-bridge, flat success/warning,
+  bare-:root base block) + contrast floors → `scripts/__tests__/css-contract.node.mjs`
+
 ## Cross-repo development loop
 
 Working a change that Heddle needs to exercise live:

@@ -97,10 +97,27 @@ function ensureVersions(entries) {
   }
 }
 
+// dist parity: every non-figma primitive must be re-exported by the committed
+// src/index.ts barrel, or it ships in src/ but is absent from dist/.
+function ensureBarrelParity(uiPrimitives) {
+  const barrel = readFileSync(join(ROOT, 'src', 'index.ts'), 'utf8');
+  const exported = new Set([...barrel.matchAll(/export \* from '\.\/ui\/([^']+)';/g)].map((m) => m[1]));
+  const missing = uiPrimitives
+    .map((entry) => entry.id)
+    .filter((id) => !id.endsWith('.figma') && !exported.has(id));
+  if (missing.length) {
+    fail([
+      'src/index.ts (the dist barrel) is missing manifest primitives:',
+      ...missing.map((id) => `- export * from './ui/${id}';`),
+    ].join('\n'));
+  }
+}
+
 const manifestPrimitiveIds = manifest.uiPrimitives.map((entry) => entry.id);
 const actualPrimitiveIds = readUiPrimitiveIds();
 
 ensureUiPathsMatch(manifest.uiPrimitives);
+ensureBarrelParity(manifest.uiPrimitives);
 ensureVersions(manifest.uiPrimitives);
 compareOrderedList('uiPrimitives', actualPrimitiveIds, manifestPrimitiveIds);
 

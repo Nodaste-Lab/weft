@@ -26,6 +26,12 @@ jobs:
         run: npm run test:props
       - name: Pure token file invariant (weft.css stays injection-safe)
         run: node scripts/check-pure-token-file.mjs
+      - name: Token-value lockfile (values change only with a version bump)
+        run: npm run tokens
+      - name: CSS semantics + contrast contract
+        run: npm run test:css-contract
+      - name: Exports-map contract (resolve every consumer specifier from the packed tarball)
+        run: npm run check:exports
       - name: Raw-color audit (tokens only outside css/)
         run: node scripts/check-raw-colors.mjs
       - name: Unit + a11y tests

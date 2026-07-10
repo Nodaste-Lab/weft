@@ -1,6 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
@@ -48,7 +48,11 @@
     "site:build": "vite build --config site/vite.config.ts",
     "site:preview": "vite preview --config site/vite.config.ts",
     "test:visual": "npm run site:build && playwright test",
-    "test:visual:update": "npm run site:build && playwright test --update-snapshots"
+    "test:visual:update": "npm run site:build && playwright test --update-snapshots",
+    "tokens": "node scripts/design-system-tokens.mjs",
+    "tokens:write": "node scripts/design-system-tokens.mjs --write",
+    "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",
+    "check:exports": "node scripts/check-exports-contract.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

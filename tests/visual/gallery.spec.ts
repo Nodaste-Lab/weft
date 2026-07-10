@@ -18,11 +18,14 @@ const SECTIONS = [
   'hud-list-row',
 ];
 
-for (const theme of ['light', 'dark'] as const) {
+for (const theme of ['light', 'dark', 'compact'] as const) {
   test(`gallery key primitives — ${theme}`, async ({ page }) => {
     await page.goto('/');
     if (theme === 'dark') {
       await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+    }
+    if (theme === 'compact') {
+      await page.evaluate(() => document.documentElement.setAttribute('data-density', 'compact'));
     }
     await page.waitForFunction(() => document.fonts.status === 'loaded');
     for (const id of SECTIONS) {
