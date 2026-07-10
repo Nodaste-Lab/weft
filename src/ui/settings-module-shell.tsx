@@ -23,7 +23,7 @@ import { EyebrowLabel } from "./eyebrow-label";
 
 type SettingsModuleTone = "default" | "subtle" | "inset";
 
-interface SettingsModuleShellProps extends React.ComponentProps<"section"> {
+interface SettingsModuleShellProps extends Omit<React.ComponentProps<"section">, "title"> {
   title: React.ReactNode;
   eyebrow?: React.ReactNode;
   description?: React.ReactNode;

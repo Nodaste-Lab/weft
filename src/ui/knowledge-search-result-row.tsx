@@ -6,7 +6,7 @@ import { Button } from "./button";
 import { cn } from "./utils";
 import { SEARCH_CATEGORIES } from "./knowledge-search-categories";
 
-const CATEGORY_LABELS = new Map(SEARCH_CATEGORIES.map(({ id, label }) => [id, label]));
+const CATEGORY_LABELS = new Map<string, string>(SEARCH_CATEGORIES.map(({ id, label }) => [id, label]));
 
 function getCategoryLabel(categoryId: string) {
   return CATEGORY_LABELS.get(categoryId) ?? categoryId;

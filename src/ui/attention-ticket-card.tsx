@@ -21,6 +21,7 @@ export interface AttentionTicketCardProps {
   /** Shown when `expanded` — thread, reply UI, etc. */
   children?: React.ReactNode;
   openInProviderAriaLabel?: string;
+  className?: string;
 }
 
 /*

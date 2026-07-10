@@ -218,5 +218,14 @@ export function extractSurface(filePath) {
   const sortedVariants = {};
   for (const g of Object.keys(variants).sort()) sortedVariants[g] = [...variants[g]].sort();
 
+  // A polymorphic `as` prop declares the native elements a component can
+  // render just as authoritatively as a ComponentProps<'x'> attribute spread —
+  // record them so refactors of the attribute base type don't read as native
+  // element removals.
+  const HTML_TAGS = new Set(['a', 'article', 'aside', 'button', 'div', 'fieldset', 'footer', 'form', 'header', 'input', 'label', 'li', 'main', 'nav', 'ol', 'p', 'section', 'select', 'span', 'table', 'textarea', 'ul']);
+  if (sortedProps.as?.union) {
+    for (const tag of sortedProps.as.union) if (HTML_TAGS.has(tag)) native.add(tag);
+  }
+
   return { variants: sortedVariants, props: sortedProps, native: [...native].sort() };
 }

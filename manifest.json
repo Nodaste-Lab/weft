@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.1",
+  "designSystemVersion": "0.1.2",
   "tokens": {
     "theme": "css/theme.css",
     "tailwind": "css/tailwind.css"
@@ -80,7 +80,7 @@
       "category": "data-display",
       "summary": "Ticketing attention row with reason pill, title, snippet, expand toggle, and optional expanded body slot.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "avatar",
@@ -338,7 +338,7 @@
       "category": "data-display",
       "summary": "Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active). Used by SignalRow, account lists, ticket updates.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "hud-meta-caption.figma",
@@ -453,7 +453,7 @@
       "category": "data-display",
       "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Used in recap beats + mysteries.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "input",

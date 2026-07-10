@@ -66,15 +66,17 @@ type HudListRowOwnProps = {
   as?: "div" | "button" | "li";
   /** When `as="button"`, forwarded to the element (default `"button"`). */
   type?: "button" | "submit" | "reset";
-  onSelect?: () => void;
+  onSelect?: (event?: React.SyntheticEvent) => void;
 };
 
+// One common supertype (HTMLElement) rather than intersecting div & li &
+// button props — the intersection made every event handler an impossible
+// type (e.g. MouseEventHandler<HTMLDivElement & HTMLButtonElement>) for
+// consumers. `disabled` is carried explicitly for the as="button" case.
 type HudListRowProps = HudListRowOwnProps &
-  Omit<React.ComponentPropsWithoutRef<"div">, "children"> &
-  Omit<React.ComponentPropsWithoutRef<"li">, "children"> &
-  Omit<React.ComponentPropsWithoutRef<"button">, "children" | "type"> & {
+  Omit<React.HTMLAttributes<HTMLElement>, "children"> & {
     children?: React.ReactNode;
-    type?: "button" | "submit" | "reset";
+    disabled?: boolean;
   };
 
 const STATE_ACCENT: Record<HudListRowState, string> = {
@@ -115,9 +117,9 @@ const HudListRow = React.forwardRef<HTMLDivElement | HTMLButtonElement | HTMLLIE
     ref,
   ) => {
     const handleClick = onSelect
-      ? (event: React.MouseEvent<HTMLDivElement & HTMLButtonElement>) => {
+      ? (event: React.MouseEvent<HTMLElement>) => {
           onClick?.(event);
-          if (!event.defaultPrevented) onSelect();
+          if (!event.defaultPrevented) onSelect(event);
         }
       : onClick;
 

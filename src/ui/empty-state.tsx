@@ -35,7 +35,7 @@ function EmptyState({
   action,
   tone = "default",
   ...props
-}: React.ComponentProps<"div"> & {
+}: Omit<React.ComponentProps<"div">, "title"> & {
   icon?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
