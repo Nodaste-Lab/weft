@@ -22,7 +22,22 @@ jobs:
           cache: npm
           registry-url: https://npm.pkg.github.com
       - run: npm ci
+      # Branch protection is unavailable on this plan for private repos, so the
+      # release job itself is the gate: nothing publishes unless the full
+      # contract battery passes on the exact commit being released.
+      - name: Gates (manifest, props, tokens, css contract, tests, raw colors, token purity)
+        run: |
+          npm run verify
+          npm run props
+          npm run tokens
+          npm run test:props
+          npm run test:css-contract
+          node scripts/check-pure-token-file.mjs
+          node scripts/check-raw-colors.mjs
+          npx vitest run
       - run: npm run build
+      - name: Exports contract (packed tarball resolves all consumer specifiers)
+        run: npm run check:exports
       - name: Create release PR or publish to GitHub Packages
         uses: changesets/action@v1
         with:
