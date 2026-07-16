@@ -51,6 +51,11 @@
   /* ── Modal overlay ───────────────────────────────────────────────────── */
   --weft-overlay:      rgba(11, 16, 32, 0.40);
 
+  /* ── Elevation + soft fills ──────────────────────────────────────────── */
+  --weft-shadow:       0 4px 12px rgba(11, 16, 32, 0.08);  /* resting card elevation */
+  --weft-fill-soft:    rgba(11, 16, 32, 0.025);            /* subtle section wash */
+  --weft-stop-soft:    rgba(248, 113, 113, 0.22);          /* danger surface tint */
+
   /* ── On-blue tier (WCAG calibrated) ──────────────────────────────────── */
   /* 0.95 = AA NORMAL (4.55:1). 0.88 / 0.78 = AA LARGE ONLY — only at ≥18pt or ≥14pt bold. */
   --weft-on-blue:            rgba(255, 255, 255, 0.95);
@@ -168,6 +173,9 @@
   --weft-rule:         rgba(244, 241, 232, 0.12);
   --weft-rule-strong:  rgba(244, 241, 232, 0.28);
   --weft-overlay:      rgba(11, 16, 32, 0.65);
+  --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
+  --weft-fill-soft:    rgba(244, 241, 232, 0.03);
+  --weft-stop-soft:    rgba(248, 113, 113, 0.20);
 
   --weft-blue:         #c4b5fd;  /* violet-300 — lifted primary */
   --weft-blue-deep:    #a78bfa;  /* violet-400 — deep */
@@ -216,6 +224,9 @@
   --weft-yellow-soft:  #2a241a;
   --weft-mark:         rgba(255, 216, 102, 0.28);
   --weft-overlay:      rgba(11, 16, 32, 0.65);
+  --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
+  --weft-fill-soft:    rgba(244, 241, 232, 0.03);
+  --weft-stop-soft:    rgba(248, 113, 113, 0.20);
 
   --weft-thread-blue:    rgba( 37,  99, 255, 0.18);
   --weft-thread-wash:    rgba( 37,  99, 255, 0.10);
