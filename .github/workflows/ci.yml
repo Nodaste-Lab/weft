@@ -30,6 +30,8 @@ jobs:
         run: npm run tokens
       - name: CSS semantics + contrast contract
         run: npm run test:css-contract
+      - name: Contrast contract (AA on paper, both themes)
+        run: npm run test:contrast
       - name: Raw-color audit (tokens only outside css/)
         run: node scripts/check-raw-colors.mjs
       - name: Unit + a11y tests

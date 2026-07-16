@@ -238,7 +238,16 @@
   --weft-focus-ring-color:   var(--weft-yellow);
 
   /* Semantic colors lift slightly in dark mode for legibility on the deep navy
-   * canvas. Warn shifts to a lighter amber, danger holds, info brightens. */
+   * canvas. Warn shifts to a lighter amber, danger holds, info brightens.
+   *
+   * ok/stop were missed here until 2026-07-16: they held their light-mode
+   * values (#3a7a4a / #a8382b) on dark paper, which measures 3.34:1 and 2.68:1
+   * against --weft-paper — both below the 4.5:1 WCAG AA floor. They are the two
+   * darkest semantic hues, so they are precisely the ones that cannot survive
+   * the surface flip. Lifted to the same 400-level ramp the others use
+   * (#34d399 is already what the hud-glass palette uses for ok). */
+  --weft-ok:           #34d399;
+  --weft-stop:         #f87171;
   --weft-warn:         #f59e0b;
   --weft-danger:       #f87171;
   --weft-info:         #93c5fd;
