@@ -148,7 +148,7 @@
       "--weft-link": "#4a7bff",
       "--weft-link-visited": "#b8a3e8",
       "--weft-focus-ring-color": "var(--weft-yellow)",
-      "--weft-ok": "#34d399",
+      "--weft-ok": "#4ade80",
       "--weft-stop": "#f87171",
       "--weft-warn": "#f59e0b",
       "--weft-danger": "#f87171",

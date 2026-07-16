@@ -245,8 +245,12 @@
    * against --weft-paper — both below the 4.5:1 WCAG AA floor. They are the two
    * darkest semantic hues, so they are precisely the ones that cannot survive
    * the surface flip. Lifted to the same 400-level ramp the others use
-   * (#34d399 is already what the hud-glass palette uses for ok). */
-  --weft-ok:           #34d399;
+   * ok lands on green-400 rather than emerald-400 (#34d399, what hud-glass
+   * uses): emerald leans teal and reads muted on the navy, and green-400 is both
+   * more vivid (69% vs 64% saturation) AND higher contrast (9.90:1 vs 8.98:1) —
+   * no trade. stop mirrors --weft-danger's red-400, so the pair sits on the same
+   * 400 level as warn/danger/info. */
+  --weft-ok:           #4ade80;
   --weft-stop:         #f87171;
   --weft-warn:         #f59e0b;
   --weft-danger:       #f87171;
