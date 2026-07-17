@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.4",
+  "designSystemVersion": "0.1.5",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
@@ -148,6 +148,8 @@
       "--weft-link": "#4a7bff",
       "--weft-link-visited": "#b8a3e8",
       "--weft-focus-ring-color": "var(--weft-yellow)",
+      "--weft-ok": "#4ade80",
+      "--weft-stop": "#f87171",
       "--weft-warn": "#f59e0b",
       "--weft-danger": "#f87171",
       "--weft-info": "#93c5fd",

@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.4",
+  "designSystemVersion": "0.1.5",
   "components": {
     "accordion": {
       "version": "1.0.0",

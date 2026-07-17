@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.4",
+  "designSystemVersion": "0.1.5",
   "tokens": {
     "theme": "css/theme.css",
     "tailwind": "css/tailwind.css"
@@ -396,7 +396,7 @@
       "id": "hud-toggle-switch",
       "path": "src/ui/hud-toggle-switch.tsx",
       "category": "toggles",
-      "summary": "HUD-density binary toggle (34×18). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
+      "summary": "HUD-density binary toggle (34\u00d718). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -552,7 +552,7 @@
       "id": "mode-only-toggle",
       "path": "src/ui/mode-only-toggle.tsx",
       "category": "toggles",
-      "summary": "Compact “use only in this mode” switch + label for vault paths, API keys, and transcription scope.",
+      "summary": "Compact \u201cuse only in this mode\u201d switch + label for vault paths, API keys, and transcription scope.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -583,7 +583,7 @@
       "id": "panel-block-shell",
       "path": "src/ui/panel-block-shell.tsx",
       "category": "layout",
-      "summary": "Outer chrome for custom panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
+      "summary": "Outer chrome for custom panel runtime blocks \u2014 title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -628,7 +628,7 @@
       "id": "pill-toggle-group",
       "path": "src/ui/pill-toggle-group.tsx",
       "category": "toggles",
-      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup — used for period and mode selectors.",
+      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup \u2014 used for period and mode selectors.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -760,7 +760,7 @@
       "id": "settings-module-shell",
       "path": "src/ui/settings-module-shell.tsx",
       "category": "layout",
-      "summary": "Bordered settings card — eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
+      "summary": "Bordered settings card \u2014 eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -978,7 +978,7 @@
       "id": "transcript-list-item-frame",
       "path": "src/ui/transcript-list-item-frame.tsx",
       "category": "layout",
-      "summary": "Transcript / highlight / pinned line shell — header meta row, body text, optional footer (tags + speaker select).",
+      "summary": "Transcript / highlight / pinned line shell \u2014 header meta row, body text, optional footer (tags + speaker select).",
       "showcase": true,
       "version": "1.0.0"
     }
