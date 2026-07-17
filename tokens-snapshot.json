@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.5",
+  "designSystemVersion": "0.2.0",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
@@ -82,6 +82,13 @@
       "--weft-chart-3": "var(--weft-ok)",
       "--weft-chart-4": "var(--weft-warn)",
       "--weft-chart-5": "var(--weft-sepia)",
+      "--weft-category-1": "#4a7bff",
+      "--weft-category-2": "#34d399",
+      "--weft-category-3": "#a3e635",
+      "--weft-category-4": "#fbbf24",
+      "--weft-category-5": "#fb7185",
+      "--weft-category-6": "#e879f9",
+      "--weft-on-category": "#0b1020",
       "--weft-encoding-event": "var(--weft-blue)",
       "--weft-encoding-decision": "var(--weft-warn)",
       "--weft-encoding-character": "var(--weft-info)",

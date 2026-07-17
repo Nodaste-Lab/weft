@@ -216,6 +216,7 @@ import { RepeatListFieldColumn } from '../ui/repeat-list-field-column';
 import { SectionBlock } from '../ui/section-block';
 import { SectionItem } from '../ui/section-item';
 import { Steps } from '../ui/steps';
+import { Sticky } from '../ui/sticky';
 import { StepsItem } from '../ui/steps-item';
 import { StatusIconRow } from '../ui/status-icon-row';
 
@@ -306,6 +307,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'status-icon-row',
   'steps-item',
   'steps',
+  'sticky',
   'switch',
   'table',
   'tabs',
@@ -2415,6 +2417,39 @@ export function DesignSystemUiGallery({
             meta="Needs attention"
           />
         </ol>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="sticky"
+        title="Sticky"
+        summary="Outlined, colour-keyed note card (header / body / footer). The caller's category colour drives both the header background and the outline; header text uses --weft-on-category for AA. Outlined, not raised."
+      >
+        <div className="flex max-w-xs flex-col gap-2">
+          <Sticky
+            color="var(--weft-category-1)"
+            header={(
+              <>
+                <span className="font-semibold">Private</span>
+                <span className="ml-auto opacity-80">just now</span>
+              </>
+            )}
+            footer={<Chip size="sm">#session</Chip>}
+          >
+            Session prep — the ferry captain knows the smuggling route.
+          </Sticky>
+          <Sticky
+            color="var(--weft-category-4)"
+            density="compact"
+            header={(
+              <>
+                <span className="font-semibold">Campaign</span>
+                <span className="ml-auto opacity-80">Jun 26</span>
+              </>
+            )}
+          >
+            Website copy review.
+          </Sticky>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard

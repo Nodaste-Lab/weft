@@ -140,6 +140,24 @@
   --weft-chart-4:      var(--weft-warn);
   --weft-chart-5:      var(--weft-sepia);
 
+  /* ── Category palette (fixed hue-spread encoders) ─────────────────────────
+   * A theme-independent categorical palette for encoding *which bucket*
+   * something belongs to (e.g. a per-space colour on Scratchpad notes) —
+   * distinct from --weft-chart-* (semantic, theme-flipping) and never built
+   * from --weft-stop / --weft-warn (a danger-red category would read as an
+   * error). Every value clears 3:1 against the dark panel canvas
+   * (--weft-paper #141a2e: 4.58–11.44:1), no two are closer than the redmean
+   * separation floor, and the single dark --weft-on-category clears AA on all
+   * six (5.02–12.56:1). Fixed across light/dark by design — a category header
+   * carries its own bright background with dark on-colour text everywhere. */
+  --weft-category-1:   #4a7bff;   /* blue */
+  --weft-category-2:   #34d399;   /* emerald (distinct from --weft-ok) */
+  --weft-category-3:   #a3e635;   /* lime */
+  --weft-category-4:   #fbbf24;   /* amber (distinct from --weft-warn) */
+  --weft-category-5:   #fb7185;   /* rose */
+  --weft-category-6:   #e879f9;   /* fuchsia */
+  --weft-on-category:  #0b1020;   /* dark on-colour, AA on every category */
+
   /* ── Layer 4: domain-encoding aliases ────────────────────────────────────
    * Document the meaning of each color in CSS rather than implicit in
    * component code. Each alias resolves to a Layer 1 semantic — a future

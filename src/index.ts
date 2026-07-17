@@ -87,6 +87,7 @@ export * from './ui/stat-row';
 export * from './ui/status-icon-row';
 export * from './ui/steps-item';
 export * from './ui/steps';
+export * from './ui/sticky';
 export * from './ui/switch';
 export * from './ui/table';
 export * from './ui/tabs';

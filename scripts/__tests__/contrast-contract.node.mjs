@@ -135,3 +135,75 @@ test('semantic status colours all flip for dark mode, or none do', () => {
       'Partial flipping is how --weft-ok ended up dark-green on dark paper.',
   );
 });
+
+/** Redmean colour separation — a cheap perceptual distance for "are these two
+ *  distinguishable". Used to keep the category palette from collapsing the way
+ *  --weft-chart-* does (chart-2 vs chart-5 separate by only 69). */
+function redmeanDistance(a, b) {
+  const rgb = (h) => [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [r1, g1, b1] = rgb(a);
+  const [r2, g2, b2] = rgb(b);
+  const rm = (r1 + r2) / 2;
+  const dr = r1 - r2;
+  const dg = g1 - g2;
+  const db = b1 - b2;
+  return Math.sqrt((2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db);
+}
+
+test('the category palette encodes on the dark panel canvas — visible, separated, AA on-colour, never a status hue', () => {
+  // NOD-1287 (D-24). The category palette is a fixed, theme-independent set of
+  // hue-spread encoders (per-space colour on Scratchpad notes). It must not
+  // repeat --weft-chart-*'s failures on the dark panel: an invisible strip
+  // (chart-2 at 2.68:1), indistinguishable pairs, or a danger-red category.
+  const { base, dark } = weftBlocks(extractTokenBlocks(css));
+  const canvas = parseHex(resolve(base, dark, '--weft-paper') ?? ''); // Weft Dark panel paper
+  assert.ok(canvas, 'need a dark --weft-paper canvas to test the category palette against');
+
+  const cats = [1, 2, 3, 4, 5, 6].map((n) => {
+    const hex = parseHex(base[`--weft-category-${n}`] ?? '');
+    assert.ok(hex, `--weft-category-${n} must be a plain hex token`);
+    return hex;
+  });
+  const onCategory = parseHex(base['--weft-on-category'] ?? '');
+  assert.ok(onCategory, '--weft-on-category must be a plain hex token');
+
+  const UI_FLOOR = 3; // WCAG non-text UI contrast floor
+  const SEPARATION_FLOOR = 120; // redmean; the six spread to ~170 min
+
+  // 1) Every value is visible against the panel canvas.
+  for (let i = 0; i < cats.length; i += 1) {
+    const ratio = contrast(cats[i], canvas);
+    assert.ok(
+      ratio >= UI_FLOOR,
+      `--weft-category-${i + 1} (#${cats[i]}) is ${ratio.toFixed(2)}:1 on the panel (#${canvas}) — below the ${UI_FLOOR}:1 UI floor.`,
+    );
+  }
+
+  // 2) One dark on-colour clears AA on every category (D-23 puts header text on these).
+  for (let i = 0; i < cats.length; i += 1) {
+    const ratio = contrast(onCategory, cats[i]);
+    assert.ok(
+      ratio >= AA_NORMAL,
+      `--weft-on-category (#${onCategory}) on --weft-category-${i + 1} (#${cats[i]}) is ${ratio.toFixed(2)}:1 — below AA ${AA_NORMAL}.`,
+    );
+  }
+
+  // 3) No two categories are indistinguishable.
+  for (let i = 0; i < cats.length; i += 1) {
+    for (let j = i + 1; j < cats.length; j += 1) {
+      const d = redmeanDistance(cats[i], cats[j]);
+      assert.ok(
+        d >= SEPARATION_FLOOR,
+        `--weft-category-${i + 1} and --weft-category-${j + 1} separate by only ${d.toFixed(0)} (floor ${SEPARATION_FLOOR}).`,
+      );
+    }
+  }
+
+  // 4) Never built from a semantically loaded status hue.
+  const stop = parseHex(resolve(base, dark, '--weft-stop') ?? '') ?? parseHex(base['--weft-stop'] ?? '');
+  const warn = parseHex(resolve(base, dark, '--weft-warn') ?? '') ?? parseHex(base['--weft-warn'] ?? '');
+  for (let i = 0; i < cats.length; i += 1) {
+    assert.notEqual(cats[i], stop, `--weft-category-${i + 1} must not be --weft-stop (a danger-red category reads as an error).`);
+    assert.notEqual(cats[i], warn, `--weft-category-${i + 1} must not be --weft-warn.`);
+  }
+});

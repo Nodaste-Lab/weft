@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.5",
+  "designSystemVersion": "0.2.0",
   "tokens": {
     "theme": "css/theme.css",
     "tailwind": "css/tailwind.css"
@@ -892,6 +892,14 @@
       "path": "src/ui/steps.tsx",
       "category": "data-display",
       "summary": "Ordered process and progress sequence with complete/current/pending/error step states.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "sticky",
+      "path": "src/ui/sticky.tsx",
+      "category": "layout",
+      "summary": "Outlined, colour-keyed note card (header / body / footer) for multi-note boards; the header spans structurally and the outline carries the caller's category colour. Pair the colour with --weft-on-category for AA-safe header text.",
       "showcase": true,
       "version": "1.0.0"
     },
