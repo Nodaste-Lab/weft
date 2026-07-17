@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.1.5",
+  "designSystemVersion": "0.2.0",
   "components": {
     "accordion": {
       "version": "1.0.0",
@@ -2602,6 +2602,36 @@
         },
         "native": [
           "li"
+        ]
+      }
+    },
+    "sticky": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "color": {
+            "optional": false,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": [
+              "comfortable",
+              "compact"
+            ]
+          },
+          "footer": {
+            "optional": true,
+            "union": null
+          },
+          "header": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "div"
         ]
       }
     },

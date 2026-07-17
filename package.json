@@ -1,6 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
