@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.2.0",
+  "designSystemVersion": "0.2.1",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
@@ -152,7 +152,7 @@
       "--weft-thread-wash": "rgba( 37, 99, 255, 0.10)",
       "--weft-thread-yellow": "rgba(255, 216, 102, 0.12)",
       "--weft-glass-cream": "rgba( 11, 16, 32, 0.78)",
-      "--weft-link": "#4a7bff",
+      "--weft-link": "#5b87fd",
       "--weft-link-visited": "#b8a3e8",
       "--weft-focus-ring-color": "var(--weft-yellow)",
       "--weft-ok": "#4ade80",

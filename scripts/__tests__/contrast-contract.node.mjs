@@ -27,10 +27,10 @@ const AA_NORMAL = 4.5;
 
 /**
  * Colours a consumer renders as TEXT on --weft-paper. Fills and accents are out
- * of scope — --weft-blue backs the avatar chip rather than setting text, and
- * --weft-link is the text-coloured member of that family.
+ * of scope — --weft-blue backs the avatar chip rather than setting text;
+ * --weft-link is the text-coloured member of that family, so it IS in scope.
  */
-const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info'];
+const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-link', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info'];
 
 /**
  * Pre-existing failures, recorded so this gate can land without a drive-by
@@ -43,11 +43,30 @@ const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-ok', '--weft-stop', '--w
 const KNOWN_FAILURES = new Set([
   'light: --weft-danger',
   'light: --weft-info',
+  // The same two brand hues on the tinted-fill surface (fill-soft over paper,
+  // marginally less contrast than paper itself). Not new failures — the same
+  // open design decision, measured on a second surface.
+  'light tinted: --weft-danger',
+  'light tinted: --weft-info',
 ]);
 
 function parseHex(value) {
   const match = /^#([0-9a-f]{6})$/i.exec(value.trim());
   return match ? match[1] : null;
+}
+
+function parseRgba(value) {
+  const match = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(0|1|0?\.\d+)\s*\)$/.exec(value.trim());
+  return match ? { rgb: [+match[1], +match[2], +match[3]], alpha: +match[4] } : null;
+}
+
+/** Alpha-composite an rgb triple over an opaque hex surface → hex. */
+function composite(rgb, alpha, underHex) {
+  const under = [0, 2, 4].map((i) => parseInt(underHex.slice(i, i + 2), 16));
+  return rgb
+    .map((v, i) => Math.round(alpha * v + (1 - alpha) * under[i]))
+    .map((v) => v.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 function relativeLuminance(hex) {
@@ -76,45 +95,61 @@ function weftBlocks(blocks) {
   return { base: blocks[base] ?? {}, dark: blocks[dark] ?? {}, baseName: base, darkName: dark };
 }
 
-/** Resolve a token in a theme, falling back to the base palette. */
-function resolve(base, theme, token) {
-  return theme[token] ?? base[token] ?? null;
+/** Resolve a token in a theme, falling back to the base palette. Follows
+ *  var() indirection (light --weft-link is var(--weft-blue)). */
+function resolve(base, theme, token, depth = 0) {
+  const raw = theme[token] ?? base[token] ?? null;
+  if (raw === null || depth > 4) return raw;
+  const ref = /^var\((--[\w-]+)\)$/.exec(raw.trim());
+  return ref ? resolve(base, theme, ref[1], depth + 1) : raw;
 }
 
-test('every on-paper colour meets WCAG AA against the paper it sits on, in both themes', () => {
+test('every on-paper colour meets WCAG AA against the surfaces it sits on, in both themes', () => {
   const { base, dark, baseName, darkName } = weftBlocks(extractTokenBlocks(css));
   assert.ok(baseName, 'could not find the base Weft palette block');
   assert.ok(darkName, 'could not find the dark Weft palette block');
 
   const failures = [];
-  for (const [label, theme] of [['light', base], ['dark', dark]]) {
+  for (const [themeLabel, theme] of [['light', base], ['dark', dark]]) {
     const paper = parseHex(resolve(base, theme, '--weft-paper') ?? '');
     if (!paper) continue;
-    for (const token of ON_PAPER) {
-      const raw = resolve(base, theme, token);
-      const hex = raw ? parseHex(raw) : null;
-      // Non-hex (var()/rgba()) values are out of scope for this static check.
-      if (!hex) continue;
-      const ratio = contrast(hex, paper);
-      if (ratio >= AA_NORMAL) {
-        // A known failure that now passes: drop it from the baseline.
-        assert.ok(
-          !KNOWN_FAILURES.has(`${label}: ${token}`),
-          `${label}: ${token} now meets AA — remove it from KNOWN_FAILURES so it stays fixed.`,
-        );
-        continue;
+    // Text also sits on --weft-fill-soft washes (section backgrounds, drawer
+    // rows). Composite the wash over paper: that tinted surface always sits
+    // slightly closer to the text colour than paper itself, and it is where
+    // --weft-link first dipped under AA in the wild (4.27:1 on the tint while
+    // still 4.58:1 on paper — caught by an axe pass in Heddle, not here).
+    const fill = parseRgba(resolve(base, theme, '--weft-fill-soft') ?? '');
+    const surfaces = [['', '--weft-paper', paper]];
+    if (fill) surfaces.push([' tinted', '--weft-fill-soft over paper', composite(fill.rgb, fill.alpha, paper)]);
+    for (const [surfaceLabel, surfaceName, surface] of surfaces) {
+      const label = `${themeLabel}${surfaceLabel}`;
+      for (const token of ON_PAPER) {
+        const raw = resolve(base, theme, token);
+        const hex = raw ? parseHex(raw) : null;
+        // Non-hex (unresolved var()/rgba()) values are out of scope for this static check.
+        if (!hex) continue;
+        const ratio = contrast(hex, surface);
+        if (ratio >= AA_NORMAL) {
+          // A known failure that now passes: drop it from the baseline.
+          assert.ok(
+            !KNOWN_FAILURES.has(`${label}: ${token}`),
+            `${label}: ${token} now meets AA — remove it from KNOWN_FAILURES so it stays fixed.`,
+          );
+          continue;
+        }
+        if (KNOWN_FAILURES.has(`${label}: ${token}`)) continue;
+        failures.push(`${label}: ${token} (#${hex}) on ${surfaceName} (#${surface}) = ${ratio.toFixed(2)}:1, needs ${AA_NORMAL}`);
       }
-      if (KNOWN_FAILURES.has(`${label}: ${token}`)) continue;
-      failures.push(`${label}: ${token} (#${hex}) on --weft-paper (#${paper}) = ${ratio.toFixed(2)}:1, needs ${AA_NORMAL}`);
     }
   }
 
   assert.deepEqual(
     failures,
     [],
-    `Colours below the AA floor on their own paper:\n  ${failures.join('\n  ')}\n\n` +
-      'A semantic hue that does not flip with the surface goes unreadable in dark mode. ' +
-      'Add a dark-mode value in the dark block alongside warn/danger/info.',
+    `Colours below the AA floor on the surfaces they sit on:\n  ${failures.join('\n  ')}\n\n` +
+      'A semantic hue that does not flip with the surface goes unreadable in dark mode, ' +
+      'and a hue that only just clears paper can still fail on the fill-soft tint. ' +
+      'Add or lift the dark-mode value in the dark block alongside warn/danger/info.',
   );
 });
 

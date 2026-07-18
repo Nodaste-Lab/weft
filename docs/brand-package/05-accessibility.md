@@ -57,8 +57,9 @@ All ratios below are computed against actual rendered colors, including alpha co
 | `--weft-ink` on `--weft-paper` | Body on cards | 15.28 | AAA |
 | `--weft-muted` on `--weft-cream` | Secondary text | 6.22 | AA |
 | `--weft-muted` on `--weft-paper` | Secondary on cards | 5.67 | AA |
-| `--weft-link` (#4a7bff) on `--weft-cream` | Links, eyebrows, italic accents | 5.02 | AA ✓ *(was --weft-blue at 3.88)* |
-| `--weft-link` (#4a7bff) on `--weft-paper` | Links on cards | 4.58 | AA ✓ *(was --weft-blue at 3.54)* |
+| `--weft-link` (#5b87fd) on `--weft-cream` | Links, eyebrows, italic accents | 5.71 | AA ✓ *(was --weft-blue at 3.88)* |
+| `--weft-link` (#5b87fd) on `--weft-paper` | Links on cards | 5.20 | AA ✓ *(was --weft-blue at 3.54)* |
+| `--weft-link` (#5b87fd) on fill-soft tint over paper | Links on washed rows/sections | 4.86 | AA ✓ *(was #4a7bff at 4.27 — the 2026-07-18 lift)* |
 | `--weft-blue-ink` on `--weft-yellow` | Pill text | 11.20 | AAA |
 | `--weft-ink` on `--weft-mark` (over cream) | Highlight-mark text | 8.05 | AAA |
 | `--weft-ink` on `--weft-mark` (over paper) | Highlight-mark text | 7.20 | AAA |

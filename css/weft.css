@@ -251,7 +251,15 @@
   --weft-thread-yellow:  rgba(255, 216, 102, 0.12);
   --weft-glass-cream:    rgba( 11,  16,  32, 0.78);
 
-  --weft-link:               #4a7bff;
+  /* Link lifted from #4a7bff on 2026-07-18: that value measured 4.58:1 on
+   * --weft-paper but only 4.27:1 on the tinted fills links actually sit on
+   * (--weft-fill-soft over paper = #1b2034) — under the 4.5:1 AA floor for
+   * small text. Heddle's Updates Dashboard shipped
+   * color-mix(in srgb, var(--weft-link) 90%, var(--weft-ink)) as a local
+   * workaround; this bakes that exact result into the canonical token:
+   * #5b87fd = 5.20:1 on paper, 4.86:1 on the tinted fill. Consumers can drop
+   * the mix. */
+  --weft-link:               #5b87fd;
   --weft-link-visited:       #b8a3e8;
   --weft-focus-ring-color:   var(--weft-yellow);
 
