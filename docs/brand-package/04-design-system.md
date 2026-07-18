@@ -232,7 +232,7 @@ A small, explicit layer that makes the system usable by keyboard users, motion-s
 }
 
 [data-theme="dark"] {
-  --weft-link:              #4a7bff;          /* 5.02:1 on dark cream, 4.58:1 on dark paper — AA normal */
+  --weft-link:              #5b87fd;          /* 5.71:1 on dark cream, 5.20:1 on dark paper, 4.86:1 on the fill-soft tint — AA normal */
   --weft-focus-ring-color:  var(--weft-yellow); /* yellow outer ring = visible against dark cream */
 }
 ```
@@ -318,7 +318,7 @@ Dark mode is a token override, not a second design. Flipping `document.documentE
   --weft-mark:   rgba(255, 216, 102, 0.28);          /* translucent so off-white reads through */
   --weft-code-bg: #05080f;
 
-  --weft-link:              #4a7bff;                  /* brighter blue for AA on dark cream */
+  --weft-link:              #5b87fd;                  /* brighter blue for AA on dark cream, paper, and fill-soft tints */
   --weft-focus-ring-color:  var(--weft-yellow);       /* yellow outer ring = visible against dark cream */
 }
 ```
