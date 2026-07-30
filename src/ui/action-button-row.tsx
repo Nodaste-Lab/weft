@@ -13,9 +13,12 @@ import { cn } from "./utils";
  * sit at the right edge with the standard gap.
  *
  * `dense` mode uses a tighter gap for operator boards that stack many controls
- * in a narrow column. In dense mode, a `trailingLink` node is pushed to the
- * far right (margin-left: auto) — use a Button size="dense" variant="ghost"
- * or a plain anchor styled as a link for the drawer's trailing action.
+ * in a narrow column.
+ *
+ * A `trailingLink` node is pushed to the far right (margin-left: auto) whenever
+ * it is supplied — it is independent of `dense`, though the operator-board
+ * drawer is where the pairing shows up most. Use a Button size="dense"
+ * variant="ghost", or a plain anchor styled as a link.
  */
 function ActionButtonRow({
   className,
@@ -28,7 +31,7 @@ function ActionButtonRow({
   align?: "start" | "end" | "between";
   /** Tighter gap for operator-board drawer action rows. */
   dense?: boolean;
-  /** Node pushed to the far-right trailing edge (dense mode only). */
+  /** Node pushed to the far-right trailing edge, in any density. */
   trailingLink?: React.ReactNode;
 }) {
   return (
