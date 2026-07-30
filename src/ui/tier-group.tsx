@@ -84,11 +84,10 @@ function TierGroup({
   subtitle?: React.ReactNode;
 }) {
   // D12: never render an empty shell — a blank tier reads as "all clear".
-  // React.Children.toArray flattens and removes null/undefined/boolean values,
-  // making it robust to {false && <Row />} patterns and mixed-falsy arrays.
-  // Known boundary: an empty fragment (<></>) counts as one element here even
-  // though it renders nothing — callers must not pass empty fragments as the
-  // sole child and expect the guard to catch them.
+  // countRenderable covers the shapes callers actually write: falsy children
+  // ({false && <Row />}), the numeric zero that `{items.length && rows}` yields,
+  // empty strings, and fragments — including an empty <></> wrapping a map that
+  // produced nothing, which React.Children counts as one node.
   if (countRenderable(children) === 0) {
     return null;
   }

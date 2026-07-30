@@ -63,12 +63,11 @@ describe('TierGroup', () => {
   });
 
   // ── Empty-shell guard ────────────────────────────────────────────────────────
-  // The guard uses React.Children.toArray which flattens arrays and removes
-  // null/undefined/boolean values. React.Children.count does NOT filter
-  // these types when they appear in arrays, so toArray is the correct predicate.
-  //
-  // Known boundary: an empty fragment <></> is a React element and counts as
-  // one node even though it renders nothing — the guard does not catch it.
+  // The guard walks children with countRenderable rather than a bare
+  // React.Children.count: count does not filter null/undefined/booleans inside
+  // arrays, keeps the numeric zero from `{items.length && rows}`, and treats a
+  // fragment as one node however empty it is. Each of those shapes is covered
+  // below, because each of them previously rendered a headed, rowless tier.
   describe('empty-shell guard', () => {
     it('returns null when children is null', () => {
       const { container } = render(
