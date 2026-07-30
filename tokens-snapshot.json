@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.2.1",
+  "designSystemVersion": "0.3.0",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
@@ -178,6 +178,17 @@
       "--weft-row-h": "32px",
       "--weft-section-pad-y": "32px",
       "--weft-section-pad-y-sm": "24px",
+      "--weft-touch-target": "24px"
+    },
+    ":root[data-density=\"dense\"]": {
+      "--weft-control-h": "34px",
+      "--weft-control-pad-x": "9px",
+      "--weft-control-gap": "6px",
+      "--weft-control-text": "13px",
+      "--weft-stack-gap": "10px",
+      "--weft-row-h": "30px",
+      "--weft-section-pad-y": "28px",
+      "--weft-section-pad-y-sm": "20px",
       "--weft-touch-target": "24px"
     },
     ":root[data-palette=\"heritage-purple\"]": {

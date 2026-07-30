@@ -680,6 +680,17 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 
 ## Patterns
 
+### Templates (whole surfaces)
+
+A component is one control; a **template** is a whole reviewed surface — its
+regions, grid, grouping semantics, and states. Templates live in
+`css/weft-templates.css` (`@nodaste-lab/weft/templates.css`), are plain CSS so
+sandboxed panel iframes can use them, and are registered under `templates` in
+`manifest.json`. Current templates and their DOM contracts:
+[11-panel-templates.md](11-panel-templates.md) — starting with `weft-board`, the
+operator action board. Rendered specimens with design-system-coverage annotations:
+[panel-templates.html](panel-templates.html).
+
 ### Two-accent headline
 
 High-impact headlines carry two accented words: one italic-blue-300, one yellow-highlight-mark. Example: "Weaving **AI** into **human** workflows." Two accents is the maximum; one accent is fine; zero is allowed for quieter headings.

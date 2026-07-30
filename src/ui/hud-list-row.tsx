@@ -277,5 +277,41 @@ function HudListRowMeta({
   );
 }
 
-export { HudListRow, HudListRowTitle, HudListRowMeta };
+/*
+ * HudListRowProject — third caption level (below title + meta).
+ *
+ * Use for tertiary attribution: the project/space/origin label that sits one
+ * level below the descriptive meta line. Visually distinguished by an even
+ * smaller size and slightly reduced opacity vs. HudListRowMeta. Renders a
+ * flex row so small chips (SourcePill, Badge count/space) can be inline.
+ *
+ * Example:
+ *   <HudListRow>
+ *     <HudListRowTitle>Ticket title</HudListRowTitle>
+ *     <HudListRowMeta>3h · In progress</HudListRowMeta>
+ *     <HudListRowProject>
+ *       <SourcePill>acme-corp / ops</SourcePill>
+ *     </HudListRowProject>
+ *   </HudListRow>
+ */
+function HudListRowProject({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="hud-list-row-project"
+      className={cn(
+        "flex flex-wrap items-center gap-1 text-[11px] text-[var(--weft-muted,var(--muted-foreground))] opacity-80",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
+export { HudListRow, HudListRowTitle, HudListRowMeta, HudListRowProject };
 export type { HudListRowProps, HudListRowState, HudListRowDensity };

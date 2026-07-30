@@ -46,6 +46,7 @@ import {
 import { Carousel } from '../ui/carousel';
 import { Checkbox } from '../ui/checkbox';
 import { Chip } from '../ui/chip';
+import { Dot } from '../ui/dot';
 import { CodeBlock } from '../ui/code-block';
 import { ContentViewer } from '../ui/content-viewer';
 import { HtmlViewer } from '../ui/html-viewer';
@@ -190,8 +191,12 @@ import { Toolbar } from '../ui/toolbar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { HudIssueCallout } from '../ui/HudIssueCallout';
 import { HudIssueToast } from '../ui/HudIssueToast';
+import { ActionButtonRow } from '../ui/action-button-row';
 import { Callout } from '../ui/callout';
-import { HudListRow, HudListRowMeta, HudListRowTitle } from '../ui/hud-list-row';
+import { CopyableRef } from '../ui/copyable-ref';
+import { HudListRow, HudListRowMeta, HudListRowProject, HudListRowTitle } from '../ui/hud-list-row';
+import { PanelHeader, PanelHeaderActions, PanelHeaderDismiss, PanelHeaderTitle } from '../ui/panel-header';
+import { TierGroup } from '../ui/tier-group';
 import { HudMetaCaption } from '../ui/hud-meta-caption';
 import { HudPopoverDropdown } from '../ui/hud-popover-dropdown';
 import { HudQuickCommandFooter } from '../ui/hud-quick-command-footer';
@@ -224,6 +229,7 @@ import { StatusIconRow } from '../ui/status-icon-row';
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
   'action-button-row',
+  'copyable-ref',
   'add-item-button',
   'alert-dialog',
   'alert',
@@ -247,6 +253,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'content-viewer',
   'context-menu',
   'dialog',
+  'dot',
   'dropdown-menu',
   'empty-state',
   'eyebrow-label',
@@ -313,6 +320,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'tabs',
   'text-content',
   'textarea',
+  'tier-group',
   'toggle-group',
   'toggle',
   'toolbar',
@@ -722,15 +730,29 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="badge"
         title="Badge"
-        summary="Small emphasis treatment for states, tags, and counts."
+        summary="Small emphasis treatment for states, tags, counts, and evidence chips. D5 adds count/space/status variants and stop/warn/ok tones."
       >
-        <div style={rowStyle}>
-          <Badge>Stable</Badge>
-          <Badge variant="secondary">Preview</Badge>
-          <Badge variant="outline">
-            <Moon size={12} />
-            Night mode
-          </Badge>
+        <div className="flex flex-col gap-2">
+          <div style={rowStyle}>
+            <Badge>Stable</Badge>
+            <Badge variant="secondary">Preview</Badge>
+            <Badge variant="outline">
+              <Moon size={12} />
+              Night mode
+            </Badge>
+          </div>
+          <div style={rowStyle}>
+            <Badge variant="count">12</Badge>
+            <Badge variant="count">0</Badge>
+            <Badge variant="space">Launch · Q1</Badge>
+            <Badge variant="space">Operations</Badge>
+          </div>
+          <div style={rowStyle}>
+            <Badge variant="status" tone="ok">ok</Badge>
+            <Badge variant="status" tone="warn">warn</Badge>
+            <Badge variant="status" tone="stop">stop</Badge>
+            <Badge variant="status">—</Badge>
+          </div>
         </div>
       </PrimitiveCard>
 
@@ -759,7 +781,7 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="button"
         title="Button"
-        summary="Primary action with variants, icon support, and explicit interaction states."
+        summary="Primary action with variants, icon support, explicit interaction states, and dense operator-board size (D4)."
       >
         <div style={rowStyle}>
           <Button>Primary</Button>
@@ -769,6 +791,12 @@ export function DesignSystemUiGallery({
           <Button size="icon" aria-label="Magic action">
             <Sparkles size={14} />
           </Button>
+        </div>
+        <div style={rowStyle}>
+          <span className="text-xs text-muted-foreground w-12">dense</span>
+          <Button size="dense">Primary</Button>
+          <Button size="dense" variant="secondary">Secondary</Button>
+          <Button size="dense" variant="outline">Outline</Button>
         </div>
         <div className="mt-5 grid gap-3">
           <div className="text-xs font-semibold text-muted-foreground">Interaction states</div>
@@ -844,6 +872,12 @@ export function DesignSystemUiGallery({
           </Callout>
           <Callout tone="positive" density="compact">
             Saved. Local changes synced to the Private vault.
+          </Callout>
+          <Callout variant="dashed" tone="warning" title="Review before sharing">
+            This content was generated. Verify citations before sending.
+          </Callout>
+          <Callout variant="band" tone="info" title="Board mode active">
+            Showing operator view.
           </Callout>
         </div>
       </PrimitiveCard>
@@ -1104,13 +1138,21 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="empty-state"
         title="Empty State"
-        summary="Centered no-content message with optional description and action slot."
+        summary="Centered no-content message with optional description and action slot. D9 adds opt-in notice variant for inline failure/notice treatment."
       >
-        <EmptyState
-          title="No notes yet"
-          description="Create a note to start capturing context for this workspace."
-          action={<Button type="button" size="sm">Create note</Button>}
-        />
+        <div className="flex flex-col gap-3">
+          <EmptyState
+            title="No notes yet"
+            description="Create a note to start capturing context for this workspace."
+            action={<Button type="button" size="sm">Create note</Button>}
+          />
+          <EmptyState
+            variant="notice"
+            title="Fetch failed"
+            description="Could not reach the signals API. Check your connection."
+            action={<Button type="button" size="dense" variant="outline">Retry</Button>}
+          />
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -1214,7 +1256,7 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="hud-list-row"
         title="HUD List Row"
-        summary="Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active)."
+        summary="Leading-media + title-stack + trailing-actions list row with state accent. D1 adds HudListRowProject as a third text level beneath meta."
       >
         <div className="flex w-full max-w-md flex-col">
           <HudListRow
@@ -1224,6 +1266,9 @@ export function DesignSystemUiGallery({
           >
             <HudListRowTitle emphasis>Review Q3 roadmap</HudListRowTitle>
             <HudListRowMeta>3h ago · #product · Slack</HudListRowMeta>
+            <HudListRowProject>
+              <Badge variant="space">Launch</Badge>
+            </HudListRowProject>
           </HudListRow>
           <HudListRow
             state="overdue"
@@ -1533,6 +1578,26 @@ export function DesignSystemUiGallery({
           <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] px-2 py-1.5 text-[length:var(--text-sm)] text-[var(--hud-text-1)]">
             <span aria-hidden="true">#</span>
             <Input variant="inline" aria-label="Rename board" defaultValue="Launch board" />
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="dot"
+        title="Dot"
+        summary="Bare semantic status dot (ok/warn/stop/info). Decorative by default; pass a label only when the dot alone carries the meaning."
+      >
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <span className="inline-flex items-center gap-1.5"><Dot tone="ok" /> ok</span>
+            <span className="inline-flex items-center gap-1.5"><Dot tone="warn" /> warn</span>
+            <span className="inline-flex items-center gap-1.5"><Dot tone="stop" /> stop</span>
+            <span className="inline-flex items-center gap-1.5"><Dot tone="info" /> info</span>
+            <span className="inline-flex items-center gap-1.5"><Dot /> muted (default)</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <span className="inline-flex items-center gap-1.5"><Dot tone="stop" size="md" /> size md</span>
+            <span className="inline-flex items-center gap-1.5"><Dot tone="ok" label="All clear" /> labelled (announced)</span>
           </div>
         </div>
       </PrimitiveCard>
@@ -2302,12 +2367,34 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="stat-row"
         title="Stat Row"
-        summary="Compact label-value readout for dense panel stats and status summaries."
+        summary="Compact label-value readout for dense panel stats. D2 adds opt-in board variant with leading icon slot and flex-fill label."
       >
-        <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
-          <StatRow label="Sources" value="8" hint="indexed" />
-          <StatRow label="Open loops" value="3" />
-          <StatRow label="Updated" value="2m ago" />
+        <div className="flex flex-col gap-3">
+          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+            <StatRow label="Sources" value="8" hint="indexed" />
+            <StatRow label="Open loops" value="3" />
+            <StatRow label="Updated" value="2m ago" />
+          </div>
+          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+            <StatRow
+              variant="board"
+              label="Blocked"
+              value="2"
+              leading={<Dot tone="stop" />}
+            />
+            <StatRow
+              variant="board"
+              label="Awaiting"
+              value="5"
+              leading={<Dot tone="warn" />}
+            />
+            <StatRow
+              variant="board"
+              label="FYI"
+              value="11"
+              leading={<Dot tone="info" />}
+            />
+          </div>
         </div>
       </PrimitiveCard>
 
@@ -2596,19 +2683,100 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="toggle-group"
         title="Toggle Group"
-        summary="Coordinated toggles for single or multi selection."
+        summary="Coordinated toggles for single or multi selection. D7 adds joined variant — border-sharing pill bar for operator mode switches."
       >
-        <ToggleGroup type="single" defaultValue="b" variant="outline" size="sm">
-          <ToggleGroupItem value="a" aria-label="Left">
-            A
-          </ToggleGroupItem>
-          <ToggleGroupItem value="b" aria-label="Center">
-            B
-          </ToggleGroupItem>
-          <ToggleGroupItem value="c" aria-label="Right">
-            C
-          </ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-col gap-3">
+          <ToggleGroup type="single" defaultValue="b" variant="outline" size="sm" aria-label="Alignment">
+            <ToggleGroupItem value="a" aria-label="Left">A</ToggleGroupItem>
+            <ToggleGroupItem value="b" aria-label="Center">B</ToggleGroupItem>
+            <ToggleGroupItem value="c" aria-label="Right">C</ToggleGroupItem>
+          </ToggleGroup>
+          <ToggleGroup type="single" defaultValue="direct" joined aria-label="Scope" size="sm">
+            <ToggleGroupItem value="direct">Direct</ToggleGroupItem>
+            <ToggleGroupItem value="expanded">Expanded</ToggleGroupItem>
+            <ToggleGroupItem value="all">All</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="action-button-row"
+        title="Action Button Row"
+        summary="Horizontal action strip for panel-rail toolbars. D3 default adopts dense start-group + trailing link arrangement."
+      >
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <ActionButtonRow
+            trailingLink={<Button size="dense" variant="ghost" className="is-link px-0 text-xs">Board view</Button>}
+          >
+            <Button size="dense" variant="outline">Refresh</Button>
+            <Button size="dense" variant="outline">Filter</Button>
+          </ActionButtonRow>
+          <ActionButtonRow>
+            <Button size="sm" variant="secondary">Export</Button>
+            <Button size="sm" variant="outline">Settings</Button>
+          </ActionButtonRow>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="panel-header"
+        title="Panel Header"
+        summary="Panel chrome title strip with dismiss control and actions slot. D10 adds board size for the 46px operator-board header."
+      >
+        <div className="flex w-full max-w-sm flex-col gap-3">
+          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+            <PanelHeader>
+              <PanelHeaderTitle>Signal Inbox</PanelHeaderTitle>
+              <PanelHeaderActions>
+                <Button size="sm" variant="ghost">Refresh</Button>
+                <PanelHeaderDismiss onClick={() => undefined} />
+              </PanelHeaderActions>
+            </PanelHeader>
+          </div>
+          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+            <PanelHeader size="board">
+              <PanelHeaderTitle>Operator Board</PanelHeaderTitle>
+              <PanelHeaderActions>
+                <Button size="dense" variant="ghost">Refresh</Button>
+                <PanelHeaderDismiss onClick={() => undefined} />
+              </PanelHeaderActions>
+            </PanelHeader>
+          </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="tier-group"
+        title="Tier Group"
+        summary="Urgency-toned section primitive for operator board tiers. Accessible region with blocked/awaiting/fyi urgency axis. D12."
+      >
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <TierGroup urgency="blocked" label="Blocked" count={2} subtitle="Need unblocking now">
+            <div className="flex flex-col gap-1 px-2 py-1">
+              <span className="text-xs text-[var(--weft-ink,var(--foreground))]">Awaiting legal sign-off</span>
+              <span className="text-xs text-[var(--weft-muted,var(--muted-foreground))]">NOD-892</span>
+            </div>
+          </TierGroup>
+          <TierGroup urgency="awaiting" label="Awaiting" count={5} subtitle="In progress">
+            <div className="px-2 py-1 text-xs text-[var(--weft-muted,var(--muted-foreground))]">5 items…</div>
+          </TierGroup>
+          <TierGroup urgency="fyi" label="FYI" count={11}>
+            <div className="px-2 py-1 text-xs text-[var(--weft-muted,var(--muted-foreground))]">11 items…</div>
+          </TierGroup>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="copyable-ref"
+        title="Copyable Ref"
+        summary="Truncated reference row with accessible one-click copy, success/failure feedback, and revert. D14."
+      >
+        <div className="flex w-full max-w-sm flex-col gap-2">
+          <CopyableRef value="nod://ticket/NOD-1234" label="ticket ID" />
+          <CopyableRef value="nod://session/e3f1a82c-b017-4d8a-99f0-2d3c5a6b7e8d" label="session ref">
+            <span>e3f1a82c-…-7e8d</span>
+          </CopyableRef>
+        </div>
       </PrimitiveCard>
 
       <PrimitiveCard

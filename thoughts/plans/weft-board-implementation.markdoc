@@ -1,0 +1,333 @@
+---
+title: Weft board template — implementation plan
+status: draft
+executionReady: false
+planId: weft-board-implementation
+templateId: default-execution-plan
+templateVersion: 1
+templateSchemaVersion: 1
+surfaces:
+  - css/weft-templates.css
+  - css/weft-components.css
+  - css/weft.css
+  - src/ui
+  - manifest.json
+  - props-snapshot.json
+  - src/gallery/DesignSystemUiGallery.tsx
+  - tests/visual/gallery.spec.ts
+---
+
+{% progress %}
+{% task id="P1" phase="phase-p1-status-dot" checked=false %}Promote the status dot (D13) — unblocks P2 and P3{% /task %}
+{% task id="P2" phase="phase-p2-new-primitives" checked=false %}Promote the tier group and reference row (D12, D14){% /task %}
+{% task id="P3" phase="phase-p3-additive-variants" checked=false %}Add variants to existing primitives (D2, D4-dense, D5, D7, D8, D10){% /task %}
+{% task id="P4" phase="phase-p4-appearance-reversals" checked=false %}Move existing primitives' appearance (D1, D3, D9) + downstream check{% /task %}
+{% task id="P5" phase="phase-p5-template-rewiring" checked=false %}Rewire the template onto primitives and delete the duplicates (D4, D6, D11, D15){% /task %}
+{% task id="P6" phase="phase-p6-css-layer" checked=false %}Widen the plain-CSS layer so panel iframes reach parity{% /task %}
+{% task id="P7" phase="phase-p7-density-axis" checked=false %}Density axis (T2) — blocked until the branch is chosen{% /task %}
+{% task id="P8" phase="phase-p8-release" checked=false %}Release and Heddle adoption{% /task %}
+{% /progress %}
+
+{% section id="delivery" title="Delivery order" %}
+Dependency-first, then risk-ascending. P1 lands the one primitive two later phases need. P2 adds the other new primitives — all three are purely additive, so nothing existing can break. P3 adds variants with the current appearance preserved as the default, still additive. P4 is the first phase that can break consumers, because it moves the appearance of primitives Heddle already renders — it is deliberately late and carries the downstream gate. P5 deletes the template-local duplicates only once their replacements exist and are proven, so the board is never left half-wired. P6 closes the plain-CSS gap that caused most of the duplication in the first place. P7 is blocked. P8 releases.
+
+Each phase is independently shippable and leaves the repo green. Do not batch P4 with anything else — it is the one phase whose blast radius reaches another repo.
+{% /section %}
+
+{% section id="status" title="Status" %}
+**draft — P1 through P6 are executable now; P7 is blocked.**
+
+All fifteen decisions (D1–D15) and T1 are settled and recorded in *Weft board template — design-system decisions* (`92db6890-19c0-497e-a549-a2d3101a005e`), which also carries the agreed test-case spec. Two sub-questions remain open and are called out under Decision Attention: the **T2 branch** (which gates P7 entirely) and the **D9 scope** (which changes the size of one step inside P4). Nothing else waits on input.
+
+Branch: `claude/panel-templates-design-system-baa007` in `Nodaste-Lab/weft`. The template layer itself (the subject of these decisions) is already committed-in-progress on that branch as uncommitted working-tree changes; see Current implementation reality.
+{% /section %}
+
+{% section id="goal" title="Goal" %}
+Land the fifteen decided outcomes in Weft: promote the four genuinely new patterns into the design system, add the agreed variants to existing primitives, move two primitives' appearance to the template's treatment, delete every template-local duplicate, and close the plain-CSS parity gap — with the decisions machine-checked by the agreed test cases so they cannot silently regress, and with Heddle adopting the result deliberately rather than absorbing a surprise.
+{% /section %}
+
+{% section id="non-goals" title="Non-goals" %}
+- Re-opening any decision. D1–D15 and T1 are settled; this plan executes them.
+- Building further templates. `weft-board` is the only template in scope; the next template waits until the CSS layer is wider (P6).
+- Migrating Heddle's panel surfaces to the new primitives. Weft ships them; Heddle adopts on its own schedule (P8 pins the version and proves nothing broke, no more).
+- Reworking the Updates Dashboard product feature. That stays on its own branch and plan.
+- Touching the `--hud-*` transitional aliases, which remain Heddle's.
+{% /section %}
+
+{% section id="decision-attention" title="Decision Attention / Low-confidence Areas" %}
+**Two open sub-questions. Neither blocks P1–P6.**
+
+1. **T2 branch — blocks P7 entirely.** High density is wanted; the question is *how*. **(a)** add a third tier `data-density="dense"` at 34px, leaving `compact` untouched — recommended; or **(b)** tighten `compact` itself to 34px, which shifts every surface already on compact including Heddle's pixel baselines. Owner: Katie.
+2. **D9 scope — changes one step in P4.** Does the introduced notice replace `EmptyState` wholesale, or only become the standard for load-failure/notice states while the centered icon+action shape stays for genuine empties? Wholesale pulls Knowledge Search, Notes and every other consumer into scope. Default in this plan is the split. Owner: Katie.
+
+**Low-confidence area: P4's blast radius.** D1 changes `HudListRow`, which backs SignalRow, ticket updates and account lists in Heddle. Unit tests will stay green while those surfaces reflow. The mitigation is the downstream gate in P4, not more unit tests — and it is the single most likely place this work causes a visible regression.
+
+**UI impact: yes**, extensively — this is design-system surface work. Every phase touches rendered output in light, dark and compact.
+{% /section %}
+
+{% section id="why" title="Why this plan exists" %}
+Porting the reviewed Updates Dashboard board into Weft as `weft-board` surfaced 45 mapped parts, of which only one reused an existing primitive and twenty duplicated something Weft already had. Review turned that inventory into fifteen decisions: four patterns worth promoting, several variants worth adding, two primitives whose appearance the template improved on, and a set of duplicates to delete. Without this plan those decisions stay a document — the duplication ships, the promotions never land, and the next template repeats the same derivation. The diagnostic finding matters as much as the decisions: most duplication existed because the plain-CSS layer has 19 classes against 96 React primitives, so panel iframes have no choice but to re-implement. P6 addresses the cause rather than the symptom.
+{% /section %}
+
+{% section id="authority-inputs" title="Authority and inputs" %}
+- **Decisions and test cases:** *Weft board template — design-system decisions* (`92db6890-19c0-497e-a549-a2d3101a005e`) — D1–D15, T1 decided, T2 direction given, plus the agreed coverage spec and gate matrix. This plan must not contradict it.
+- **Component breakdown:** `docs/brand-package/11-panel-templates.md` (45 parts, statuses, region map) and the rendered specimens at `docs/brand-package/panel-templates.html`.
+- **Visual diff harness:** `site/diff.tsx` — renders each template part beside its existing primitive; `site/buttons.tsx` for the D4 button coverage. Measuring pairs here is what reversed the D4 recommendation.
+- **Repo contract:** `AGENTS.md` — the six hard invariants (pure token file, token-only colors, manifest lockstep, prop-surface contracts, tarball ships `src/`, byte-stability), the Weft-vs-Heddle boundary, and the changeset release flow.
+- **Test conventions:** the 43 existing suites in `src/ui/__tests__/`, `tests/visual/gallery.spec.ts`, and the gate scripts under `scripts/`.
+- **Brand rules:** token-only colors, sentence case, WCAG 2.1 AA invariants (focus-visible, reduced motion, ≥24px targets).
+{% /section %}
+
+{% section id="current-reality" title="Current implementation reality" %}
+- The template layer exists and is green but **uncommitted** on `claude/panel-templates-design-system-baa007`: `css/weft-templates.css` (395 lines, 99 `weft-board-*` classes, zero token declarations), exported as `@nodaste-lab/weft/templates.css`, bundled last in `css/index.css`, registered under a new `templates` key in `manifest.json`, documented in `docs/brand-package/11-panel-templates.md`, with a `minor` changeset staged.
+- Twelve working-tree paths are uncommitted, including the two review harnesses under `site/` (outside `package.json` `files`, so they never ship).
+- `weft-components.css` has 19 top-level classes; `manifest.json` lists 127 `uiPrimitives` of which 96 are React components and 31 are Code Connect mappings.
+- `--weft-control-h` resolves 44px default and 36px under `data-density="compact"` (`css/weft.css:109`, `:299`). No dense tier exists.
+- `Button` ships 6 variants × 4 sizes including `link` (`src/ui/button.tsx:22`). `.weft-btn` ships only the default slab and `.is-ghost`.
+- No `stat-row`, `panel-header` or `source-pill` unit suites exist yet — three of the test-case files in this plan are new.
+- `tests/visual/gallery.spec.ts` iterates `light | dark | compact` over a curated `SECTIONS` list; `hud-list-row`, `badge`, `button`, `callout`, `empty-state` are already in it, so P3 and P4 move baselines.
+- All gates currently pass: `npm run verify`, `npm run props`, `npm test` (161 tests, 43 files), `npm run build`, `check-raw-colors`, `check-pure-token-file`, `check-exports-contract` (16 specifiers from the packed tarball).
+{% /section %}
+
+{% section id="product-intent" title="Product intent alignment" %}
+- Advances the design system's core promise — the documented pattern and the shipped component are the same artifact — by ending the state where a template and a primitive both answer the same question differently.
+- Protects existing consumers by construction: additive phases first, appearance changes late and gated on a downstream run, deletions only after replacements are proven.
+- Fixes a real accessibility defect (D11) rather than restyling around it, and machine-checks the accessibility invariants that were previously review habits (focus affordance, decorative-by-default dot, non-colour differentiation).
+- Addresses cause over symptom: P6 widens the plain-CSS layer so the *next* template composes instead of duplicating.
+- Keeps the Weft/Heddle boundary intact — primitives and tokens here, panel surfaces and adoption there.
+{% /section %}
+
+{% section id="locked-decisions" title="Locked decisions" %}
+{% decision id="decision-1" %}**Additive before destructive.** New primitives (P1, P2) and variants with unchanged defaults (P3) land before any appearance change (P4) or deletion (P5). At no point is the board left referencing a class that no longer exists.{% /decision %}
+{% decision id="decision-2" %}**Every decision gets its GUARD test in the same phase that implements it.** A decision without a machine-check is not done. The 24 GUARD, 9 REGRESSION and 3 DELETION-GUARD cases in the decisions plan are the definition of complete, not a follow-up.{% /decision %}
+{% decision id="decision-3" %}**Breaking prop-surface changes need a major bump.** `props:write` refuses otherwise, and `--force` is only for extractor changes. Every variant added in P3 is additive and therefore a minor bump; if any turns out to remove or require a prop, it becomes a major and moves to its own phase.{% /decision %}
+{% decision id="decision-4" %}**Visual baselines are updated deliberately, never reflexively.** A moved baseline is reviewed in light, dark and compact before `--update-snapshots` is run. P4 in particular must not blanket-update.{% /decision %}
+{% decision id="decision-5" %}**Heddle adopts, Weft does not push.** P8 pins the version in Heddle and proves its suites pass; it does not migrate Heddle's panels to the new primitives.{% /decision %}
+{% decision id="decision-6" %}**`css/weft.css` stays a pure token file.** T2's density work adds a `:root[...]` axis block and nothing else, additively, preserving byte-stability for Heddle's verbatim injection.{% /decision %}
+{% /section %}
+
+{% section id="acceptance" title="Acceptance Criteria" %}
+{% acceptance id="ac-1" %}**AC1 — Decisions implemented.** All fifteen decisions are reflected in the shipped code: four promotions exist as primitives, the agreed variants exist on existing primitives, D1 and D3 carry the template's treatment, and every template-local duplicate named in D4, D6, D11 and D15 is gone.{% /acceptance %}
+{% acceptance id="ac-2" %}**AC2 — Decisions guarded.** Every GUARD, REGRESSION and DELETION-GUARD case from the agreed spec exists and passes, including the never-invent-provenance guard (D15), the zero-token-declaration guard (T1), and the focus-affordance guard (D11).{% /acceptance %}
+{% acceptance id="ac-3" %}**AC3 — Existing consumers preserved.** Every primitive that gained a variant renders byte-identically when the variant is not requested. Primitives whose appearance moved (D1, D3) have reviewed, intentionally updated baselines in all three themes.{% /acceptance %}
+{% acceptance id="ac-4" %}**AC4 — Gates green.** `npm run verify`, `npm run props`, `npm test`, `npm run build`, `npm run test:visual`, `check-raw-colors`, `check-pure-token-file` and `check-exports-contract` all pass, with manifest entries ordered, semver versions bumped per the gate matrix, and the props snapshot regenerated.{% /acceptance %}
+{% acceptance id="ac-5" %}**AC5 — Downstream proven.** Heddle pins the new Weft version and its `npm run linux:check` plus visual suite pass, with SignalRow, ticket updates and account lists specifically reviewed for D1 reflow.{% /acceptance %}
+{% acceptance id="ac-6" %}**AC6 — Parity gap closed or logged.** Every plain-CSS counterpart added in P6 renders equivalently to its React counterpart in light and dark; any counterpart deliberately not added is recorded in the log with a reason.{% /acceptance %}
+{% /section %}
+
+{% section id="bdd" title="BDD Scenarios" %}
+{% bdd id="bdd-ac1-1" title="BDD-AC1-1 — The board composes primitives, not duplicates" %}
+**Given** the template layer after P5, **when** `css/weft-templates.css` is scanned for the selectors named in the deletion guards (`weft-board-btn`, `weft-board-type`, the rail-search and drawer-reply div styling), **then** none of them exist, **and** the board still renders every region it did before.
+{% /bdd %}
+{% bdd id="bdd-ac2-1" title="BDD-AC2-1 — Absent provenance renders no chip" %}
+**Given** the evidence chip from D15, **when** it is rendered for a row whose payload carried no relation evidence, **then** no chip element is produced — not a default chip, not an "unknown" chip.
+{% /bdd %}
+{% bdd id="bdd-ac2-2" title="BDD-AC2-2 — The template never pins a palette" %}
+**Given** `css/weft-templates.css`, **when** it is parsed for custom-property declarations, **then** there are zero, **and** every `var(--weft-*)` it reads resolves in `css/weft.css` or `css/theme.css`.
+{% /bdd %}
+{% bdd id="bdd-ac2-3" title="BDD-AC2-3 — The rail search is a real control" %}
+**Given** the rail after P5, **when** a user tabs to the search field and types, **then** it is exposed as a textbox with an accessible name, it accepts the input, **and** it shows a visible focus ring.
+{% /bdd %}
+{% bdd id="bdd-ac3-1" title="BDD-AC3-1 — Variants do not disturb defaults" %}
+**Given** `StatRow`, `Badge`, `Callout`, `ToggleGroup` and `PanelHeader` after P3, **when** each is rendered without requesting a new variant, **then** its output is identical to the pre-P3 baseline.
+{% /bdd %}
+{% bdd id="bdd-ac5-1" title="BDD-AC5-1 — Heddle survives the D1 change" %}
+**Given** Heddle pinned to the released Weft version, **when** its visual suite runs, **then** SignalRow, ticket updates and account lists render without unintended reflow, **and** any intended change is an accepted, reviewed baseline.
+{% /bdd %}
+{% bdd id="bdd-ac4-1" title="BDD-AC4-1 — A breaking surface cannot slip through" %}
+**Given** any phase that changes a component's prop surface, **when** `npm run props` runs without a matching version bump, **then** it fails, **and** a breaking change fails until the component's manifest major is bumped.
+{% /bdd %}
+{% /section %}
+
+{% section id="phases" title="Phase-by-phase execution plan" %}
+Each phase maps one-to-one to a Progress entry. Every phase ends with the repo green and independently shippable. Tests come before implementation in each phase; the failing test is the contract.
+{% /section %}
+
+{% phase id="phase-p1-status-dot" title="P1 — Promote the status dot (D13)" mapsTo="P1" %}
+{% endState %}A `Dot` primitive exists in Weft with four semantic tones, decorative by default, registered and gallery-carded — and the two phases that depend on it are unblocked.{% /endState %}
+{% testsFirst %}
+- New `src/ui/__tests__/dot.test.tsx`: four tones (`ok | warn | stop | info`) each render their tone marker.
+- GUARD (a11y): decorative by default — `aria-hidden="true"` and no accessible name, because the adjacent label carries the meaning. When a label is passed it takes a `status`/`img` role with that name.
+- GUARD: colour is never the only signal — a dot without an adjacent label or accessible name is a documented misuse; assert the labelled path works.
+- Inline rendering does not disturb adjacent text baseline alignment.
+{% /testsFirst %}
+{% expectedFiles %}`src/ui/dot.tsx`, `src/ui/__tests__/dot.test.tsx`, `manifest.json`, `props-snapshot.json`, `src/gallery/DesignSystemUiGallery.tsx`, `tests/visual/gallery.spec.ts`{% /expectedFiles %}
+{% work %}
+1. Add `src/ui/dot.tsx` — token-only, tones from `--weft-ok/-warn/-stop/-info`, `aria-hidden` by default, optional accessible label.
+2. Export from `src/index.ts` (barrel parity is gated).
+3. Add the ordered `manifest.json` entry with a semver `version` and `showcase: true`; run `npm run props:write`.
+4. Add a gallery card at `id="dot-example"` covering all four tones; add `dot` to `SECTIONS` and record new light/dark/compact baselines.
+5. Run the full gate set.
+{% /work %}
+{% openQuestions %}Final primitive id — `dot` vs `status-dot`. Defaulting to `dot`, since it is not signals-specific.{% /openQuestions %}
+{% verify %}`npm test`, `npm run verify`, `npm run props`, `node scripts/check-raw-colors.mjs`, `npm run test:visual` (new baselines reviewed in all three themes).{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p2-new-primitives" title="P2 — Promote the tier group and reference row (D12, D14)" mapsTo="P2" %}
+{% endState %}The urgency-toned tier group and the copyable reference row exist as Weft primitives, both fully tested including the reference row's clipboard behaviour and failure path.{% /endState %}
+{% testsFirst %}
+- Tier group: three tones render distinct container treatments; header composes label + sub-label + count; the count slot accepts a `Badge` and the dot slot accepts P1's `Dot`.
+- Tier group semantics: the group is a region with an accessible name from its label, and the count is announced as part of it, not as an orphaned number.
+- Tier group GUARD (D9-adjacent doctrine): a tier with zero items renders nothing — no empty shell. This is the machine-check for "never render an empty tier set".
+- Tier group GUARD: tone is semantic, never inferred from DOM order.
+- Reference row: long ids truncate with ellipsis while the full value stays available; the copy control has an accessible name, not a bare icon.
+- Reference row: clicking copies — assert `navigator.clipboard.writeText` receives the full id, via `vi.spyOn`.
+- Reference row: success affordance appears then reverts; **failure path** — clipboard rejection shows no false success.
+- Reference row: keyboard reachable, activates on Enter/Space.
+{% /testsFirst %}
+{% expectedFiles %}`src/ui/tier-group.tsx`, `src/ui/reference-row.tsx`, their `__tests__` files, `src/index.ts`, `manifest.json`, `props-snapshot.json`, gallery, `tests/visual/gallery.spec.ts`{% /expectedFiles %}
+{% work %}
+1. Build the tier group composing `Dot` and `Badge`; tones map to `--weft-stop/-warn/-info` mixes exactly as the template does.
+2. Build the reference row with truncation, an accessible copy control, success and failure states, and an `aria-live` announcement.
+3. Register both (ordered manifest entries, semver, showcase), `npm run props:write`, gallery cards, `SECTIONS` entries, baselines.
+4. Gate set.
+{% /work %}
+{% openQuestions %}Whether the tier group owns collapse. The template's tier does not collapse and `SignalGroupCollapsible` already exists — defaulting to no collapse, composing the existing primitive when collapse is wanted.{% /openQuestions %}
+{% verify %}Same gate set as P1, plus a clipboard-permission-denied case proven in jsdom.{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p3-additive-variants" title="P3 — Additive variants on existing primitives (D2, D4-dense, D5, D7, D8, D10)" mapsTo="P3" %}
+{% endState %}`StatRow`, `Button`, `Badge`, `ToggleGroup`, `Callout` and `PanelHeader` each gained the decided variant, every current default is byte-identical, and each is a minor bump with a refreshed props snapshot.{% /endState %}
+{% testsFirst %}
+- D2 `StatRow` (new suite): default unchanged; new variant adds the denser rhythm and a leading slot; the slot accepts P1's `Dot`. **GUARD/REGRESSION:** omitting the variant is byte-identical to today.
+- D4 `Button`: dense variant renders 12.5px type and 2px radius; the 6 × 4 matrix still renders; `loading`, `blocked`, `disabled`, `pressed` unaffected.
+- D5 `Badge`: three new variants (count pill, space tint, status outline); existing 5 tones × 4 variants matrix intact; default unchanged.
+- D7 `ToggleGroup`: `joined` variant — shared border, inset ring on the active item, no gaps; selected item keeps its pressed/checked ARIA state; arrow-key traversal and Enter/Space still work; `PillToggleGroup` untouched.
+- D8 `Callout`: dashed and band variants; both compose with existing tones and densities; `title`, `icon`, `action`, `markdown` still work; default unchanged.
+- D10 `PanelHeader` (new suite): default HUD-dense strip unchanged; board size variant renders the larger title; sub-components still compose; dismiss keeps an accessible name.
+{% /testsFirst %}
+{% expectedFiles %}`src/ui/stat-row.tsx`, `button.tsx`, `badge.tsx`, `toggle-group.tsx`, `callout.tsx`, `panel-header.tsx`, their `__tests__` files (two new), `manifest.json`, `props-snapshot.json`, gallery cards{% /expectedFiles %}
+{% work %}
+1. Implement each variant additively — new value on an existing variant prop, never a changed default.
+2. Bump each component's manifest `version` (minor) and run `npm run props:write`; confirm the gate records additive, not breaking.
+3. Extend the gallery cards so the new variants are visually covered; review moved baselines for `badge`, `button`, `callout` (already in `SECTIONS`).
+4. Gate set.
+{% /work %}
+{% openQuestions %}Whether D5's three chips are three `Badge` variants or one variant with three tones. Defaulting to variants, matching how the template distinguishes them structurally.{% /openQuestions %}
+{% verify %}Full gate set; `npm run props` must report additive changes with matching minor bumps.{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p4-appearance-reversals" title="P4 — Move existing primitives' appearance (D1, D3, D9)" mapsTo="P4" %}
+{% endState %}`HudListRow` carries the template's hierarchy, `ActionButtonRow` carries the template's arrangement, and the notice treatment is the standard for its agreed scope — with every moved baseline reviewed and Heddle proven unbroken.{% /endState %}
+{% testsFirst %}
+- D1: title, meta and project render into three distinct slots with distinct weights. **GUARD:** the project line is optional — title + meta alone produces no empty third slot.
+- D1 REGRESSION: all five state accents still apply; `density`, `as`, `leading`, `trailing`, `bodyClassName`, `align`, `divider`, `interactive`, `disabled` unchanged.
+- D3: new default arrangement groups primary and secondary at the start and pushes the link action to the end; all three `align` values still honoured. **GUARD:** the row does not style its children — `Button` variants pass through intact.
+- D3 REGRESSION: existing Copy/Email/Vault consumers keep their arrangement, or the change is explicitly accepted and snapshotted.
+- D9: the notice treatment renders for load-failure states; per the default scope, `EmptyState`'s centered icon+action shape still renders for genuine empty states.
+{% /testsFirst %}
+{% expectedFiles %}`src/ui/hud-list-row.tsx`, `action-button-row.tsx`, `empty-state.tsx`, their `__tests__` files, `manifest.json`, `props-snapshot.json`, the `tests/visual/gallery.spec.ts-snapshots` baselines{% /expectedFiles %}
+{% work %}
+1. Implement D1's hierarchy, keeping every existing prop and state accent.
+2. Implement D3's arrangement without introducing button styling.
+3. Implement D9 at the agreed scope — **do not start until the D9 sub-question is answered**; if wholesale, add the consumer sweep as a separate step and expand the test set to Knowledge Search and Notes.
+4. Review each moved baseline in light, dark and compact individually. No blanket `--update-snapshots`.
+5. Bump versions per the gate matrix; regenerate the props snapshot if any surface moved.
+{% /work %}
+{% openQuestions %}D9 scope — split (default) vs wholesale. Blocks step 3 only; steps 1, 2, 4 and 5 can proceed.{% /openQuestions %}
+{% verify %}Full gate set plus `npm run test:visual` with each diff individually reviewed. **Do not proceed to P8 until Heddle's suites are green against a local pack of this branch.**{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p5-template-rewiring" title="P5 — Rewire the template and delete duplicates (D4, D6, D11, D15)" mapsTo="P5" %}
+{% endState %}`weft-board` composes Weft primitives instead of re-implementing them, every named duplicate is deleted, and the D11 accessibility defect is fixed with real controls.{% /endState %}
+{% testsFirst %}
+- D11: rail search is a real `<input>` and drawer reply a real `<textarea>` — each exposed as a textbox with an accessible name, accepting input. **GUARD (focus):** both show a visible focus ring on `:focus-visible`.
+- D11: Tab reaches both in DOM order.
+- DELETION GUARDs: `css/weft-templates.css` contains no `weft-board-btn`, no `weft-board-type`, and no rail-search or drawer-reply div-styling selectors.
+- D6: `SourcePill` suite (new) — mono type, `truncate` ellipsises, `tone="muted"` applies. **GUARD:** a `Badge` space chip and a `SourcePill` render together without class collision, encoding the D5/D6 chip split.
+- D15: `direct | alias | trace` chips render on `Badge`. **GUARD:** no evidence renders no chip. **GUARD:** the three kinds are distinguishable without colour, since T1 kept canonical `--weft-info` close in hue to `--weft-link`.
+- D4 GUARD (a11y): the drawer's link-styled action is still `role="button"`, not `link`.
+{% /testsFirst %}
+{% expectedFiles %}`css/weft-templates.css`, `docs/brand-package/11-panel-templates.md`, `scripts/generate-panel-templates-page.py`, `docs/brand-package/panel-templates.html`, `src/ui/__tests__/source-pill.test.tsx`, template guard test{% /expectedFiles %}
+{% work %}
+1. Replace the display-only divs with real controls; verify focus affordance rather than trusting the global rule.
+2. Point the template's chips at `SourcePill` (mono) and `Badge` (count/space/status), its buttons at `Button size="sm"`, its header at `PanelHeader`, its rows at `HudListRow`, its actions at `ActionButtonRow`.
+3. Delete the superseded `weft-board-*` classes and update the region map, the breakdown tables, and the generated specimen page together — they must not drift.
+4. Add the T1 guard test: zero custom-property declarations in the template, and every `var(--weft-*)` resolves.
+5. Gate set; regenerate the specimen page and confirm it still renders in both themes.
+{% /work %}
+{% openQuestions %}None.{% /openQuestions %}
+{% verify %}Full gate set; `node scripts/check-raw-colors.mjs`; regenerate and eyeball `docs/brand-package/panel-templates.html` in light and dark.{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p6-css-layer" title="P6 — Widen the plain-CSS layer" mapsTo="P6" %}
+{% endState %}Panel iframes can compose the same surface React consumers can: the counterparts that caused most of the duplication exist in `weft-components.css`, token-only and theme-correct.{% /endState %}
+{% testsFirst %}
+- `.weft-btn.is-link` exists in the shipped `css/weft-components.css` (D4's CSS-layer gap).
+- For each counterpart added: the class exists, is token-only, and renders equivalently to its React counterpart in light and dark.
+- GUARD: `check-exports-contract.mjs` still resolves every subpath from the packed tarball.
+- GUARD: `check-pure-token-file.mjs` still passes — the components layer may carry `@media`, `weft.css` may not.
+{% /testsFirst %}
+{% expectedFiles %}`css/weft-components.css`, `docs/brand-package/04-design-system.md`, a CSS-layer parity test{% /expectedFiles %}
+{% work %}
+1. Add `.weft-btn.is-link` first — it closes a decision (D4) rather than a nice-to-have.
+2. Then, in decreasing order of duplication caused: `panel-header`, `hud-list-row`, `badge`, `stat-row`, `action-button-row`, `toggle-group` (joined).
+3. Document each in `04-design-system.md`; anything deliberately skipped goes in this plan's log with a reason.
+4. Gate set.
+{% /work %}
+{% openQuestions %}How far to take this. Six counterparts is the full list from the breakdown; the minimum that closes a decision is one (`.weft-btn.is-link`). Recommend the full set, since the stated goal is that the next template composes rather than duplicates.{% /openQuestions %}
+{% verify %}Full gate set; visual parity checked React-vs-CSS for each counterpart in light and dark.{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p7-density-axis" title="P7 — Density axis (T2) — BLOCKED" mapsTo="P7" %}
+{% endState %}Users can opt into high density through a real Weft axis, and the board stops carrying a 34px literal.{% /endState %}
+{% testsFirst %}
+- `--weft-control-h` resolves 44px default, 36px compact, 34px dense.
+- REGRESSION (path a): every surface currently on `compact` is unchanged — the reason (a) was recommended over (b).
+- `check-pure-token-file.mjs` passes — the new tier is a plain `:root[...]` axis block with no component selectors.
+- Visual: `gallery.spec.ts` gains a `dense` theme, giving a fourth baseline per section.
+{% /testsFirst %}
+{% expectedFiles %}`css/weft.css`, `docs/brand-package/04-design-system.md`, `tests/visual/gallery.spec.ts`, new baselines{% /expectedFiles %}
+{% work %}
+**Do not start until the T2 branch is chosen.**
+1. Path (a): add a `:root[data-density="dense"]` block setting the `--weft-control-*` family at the dense scale; leave `compact` untouched.
+2. Remove the board's 34px literal and the note that documents it.
+3. Extend the visual theme loop; record dense baselines.
+4. Confirm the `weft.css` diff is additive only, preserving byte-stability for Heddle's verbatim injection.
+{% /work %}
+{% openQuestions %}**Blocking:** (a) new `dense` tier, or (b) tighten `compact`. If (b), replace the regression case with an explicit accept-list of every compact consumer whose baseline moves, Heddle's included.{% /openQuestions %}
+{% verify %}Full gate set; `check-pure-token-file.mjs`; four-theme visual suite; Heddle re-run because injected CSS changed.{% /verify %}
+{% /phase %}
+
+{% phase id="phase-p8-release" title="P8 — Release and Heddle adoption" mapsTo="P8" %}
+{% endState %}The work is published as a versioned Weft release and Heddle has adopted it with its own suites green — D1's reflow risk specifically checked.{% /endState %}
+{% testsFirst %}
+- No new tests. The gate is that every prior phase's suite passes on the release commit, and Heddle's suites pass against the packed tarball.
+{% /testsFirst %}
+{% expectedFiles %}`.changeset/*.md`, `manifest.json` (`designSystemVersion`), `package.json`, Heddle's `package.json`{% /expectedFiles %}
+{% work %}
+1. Consolidate changesets — the staged template changeset plus one per phase; minor overall unless a major crept in.
+2. Confirm `designSystemVersion` equals `package.json` version (gated) and every showcase entry carries its bumped semver.
+3. `npm run build`; `check-exports-contract` against the packed tarball.
+4. PR, CI green, merge; merge the Version Packages PR to publish.
+5. In Heddle: bump the exact pin, `npm install`, run `npm run linux:check` and the visual suite. **Review SignalRow, ticket updates and account lists specifically for D1 reflow.**
+6. Refresh plan-reviewer's vendored `weft.css` copy via its `scripts/refresh-weft-tokens.mjs` if the token file changed (only if P7 landed).
+{% /work %}
+{% openQuestions %}Whether to release after P6 and treat P7 as a follow-up release. Recommend yes — it decouples the blocked phase from six shippable ones.{% /openQuestions %}
+{% verify %}CI green on the PR; Heddle `npm run linux:check` plus visual suite green; published version resolves from GitHub Packages.{% /verify %}
+{% /phase %}
+
+{% section id="verification" title="Verification strategy" %}
+{% matrix id="coverage" columns=["Area", "Planned tests / checks", "Acceptance"] %}
+{% row %}{% cell %}New primitives (dot, tier group, reference row){% /cell %}{% cell %}New vitest suites incl. clipboard success + failure; manifest + props entries; new gallery baselines in 3 themes{% /cell %}{% cell %}AC1, AC2, AC4{% /cell %}{% /row %}
+{% row %}{% cell %}Additive variants{% /cell %}{% cell %}Per-component variant tests plus a byte-identical-default regression each{% /cell %}{% cell %}AC1, AC3{% /cell %}{% /row %}
+{% row %}{% cell %}Appearance moves (D1, D3, D9){% /cell %}{% cell %}Hierarchy/arrangement tests + full prop regression; individually reviewed baselines{% /cell %}{% cell %}AC1, AC3{% /cell %}{% /row %}
+{% row %}{% cell %}Deletions{% /cell %}{% cell %}Three DELETION GUARDs scanning `css/weft-templates.css`{% /cell %}{% cell %}AC1, BDD-AC1-1{% /cell %}{% /row %}
+{% row %}{% cell %}Accessibility{% /cell %}{% cell %}Focus-affordance guard (D11), decorative-dot guard (D13), role-is-button guard (D4), non-colour differentiation (D15), accessible names on copy + dismiss{% /cell %}{% cell %}AC2{% /cell %}{% /row %}
+{% row %}{% cell %}Doctrine made machine-checked{% /cell %}{% cell %}Never-invent-provenance (D15), never-render-an-empty-tier (D12), zero-token-declarations (T1){% /cell %}{% cell %}AC2, BDD-AC2-1, BDD-AC2-2{% /cell %}{% /row %}
+{% row %}{% cell %}Contract gates{% /cell %}{% cell %}`npm run verify`, `npm run props` (additive vs breaking), `check-raw-colors`, `check-pure-token-file`, `check-exports-contract`{% /cell %}{% cell %}AC4, BDD-AC4-1{% /cell %}{% /row %}
+{% row %}{% cell %}Plain-CSS parity{% /cell %}{% cell %}Class-presence + React-vs-CSS visual parity per counterpart{% /cell %}{% cell %}AC6{% /cell %}{% /row %}
+{% row %}{% cell %}Density axis{% /cell %}{% cell %}Token resolution per tier; compact-unchanged regression; four-theme baselines{% /cell %}{% cell %}AC4{% /cell %}{% /row %}
+{% row %}{% cell %}Downstream{% /cell %}{% cell %}Heddle `npm run linux:check` + visual suite; SignalRow / ticket updates / account lists reviewed for D1{% /cell %}{% cell %}AC5, BDD-AC5-1{% /cell %}{% /row %}
+{% /matrix %}
+{% /section %}
+
+{% section id="log" title="Decisions / Deviations Log" %}
+- 2026-07-29: Plan created from the fifteen settled decisions and the agreed test-case spec in `92db6890-19c0-497e-a549-a2d3101a005e`. Phasing is dependency-first then risk-ascending: P1 lands the dot that P2 and P3 need, additive work precedes appearance changes, deletions come last, and the one phase with cross-repo blast radius (P4) is isolated with a downstream gate.
+- 2026-07-29: P7 is blocked on the T2 branch and one step of P4 is blocked on the D9 scope. Everything else is executable, which is why release after P6 with P7 as a follow-up is recommended.
+- 2026-07-29: Branch is `claude/panel-templates-design-system-baa007` on `Nodaste-Lab/weft`, currently local-only with the template layer uncommitted in the working tree.
+{% /section %}
+
+{% section id="resume" title="Resume Instructions (Agent)" %}
+Read this plan and the decisions plan (`92db6890-19c0-497e-a549-a2d3101a005e`) fully before touching code — the decisions there are settled and this plan may not contradict them. Then inspect the first unchecked Progress item. Write the phase's failing tests before its implementation; the GUARD cases are the contract, not a follow-up. Do not start P7 until the T2 branch is chosen, and do not start P4 step 3 until the D9 scope is answered. Never run a blanket `--update-snapshots` — review each moved baseline in light, dark and compact. Keep `css/weft.css` a pure token file and additive. After each phase, update the matching Progress checkbox and append a dated log line with what moved and what the gates said.
+{% /section %}

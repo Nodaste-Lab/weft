@@ -26,6 +26,12 @@ const calloutVariants = cva(
       variant: {
         inline: "",
         text: "gap-3",
+        // dashed — notice box with a dashed border; use for inline failure/error
+        // notices that sit left-aligned inside a content area (D8/D9).
+        dashed: "border-dashed",
+        // band — full-width left-accented stripe for section-level notices.
+        // No border-radius on the accent side; strong left border carries tone.
+        band: "rounded-none border-0 border-l-[3px] pl-3 pr-3 py-2.5",
       },
       tone: {
         info: "border-[var(--hud-border-accent)] bg-[var(--hud-info-bg-soft)] text-[var(--hud-text-1)]",

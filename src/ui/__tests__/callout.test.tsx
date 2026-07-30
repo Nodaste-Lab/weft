@@ -73,6 +73,16 @@ describe('Callout', () => {
     expect(screen.queryByText('Markdown body')).not.toBeInTheDocument();
   });
 
+  it('GUARD D8: dashed variant sets data-variant="dashed"', () => {
+    const { container } = render(<Callout variant="dashed" title="Notice" />);
+    expect(container.querySelector('[data-slot="callout"]')).toHaveAttribute('data-variant', 'dashed');
+  });
+
+  it('GUARD D8: band variant sets data-variant="band"', () => {
+    const { container } = render(<Callout variant="band" title="Info band" />);
+    expect(container.querySelector('[data-slot="callout"]')).toHaveAttribute('data-variant', 'band');
+  });
+
   it('supports action content without making the whole callout interactive', () => {
     const { container } = render(
       <Callout

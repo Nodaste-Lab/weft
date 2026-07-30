@@ -11,7 +11,7 @@ const ui = (id) => join(ROOT, 'src/ui', `${id}.tsx`);
 test('extractSurface reads cva variants and own props (button)', () => {
   const s = extractSurface(ui('button'));
   assert.deepEqual(s.variants.variant.includes('ghost'), true);
-  assert.deepEqual(s.variants.size.sort(), ['default', 'icon', 'lg', 'sm']);
+  assert.deepEqual(s.variants.size.sort(), ['default', 'dense', 'icon', 'lg', 'sm']);
   assert.equal(s.props.loading.optional, true);
   assert.deepEqual(s.native, ['button']);
 });

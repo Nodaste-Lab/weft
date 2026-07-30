@@ -111,6 +111,14 @@
   border-color: var(--weft-rule);
 }
 .weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-rule-strong); background: var(--weft-paper); }
+/* Link-style inline action — no border, no background, just a colored text
+ * button. Use for trailing "View all" or "Retry" actions in dense rows.
+ * margin-left: auto pushes it to the trailing edge in a flex row. */
+.weft-btn.is-link {
+  border: 0; background: transparent; color: var(--weft-link);
+  padding-inline: 4px; text-decoration: underline; text-underline-offset: 2px;
+}
+.weft-btn.is-link:hover:not(:disabled) { color: var(--weft-blue-deep); }
 
 /* ── Form inputs ──────────────────────────────────────────────────────────── */
 .weft-field {
@@ -211,6 +219,112 @@
   margin-bottom: 4px; padding: 0;
 }
 
+/* ── Status dot (D13) ─────────────────────────────────────────────────────── */
+/* Decorative by default — sits beside a label that carries the meaning.
+ * Add role="img" aria-label="…" only when the dot is the sole carrier. */
+.weft-dot {
+  width: 7px; height: 7px; border-radius: var(--weft-radius-dot);
+  display: inline-block; flex: none;
+}
+.weft-dot.is-ok   { background: var(--weft-ok); }
+.weft-dot.is-warn { background: var(--weft-warn); }
+.weft-dot.is-stop { background: var(--weft-stop); }
+.weft-dot.is-info { background: var(--weft-info); }
+.weft-dot.is-muted { background: var(--weft-muted); }
+
+/* ── Joined toggle group (D7) ─────────────────────────────────────────────── */
+/* Segmented control: items share one outer border, active item gets a tinted
+ * fill. Use for "Direct / Expanded" or "Day / Week / Month" switchers.
+ * Compose: .weft-toggle-group > button.weft-toggle-group-item[aria-pressed] */
+.weft-toggle-group {
+  display: inline-flex;
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-chip);
+  overflow: hidden;
+}
+.weft-toggle-group-item {
+  flex: 1; text-align: center;
+  padding: 6px 12px; min-height: 24px;
+  font-size: 12px; font-weight: 600;
+  color: var(--weft-muted); cursor: pointer;
+  border: 0; border-left: 1px solid var(--weft-rule);
+  background: transparent;
+}
+.weft-toggle-group-item:first-child { border-left: 0; }
+.weft-toggle-group-item[aria-pressed="true"],
+.weft-toggle-group-item.is-on {
+  background: color-mix(in srgb, var(--weft-blue) 15%, transparent);
+  color: var(--weft-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--weft-blue) 40%, transparent);
+}
+
+/* ── Tier group (D12) ─────────────────────────────────────────────────────── */
+/* Urgency-toned priority tier for operator boards. Groups action rows by what
+ * must be done now. Never render an empty tier: guard callers.
+ *   .is-blocked  act now        .is-awaiting  needs response    .is-fyi  note */
+.weft-tier-group {
+  margin-bottom: 12px;
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-chip);
+  overflow: hidden;
+}
+.weft-tier-group-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 11px;
+  font-weight: 600; font-size: 13px;
+  border-bottom: 1px solid var(--weft-rule);
+}
+.weft-tier-group-sub { font-weight: 400; color: var(--weft-muted); font-size: 12px; }
+.weft-tier-group-count {
+  margin-left: auto;
+  font-family: var(--weft-font-mono); font-size: 11px; color: var(--weft-muted);
+  border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-pill);
+  padding: 1px 8px;
+}
+.weft-tier-group.is-blocked {
+  border-color: color-mix(in srgb, var(--weft-stop) 45%, transparent);
+}
+.weft-tier-group.is-blocked .weft-tier-group-head {
+  background: color-mix(in srgb, var(--weft-stop) 10%, transparent);
+}
+.weft-tier-group.is-awaiting {
+  border-color: color-mix(in srgb, var(--weft-warn) 40%, transparent);
+}
+.weft-tier-group.is-awaiting .weft-tier-group-head {
+  background: color-mix(in srgb, var(--weft-warn) 10%, transparent);
+}
+.weft-tier-group.is-fyi .weft-tier-group-head { background: var(--weft-fill-soft); }
+
+/* ── Panel header (D10) ───────────────────────────────────────────────────── */
+/* Top strip of a panel surface. Use data-size="board" for operator boards. */
+.weft-panel-header {
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--weft-rule);
+  background: var(--weft-paper);
+  padding: 8px 14px;
+  font-family: var(--weft-font-sans);
+}
+.weft-panel-header[data-size="board"] {
+  min-height: 46px;
+  padding: 10px 14px;
+  font-size: 19px; font-weight: 600;
+}
+.weft-panel-header-title { flex: 1; min-width: 0; font-weight: 600; }
+/* Board size auto-propagates to the title — callers do not set size on both. */
+.weft-panel-header[data-size="board"] .weft-panel-header-title {
+  font-size: 19px; font-weight: 600; line-height: 1.25;
+}
+.weft-panel-header-actions {
+  display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.weft-panel-header-dismiss {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border: 0; background: none; cursor: pointer;
+  color: var(--weft-muted); border-radius: var(--weft-radius-chip);
+}
+.weft-panel-header-dismiss:hover { background: var(--weft-fill-soft); color: var(--weft-ink); }
+
 /* ── Table — bordered paper list with hairline rows ───────────────────────── */
 .weft-table {
   display: flex; flex-direction: column;
@@ -243,3 +357,157 @@
 .weft-row.is-active .weft-stage { color: var(--weft-yellow); }
 .weft-row.is-active .weft-desc { color: var(--weft-on-blue); }
 .weft-row.is-active .weft-desc span { color: var(--weft-on-blue-muted); }
+
+/* ── Badge plain-CSS counterparts (D5 / D6 / D8) ────────────────────────────
+ * Canonical chip classes for badge variants: count, space, status.
+ * Tone modifiers (.is-stop, .is-warn, .is-ok, .is-info) apply to any variant.
+ * Absence of relation evidence = no chip rendered.
+ */
+.weft-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid transparent;
+  font-family: var(--weft-font-sans); font-size: 12px; font-weight: 500;
+  white-space: nowrap; overflow: hidden;
+  border-radius: var(--weft-radius-chip);
+  padding: 1px 8px;
+}
+/* Count — mono numeral chip for tier item counts */
+.weft-badge.is-count {
+  border-color: var(--weft-rule);
+  background: transparent;
+  font-family: var(--weft-font-mono); font-size: 11px;
+  color: var(--weft-muted);
+  border-radius: var(--weft-radius-pill);
+  padding: 1px 8px;
+}
+/* Space — tinted chip for workspace/space attribution */
+.weft-badge.is-space {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--weft-ink) 8%, transparent);
+  color: var(--weft-muted);
+  font-size: 10.5px;
+  padding: 1px 7px;
+}
+/* Status — mono bordered chip for machine-state labels (e.g. "BLOCKED") */
+.weft-badge.is-status {
+  border-color: currentColor;
+  background: transparent;
+  font-family: var(--weft-font-mono); font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: var(--weft-radius-chip);
+}
+/* Outline variant */
+.weft-badge.is-outline {
+  border-color: var(--weft-rule);
+  background: transparent; color: var(--weft-muted);
+}
+/* Tone modifiers — use with .is-outline, .is-status */
+.weft-badge.is-stop {
+  border-color: color-mix(in srgb, var(--weft-stop) 45%, transparent);
+  color: var(--weft-stop);
+}
+.weft-badge.is-warn {
+  border-color: color-mix(in srgb, var(--weft-warn) 45%, transparent);
+  color: var(--weft-warn);
+}
+.weft-badge.is-ok {
+  border-color: color-mix(in srgb, var(--weft-ok) 45%, transparent);
+  color: var(--weft-ok);
+}
+.weft-badge.is-info {
+  border-color: color-mix(in srgb, var(--weft-info) 45%, transparent);
+  color: var(--weft-info);
+}
+
+/* ── CopyableRef plain-CSS counterpart (D14) ─────────────────────────────────
+ * Copyable canonical reference chip with a copy button.
+ * Markup:
+ *   <div class="weft-copyable-ref">
+ *     <code>nod://ticket/NOD-1234</code>
+ *     <button class="weft-copyable-ref-copy" type="button"
+ *             aria-label="Copy reference">Copy</button>
+ *   </div>
+ */
+.weft-copyable-ref {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px 5px 9px;
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-chip);
+  background: var(--weft-fill-soft);
+}
+.weft-copyable-ref code {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--weft-font-mono); font-size: 11px; color: var(--weft-muted);
+}
+.weft-copyable-ref-copy {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 5px;
+  min-height: 24px;
+  border: 1px solid var(--weft-rule-strong);
+  border-radius: var(--weft-radius-chip);
+  background: transparent; color: var(--weft-ink);
+  font-size: 11px; padding: 3px 8px; cursor: pointer;
+}
+.weft-copyable-ref-copy:hover { background: var(--weft-fill-soft); }
+.weft-copyable-ref-copy svg { width: 12px; height: 12px; }
+
+/* ── ActionButtonRow plain-CSS counterpart (D3) ──────────────────────────────
+ * Flex row for grouped panel actions (dense by default).
+ * Markup:
+ *   <div class="weft-action-button-row">
+ *     <button class="weft-btn">Resolve</button>
+ *     <button class="weft-btn is-link">Open ↗</button>
+ *   </div>
+ */
+.weft-action-button-row {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+/* Trailing slot wrapper — use <span class="weft-action-button-row-trailing"> around any trailing link/action. */
+.weft-action-button-row-trailing { margin-left: auto; }
+
+/* ── StatRow plain-CSS counterpart (D13) ─────────────────────────────────────
+ * Compact stat summary row, typically used inside a narrow panel slot.
+ * Markup:
+ *   <div class="weft-stat-row">
+ *     <span class="weft-dot is-stop" aria-hidden="true"></span>
+ *     <span class="weft-stat-row-label">Blockers</span>
+ *     <span class="weft-stat-row-value">1</span>
+ *   </div>
+ */
+.weft-stat-row {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 2px;
+  border-bottom: 1px solid var(--weft-rule);
+  font-size: 12px; color: var(--weft-ink);
+}
+.weft-stat-row:last-child { border-bottom: 0; }
+.weft-stat-row-label { flex: 1; min-width: 0; }
+.weft-stat-row-value { color: var(--weft-muted); margin-left: auto; }
+/* Board variant — slightly taller for operator surfaces */
+.weft-stat-row.is-board { font-size: 13px; padding: 7px 2px; }
+
+/* ── HudListRow plain-CSS counterpart (D1) ───────────────────────────────────
+ * Action item row inside a priority tier or plain list.
+ * Markup:
+ *   <div class="weft-hud-list-row">
+ *     <div class="weft-hud-list-row-col">
+ *       <div class="weft-hud-list-row-title">Title text</div>
+ *       <div class="weft-hud-list-row-meta">Space · Type</div>
+ *     </div>
+ *     <div class="weft-hud-list-row-aside">… badges …</div>
+ *   </div>
+ */
+.weft-hud-list-row {
+  display: flex; gap: 8px; align-items: baseline;
+  padding: 8px 11px;
+  border-bottom: 1px solid var(--weft-rule);
+  cursor: pointer;
+}
+.weft-hud-list-row:last-child { border-bottom: 0; }
+.weft-hud-list-row:hover { background: var(--weft-fill-soft); }
+.weft-hud-list-row-col { flex: 1; min-width: 0; }
+.weft-hud-list-row-title { font-size: 13px; color: var(--weft-ink); }
+.weft-hud-list-row-meta { font-size: 11.5px; color: var(--weft-muted); margin-top: 1px; }
+.weft-hud-list-row-aside { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }

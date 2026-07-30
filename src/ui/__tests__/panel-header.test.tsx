@@ -23,4 +23,18 @@ describe('PanelHeader', () => {
     expect(onDismiss).toHaveBeenCalledTimes(1);
     await expectA11yClean(container);
   });
+
+  it('GUARD D10: board size sets data-size="board"', () => {
+    const { container } = render(
+      <PanelHeader size="board">
+        <PanelHeaderTitle size="board">Operator Board</PanelHeaderTitle>
+      </PanelHeader>,
+    );
+    expect(container.querySelector('[data-slot="panel-header"]')).toHaveAttribute('data-size', 'board');
+  });
+
+  it('GUARD D10: default size does not set data-size', () => {
+    const { container } = render(<PanelHeader><PanelHeaderTitle>Title</PanelHeaderTitle></PanelHeader>);
+    expect(container.querySelector('[data-slot="panel-header"]')).not.toHaveAttribute('data-size');
+  });
 });
