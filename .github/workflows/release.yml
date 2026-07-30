@@ -44,7 +44,10 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: npx changeset publish
-          version: npx changeset version && npm run sync:version
+          # A single command on purpose: changesets/action passes this to
+          # @actions/exec, not a shell, so `&&` here would become a literal
+          # argument. The chaining lives in the npm script instead.
+          version: npm run release:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
