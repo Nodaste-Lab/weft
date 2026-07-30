@@ -73,23 +73,38 @@ git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BA
 
 LOGDIR="${TMPDIR:-/tmp}/review-gate/$(basename "$ROOT")"
 # Review inputs embed the full private diff, so the log path must be private —
-# and that has to be ENFORCED, not attempted. A pre-existing world-writable
-# /tmp/review-gate would otherwise expose the diff and invite symlink tampering.
+# enforced, not attempted. Order matters: lstat every component BEFORE any
+# mkdir/chmod, because both follow symlinks and would otherwise create or modify
+# a directory we never intended to touch.
+LOGPARENT="$(dirname "$LOGDIR")"
+
+refuse_path() {
+  echo "review-gate: refusing to write review artefacts to $1" >&2
+  echo "  $2" >&2
+  echo "  The review input contains the full private diff. Remove or fix that" >&2
+  echo "  path and retry." >&2
+  exit 1
+}
+
+# 1. Reject symlinks first, before anything follows them.
+for dir in "$LOGPARENT" "$LOGDIR"; do
+  [ -L "$dir" ] && refuse_path "$dir" "it is a symlink; refusing to follow it."
+done
+
+# 2. Create only after the paths are known not to be links.
 mkdir -p "$LOGDIR"
-for dir in "$(dirname "$LOGDIR")" "$LOGDIR"; do
+
+# 3. Now secure and verify owner + mode on each real directory.
+for dir in "$LOGPARENT" "$LOGDIR"; do
+  [ -L "$dir" ] && refuse_path "$dir" "it became a symlink mid-run; refusing to follow it."
   chmod 700 "$dir" 2>/dev/null || true
   owner="$(stat -f '%u' "$dir" 2>/dev/null || stat -c '%u' "$dir" 2>/dev/null || echo '')"
   mode="$(stat -f '%OLp' "$dir" 2>/dev/null || stat -c '%a' "$dir" 2>/dev/null || echo '')"
   if [ "$owner" != "$(id -u)" ] || [ "$mode" != "700" ]; then
-    echo "review-gate: refusing to write review artefacts to $dir" >&2
-    echo "  owner=$owner (need $(id -u)), mode=$mode (need 700). The review input" >&2
-    echo "  contains the full private diff; remove or fix that directory and retry." >&2
-    exit 1
-  fi
-  if [ -L "$dir" ]; then
-    echo "review-gate: $dir is a symlink — refusing to follow it" >&2; exit 1
+    refuse_path "$dir" "owner=$owner (need $(id -u)), mode=$mode (need 700)."
   fi
 done
+
 ROUND=$(( $(find "$LOGDIR" -name "${SHORT}-round*.md" 2>/dev/null | wc -l | tr -d ' ') + 1 ))
 OUT="$LOGDIR/${SHORT}-round${ROUND}.md"
 INPUT="$LOGDIR/${SHORT}-input${ROUND}.md"
