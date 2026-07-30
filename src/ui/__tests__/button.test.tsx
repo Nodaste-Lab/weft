@@ -88,4 +88,11 @@ describe('Button interaction states', () => {
     expect(link).toHaveAttribute('data-slot', 'button');
     expect(link).toHaveAttribute('data-state', 'idle');
   });
+
+  it('GUARD: dense size renders with the 34px height class (T2/D4)', () => {
+    const { container } = render(<Button size="dense">Action</Button>);
+    const button = container.querySelector('[data-slot="button"]');
+    // h-[34px] is the dense size class
+    expect(button?.className).toContain('h-[34px]');
+  });
 });

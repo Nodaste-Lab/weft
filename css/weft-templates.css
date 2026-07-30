@@ -1,0 +1,297 @@
+/*
+ * Weft template layer — whole-surface compositions, not single controls.
+ *
+ * `weft-components.css` gives a panel one control at a time (a button, an
+ * input). A template gives it an entire reviewed surface: the regions, the
+ * grid, the grouping semantics, and the states, so a panel author composes a
+ * known-good operator surface instead of re-deriving one from tokens.
+ *
+ * Load order: `weft.css` (tokens) → `weft-components.css` (a11y base +
+ * controls) → this file. The focus ring, reduced-motion override, and the
+ * canonical `.weft-checkbox` / `.weft-btn` controls come from the components
+ * layer; templates never redefine them.
+ *
+ * Rules (same as the components layer):
+ *   • Token-only — every value reads var(--weft-*). Gated by
+ *     scripts/check-raw-colors.mjs.
+ *   • Renders in light AND dark from the same tokens. A template must never
+ *     pin a palette; it follows the active theme.
+ *   • Namespaced. Every class starts `weft-<template>-`, states use `.is-*`.
+ *
+ * ── Templates in this file ───────────────────────────────────────────────────
+ *   weft-board   Operator action board. Filter rail + priority-tiered action
+ *                list, with a compact panel variant for narrow slots and an
+ *                item drawer. Ported from the reviewed Updates Dashboard
+ *                surface (Heddle NOD-1254); see
+ *                docs/brand-package/11-panel-templates.md for the DOM contract.
+ */
+
+/* ══ weft-board ═════════════════════════════════════════════════════════════
+ * Scope. Sets the surface frame and the template's local type scale. Colors
+ * resolve from the active theme — light and dark both derive from tokens.
+ */
+.weft-board {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--weft-rule);
+  border-radius: var(--weft-radius-card);
+  background: var(--weft-paper);
+  color: var(--weft-ink);
+  font-family: var(--weft-font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.weft-board,
+.weft-board * { box-sizing: border-box; }
+
+/* Weft's palette bridge promotes h1–h3 to the decorative serif with
+ * !important. In a dense operator board the headings are UI chrome, not
+ * editorial voice, so the template holds a single sans face. Scoped, and with
+ * !important, because beating the bridge requires both. Same convention as the
+ * work-board surface. */
+:root[data-palette='weft'] .weft-board h1,
+:root[data-palette='weft'] .weft-board h2,
+:root[data-palette='weft'] .weft-board h3 {
+  font-family: var(--weft-font-sans) !important;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+.weft-board h3 { margin: 24px 0 10px; font-size: 17px; font-weight: 700; }
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+/* D10: use .weft-panel-header[data-size="board"] (weft-components.css)
+ * or <PanelHeader size="board"> (React).
+ * The board-local header, title, and refresh classes are deleted; see
+ * docs/brand-package/11-panel-templates.md for the canonical markup. */
+
+/* ── Body: filter rail + detail column ────────────────────────────────────── */
+.weft-board-body { display: grid; grid-template-columns: 258px 1fr; }
+.weft-board-rail {
+  border-right: 1px solid var(--weft-rule);
+  padding: 14px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.weft-board-detail { padding: 14px; min-width: 0; }
+
+/* Narrow slots stack the rail above the list rather than crushing both. */
+@media (max-width: 720px) {
+  .weft-board-body { grid-template-columns: 1fr; }
+  .weft-board-rail { border-right: 0; border-bottom: 1px solid var(--weft-rule); }
+}
+
+/* ── Rail controls ────────────────────────────────────────────────────────── */
+.weft-board-rail-label { font-size: 12px; color: var(--weft-muted); }
+.weft-board-rail-section { display: flex; flex-direction: column; gap: 9px; }
+/* D11: use real .weft-input / .weft-select (weft-components.css) with
+ * data-density="dense" on :root (<html>) for the 34px control tier. Density is
+ * an application-level preference, not board-scoped: weft.css may only carry
+ * :root selectors because it is injected verbatim into panel iframes.
+ * The board-local search and picker classes are deleted.
+ * Markup: <input class="weft-input" name="…" placeholder="Search…"> */
+
+/* Filter checkbox rows. The control itself is the canonical .weft-checkbox
+ * from the components layer — the template only lays it out. */
+.weft-board-checks { display: flex; flex-direction: column; gap: 3px; }
+.weft-board-check {
+  display: flex; align-items: center; gap: 9px;
+  min-height: 24px;                        /* AA touch target */
+  font-size: 13px; color: var(--weft-ink);
+  padding: 3px 0; cursor: pointer;
+}
+.weft-board-check.is-disabled { color: var(--weft-muted); cursor: default; }
+.weft-board-check.is-disabled .weft-checkbox { border-style: dashed; }
+.weft-board-check-note { color: var(--weft-muted); font-size: 11.5px; }
+
+/* D7: use .weft-toggle-group / .weft-toggle-group-item (weft-components.css)
+ * or <ToggleGroup joined> / <ToggleGroupItem> (React) for segmented controls.
+ * The board-local segmented control class is deleted. */
+
+/* ── Context header above the list ────────────────────────────────────────── */
+.weft-board-context { margin-bottom: 14px; }
+.weft-board-context h3 { margin: 0 0 4px; font-size: 18px; }
+.weft-board-context-sub { font-size: 12.5px; color: var(--weft-muted); }
+.weft-board-context-note {
+  font-size: 11.5px; color: var(--weft-muted); margin-top: 7px;
+  padding: 6px 9px;
+  border: 1px dashed var(--weft-rule-strong);
+  border-radius: var(--weft-radius-chip);
+}
+.weft-board-context-note b { color: var(--weft-ink); }
+
+/* ── Partial-failure toast — floats over the surface ──────────────────────── */
+.weft-board-toast {
+  position: absolute; top: 58px; right: 16px; z-index: 5;
+  max-width: 340px;
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 11px 12px;
+  border: 1px solid var(--weft-warn); border-left-width: 3px;
+  border-radius: var(--weft-radius-chip);
+  background: var(--weft-paper);
+  box-shadow: var(--weft-shadow);
+  font-size: 12.5px;
+}
+.weft-board-toast-icon { color: var(--weft-warn); }
+.weft-board-toast b { color: var(--weft-ink); }
+.weft-board-toast-sub { font-size: 11.5px; color: var(--weft-muted); margin-top: 2px; }
+.weft-board-toast-retry {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--weft-link); font-size: 12px;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.weft-board-toast-close {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--weft-muted); font-size: 15px; line-height: 1;
+  min-width: 24px; min-height: 24px;       /* AA touch target */
+}
+
+/* ── Priority tiers ───────────────────────────────────────────────────────── */
+/* D12: use .weft-tier-group (weft-components.css) or <TierGroup> (React).
+ * Board-local urgency tier classes are deleted. Never render an empty tier.
+ *   Plain-CSS markup:
+ *   <div class="weft-tier-group is-blocked">
+ *     <div class="weft-tier-group-head">
+ *       <span class="weft-dot is-stop" aria-hidden="true"></span>
+ *       Act now <span class="weft-tier-group-sub">3 items</span>
+ *       <span class="weft-tier-group-count">3</span>
+ *     </div>
+ *     <div class="weft-hud-list-row">… rows …</div>
+ *   </div>
+ *
+ * D13: use .weft-dot (weft-components.css) or <Dot> (React) for status dots.
+ * Board-local dot classes are deleted. */
+
+/* ── Action rows ──────────────────────────────────────────────────────────── */
+/* D1: board item rows are now HudListRow (React) / .weft-hud-list-row (CSS).
+ * Board-local item row classes are deleted (verified by test:template-contract).
+ * Plain-CSS markup:
+ *   <div class="weft-hud-list-row"> … </div>
+ * React: <HudListRow><HudListRowTitle>…</HudListRowTitle><HudListRowMeta>…</HudListRowMeta></HudListRow>
+ */
+
+/* Row chips — D6 / D5 */
+/* Board-local mono type chip and tinted space chip are deleted.
+ * Use: .weft-source-pill / <SourcePill> for mono type origin chips.
+ *      .weft-badge.is-space / <Badge variant="space"> for space attribution.
+ */
+
+/* ── Provenance evidence chips ────────────────────────────────────────────────
+ * D15: evidence chips compose .weft-badge with a tone modifier.
+ * Never invent provenance: a row with no relation evidence renders no chip.
+ * Board-local evidence chip classes are deleted.
+ * Use: <span class="weft-badge is-outline is-info">direct</span>
+ *      <span class="weft-badge is-outline is-ok">alias</span>
+ *      (no chip rendered when relation field is absent)
+ */
+.weft-board-legend {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  margin-top: 10px; font-size: 11px; color: var(--weft-muted);
+}
+.weft-board-legend-item { display: inline-flex; gap: 5px; align-items: center; }
+
+/* ── Item drawer ──────────────────────────────────────────────────────────── */
+/* The drawer shell is a template-local inline detail panel (not a modal sheet). */
+.weft-board-drawer {
+  max-width: 480px;
+  border: 1px solid var(--weft-rule-strong);
+  border-radius: var(--weft-radius-chip);
+  box-shadow: var(--weft-shadow);
+  overflow: hidden;
+}
+.weft-board-drawer.is-wide { max-width: none; }
+
+/* D10: drawer header uses weft-panel-header[data-size="board"] (weft-components.css).
+ * Board-local drawer header and close classes are deleted.
+ * Plain-CSS markup:
+ *   <div class="weft-panel-header" data-size="board">
+ *     <div class="weft-panel-header-title">…</div>
+ *     <div class="weft-panel-header-actions">
+ *       <button class="weft-panel-header-dismiss" aria-label="Close">×</button>
+ *     </div>
+ *   </div>
+ */
+
+/* D14: copyable reference uses weft-copyable-ref (weft-components.css) or <CopyableRef>.
+ * Board-local reference chip and copy button classes are deleted.
+ * Plain-CSS markup:
+ *   <div class="weft-copyable-ref">
+ *     <code>nod://ticket/NOD-1234</code>
+ *     <button class="weft-copyable-ref-copy" type="button" aria-label="Copy reference">Copy</button>
+ *   </div>
+ */
+
+.weft-board-drawer-body {
+  padding: 11px 12px;
+  font-size: 12.5px; line-height: 1.5;
+  border-bottom: 1px solid var(--weft-rule);
+}
+
+/* D11: reply field uses .weft-textarea (weft-components.css) with a real <textarea>.
+ * The board-local display-only reply div is deleted.
+ * Plain-CSS markup:
+ *   <textarea class="weft-textarea" name="reply" rows="2" placeholder="Reply…"
+ *             aria-label="Reply to this item"></textarea>
+ */
+
+.weft-board-drawer-prov {
+  padding: 9px 12px;
+  background: var(--weft-fill-soft);
+  border-bottom: 1px solid var(--weft-rule);
+  font-size: 11.5px; color: var(--weft-muted);
+  display: flex; gap: 7px; align-items: baseline; flex-wrap: wrap;
+}
+.weft-board-drawer-prov b { color: var(--weft-ink); }
+
+/* D3: drawer action row uses .weft-action-button-row (weft-components.css).
+ * The board-local drawer actions class is deleted.
+ * Plain-CSS markup:
+ *   <div class="weft-action-button-row">
+ *     <button class="weft-btn">Resolve</button>
+ *     <button class="weft-btn is-link">Open ↗</button>
+ *   </div>
+ */
+
+/* D4: .weft-btn.is-link (weft-components.css) and .weft-badge.is-status (weft-components.css).
+ * Board-local button and status chip classes are deleted.
+ * Use: <button class="weft-btn">action</button>
+ *      <button class="weft-btn is-link">Open ↗</button>
+ *      <span class="weft-badge is-status is-stop">BLOCKED</span>
+ */
+
+/* ── Compact panel variant ───────────────────────────────────────────────────
+ * What a narrow slot gets instead of the full board: the same tiers reduced to
+ * counts. Swap on measured width, not on a media query, so the variant follows
+ * the slot rather than the viewport.
+ */
+.weft-board-panel {
+  border: 1px solid var(--weft-rule-strong);
+  border-radius: var(--weft-radius-chip);
+}
+.weft-board-panel-head {
+  font-size: 11px; color: var(--weft-muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--weft-rule);
+}
+.weft-board-panel-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+/* D12 / D13: compact panel rows use .weft-stat-row (weft-components.css).
+ * Board-local panel row and count classes are deleted.
+ * Plain-CSS markup:
+ *   <div class="weft-stat-row">
+ *     <span class="weft-dot is-stop" aria-hidden="true"></span>
+ *     <span class="weft-stat-row-label">Blockers</span>
+ *     <span class="weft-stat-row-value">1</span>
+ *   </div>
+ */
+
+/* ── Empty / error ───────────────────────────────────────────────────────────
+ * D9: the board-local notice class is deleted.
+ *
+ * Failure / partial-error notices (board cannot load, fetch failed):
+ *   React: <EmptyState variant="notice" title="…" />
+ *   Plain CSS: <div class="weft-callout is-dashed">…</div>
+ *
+ * True empty state (no items, not an error — i.e. "nothing needs you today"):
+ *   React: <EmptyState title="All clear" />  (centered default)
+ *
+ * The floating partial-failure toast (.weft-board-toast) is retained as a
+ * separate pattern for in-flight fetch failures that don't replace the list. */

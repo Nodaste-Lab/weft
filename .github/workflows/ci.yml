@@ -32,6 +32,8 @@ jobs:
         run: npm run test:css-contract
       - name: Contrast contract (AA on paper, both themes)
         run: npm run test:contrast
+      - name: Template contract (weft-board template layer)
+        run: npm run test:template-contract
       - name: Raw-color audit (tokens only outside css/)
         run: node scripts/check-raw-colors.mjs
       - name: Unit + a11y tests

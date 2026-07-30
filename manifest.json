@@ -24,9 +24,9 @@
       "id": "action-button-row",
       "path": "src/ui/action-button-row.tsx",
       "category": "actions",
-      "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment.",
+      "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment. Supports dense mode and trailingLink slot.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "add-item-button.figma",
@@ -94,9 +94,9 @@
       "id": "badge",
       "path": "src/ui/badge.tsx",
       "category": "feedback",
-      "summary": "Compact pill label for statuses, counts, and tags.",
+      "summary": "Compact pill label for statuses, counts, and tags. Includes count, space, and status variants with stop/warn/ok tones.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "breadcrumb",
@@ -110,9 +110,9 @@
       "id": "button",
       "path": "src/ui/button.tsx",
       "category": "actions",
-      "summary": "Primary action component with variant, size, disabled, blocked, and loading state options.",
+      "summary": "Primary action component with variant, size (default/sm/lg/icon/dense), disabled, blocked, and loading state options.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "calendar",
@@ -133,9 +133,9 @@
       "id": "callout",
       "path": "src/ui/callout.tsx",
       "category": "feedback",
-      "summary": "Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints. Supports info/warning/danger/positive/muted tones.",
+      "summary": "Inline and text-rich message panel for help notes, generated explanations, status banners, and panel-level hints. Supports inline/text/dashed/band variants and info/warning/danger/positive/muted tones.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "card",
@@ -240,10 +240,26 @@
       "version": "1.0.0"
     },
     {
+      "id": "copyable-ref",
+      "path": "src/ui/copyable-ref.tsx",
+      "category": "data-display",
+      "summary": "Truncated canonical reference with accessible copy action, success/failure visual feedback, and aria-live announcement.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "dialog",
       "path": "src/ui/dialog.tsx",
       "category": "overlay",
       "summary": "Modal dialog components for blocking workflows.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "dot",
+      "path": "src/ui/dot.tsx",
+      "category": "data-display",
+      "summary": "Bare semantic status dot (ok/warn/stop/info). Decorative by default; pass a label only when the dot alone carries the meaning.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -266,9 +282,9 @@
       "id": "empty-state",
       "path": "src/ui/empty-state.tsx",
       "category": "feedback",
-      "summary": "Centered icon + title + description + action slot for 'nothing to show yet' surfaces.",
+      "summary": "Placeholder for empty and failure states. centered variant (default) for genuine empty states; notice variant for left-aligned inline failure/error notices.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "eyebrow-label.figma",
@@ -336,9 +352,9 @@
       "id": "hud-list-row",
       "path": "src/ui/hud-list-row.tsx",
       "category": "data-display",
-      "summary": "Leading-media + title-stack + trailing-actions list row chrome with state accent (default/unread/overdue/resolved/active). Used by SignalRow, account lists, ticket updates.",
+      "summary": "Leading-media + three-level title-stack (title/meta/project) + trailing-actions list row with state accent (default/unread/overdue/resolved/active). Used by SignalRow, account lists, ticket updates.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "id": "hud-meta-caption.figma",
@@ -598,9 +614,9 @@
       "id": "panel-header",
       "path": "src/ui/panel-header.tsx",
       "category": "layout",
-      "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button.",
+      "summary": "Composable HUD-panel top strip with icon+title, action slot, and dismiss button. size='board' for larger operator-board headers.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "period-chip-row.figma",
@@ -860,9 +876,9 @@
       "id": "stat-row",
       "path": "src/ui/stat-row.tsx",
       "category": "data-display",
-      "summary": "Label-on-left, value-on-right key/value row with optional hint badge.",
+      "summary": "Label-on-left, value-on-right key/value row with optional hint badge. board variant adds leading slot for status dots.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "status-icon-row.figma",
@@ -944,12 +960,20 @@
       "version": "1.0.0"
     },
     {
+      "id": "tier-group",
+      "path": "src/ui/tier-group.tsx",
+      "category": "data-display",
+      "summary": "Urgency-toned priority tier for operator boards. Groups action rows by what the operator must do (blocked/awaiting/fyi). Never render empty; guard callers.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "toggle-group",
       "path": "src/ui/toggle-group.tsx",
       "category": "toggles",
-      "summary": "Coordinated group of toggle buttons for single or multi select.",
+      "summary": "Coordinated group of toggle buttons for single or multi select. joined variant for segmented controls.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "toggle",
@@ -1009,6 +1033,16 @@
       "id": "utils",
       "path": "src/ui/utils.ts",
       "summary": "Shared class name merge helper used by UI components."
+    }
+  ],
+  "templates": [
+    {
+      "id": "weft-board",
+      "path": "css/weft-templates.css",
+      "classPrefix": "weft-board",
+      "version": "2.0.0",
+      "summary": "Operator action board \u2014 filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
+      "docs": "docs/brand-package/11-panel-templates.md"
     }
   ]
 }

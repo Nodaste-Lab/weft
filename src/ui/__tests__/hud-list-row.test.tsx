@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { HudListRow } from '../hud-list-row';
+import { HudListRow, HudListRowTitle, HudListRowMeta, HudListRowProject } from '../hud-list-row';
 
 describe('HudListRow', () => {
   it('renders data-slot on div by default', () => {
@@ -31,5 +31,17 @@ describe('HudListRow', () => {
     );
     const body = container.querySelector('[data-slot="hud-list-row-body"]');
     expect(body?.className).toMatch(/gap-\[7px\]/);
+  });
+
+  it('GUARD D1: HudListRowProject renders as third level data-slot', () => {
+    const { container } = render(
+      <HudListRow>
+        <HudListRowTitle>Title</HudListRowTitle>
+        <HudListRowMeta>Meta</HudListRowMeta>
+        <HudListRowProject>acme-corp / ops</HudListRowProject>
+      </HudListRow>
+    );
+    expect(container.querySelector('[data-slot="hud-list-row-project"]')).toBeTruthy();
+    expect(screen.getByText('acme-corp / ops')).toBeInTheDocument();
   });
 });

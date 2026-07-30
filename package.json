@@ -24,6 +24,7 @@
     "./tokens.css": "./css/weft.css",
     "./theme.css": "./css/theme.css",
     "./components.css": "./css/weft-components.css",
+    "./templates.css": "./css/weft-templates.css",
     "./fonts.css": "./css/fonts.css",
     "./tailwind.css": "./css/tailwind.css",
     "./index.css": "./css/index.css",
@@ -39,6 +40,8 @@
   "scripts": {
     "build": "tsup",
     "verify": "node scripts/verify-design-system-manifest.mjs",
+    "sync:version": "node scripts/sync-design-system-version.mjs",
+    "release:version": "changeset version && npm run sync:version",
     "props": "node scripts/design-system-props.mjs",
     "props:write": "node scripts/design-system-props.mjs --write",
     "test:props": "node --test scripts/__tests__/design-system-props.node.mjs",
@@ -53,7 +56,8 @@
     "tokens:write": "node scripts/design-system-tokens.mjs --write",
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",
     "check:exports": "node scripts/check-exports-contract.mjs",
-    "test:contrast": "node --test scripts/__tests__/contrast-contract.node.mjs"
+    "test:contrast": "node --test scripts/__tests__/contrast-contract.node.mjs",
+    "test:template-contract": "node --test scripts/__tests__/template-contract.node.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

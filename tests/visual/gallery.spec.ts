@@ -16,9 +16,17 @@ const SECTIONS = [
   'tabs',
   'empty-state',
   'hud-list-row',
+  'dot',
+  // D2–D4, D7, D10, D12, D14 additions
+  'stat-row',
+  'action-button-row',
+  'toggle-group',
+  'panel-header',
+  'tier-group',
+  'copyable-ref',
 ];
 
-for (const theme of ['light', 'dark', 'compact'] as const) {
+for (const theme of ['light', 'dark', 'compact', 'dense'] as const) {
   test(`gallery key primitives — ${theme}`, async ({ page }) => {
     await page.goto('/');
     if (theme === 'dark') {
@@ -26,6 +34,9 @@ for (const theme of ['light', 'dark', 'compact'] as const) {
     }
     if (theme === 'compact') {
       await page.evaluate(() => document.documentElement.setAttribute('data-density', 'compact'));
+    }
+    if (theme === 'dense') {
+      await page.evaluate(() => document.documentElement.setAttribute('data-density', 'dense'));
     }
     await page.waitForFunction(() => document.fonts.status === 'loaded');
     for (const id of SECTIONS) {
