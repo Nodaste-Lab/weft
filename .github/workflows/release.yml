@@ -44,7 +44,7 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: npx changeset publish
-          version: npx changeset version
+          version: npx changeset version && npm run sync:version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
@@ -40,6 +40,7 @@
   "scripts": {
     "build": "tsup",
     "verify": "node scripts/verify-design-system-manifest.mjs",
+    "sync:version": "node scripts/sync-design-system-version.mjs",
     "props": "node scripts/design-system-props.mjs",
     "props:write": "node scripts/design-system-props.mjs --write",
     "test:props": "node --test scripts/__tests__/design-system-props.node.mjs",
