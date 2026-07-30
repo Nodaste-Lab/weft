@@ -71,49 +71,41 @@ SHORT="$(git rev-parse --short HEAD)"
 [ -x "$WRAPPER" ] || { echo "review-gate: codex wrapper not found at $WRAPPER" >&2; exit 1; }
 git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BASE' not found" >&2; exit 1; }
 
-LOGDIR="${TMPDIR:-/tmp}/review-gate/$(basename "$ROOT")"
-# Review inputs embed the full private diff, so the log path must be private —
-# enforced, not attempted. Order matters: lstat every component BEFORE any
-# mkdir/chmod, because both follow symlinks and would otherwise create or modify
-# a directory we never intended to touch.
-LOGPARENT="$(dirname "$LOGDIR")"
+# Artefact storage. Review inputs embed the full private diff, so this deliberately
+# avoids /tmp entirely: no shared directory means no symlink swap, no check/create
+# race, and no value in predicting filenames. The repo's own git dir is already
+# private to whoever can read the repo, and is never packaged or committed.
+# (Use --git-dir, not ".git": in a worktree that path is a file, not a directory.)
+GITDIR="$(cd "$(git rev-parse --git-dir)" && pwd)"
+LOGDIR="$GITDIR/review-gate"
 
-refuse_path() {
-  echo "review-gate: refusing to write review artefacts to $1" >&2
-  echo "  $2" >&2
-  echo "  The review input contains the full private diff. Remove or fix that" >&2
-  echo "  path and retry." >&2
+if [ -L "$LOGDIR" ]; then
+  echo "review-gate: $LOGDIR is a symlink — refusing to follow it." >&2
   exit 1
-}
-
-# 1. Reject symlinks first, before anything follows them.
-for dir in "$LOGPARENT" "$LOGDIR"; do
-  [ -L "$dir" ] && refuse_path "$dir" "it is a symlink; refusing to follow it."
-done
-
-# 2. Create only after the paths are known not to be links.
+fi
 mkdir -p "$LOGDIR"
+chmod 700 "$LOGDIR" 2>/dev/null || true
 
-# 3. Now secure and verify owner + mode on each real directory.
-for dir in "$LOGPARENT" "$LOGDIR"; do
-  [ -L "$dir" ] && refuse_path "$dir" "it became a symlink mid-run; refusing to follow it."
-  chmod 700 "$dir" 2>/dev/null || true
-  owner="$(stat -f '%u' "$dir" 2>/dev/null || stat -c '%u' "$dir" 2>/dev/null || echo '')"
-  mode="$(stat -f '%OLp' "$dir" 2>/dev/null || stat -c '%a' "$dir" 2>/dev/null || echo '')"
-  if [ "$owner" != "$(id -u)" ] || [ "$mode" != "700" ]; then
-    refuse_path "$dir" "owner=$owner (need $(id -u)), mode=$mode (need 700)."
+# Never write through a pre-existing symlink or special file.
+ensure_regular() {
+  if [ -e "$1" ] && { [ -L "$1" ] || [ ! -f "$1" ]; }; then
+    echo "review-gate: $1 exists and is not a regular file — refusing to write through it." >&2
+    exit 1
   fi
-done
+}
 
 ROUND=$(( $(find "$LOGDIR" -name "${SHORT}-round*.md" 2>/dev/null | wc -l | tr -d ' ') + 1 ))
 OUT="$LOGDIR/${SHORT}-round${ROUND}.md"
 INPUT="$LOGDIR/${SHORT}-input${ROUND}.md"
+ensure_regular "$OUT"
+ensure_regular "$INPUT"
 
 say "review-gate · $BRANCH @ $SHORT · round $ROUND"
 
 # ── 2. Repo gates. If these fail nothing is reviewed — fix first. ────────────
 say "[1/3] repo gates"
 GATELOG="$LOGDIR/${SHORT}-gates${ROUND}.log"
+ensure_regular "$GATELOG"
 if bash -c "$GATES" >"$GATELOG" 2>&1; then
   GATE_RESULT="PASS"
   echo "  gates: PASS"
@@ -221,6 +213,7 @@ echo "  review log: $OUT"
 case "$VERDICT" in
   CLEAN)
     echo "  codex: CLEAN"
+    ensure_regular "$LOGDIR/${SHORT}.verdict"
     echo "$SHA CLEAN round=$ROUND $(date -u +%FT%TZ)" > "$LOGDIR/${SHORT}.verdict"
     say "DOUBLE-CLEAN · gates PASS · codex CLEAN · $SHORT"
     if [ "$MARK_READY" = "1" ]; then
@@ -230,6 +223,8 @@ case "$VERDICT" in
         echo "review-gate: refusing to mark ready — PR head ($HEAD_SHA) is not the reviewed commit ($SHA). Push, then re-run." >&2
         exit 1
       fi
+      EVIDENCE="$LOGDIR/${SHORT}-evidence.md"
+      ensure_regular "$EVIDENCE"
       {
         echo "## Review gate: double-clean"
         echo
@@ -248,8 +243,8 @@ case "$VERDICT" in
         sed 's/^/> /' "$OUT"
         echo
         echo "</details>"
-      } > "$LOGDIR/${SHORT}-evidence.md"
-      gh pr comment "$PR" --body-file "$LOGDIR/${SHORT}-evidence.md"
+      } > "$EVIDENCE"
+      gh pr comment "$PR" --body-file "$EVIDENCE"
       gh pr ready "$PR"
       echo "  PR #$PR marked ready, evidence posted."
     else
@@ -259,6 +254,7 @@ case "$VERDICT" in
     ;;
   ISSUES)
     echo "  codex: ISSUES — PR stays draft"
+    ensure_regular "$LOGDIR/${SHORT}.verdict"
     echo "$SHA ISSUES round=$ROUND $(date -u +%FT%TZ)" > "$LOGDIR/${SHORT}.verdict"
     say "Findings to triage (fix, or rebut with file/line evidence):"
     sed -n '/VERDICT: ISSUES/q;p' "$OUT" | tail -60
@@ -266,6 +262,7 @@ case "$VERDICT" in
     ;;
   *)
     echo "  codex: no parseable verdict — treating as NOT clean" >&2
+    ensure_regular "$LOGDIR/${SHORT}.verdict"
     echo "$SHA NO_VERDICT round=$ROUND $(date -u +%FT%TZ)" > "$LOGDIR/${SHORT}.verdict"
     exit 3
     ;;
