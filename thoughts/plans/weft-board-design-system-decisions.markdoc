@@ -280,10 +280,10 @@ A defensible split: take **canonical muted** (keeps hierarchy) and **mock info**
 
 **T2 — rail control density.** The rail's controls are 34px against `--weft-control-h` (44px, or 36px under compact density). Held as a documented literal.
 
-**DIRECTION 2026-07-29 (Katie).** *"Yes we want users to be able to opt for a high density interface."* This becomes a real density axis in Weft rather than a board literal. Two ways to land it — **open sub-question:**
+**DECIDED 2026-07-30 (Katie): path (a) — create both variables.** *"Yes we want users to be able to opt for a high density interface."* A real density axis, landed as a new tier so nothing existing moves:
 
-- **(a) Add a third tier, `data-density="dense"` at 34px** *(recommended)* — existing `compact` consumers untouched, users get a genuine high-density opt-in, board stops carrying a literal.
-- **(b) Tighten `compact` itself to 34px** — fewer moving parts, but shifts every surface already on compact, including Heddle's pixel-parity baselines.
+- **(a) Add a third tier, `data-density="dense"` at 34px** *(CHOSEN)* — existing `compact` consumers untouched, users get a genuine high-density opt-in, board stops carrying a literal.
+- ~~(b) Tighten `compact` itself to 34px~~ *(not chosen)* — fewer moving parts, but shifts every surface already on compact, including Heddle's pixel-parity baselines.
 
 Either path edits the density blocks in `css/weft.css` — the pure token file Heddle injects verbatim — so it needs the byte-stability and injection checks plus a token-layer version bump.
 
@@ -481,7 +481,7 @@ T1 decided to keep canonical Weft values, which makes this cheap and permanent:
 - Every `var(--weft-*)` the template reads resolves in `css/weft.css` / `css/theme.css` — catches typo'd token names, which nothing currently catches.
 - `node scripts/check-raw-colors.mjs` stays clean over `css/weft-templates.css`.
 
-#### T2 · Density axis — **branch pending**
+#### T2 · Density axis — **decided: new `dense` tier**
 
 The recommended path (a) adds a third `data-density="dense"` tier at 34px:
 
@@ -516,7 +516,7 @@ presence + parity case:
 | D6 SourcePill | new file | — | — | — | raw-color |
 | D7 ToggleGroup joined | extend | yes if carded | minor | yes (additive) | raw-color (CSS layer) |
 | D8 Callout variants | extend | yes (in SECTIONS) | minor | yes (additive) | — |
-| D9 notice standard | pending branch | pending | pending | pending | — |
+| D9 notice standard | narrow split (notice variant) | if carded | minor | yes (additive) | — |
 | D10 PanelHeader size | new file | yes if carded | minor | yes (additive) | — |
 | D11 Input/Textarea fix | new cases | yes (in SECTIONS) | — | — | raw-color |
 | D12 tier group | new file | new baseline | **new entry** | new entry | raw-color |
@@ -545,10 +545,10 @@ Not exhaustive — the ones where the test above is doing real work rather than 
 3. **D11's focus ring.** The old markup had no focus affordance at all. A test that only
    checks `getByRole('textbox')` passes without proving the defect is fixed.
 
-### Open items that change these cases
+### Resolved items that shaped these cases
 
-- **T2 branch** — new `dense` tier (recommended) vs tightening `compact`. Changes whether the visual suite gains a fourth theme or re-baselines every compact consumer.
-- **D9 branch** — whether the introduced notice replaces `EmptyState` wholesale or only for load-failure/notice states. Wholesale means test cases across Knowledge Search, Notes and every other consumer.
+- **T2 — decided (Katie, 2026-07-30): path (a), both tiers.** `compact` keeps 36px untouched; `dense` adds 34px. The visual suite therefore gains a fourth theme rather than re-baselining every compact consumer.
+- **D9 — decided (Katie, 2026-07-30): narrow split ships here.** `EmptyState` keeps `variant="centered"` as the default and gains `variant="notice"` for load failures. Making the notice the standard across Knowledge Search, Notes and every other consumer is separate work, tracked in weft#11, and is deliberately not in this change.
 
 ## Decision log
 
@@ -562,7 +562,7 @@ Not exhaustive — the ones where the test above is doing real work rather than 
 - 2026-07-29 · **D7 decided.** Joined segmented look becomes a variant of the existing Weft toggle (`ToggleGroup` + plain-CSS counterpart); `PillToggleGroup` stays the gap-separated default.
 - 2026-07-29 · **Emerging principle (D2, D5, D7).** The template's treatments *graduate into* existing primitives as variants — they do not fork them, and the primitive's current appearance stays the default. Carried into D8–D15 unless overridden.
 - 2026-07-29 · **D8 decided (reversed).** Dashed hint box and filled provenance band kept, landing as `Callout` variants.
-- 2026-07-29 · **D9 decided (reversed) — with an open sub-question.** The introduced notice becomes the standard. `EmptyState` has consumers beyond the board (Knowledge Search, Notes), so pending confirmation the split is: introduced treatment for load-failure/notice, centered shape retained for true empties.
+- 2026-07-29 · **D9 decided (reversed) — with a sub-question, since closed 2026-07-30 (see below).** The introduced notice becomes the standard. `EmptyState` has consumers beyond the board (Knowledge Search, Notes), so pending confirmation the split is: introduced treatment for load-failure/notice, centered shape retained for true empties.
 - 2026-07-29 · **D10 decided (as recommended).** Adopt `PanelHeader`; board title becomes a size variant if wanted.
 - 2026-07-29 · **D11 decided (as recommended).** Display-only divs replaced with real `Input` / `Textarea` — a defect fix, restoring focus, keyboard entry and accessible roles.
 - 2026-07-29 · **D12, D13, D14 decided (all as recommended): promote to Weft.** Urgency-toned tier group, standalone status dot, copyable reference row. D13 unblocks the D2 `StatRow` variant; D14 is the only promotion carrying behaviour (truncation + clipboard), so it needs a copy-success affordance and an accessible control name.
@@ -570,9 +570,9 @@ Not exhaustive — the ones where the test above is doing real work rather than 
 - 2026-07-29 · **T1 DECIDED: keep canonical Weft tokens** for both `--weft-muted` (`#8b93b0`) and `--weft-info` (`#93c5fd`). No token change; the mock's `#aab4bf` / `#c4b5fd` are dropped, retiring the last piece of the mock override block. Consequence accepted: `.is-direct` (link blue) and `.is-trace` (info blue) sit close in hue — if that bites, the fix is a non-colour differentiator on the chips, not reopening the token.
 - 2026-07-29 · **D4 link variant shown on request.** Coverage confirmed: `variant="link"` handles the drawer's trailing action and the board's three other link-styled controls, no template-local button needed. Two notes carried forward — keep link-styled controls as `<button>` for a11y, and add `.weft-btn.is-link` to close the CSS-layer gap.
 - 2026-07-29 · **T1 examples produced on request** — side-by-side render plus measured contrast. All four values pass AA (lowest 5.67:1), so accessibility does not decide it. Open; a defensible split is canonical muted + mock info, since canonical info sits beside `--weft-link` and can read as a link.
-- 2026-07-29 · **T2 direction given:** users should be able to opt into high density, so this becomes a real density axis. Open sub-question: new `dense` tier (recommended) vs tightening `compact`.
+- 2026-07-29 · **T2 direction given** (sub-question since closed 2026-07-30, see below)**:** users should be able to opt into high density, so this becomes a real density axis. Open sub-question: new `dense` tier (recommended) vs tightening `compact`.
 - 2026-07-29 · **Answered on D4:** `Button variant="link"` exists in React (`src/ui/button.tsx:22`); the plain-CSS layer has no `.weft-btn.is-link`, which is why the template invented one. Added to the widen-the-CSS-layer list. The template's `margin-left:auto` on the link is layout, so it belongs to D3's `ActionButtonRow` pattern, not the button.
-- 2026-07-29 · **No blanket adopt/reject rule.** D1, D3 replace the primitive's treatment; D2, D5, D7 add a variant; D4, D6 adopt the existing primitive outright. Per-item. **All fifteen decisions (D1–D15) are now recorded.** **All decisions are now closed.** T1: keep canonical tokens. **T2 DECIDED 2026-07-30 (Katie): path (a) — both tiers exist.** `compact` keeps 36px untouched and a new `dense` tier adds 34px, so a surface opts into high density rather than compact changing under existing consumers. **D9 DECIDED 2026-07-30 (Katie): the narrow split ships here; the holistic change is spun off** to weft#12 and will not be delivered in this PR.
+- 2026-07-29 · **No blanket adopt/reject rule.** D1, D3 replace the primitive's treatment; D2, D5, D7 add a variant; D4, D6 adopt the existing primitive outright. Per-item. **All fifteen decisions (D1–D15) are now recorded.** **All decisions are now closed.** T1: keep canonical tokens. **T2 DECIDED 2026-07-30 (Katie): path (a) — both tiers exist.** `compact` keeps 36px untouched and a new `dense` tier adds 34px, so a surface opts into high density rather than compact changing under existing consumers. **D9 DECIDED 2026-07-30 (Katie): the narrow split ships here; the holistic change is spun off** to weft#11 and will not be delivered in this PR.
 - 2026-07-29 · **Test cases added to this plan** (Test cases section above), covering D1–D15 plus T1/T2 in the repo's real conventions: vitest `src/ui/__tests__`, the gallery-driven visual suite, and the manifest / props / token gates. 22 GUARD cases, 9 REGRESSION cases, 3 DELETION GUARDs, plus a gate matrix. No test files written yet — this is the coverage spec to agree on first.
 - 2026-07-29 · **Test spec is provisional on two open items:** the T2 branch decides whether the visual suite gains a fourth theme or re-baselines every compact consumer; the D9 branch decides whether the notice replaces `EmptyState` wholesale, which would pull Knowledge Search and Notes into scope.
 - 2026-07-29 · **Kept in one plan on request.** The test cases were first registered as a separate Doct doc; that doc is superseded and now points here. This plan is the single source for decisions and their coverage.
