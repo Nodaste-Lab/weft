@@ -65,7 +65,12 @@ function TierGroup({
   // Known boundary: an empty fragment (<></>) counts as one element here even
   // though it renders nothing — callers must not pass empty fragments as the
   // sole child and expect the guard to catch them.
-  if (React.Children.toArray(children).length === 0) {
+  // React.Children.toArray drops null/undefined/booleans but KEEPS 0 and "",
+  // so `{items.length && rows}` with zero items would render a visible "0".
+  const renderable = React.Children.toArray(children).filter(
+    (child) => !(child === 0 || child === "" || child === "0"),
+  );
+  if (renderable.length === 0) {
     return null;
   }
 

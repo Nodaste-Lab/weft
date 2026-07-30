@@ -133,4 +133,23 @@ describe('TierGroup', () => {
       expect(container.querySelector('[data-slot="tier-group"]')).not.toBeNull();
     });
   });
+
+  // Regression (review round 4): React.Children.toArray keeps 0 and "", so the
+  // common `{items.length && rows}` idiom rendered a visible "0" inside an
+  // otherwise-empty tier — exactly the "all clear" misread D12 forbids.
+  it('GUARD D12: renders null for numeric-zero children', () => {
+    const items: string[] = [];
+    const { container } = render(
+      <TierGroup urgency="blocked" label="Blockers">{items.length && <div>row</div>}</TierGroup>,
+    );
+    expect(container.querySelector('[data-slot="tier-group"]')).toBeNull();
+    expect(container.textContent).toBe('');
+  });
+
+  it('GUARD D12: renders null for empty-string children', () => {
+    const { container } = render(
+      <TierGroup urgency="fyi" label="FYI">{''}</TierGroup>,
+    );
+    expect(container.querySelector('[data-slot="tier-group"]')).toBeNull();
+  });
 });

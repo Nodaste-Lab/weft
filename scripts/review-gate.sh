@@ -27,13 +27,15 @@
 #   2  Codex reported issues — fix, commit, re-run
 #   3  Codex produced no parseable verdict — treated as NOT clean, never as pass
 set -euo pipefail
+# Review inputs contain the full private diff; keep every artefact owner-only.
+umask 077
 
 BASE="main"
 GOAL=""
 PR=""
 MARK_READY=0
 MAX_DIFF_BYTES=200000
-GATES='npm test --silent && npm run verify --silent && npm run props --silent && npm run test:props --silent && node scripts/check-raw-colors.mjs && node scripts/check-pure-token-file.mjs && npm run check:exports --silent && npm run test:css-contract --silent && npm run test:contrast --silent && npm run test:template-contract --silent && npm run build --silent'
+GATES='npm test --silent && npm run verify --silent && npm run props --silent && npm run test:props --silent && npm run tokens --silent && node scripts/check-raw-colors.mjs && node scripts/check-pure-token-file.mjs && npm run test:css-contract --silent && npm run test:contrast --silent && npm run test:template-contract --silent && npm run build --silent && npm run check:exports --silent'
 WRAPPER="$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh"
 
 while [ $# -gt 0 ]; do
@@ -70,7 +72,10 @@ SHORT="$(git rev-parse --short HEAD)"
 git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BASE' not found" >&2; exit 1; }
 
 LOGDIR="${TMPDIR:-/tmp}/review-gate/$(basename "$ROOT")"
+# Review inputs embed the full private diff. Tighten the whole path, not just the
+# leaf: on a shared /tmp the parent may already exist with permissive modes.
 mkdir -p "$LOGDIR"
+chmod 700 "$(dirname "$LOGDIR")" "$LOGDIR" 2>/dev/null || true
 ROUND=$(( $(find "$LOGDIR" -name "${SHORT}-round*.md" 2>/dev/null | wc -l | tr -d ' ') + 1 ))
 OUT="$LOGDIR/${SHORT}-round${ROUND}.md"
 INPUT="$LOGDIR/${SHORT}-input${ROUND}.md"

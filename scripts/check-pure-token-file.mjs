@@ -14,12 +14,40 @@ if (/@media/.test(css)) problems.push('contains @media — token overrides must 
 if (/url\(/.test(css)) problems.push('contains url() — the opaque-origin panel iframe cannot fetch external assets');
 
 // Every selector must target :root (base or attribute-scoped variants).
-const selectors = [...css.matchAll(/(^|\})([^{}@]+?)\{/g)].map((m) => m[2].trim());
-for (const sel of selectors) {
-  // Split the selector list: a group like `:root[...], [data-density="x"]` would
-  // otherwise pass on the strength of its first selector alone.
-  for (const one of sel.split(',').map((x) => x.trim()).filter(Boolean)) {
-    if (!one.startsWith(':root')) problems.push(`non-:root selector "${one.slice(0, 60)}" — weft.css must stay tokens-only`);
+// AGENTS.md invariant 1: weft.css may contain only the documented `:root[...]`
+// axis blocks (which declare custom properties only) and the sanctioned
+// `data-palette="weft"` typography rules. Everything else would restyle every
+// third-party panel this file is injected into.
+//
+// Root axis selector: `:root` plus any number of [attr] / :not(...) qualifiers.
+const ROOT_AXIS = /^:root(\[[^\]]*\]|:not\([^)]*\))*$/;
+// The sanctioned exception: the `data-palette="weft"` bridge. AGENTS.md calls out
+// its typography rules; in practice the bridge also normalises body, wallpaper
+// layers and inline-styled spans. It is an escape hatch by design — additions to
+// it deserve review scrutiny, because they ship into every panel iframe — but it
+// is legitimate, pre-existing, and not something this guard should reject.
+const PALETTE_BRIDGE = /^:root\[data-palette="weft"\](\s+.+)?$/;
+
+// Do NOT anchor on the preceding `}` — that consumes it and makes every other
+// rule invisible to the scan. Match `selector { body }` directly instead.
+const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+  .map(([, sel, body]) => [sel, body])
+  .filter(([sel]) => !sel.includes('@'));
+for (const [rawSel, body] of rules) {
+  const parts = rawSel.trim().split(',').map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const isBridge = parts.length > 0 && parts.every((one) => PALETTE_BRIDGE.test(one));
+  for (const one of parts) {
+    if (ROOT_AXIS.test(one) || PALETTE_BRIDGE.test(one)) continue;
+    problems.push(`non-:root selector "${one.slice(0, 60)}" — weft.css must stay tokens-only`);
+  }
+  // Token blocks declare custom properties only. The palette bridge is the
+  // documented exception and may set real properties.
+  if (isBridge) continue;
+  for (const decl of body.split(';').map((d) => d.trim()).filter(Boolean)) {
+    const prop = decl.split(':')[0].trim();
+    if (prop && !prop.startsWith('--')) {
+      problems.push(`non-custom-property declaration "${decl.slice(0, 60)}" in "${parts[0]?.slice(0, 40)}" — token blocks declare tokens only`);
+    }
   }
 }
 
@@ -27,4 +55,4 @@ if (problems.length) {
   console.error('css/weft.css violates the pure-token-file invariant:\n' + problems.map((p) => `- ${p}`).join('\n'));
   process.exit(1);
 }
-console.log(`weft.css is a pure token file (${selectors.length} :root selector blocks).`);
+console.log(`weft.css is a pure token file (${rules.length} rule blocks, all :root axes or the sanctioned data-palette bridge).`);

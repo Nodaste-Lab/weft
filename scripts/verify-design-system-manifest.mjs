@@ -7,7 +7,7 @@
 // The app-coupled panelBuilder vocabulary lives in Heddle's
 // src/design-system/panel-manifest.json, checked by scripts/verify-panel-manifest.mjs.
 
-import { readFileSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 
 const ROOT = decodeURIComponent(new URL('..', import.meta.url).pathname).replace(/\/$/, '');
@@ -120,6 +120,39 @@ ensureUiPathsMatch(manifest.uiPrimitives);
 ensureBarrelParity(manifest.uiPrimitives);
 ensureVersions(manifest.uiPrimitives);
 compareOrderedList('uiPrimitives', actualPrimitiveIds, manifestPrimitiveIds);
+
+// ── templates ────────────────────────────────────────────────────────────────
+// The `templates` registry is a published surface (consumers read manifest.json),
+// so it gets the same treatment as uiPrimitives: real paths, real docs, semver,
+// and a class prefix that actually exists in the stylesheet it names.
+function ensureTemplates(templates) {
+  if (!Array.isArray(templates)) return;
+  const ids = templates.map((t) => t.id);
+  compareOrderedList('templates', [...ids].sort(), ids);
+  for (const t of templates) {
+    const where = `templates entry "${t.id ?? '(missing id)'}"`;
+    for (const field of ['id', 'path', 'classPrefix', 'version', 'summary', 'docs']) {
+      if (!t[field]) fail(`${where} is missing "${field}".`);
+    }
+    if (t.version && !SEMVER.test(t.version)) {
+      fail(`${where} version "${t.version}" is not semver.`);
+    }
+    if (t.path && !existsSync(join(ROOT, t.path))) {
+      fail(`${where} path "${t.path}" does not exist.`);
+    }
+    if (t.docs && !existsSync(join(ROOT, t.docs))) {
+      fail(`${where} docs "${t.docs}" does not exist.`);
+    }
+    if (t.path && t.classPrefix && existsSync(join(ROOT, t.path))) {
+      const css = readFileSync(join(ROOT, t.path), 'utf8');
+      if (!css.includes(`.${t.classPrefix}`)) {
+        fail(`${where} classPrefix ".${t.classPrefix}" never appears in ${t.path}.`);
+      }
+    }
+  }
+}
+
+ensureTemplates(manifest.templates);
 
 if (process.exitCode) {
   process.exit(process.exitCode);
