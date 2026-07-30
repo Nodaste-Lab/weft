@@ -76,7 +76,9 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 ### Skeleton
 
 ```html
-<section class="weft-board">
+<!-- data-density="dense" is load-bearing: it scopes the 34px control tier to
+     the board. Without it .weft-input and friends render at the 44px default. -->
+<section class="weft-board" data-density="dense">
   <!-- Header: use the canonical panel-header component -->
   <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Updates dashboard</div>

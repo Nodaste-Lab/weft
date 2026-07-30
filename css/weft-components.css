@@ -515,3 +515,42 @@
 .weft-hud-list-row-title { font-size: 13px; color: var(--weft-ink); }
 .weft-hud-list-row-meta { font-size: 11.5px; color: var(--weft-muted); margin-top: 1px; }
 .weft-hud-list-row-aside { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+
+/* ── Source pill — mono origin/path chip; CSS counterpart of <SourcePill> ──── */
+.weft-source-pill {
+  display: inline-flex; align-items: center;
+  max-width: 100%;
+  padding: 2px 6px;
+  border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-chip);
+  background: var(--weft-paper);
+  color: var(--weft-muted);
+  font-family: var(--weft-font-mono); font-size: 10px; line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.weft-source-pill.is-strong { color: var(--weft-ink); }
+
+/* ── Callout — panel-level notice; CSS counterpart of <Callout> ────────────────
+ * Base is the inline bordered notice. `.is-dashed` is the muted hint treatment
+ * and `.is-band` the full-width left-accented stripe (D8). Tones set the accent.
+ */
+.weft-callout {
+  display: block;
+  padding: 9px 11px;
+  border: 1px solid var(--weft-rule-strong); border-radius: var(--weft-radius-chip);
+  background: var(--weft-fill-soft);
+  color: var(--weft-ink);
+  font-family: var(--weft-font-sans); font-size: 12.5px; line-height: 1.5;
+}
+.weft-callout.is-dashed { border-style: dashed; color: var(--weft-muted); }
+.weft-callout.is-band {
+  border: 0; border-left: 3px solid var(--weft-rule-strong); border-radius: 0;
+  padding: 10px 12px;
+}
+.weft-callout.is-info { border-color: var(--weft-info); }
+.weft-callout.is-warn { border-color: var(--weft-warn); }
+.weft-callout.is-stop { border-color: var(--weft-stop); }
+.weft-callout.is-ok { border-color: var(--weft-ok); }
+.weft-callout.is-band.is-info { border-left-color: var(--weft-info); }
+.weft-callout.is-band.is-warn { border-left-color: var(--weft-warn); }
+.weft-callout.is-band.is-stop { border-left-color: var(--weft-stop); }
+.weft-callout.is-band.is-ok { border-left-color: var(--weft-ok); }

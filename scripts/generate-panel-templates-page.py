@@ -66,7 +66,7 @@ SECTIONS = [
  ("Search field", ".weft-input (real &lt;input type=search&gt;)", S,
   "<code>.weft-input</code> (<code>weft-components.css</code>); <code>Input</code> (React)",
   "Canonical real form control. Use <code>data-density=&quot;dense&quot;</code> on the board root for 34px.",
-  '<div class="weft-board" style="padding:12px;width:258px">'
+  '<div class="weft-board" data-density="dense" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-search">Search projects</label>'
   '<input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…">'
   '</div>'),
@@ -93,7 +93,7 @@ SECTIONS = [
  ("Preset picker", ".weft-select (real &lt;select&gt;)", S,
   "<code>.weft-select</code> (<code>weft-components.css</code>); <code>Select</code> (React)",
   "Canonical real form control with accessible label.",
-  '<div class="weft-board" style="padding:12px;width:258px">'
+  '<div class="weft-board" data-density="dense" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-since">Updated since</label>'
   '<select id="demo-since" class="weft-select" name="since" aria-label="Updated since">'
   '<option value="">Any date</option>'
@@ -243,7 +243,7 @@ SECTIONS = [
   ' <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI (pr_9f2a…c1)</div>'
   '</div></div>'),
  ("Action row", ".weft-action-button-row", S,
-  "<code>.weft-action-button-row</code> (<code>weft-components.css</code>); <code>ActionButtonRow</code> (React, dense=true default)",
+  "<code>.weft-action-button-row</code> (<code>weft-components.css</code>); <code>ActionButtonRow</code> (React; <code>dense</code> is opt-in, default false)",
   "Canonical grouped actions row. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
   '<div class="weft-board"><div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
