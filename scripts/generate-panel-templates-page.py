@@ -65,8 +65,8 @@ SECTIONS = [
 ("Filter rail", [
  ("Search field", ".weft-input (real &lt;input type=search&gt;)", S,
   "<code>.weft-input</code> (<code>weft-components.css</code>); <code>Input</code> (React)",
-  "Canonical real form control. Use <code>data-density=&quot;dense&quot;</code> on the board root for 34px.",
-  '<div class="weft-board" data-density="dense" style="padding:12px;width:258px">'
+  "Canonical real form control. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on <code>:root</code> — an app-level preference, not board-scoped.",
+  '<div class="weft-board" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-search">Search projects</label>'
   '<input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…">'
   '</div>'),
@@ -93,7 +93,7 @@ SECTIONS = [
  ("Preset picker", ".weft-select (real &lt;select&gt;)", S,
   "<code>.weft-select</code> (<code>weft-components.css</code>); <code>Select</code> (React)",
   "Canonical real form control with accessible label.",
-  '<div class="weft-board" data-density="dense" style="padding:12px;width:258px">'
+  '<div class="weft-board" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-since">Updated since</label>'
   '<select id="demo-since" class="weft-select" name="since" aria-label="Updated since">'
   '<option value="">Any date</option>'
@@ -252,7 +252,7 @@ SECTIONS = [
   '</div></div>'),
  ("Drawer buttons", ".weft-btn + .weft-btn.is-ghost + .weft-btn.is-link", S,
   "<code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)",
-  "Canonical. Dense size (34px) activated by <code>data-density=&quot;dense&quot;</code> on the board root.",
+  "Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.",
   '<div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
   '<button class="weft-btn" type="button">Resolve</button>'
   '<button class="weft-btn is-ghost" type="button">Reassign</button>'

@@ -138,13 +138,17 @@
 
 .weft-input, .weft-textarea, .weft-select {
   width: 100%;
+  /* Explicit, not inherited: these files are injected verbatim into sandboxed
+   * panel iframes that may have no box-sizing reset, and without border-box the
+   * padding would push the control past its --weft-control-h tier. */
+  box-sizing: border-box;
   font-family: var(--weft-font-sans);
   font-size: var(--weft-control-text); line-height: 1.4;
   color: var(--weft-ink);
   background: var(--weft-paper);
   border: 1px solid var(--weft-rule);
   border-radius: var(--weft-radius-card);
-  padding: 11px var(--weft-control-pad-x);
+  padding: var(--weft-control-pad-y, 11px) var(--weft-control-pad-x);
   min-height: var(--weft-control-h);
   transition:
     border-color var(--weft-dur-fast) var(--weft-ease-out),

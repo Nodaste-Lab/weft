@@ -16,7 +16,11 @@ if (/url\(/.test(css)) problems.push('contains url() — the opaque-origin panel
 // Every selector must target :root (base or attribute-scoped variants).
 const selectors = [...css.matchAll(/(^|\})([^{}@]+?)\{/g)].map((m) => m[2].trim());
 for (const sel of selectors) {
-  if (!sel.startsWith(':root')) problems.push(`non-:root selector "${sel.slice(0, 60)}" — weft.css must stay tokens-only`);
+  // Split the selector list: a group like `:root[...], [data-density="x"]` would
+  // otherwise pass on the strength of its first selector alone.
+  for (const one of sel.split(',').map((x) => x.trim()).filter(Boolean)) {
+    if (!one.startsWith(':root')) problems.push(`non-:root selector "${one.slice(0, 60)}" — weft.css must stay tokens-only`);
+  }
 }
 
 if (problems.length) {

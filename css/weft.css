@@ -108,6 +108,7 @@
   /* ── Density (marketing default — see [data-density="compact"] for app) ── */
   --weft-control-h:         44px;
   --weft-control-pad-x:     14px;
+  --weft-control-pad-y:     11px;
   --weft-control-gap:       12px;
   --weft-control-text:      16px;
   --weft-stack-gap:         16px;
@@ -298,6 +299,7 @@
 :root[data-density="compact"] {
   --weft-control-h:         36px;
   --weft-control-pad-x:     10px;
+  --weft-control-pad-y:     11px;   /* unchanged from base: compact rendering must not move */
   --weft-control-gap:       8px;
   --weft-control-text:      14px;
   --weft-stack-gap:         12px;
@@ -312,14 +314,15 @@
  * column (e.g. the operator board rail). WCAG 2.5.8 AA touch target is
  * guaranteed by the 24px --weft-touch-target floor; interactive rows in this
  * tier must still reach 24px even though the control chrome may be shorter. */
-/* Scoped as well as global: the board applies dense to its own root element,
- * not to <html>, so the axis must match a nested [data-density] too.
- * `compact` deliberately stays :root-only — widening it would newly apply to
- * nested compact markup in existing consumers, which is a separate change. */
-:root[data-density="dense"],
-[data-density="dense"] {
+/* Root-scoped like every other density axis. weft.css is injected verbatim into
+ * sandboxed panel iframes, so it may only ever carry :root selectors — a nested
+ * [data-density] here would restyle third-party panels. Density is therefore an
+ * application-level preference (set on <html>), which is what T2 asked for:
+ * "users should be able to opt for a high density interface". */
+:root[data-density="dense"] {
   --weft-control-h:         34px;
   --weft-control-pad-x:     9px;
+  --weft-control-pad-y:     6px;    /* so min-height, not padding, governs at 34px */
   --weft-control-gap:       6px;
   --weft-control-text:      13px;
   --weft-stack-gap:         10px;

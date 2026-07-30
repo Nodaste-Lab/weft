@@ -76,9 +76,11 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 ### Skeleton
 
 ```html
-<!-- data-density="dense" is load-bearing: it scopes the 34px control tier to
-     the board. Without it .weft-input and friends render at the 44px default. -->
-<section class="weft-board" data-density="dense">
+<!-- The 34px control tier comes from data-density="dense" on :root (<html>),
+     set by the application as a user preference. It is not board-scoped —
+     weft.css carries :root selectors only, because it is injected verbatim
+     into sandboxed panel iframes. Without it, controls use the 44px default. -->
+<section class="weft-board">
   <!-- Header: use the canonical panel-header component -->
   <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Updates dashboard</div>
@@ -295,7 +297,8 @@ override layer.
 
 The reviewed rail controls are 34px, tighter than `--weft-control-h` (44px, or
 36px under `data-density="compact"`), because the rail stacks eight controls in a
-258px column. The template uses `data-density="dense"` on the board root. Open
+258px column, which the `dense` density tier provides. That tier is set on
+`:root` by the application as a user preference, not on the board. Open
 question: should the rail adopt the density axis fully, or should Weft gain a
 genuine 34px token?
 

@@ -83,7 +83,9 @@
 .weft-board-rail-label { font-size: 12px; color: var(--weft-muted); }
 .weft-board-rail-section { display: flex; flex-direction: column; gap: 9px; }
 /* D11: use real .weft-input / .weft-select (weft-components.css) with
- * data-density="dense" on the board root for 34px control height.
+ * data-density="dense" on :root (<html>) for the 34px control tier. Density is
+ * an application-level preference, not board-scoped: weft.css may only carry
+ * :root selectors because it is injected verbatim into panel iframes.
  * The board-local search and picker classes are deleted.
  * Markup: <input class="weft-input" name="…" placeholder="Search…"> */
 

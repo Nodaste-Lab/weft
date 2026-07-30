@@ -98,10 +98,10 @@
 </div></div><h2 class="sec">Filter rail</h2><div class="grid"><div class="spec">
   <div class="spec-h"><span class="nm">Search field</span><span class="bg"><span class="b ok">REUSES</span></span></div>
   <div class="cls">.weft-input (real &lt;input type=search&gt;)</div>
-  <div class="demo"><div class="weft-board" data-density="dense" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-search">Search projects</label><input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…"></div></div>
+  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-search">Search projects</label><input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…"></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-input</code> (<code>weft-components.css</code>); <code>Input</code> (React)</span></div>
-    <div class="row"><span class="k">Action</span><span>Canonical real form control. Use <code>data-density=&quot;dense&quot;</code> on the board root for 34px.</span></div>
+    <div class="row"><span class="k">Action</span><span>Canonical real form control. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on <code>:root</code> — an app-level preference, not board-scoped.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Rail label</span><span class="bg"><span class="b part">PARTIAL</span></span></div>
@@ -130,7 +130,7 @@
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Preset picker</span><span class="bg"><span class="b ok">REUSES</span></span></div>
   <div class="cls">.weft-select (real &lt;select&gt;)</div>
-  <div class="demo"><div class="weft-board" data-density="dense" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-since">Updated since</label><select id="demo-since" class="weft-select" name="since" aria-label="Updated since"><option value="">Any date</option><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option></select></div></div>
+  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-since">Updated since</label><select id="demo-since" class="weft-select" name="since" aria-label="Updated since"><option value="">Any date</option><option value="7d">Last 7 days</option><option value="30d">Last 30 days</option></select></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-select</code> (<code>weft-components.css</code>); <code>Select</code> (React)</span></div>
     <div class="row"><span class="k">Action</span><span>Canonical real form control with accessible label.</span></div>
@@ -261,7 +261,7 @@
   <div class="demo"><div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="weft-btn" type="button">Resolve</button><button class="weft-btn is-ghost" type="button">Reassign</button><button class="weft-btn is-link" type="button">Open ↗</button></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)</span></div>
-    <div class="row"><span class="k">Action</span><span>Canonical. Dense size (34px) activated by <code>data-density=&quot;dense&quot;</code> on the board root.</span></div>
+    <div class="row"><span class="k">Action</span><span>Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Status chip</span><span class="bg"><span class="b ok">REUSES</span></span></div>
