@@ -180,7 +180,7 @@
       "--weft-section-pad-y-sm": "24px",
       "--weft-touch-target": "24px"
     },
-    ":root[data-density=\"dense\"]": {
+    ":root[data-density=\"dense\"], [data-density=\"dense\"]": {
       "--weft-control-h": "34px",
       "--weft-control-pad-x": "9px",
       "--weft-control-gap": "6px",

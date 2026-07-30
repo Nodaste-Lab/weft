@@ -33,6 +33,7 @@ jobs:
           npm run test:props
           npm run test:css-contract
           npm run test:contrast
+          npm run test:template-contract
           node scripts/check-pure-token-file.mjs
           node scripts/check-raw-colors.mjs
           npx vitest run

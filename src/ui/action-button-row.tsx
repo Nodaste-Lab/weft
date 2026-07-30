@@ -20,7 +20,7 @@ import { cn } from "./utils";
 function ActionButtonRow({
   className,
   align = "start",
-  dense = true,
+  dense = false,
   trailingLink,
   children,
   ...props

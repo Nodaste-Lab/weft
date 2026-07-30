@@ -503,10 +503,14 @@
   display: flex; gap: 8px; align-items: baseline;
   padding: 8px 11px;
   border-bottom: 1px solid var(--weft-rule);
-  cursor: pointer;
 }
 .weft-hud-list-row:last-child { border-bottom: 0; }
-.weft-hud-list-row:hover { background: var(--weft-fill-soft); }
+/* Interactivity is opt-in AND must be a real control: the base row is a
+ * non-focusable container, so pointer affordances on it would be mouse-only.
+ * Use <button class="weft-hud-list-row is-interactive"> (or an <a>) so the row
+ * is keyboard reachable and announced. */
+.weft-hud-list-row.is-interactive { cursor: pointer; width: 100%; text-align: left; background: none; border-left: 0; border-right: 0; border-top: 0; font: inherit; color: inherit; }
+.weft-hud-list-row.is-interactive:hover { background: var(--weft-fill-soft); }
 .weft-hud-list-row-col { flex: 1; min-width: 0; }
 .weft-hud-list-row-title { font-size: 13px; color: var(--weft-ink); }
 .weft-hud-list-row-meta { font-size: 11.5px; color: var(--weft-muted); margin-top: 1px; }

@@ -133,8 +133,11 @@ with a compact variant for narrow slots and a drawer for one item's detail.
           Blockers <span class="weft-tier-group-sub">act now</span>
           <span class="weft-tier-group-count">1</span>
         </div>
-        <!-- Action row: use weft-hud-list-row -->
-        <div class="weft-hud-list-row">
+        <!-- Action row: weft-hud-list-row. Rows that open a drawer are real
+             controls — use <button> + .is-interactive so they are keyboard
+             reachable and announced. A display-only row stays a <div> with no
+             .is-interactive and therefore no pointer affordance. -->
+        <button type="button" class="weft-hud-list-row is-interactive">
           <div class="weft-hud-list-row-col">
             <div class="weft-hud-list-row-title">Account Recovery dependency unresolved</div>
             <div class="weft-hud-list-row-meta">Blocked · 5d — oldest open item</div>
@@ -144,7 +147,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
             <!-- Evidence chip: only if relation evidence is present -->
             <span class="weft-badge is-outline is-info">direct</span>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   </div>
