@@ -72,10 +72,24 @@ SHORT="$(git rev-parse --short HEAD)"
 git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BASE' not found" >&2; exit 1; }
 
 LOGDIR="${TMPDIR:-/tmp}/review-gate/$(basename "$ROOT")"
-# Review inputs embed the full private diff. Tighten the whole path, not just the
-# leaf: on a shared /tmp the parent may already exist with permissive modes.
+# Review inputs embed the full private diff, so the log path must be private —
+# and that has to be ENFORCED, not attempted. A pre-existing world-writable
+# /tmp/review-gate would otherwise expose the diff and invite symlink tampering.
 mkdir -p "$LOGDIR"
-chmod 700 "$(dirname "$LOGDIR")" "$LOGDIR" 2>/dev/null || true
+for dir in "$(dirname "$LOGDIR")" "$LOGDIR"; do
+  chmod 700 "$dir" 2>/dev/null || true
+  owner="$(stat -f '%u' "$dir" 2>/dev/null || stat -c '%u' "$dir" 2>/dev/null || echo '')"
+  mode="$(stat -f '%OLp' "$dir" 2>/dev/null || stat -c '%a' "$dir" 2>/dev/null || echo '')"
+  if [ "$owner" != "$(id -u)" ] || [ "$mode" != "700" ]; then
+    echo "review-gate: refusing to write review artefacts to $dir" >&2
+    echo "  owner=$owner (need $(id -u)), mode=$mode (need 700). The review input" >&2
+    echo "  contains the full private diff; remove or fix that directory and retry." >&2
+    exit 1
+  fi
+  if [ -L "$dir" ]; then
+    echo "review-gate: $dir is a symlink — refusing to follow it" >&2; exit 1
+  fi
+done
 ROUND=$(( $(find "$LOGDIR" -name "${SHORT}-round*.md" 2>/dev/null | wc -l | tr -d ' ') + 1 ))
 OUT="$LOGDIR/${SHORT}-round${ROUND}.md"
 INPUT="$LOGDIR/${SHORT}-input${ROUND}.md"

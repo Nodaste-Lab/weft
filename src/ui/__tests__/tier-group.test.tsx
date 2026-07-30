@@ -152,4 +152,28 @@ describe('TierGroup', () => {
     );
     expect(container.querySelector('[data-slot="tier-group"]')).toBeNull();
   });
+
+  // Regression (review round 5): an empty fragment is one child to
+  // React.Children, so <>{items.map(...)}</> with no items rendered a headed
+  // tier with no rows — the exact "all clear" misread D12 forbids.
+  it('GUARD D12: renders null for an empty fragment of mapped rows', () => {
+    const items: string[] = [];
+    const { container } = render(
+      <TierGroup urgency="awaiting" label="Awaiting you">
+        <>{items.map((i) => <div key={i}>{i}</div>)}</>
+      </TierGroup>,
+    );
+    expect(container.querySelector('[data-slot="tier-group"]')).toBeNull();
+  });
+
+  it('still renders when a fragment contains real rows', () => {
+    const items = ['a'];
+    const { container } = render(
+      <TierGroup urgency="awaiting" label="Awaiting you">
+        <>{items.map((i) => <div key={i}>{i}</div>)}</>
+      </TierGroup>,
+    );
+    expect(container.querySelector('[data-slot="tier-group"]')).not.toBeNull();
+    expect(container.textContent).toContain('a');
+  });
 });

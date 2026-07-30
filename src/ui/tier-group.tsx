@@ -41,6 +41,30 @@ const URGENCY_CLASSES: Record<
   },
 };
 
+/**
+ * How many children would actually paint something.
+ *
+ * `React.Children.toArray` drops null/undefined/booleans but keeps `0` and `""`,
+ * and counts a fragment as one child however empty it is. Both shapes are common
+ * for mapped rows — `{items.length && rows}` and `<>{items.map(...)}</>` — and
+ * both previously produced a headed tier with no rows, i.e. exactly the
+ * misleading "all clear" that D12 exists to prevent. So: recurse through
+ * fragments and ignore the falsy-but-retained primitives.
+ */
+function countRenderable(children: React.ReactNode): number {
+  let count = 0;
+  React.Children.forEach(children, (child) => {
+    if (child === null || child === undefined || typeof child === "boolean") return;
+    if (child === 0 || child === "" || child === "0") return;
+    if (React.isValidElement(child) && child.type === React.Fragment) {
+      count += countRenderable((child.props as { children?: React.ReactNode }).children);
+      return;
+    }
+    count += 1;
+  });
+  return count;
+}
+
 function TierGroup({
   className,
   urgency,
@@ -65,12 +89,7 @@ function TierGroup({
   // Known boundary: an empty fragment (<></>) counts as one element here even
   // though it renders nothing — callers must not pass empty fragments as the
   // sole child and expect the guard to catch them.
-  // React.Children.toArray drops null/undefined/booleans but KEEPS 0 and "",
-  // so `{items.length && rows}` with zero items would render a visible "0".
-  const renderable = React.Children.toArray(children).filter(
-    (child) => !(child === 0 || child === "" || child === "0"),
-  );
-  if (renderable.length === 0) {
+  if (countRenderable(children) === 0) {
     return null;
   }
 
