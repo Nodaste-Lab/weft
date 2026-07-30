@@ -293,14 +293,19 @@ canonical dark, **17 of 19 overrides are byte-identical** — including the
 and `--weft-info` diverge. This template takes canonical for both and needs no
 override layer.
 
-### 2. Rail control density
+### 2. Rail control density (resolved)
 
 The reviewed rail controls are 34px, tighter than `--weft-control-h` (44px, or
 36px under `data-density="compact"`), because the rail stacks eight controls in a
-258px column, which the `dense` density tier provides. That tier is set on
-`:root` by the application as a user preference, not on the board. Open
-question: should the rail adopt the density axis fully, or should Weft gain a
-genuine 34px token?
+258px column.
+
+**Decided (2026-07-30): a real `dense` tier, and both tiers exist.** `compact`
+keeps 36px untouched so nothing already using it moves, and `data-density="dense"`
+adds the 34px tier. It is set on `:root` (`<html>`) by the application as a user
+preference, not on the board — `css/weft.css` may only carry `:root` selectors
+because it is injected verbatim into sandboxed panel iframes. Each tier also sets
+`--weft-control-pad-y`, so `min-height` rather than padding governs the control
+height and dense controls really are 34px.
 
 ### 3. Real form controls (resolved)
 

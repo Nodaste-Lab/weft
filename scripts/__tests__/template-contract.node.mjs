@@ -20,7 +20,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -211,11 +211,16 @@ test('T2-c: generated HTML contains only real accessible controls', () => {
   );
 
   // Every <button> without visible text must have an aria-label
-  const buttonMatches = [...html.matchAll(/<button([^>]*)>([^<]*)<\/button>/gi)];
+  // Body may contain nested markup: an icon-only <button><svg/></button> is the
+  // exact case this guard exists for, and [^<]* would skip it entirely.
+  const buttonMatches = [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)];
   const buttonViolations = buttonMatches.filter((m) => {
     const attrs = m[1];
     const inner = m[2].trim();
-    if (inner.length > 0) return false;          // has visible text
+    // Strip tags before asking whether there is visible text, so an icon-only
+    // button counts as empty rather than as labelled by its <svg>.
+    const visible = inner.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, '').trim();
+    if (visible.length > 0) return false;        // has visible text
     if (/aria-label=/i.test(attrs)) return false; // has aria-label
     return true;
   });
@@ -257,4 +262,34 @@ test('T3: docs/brand-package/11-panel-templates.md exists and is non-empty', () 
   assert.ok(existsSync(mdPath), '11-panel-templates.md must exist');
   const content = readFileSync(mdPath, 'utf8');
   assert.ok(content.trim().length > 200, '11-panel-templates.md must contain substantive content');
+});
+
+// ── pure-token-file guard: the palette bridge must stay an allowlist ─────────
+// Regression for review round 14. The bridge exemption was briefly a wildcard
+// (`:root[data-palette="weft"] <anything>`), which would have let a component
+// rule ship inside css/weft.css — a file injected verbatim into panel iframes.
+test('check-pure-token-file rejects arbitrary palette-scoped component selectors', () => {
+  const cssPath = join(ROOT, 'css/weft.css');
+  const original = readFileSync(cssPath, 'utf8');
+  const offenders = [
+    ':root[data-palette="weft"] .weft-board { display: none; }',
+    ':root[data-palette="weft"] button { color: var(--weft-ink); }',
+    ':root[data-palette="weft"] h4 { font-size: 1px; }',
+    '[data-density="dense"] { --weft-control-h: 1px; }',
+  ];
+  try {
+    for (const rule of offenders) {
+      writeFileSync(cssPath, `${original}\n${rule}\n`);
+      let rejected = false;
+      try {
+        execFileSync(process.execPath, [join(ROOT, 'scripts/check-pure-token-file.mjs')], { stdio: 'pipe' });
+      } catch {
+        rejected = true;
+      }
+      assert.ok(rejected, `guard accepted a rule it must reject: ${rule}`);
+    }
+  } finally {
+    writeFileSync(cssPath, original);
+  }
+  execFileSync(process.execPath, [join(ROOT, 'scripts/check-pure-token-file.mjs')], { stdio: 'pipe' });
 });

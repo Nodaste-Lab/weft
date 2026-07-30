@@ -21,23 +21,35 @@ if (/url\(/.test(css)) problems.push('contains url() — the opaque-origin panel
 //
 // Root axis selector: `:root` plus any number of [attr] / :not(...) qualifiers.
 const ROOT_AXIS = /^:root(\[[^\]]*\]|:not\([^)]*\))*$/;
-// The sanctioned exception: the `data-palette="weft"` bridge. AGENTS.md calls out
-// its typography rules; in practice the bridge also normalises body, wallpaper
-// layers and inline-styled spans. It is an escape hatch by design — additions to
-// it deserve review scrutiny, because they ship into every panel iframe — but it
-// is legitimate, pre-existing, and not something this guard should reject.
-const PALETTE_BRIDGE = /^:root\[data-palette="weft"\](\s+.+)?$/;
+// The sanctioned exception is an explicit ALLOWLIST, not a pattern. AGENTS.md
+// permits "the data-palette=weft typography rules"; in practice the bridge also
+// normalises body, the wallpaper layer and inline-styled uppercase spans. Those
+// specific rules are legitimate and pre-existing.
+//
+// It is deliberately not a wildcard like `:root[data-palette="weft"] <anything>`:
+// that would let a future `:root[data-palette="weft"] .weft-board { ... }` ship a
+// component rule into every panel iframe this file is injected into. Adding a
+// selector here is the review checkpoint — do it consciously, not by regex.
+const PALETTE_BRIDGE_ALLOWLIST = new Set([
+  ':root[data-palette="weft"] body',
+  ':root[data-palette="weft"] [data-hud-layer="wallpaper"]',
+  ':root[data-palette="weft"] [style*="text-transform: uppercase"]',
+  ...['h1', 'h2', 'h3'].flatMap((h) => [
+    `:root[data-palette="weft"] ${h}`,
+    `:root[data-palette="weft"] ${h} em`,
+    `:root[data-palette="weft"] ${h} i`,
+  ]),
+]);
+const isBridgeSelector = (sel) => PALETTE_BRIDGE_ALLOWLIST.has(sel);
 
-// Do NOT anchor on the preceding `}` — that consumes it and makes every other
-// rule invisible to the scan. Match `selector { body }` directly instead.
 const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   .map(([, sel, body]) => [sel, body])
   .filter(([sel]) => !sel.includes('@'));
 for (const [rawSel, body] of rules) {
   const parts = rawSel.trim().split(',').map((x) => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
-  const isBridge = parts.length > 0 && parts.every((one) => PALETTE_BRIDGE.test(one));
+  const isBridge = parts.length > 0 && parts.every(isBridgeSelector);
   for (const one of parts) {
-    if (ROOT_AXIS.test(one) || PALETTE_BRIDGE.test(one)) continue;
+    if (ROOT_AXIS.test(one) || isBridgeSelector(one)) continue;
     problems.push(`non-:root selector "${one.slice(0, 60)}" — weft.css must stay tokens-only`);
   }
   // Token blocks declare custom properties only. The palette bridge is the

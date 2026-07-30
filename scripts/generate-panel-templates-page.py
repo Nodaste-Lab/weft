@@ -301,11 +301,14 @@ SECTIONS = [
   '<div class="weft-board-toast-sub">ccore/archive timed out. Showing 4.</div></div>'
   '<button type="button" class="weft-board-toast-retry">Retry</button>'
   '<button type="button" class="weft-board-toast-close" aria-label="Dismiss">×</button></div></div>'),
- ("Notice / empty state", "EmptyState or Callout (React)", S,
-  "<code>EmptyState</code>; <code>Callout variant=&quot;dashed&quot;</code> (React)",
-  "Canonical. Use <code>EmptyState</code> for error/empty. Board-local notice class is deleted.",
+ ("Notice / empty state", "weft-callout.is-dashed / EmptyState variant=notice", S,
+  "<code>.weft-callout.is-dashed</code> (<code>weft-components.css</code>); "
+  "<code>EmptyState variant=&quot;notice&quot;</code> or <code>Callout variant=&quot;dashed&quot;</code> (React)",
+  "Canonical, and the specimen renders the canonical class rather than the board-local one — "
+  "copyable markup must not contradict the guidance. D9: notice for load failures, "
+  "<code>EmptyState variant=&quot;centered&quot;</code> for genuine empty states.",
   '<div class="weft-board" style="padding:14px">'
-  '<div class="weft-board-context-note">'
+  '<div class="weft-callout is-dashed">'
   '<b>Couldn\'t load action items.</b> Connecting your account…'
   '</div></div>'),
  ("Loading", "—", None,
