@@ -284,6 +284,12 @@ test('check-pure-token-file rejects arbitrary palette-scoped component selectors
     '@media (min-width: 40em) { :root { --weft-control-h: 1px; } }',
     '@supports (display: grid) { :root { --weft-control-h: 1px; } }',
     '@font-face { font-family: Smuggled; }',
+    // Review round 16: CSS escapes let a keyword be spelled around a literal
+    // match, and function names are case-insensitive.
+    '@\\69mport "https://example.com/panel.css";',
+    '@IMPORT "https://example.com/panel.css";',
+    ':root { --weft-bg: URL(https://example.com/x.png); }',
+    ':root { --weft-bg: Url (https://example.com/x.png); }',
   ];
   try {
     for (const rule of offenders) {

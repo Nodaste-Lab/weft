@@ -10,7 +10,27 @@ const raw = readFileSync(new URL('../css/weft.css', import.meta.url), 'utf8');
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, ''); // strip comments before parsing
 const problems = [];
 
-if (/url\(/.test(css)) problems.push('contains url() — the opaque-origin panel iframe cannot fetch external assets');
+// CSS escape sequences are rejected outright. `@\69mport "…";` is a perfectly
+// legal spelling of `@import`, and `\75 rl(…)` of `url(…)`, so any guard that
+// pattern-matches on the literal keyword can be walked straight past. A pure
+// token file has no legitimate need for an escape, which makes banning them the
+// cheap and total answer: with no backslash in the file, every keyword below is
+// spelled the only way it can be spelled.
+if (/\\/.test(css)) {
+  problems.push('contains a backslash escape — escapes can disguise at-keywords and function names, and a token file needs none');
+}
+
+// Blank the *contents* of string literals for the keyword scans below, so an "@"
+// or "url(" quoted inside a token value can't raise a false alarm. Escapes are
+// rejected above, so no backslash can escape a quote and desynchronise this.
+// Only the scans use it — the rule parser keeps the real text, because selectors
+// like [style*="text-transform: uppercase"] carry meaning inside their quotes.
+const blanked = css.replace(/"[^"]*"|'[^']*'/g, (m) => m[0] + ' '.repeat(m.length - 2) + m[0]);
+
+// Function names are case-insensitive in CSS, and `url ( x )` is valid too.
+if (/url\s*\(/i.test(blanked)) {
+  problems.push('contains url() — the opaque-origin panel iframe cannot fetch external assets');
+}
 
 // At-rules are rejected wholesale, not case by case. The rule parser below only
 // ever sees `selector { ... }` pairs, so a statement at-rule — `@import "…";` —
@@ -23,11 +43,11 @@ const AT_RULE_NOTES = {
   media: 'token overrides must key off :root attributes instead',
   import: 'the panel iframe must not fetch external stylesheets',
 };
-// Only statement position — a literal "@" inside a quoted token value is not an
-// at-rule, and is preceded by the quote rather than by `;`/`{`/`}`/start.
-for (const [, name] of css.matchAll(/(?:^|[;{}])\s*@([a-zA-Z-]+)/g)) {
+// Any "@" in statement position is an at-rule, whatever follows it. The name is
+// only used to pick a friendlier message.
+for (const [, name] of blanked.matchAll(/(?:^|[;{}])\s*@([a-zA-Z-]*)/g)) {
   const note = AT_RULE_NOTES[name.toLowerCase()] ?? 'weft.css must stay a flat list of :root token blocks';
-  problems.push(`contains @${name} — ${note}`);
+  problems.push(`contains @${name || '<escaped>'} — ${note}`);
 }
 
 // Every selector must target :root (base or attribute-scoped variants).
