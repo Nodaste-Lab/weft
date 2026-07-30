@@ -88,7 +88,10 @@ chmod 700 "$LOGDIR" 2>/dev/null || true
 
 # Never write through a pre-existing symlink or special file.
 ensure_regular() {
-  if [ -e "$1" ] && { [ -L "$1" ] || [ ! -f "$1" ]; }; then
+  # -L is tested independently of -e: a DANGLING symlink fails -e, so gating the
+  # whole check on -e would skip precisely the case this guard exists for — a
+  # planted link whose target does not exist yet, which a redirection then creates.
+  if [ -L "$1" ] || { [ -e "$1" ] && [ ! -f "$1" ]; }; then
     echo "review-gate: $1 exists and is not a regular file — refusing to write through it." >&2
     exit 1
   fi
