@@ -33,7 +33,7 @@ GOAL=""
 PR=""
 MARK_READY=0
 MAX_DIFF_BYTES=200000
-GATES='npm test --silent && npm run verify --silent && npm run props --silent && node scripts/check-raw-colors.mjs && node scripts/check-pure-token-file.mjs'
+GATES='npm test --silent && npm run verify --silent && npm run props --silent && npm run test:props --silent && node scripts/check-raw-colors.mjs && node scripts/check-pure-token-file.mjs && npm run check:exports --silent && npm run test:css-contract --silent && npm run test:contrast --silent && npm run test:template-contract --silent && npm run build --silent'
 WRAPPER="$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh"
 
 while [ $# -gt 0 ]; do

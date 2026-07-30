@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Generate the visual component breakdown page for the weft-board template.
 
+Usage (normal):
+  python3 generate-panel-templates-page.py <repo-root> <scratchpad>
+
+Usage (pure render / freshness check — no writes to repo):
+  python3 generate-panel-templates-page.py <repo-root> <scratchpad> --output <file>
+  Writes the linked HTML to <file> instead of docs/brand-package/panel-templates.html.
+  The inline copy still goes to <scratchpad>/panel-templates-inline.html.
+
 Emits two files from one source of truth:
   docs/brand-package/panel-templates.html   relative CSS links — always reads the
                                             live token/component/template files,
@@ -13,8 +21,15 @@ appear in any specimen; evidence absence renders no chip.
 """
 import pathlib, sys, html as html_mod
 
-W = pathlib.Path(sys.argv[1])
-SP = pathlib.Path(sys.argv[2])
+args = sys.argv[1:]
+output_override = None
+if '--output' in args:
+    idx = args.index('--output')
+    output_override = pathlib.Path(args[idx + 1])
+    args = args[:idx] + args[idx + 2:]
+
+W = pathlib.Path(args[0])
+SP = pathlib.Path(args[1])
 
 CSS_FILES = ['css/theme.css', 'css/weft.css', 'css/weft-components.css', 'css/weft-templates.css']
 
@@ -447,7 +462,9 @@ def build(css_block):
 
 # repo copy — relative links, always reads the live CSS
 linked = "\n".join(f'<link rel="stylesheet" href="../../{f}" />' for f in CSS_FILES)
-(W / 'docs/brand-package/panel-templates.html').write_text(build(linked))
+dest = output_override if output_override else (W / 'docs/brand-package/panel-templates.html')
+dest.parent.mkdir(parents=True, exist_ok=True)
+dest.write_text(build(linked))
 
 # shareable copy — CSS inlined
 inline = "<style>\n" + "\n".join((W / f).read_text() for f in CSS_FILES) + "\n</style>"

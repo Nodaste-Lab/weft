@@ -2370,12 +2370,12 @@ export function DesignSystemUiGallery({
         summary="Compact label-value readout for dense panel stats. D2 adds opt-in board variant with leading icon slot and flex-fill label."
       >
         <div className="flex flex-col gap-3">
-          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-border bg-card p-2">
             <StatRow label="Sources" value="8" hint="indexed" />
             <StatRow label="Open loops" value="3" />
             <StatRow label="Updated" value="2m ago" />
           </div>
-          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)] p-2">
+          <div className="w-full max-w-xs rounded-[var(--radius-sm)] border border-border bg-card p-2">
             <StatRow
               variant="board"
               label="Blocked"
@@ -2724,7 +2724,7 @@ export function DesignSystemUiGallery({
         summary="Panel chrome title strip with dismiss control and actions slot. D10 adds board size for the 46px operator-board header."
       >
         <div className="flex w-full max-w-sm flex-col gap-3">
-          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-border bg-card">
             <PanelHeader>
               <PanelHeaderTitle>Signal Inbox</PanelHeaderTitle>
               <PanelHeaderActions>
@@ -2733,7 +2733,7 @@ export function DesignSystemUiGallery({
               </PanelHeaderActions>
             </PanelHeader>
           </div>
-          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--hud-border)] bg-[var(--hud-surface-raised)]">
+          <div className="overflow-hidden rounded-[var(--radius-sm)] border border-border bg-card">
             <PanelHeader size="board">
               <PanelHeaderTitle>Operator Board</PanelHeaderTitle>
               <PanelHeaderActions>
