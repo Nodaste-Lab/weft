@@ -387,13 +387,15 @@ CHROME = """
 
 def spec_card(nm, cls_html, status, equiv, action, demo):
     b = f'<span class="b {BADGE[status]}">{status}</span>' if status else '<span class="b doc">GAP</span>'
-    demo_html = f'<div class="demo">{demo}</div>' if demo else ''
+    # Carries its own indent and newline so an absent demo leaves no blank line
+    # behind — an interpolated empty string on its own indented line emits
+    # trailing whitespace, which `git diff --check` flags on every regeneration.
+    demo_html = f'  <div class="demo">{demo}</div>\n' if demo else ''
     # nm is escaped; cls_html is already HTML (may contain entities like &lt;)
     return f"""<div class="spec">
   <div class="spec-h"><span class="nm">{html_mod.escape(nm)}</span><span class="bg">{b}</span></div>
   <div class="cls">{cls_html}</div>
-  {demo_html}
-  <div class="meta">
+{demo_html}  <div class="meta">
     <div class="row"><span class="k">Weft has</span><span>{equiv}</span></div>
     <div class="row"><span class="k">Action</span><span>{action}</span></div>
   </div>

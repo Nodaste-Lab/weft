@@ -276,6 +276,14 @@ test('check-pure-token-file rejects arbitrary palette-scoped component selectors
     ':root[data-palette="weft"] button { color: var(--weft-ink); }',
     ':root[data-palette="weft"] h4 { font-size: 1px; }',
     '[data-density="dense"] { --weft-control-h: 1px; }',
+    // Review round 15: statement at-rules have no braces, so the rule parser
+    // never saw them. @import is the dangerous one — it would pull external CSS
+    // into every sandboxed panel iframe weft.css is injected into.
+    '@import "https://example.com/panel.css";',
+    '@import url("https://example.com/panel.css");',
+    '@media (min-width: 40em) { :root { --weft-control-h: 1px; } }',
+    '@supports (display: grid) { :root { --weft-control-h: 1px; } }',
+    '@font-face { font-family: Smuggled; }',
   ];
   try {
     for (const rule of offenders) {

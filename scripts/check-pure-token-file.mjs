@@ -10,8 +10,25 @@ const raw = readFileSync(new URL('../css/weft.css', import.meta.url), 'utf8');
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, ''); // strip comments before parsing
 const problems = [];
 
-if (/@media/.test(css)) problems.push('contains @media — token overrides must key off :root attributes instead');
 if (/url\(/.test(css)) problems.push('contains url() — the opaque-origin panel iframe cannot fetch external assets');
+
+// At-rules are rejected wholesale, not case by case. The rule parser below only
+// ever sees `selector { ... }` pairs, so a statement at-rule — `@import "…";` —
+// has no braces and would slip past it entirely, pulling external CSS into every
+// sandboxed panel this file is injected into. A pure token file needs no at-rule
+// of any kind: the theme/density/palette axes key off :root attributes, which is
+// why @media in particular is disallowed. Anything new here is a design change
+// that belongs in review, so name it rather than pattern-matching it.
+const AT_RULE_NOTES = {
+  media: 'token overrides must key off :root attributes instead',
+  import: 'the panel iframe must not fetch external stylesheets',
+};
+// Only statement position — a literal "@" inside a quoted token value is not an
+// at-rule, and is preceded by the quote rather than by `;`/`{`/`}`/start.
+for (const [, name] of css.matchAll(/(?:^|[;{}])\s*@([a-zA-Z-]+)/g)) {
+  const note = AT_RULE_NOTES[name.toLowerCase()] ?? 'weft.css must stay a flat list of :root token blocks';
+  problems.push(`contains @${name} — ${note}`);
+}
 
 // Every selector must target :root (base or attribute-scoped variants).
 // AGENTS.md invariant 1: weft.css may contain only the documented `:root[...]`
