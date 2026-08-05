@@ -84,10 +84,18 @@ with no constraints would hand the reviewer a weaker review than the operator
 believes they asked for, which is the same fail-open shape as the bug itself.
 A path passed explicitly to `--constraints` is operator intent and is exempt.
 
-**Heading matching is exact and fence-aware.** Substring matching was wrong twice:
-`## Why the invariant policy exists` would beat a later `## Hard invariants`, and
-a `##` line inside a fenced code block counted as the next heading and silently
-truncated the section. Both still produced `CLEAN`.
+**Heading matching is exact, literal, and fence-aware.** Three parser defects
+lived here, and every one of them omitted rules while still producing `CLEAN`:
+
+- Substring matching let `## Why the invariant policy exists` beat a later
+  `## Hard invariants`. Headings are now normalized and matched exactly.
+- Toggling fences on any ` ``` ` or `~~~` meant a nested shorter fence read as the
+  close, after which a `##` still inside the outer fence ended the section.
+  Fences now follow CommonMark: a fence closes only on the same marker character
+  at at least the opening run length.
+- `--constraints-heading` was interpolated into an ERE, so `C++ rules` matched
+  `## C rules`. An operator-supplied heading now travels as a literal and is
+  compared with `==`; only the built-in default is an alternation.
 
 In this repo that resolves to `AGENTS.md` § *Hard invariants*, so the reviewer
 gets the live text rather than a paraphrase that drifts. The last case is the
@@ -116,12 +124,18 @@ GitHub Enterprise login unrelated to this repo would block a PR `gh` can read
 perfectly well. `gh pr view` is the repo-scoped check, and it already fails on
 bad auth, bad number, and no access alike.
 
-**The gate has its own tests.** `npm run test:review-gate` builds throwaway git
-repos, runs the real script against a stub wrapper, and asserts on the review
-input it generates — the artefact that actually reaches an external reviewer.
-It is in the discovered gate battery, so the gate runs it on itself. Every defect
-it pins failed *open*: symlink disclosure, wrong-section selection, and fenced-`##`
-truncation all exited `0` with a `CLEAN` verdict.
+**The gate has its own tests, and CI runs them.** `npm run test:review-gate`
+builds throwaway git repos, runs the real script against a stub wrapper, and
+asserts on the review input it generates — the artefact that actually reaches an
+external reviewer. It is a step in `ci.yml` and a member of the discovered gate
+battery, so the gate also runs it on itself. A suite that only ever runs when
+someone remembers to run it is not a gate.
+
+Every defect it pins failed *open* — symlink disclosure, wrong-section selection,
+fenced-`##` truncation, nested-fence truncation, and regex-metacharacter heading
+matching all exited `0` with a `CLEAN` verdict. That is the signature to watch
+for here: this harness's failure mode is not crashing, it is quietly reviewing
+less than it claims to.
 
 ## Running it in another repo
 

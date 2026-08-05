@@ -146,12 +146,34 @@ safe_repo_file() {
 # would win over a later "## Hard invariants", and a `## ...` line inside a fenced
 # code block counted as the next heading and silently truncated the section. Both
 # failures still produced a CLEAN verdict, which is the worst shape for a bug in a
-# gate. So: fences are tracked, and the heading is normalized (emphasis stripped,
-# a trailing " — clause" / " - clause" / ": clause" dropped) and matched exactly
-# against an anchored alternation.
+# gate. So the heading is normalized (emphasis stripped, a trailing " — clause" /
+# " - clause" / ": clause" dropped) and matched exactly.
+#
+# Fence tracking follows CommonMark rather than toggling on any ``` or ~~~: a
+# fence closes only on the SAME marker character at AT LEAST the opening run
+# length. Toggling naively meant a three-backtick example nested inside a
+# four-backtick fence read as the close, after which a `##` still inside the outer
+# fence terminated the section — truncating the rules, silently, on a CLEAN run.
+#
+# Args: FILE LITERAL RE. LITERAL is an exact lowercase heading and wins when
+# non-empty; it is compared with == precisely so an operator-supplied heading is
+# never interpreted as a regex ("C++ rules" must not match "C rules").
 extract_section() {
-  awk -v want="$2" '
-    /^[ \t]*(```|~~~)/ { if (grab) print; fence = !fence; next }
+  awk -v lit="$2" -v re="$3" '
+    /^[ \t]*(```|~~~)/ {
+      line = $0
+      sub(/^[ \t]+/, "", line)
+      ch = substr(line, 1, 1)
+      run = 0
+      while (substr(line, run + 1, 1) == ch) run++
+      if (!fence) {
+        fence = 1; fch = ch; flen = run
+      } else if (ch == fch && run >= flen) {
+        fence = 0
+      }
+      if (grab) print
+      next
+    }
     fence { if (grab) print; next }
     /^#+[ \t]/ {
       match($0, /^#+/); n = RLENGTH
@@ -164,7 +186,8 @@ extract_section() {
         sub(/:.*$/, "", h)
         gsub(/[*_`]/, "", h)
         sub(/[ \t]+$/, "", h)
-        if (tolower(h) ~ want) { grab = 1; lvl = n; next }
+        h = tolower(h)
+        if (lit != "" ? (h == lit) : (h ~ re)) { grab = 1; lvl = n; next }
       }
     }
     grab { print }
@@ -187,7 +210,7 @@ resolve_constraints() {
     fi
   fi
   if safe_repo_file AGENTS.md; then
-    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING_RE")"
+    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING_LIT" "$HEADING_RE")"
     if [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
       return
@@ -206,10 +229,16 @@ BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 # Which AGENTS.md heading holds the invariants. --constraints-heading names one
 # exactly; the default accepts the few conventional spellings, matched exactly
 # after normalization rather than by substring.
+# An operator-supplied heading travels as a LITERAL, never as a regex: it is
+# documented as an exact heading, and interpolating it into ERE let
+# "C++ rules" match "## C rules" and select the wrong section. The default stays
+# an anchored alternation because it genuinely is a set of alternatives.
 if [ -n "$HEADING" ]; then
-  HEADING_RE="^$(printf '%s' "$HEADING" | tr '[:upper:]' '[:lower:]')$"
+  HEADING_LIT="$(printf '%s' "$HEADING" | tr '[:upper:]' '[:lower:]')"
+  HEADING_RE=""
   HEADING_LABEL="$HEADING"
 else
+  HEADING_LIT=""
   HEADING_RE='^(invariants|hard invariants|repo invariants)$'
   HEADING_LABEL="invariants"
 fi

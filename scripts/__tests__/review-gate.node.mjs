@@ -216,6 +216,91 @@ test('a ## line inside a fenced block does not truncate the section', () => {
   assert.ok(!block.body.includes('unrelated'));
 });
 
+test('a nested shorter fence does not close the outer fence', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', [
+    '# Repo',
+    '',
+    '## Invariants',
+    '- first rule',
+    '',
+    '````markdown',            // four-backtick outer fence
+    'Example of documenting a fence:',
+    '```bash',                 // three backticks: NOT a close
+    '## not a heading, still inside the outer fence',
+    '```',
+    '````',                    // this closes it
+    '',
+    '- last rule',
+    '',
+    '## Release',
+    'unrelated',
+    '',
+  ].join('\n'));
+  s.commit();
+  const block = constraintsBlock(s.run().input);
+  assert.match(block.body, /first rule/);
+  assert.match(block.body, /last rule/, 'a nested three-backtick fence closed the four-backtick fence');
+  assert.ok(!block.body.includes('unrelated'));
+});
+
+test('a tilde fence inside a backtick fence does not close it', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', [
+    '# Repo',
+    '',
+    '## Invariants',
+    '- first rule',
+    '',
+    '```markdown',
+    '~~~',
+    '## not a heading',
+    '~~~',
+    '```',
+    '',
+    '- last rule',
+    '',
+    '## Release',
+    'unrelated',
+    '',
+  ].join('\n'));
+  s.commit();
+  const block = constraintsBlock(s.run().input);
+  assert.match(block.body, /last rule/, 'a ~~~ line closed a ``` fence');
+  assert.ok(!block.body.includes('unrelated'));
+});
+
+test('--constraints-heading is a literal, not a regex', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', [
+    '# Repo',
+    '',
+    '## C rules',
+    'the WRONG section',
+    '',
+    '## C++ rules',
+    '- the right rule',
+    '',
+    '## Other',
+    'unrelated',
+    '',
+  ].join('\n'));
+  s.commit();
+  const block = constraintsBlock(s.run(['--constraints-heading', 'C++ rules']).input);
+  assert.match(block.body, /the right rule/);
+  assert.ok(!block.body.includes('the WRONG section'), 'heading was interpreted as a regex');
+});
+
+test('a regex-metacharacter heading that matches nothing yields no block', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', '# Repo\n\n## Invariants\n- a rule\n');
+  s.commit();
+  // '.*' must not match the Invariants heading by accident.
+  const r = s.run(['--constraints-heading', '.*']);
+  assert.equal(r.status, 0);
+  assert.equal(constraintsBlock(r.input), null);
+});
+
 test('--constraints-heading selects a non-conventional heading', () => {
   const s = sandbox();
   s.write('AGENTS.md', '# Repo\n\n## House rules\n- the house rule\n\n## Other\nnope\n');
