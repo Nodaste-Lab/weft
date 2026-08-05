@@ -34,6 +34,8 @@ jobs:
         run: npm run test:contrast
       - name: Template contract (weft-board template layer)
         run: npm run test:template-contract
+      - name: Review-gate harness (constraint discovery, refusals, preflight)
+        run: npm run test:review-gate
       - name: Raw-color audit (tokens only outside css/)
         run: node scripts/check-raw-colors.mjs
       - name: Unit + a11y tests

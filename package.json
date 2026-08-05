@@ -57,7 +57,8 @@
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",
     "check:exports": "node scripts/check-exports-contract.mjs",
     "test:contrast": "node --test scripts/__tests__/contrast-contract.node.mjs",
-    "test:template-contract": "node --test scripts/__tests__/template-contract.node.mjs"
+    "test:template-contract": "node --test scripts/__tests__/template-contract.node.mjs",
+    "test:review-gate": "node --test scripts/__tests__/extract-constraints.node.mjs scripts/__tests__/review-gate.node.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

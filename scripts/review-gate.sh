@@ -12,6 +12,7 @@
 # Usage
 #   scripts/review-gate.sh --base main [--gates "<cmd>"] [--goal "<text>"]
 #                          [--pr <n>] [--mark-ready] [--max-diff-bytes N]
+#                          [--wrapper <path>] [--constraints <file>]
 #
 #   --base            branch/ref to diff against (default: main)
 #   --gates           gate command; default is this repo's set
@@ -20,6 +21,16 @@
 #   --mark-ready      on double-clean, flip the PR out of draft and post evidence
 #   --max-diff-bytes  cap the diff sent to Codex (default 200000); truncation is
 #                     reported to Codex and in the log rather than hidden
+#   --wrapper         codex review-partner wrapper (env: REVIEW_GATE_WRAPPER)
+#   --constraints     file of repo invariants to hand the reviewer; default is
+#                     discovered (see resolve_constraints). An explicit path is
+#                     operator intent; discovered paths must be regular files
+#                     inside the repo, never symlinks.
+#   --constraints-heading
+#                     exact AGENTS.md heading holding the invariants, matched
+#                     verbatim apart from emphasis and any closing '#' run
+#                     (default: Invariants / Hard invariants / Repo invariants,
+#                     which additionally tolerate a trailing dash/colon clause)
 #
 # Exit codes
 #   0  double-clean (and PR marked ready if asked)
@@ -30,13 +41,22 @@ set -euo pipefail
 # Review inputs contain the full private diff; keep every artefact owner-only.
 umask 077
 
+# Where this script lives, resolved before any cd. Helper scripts are siblings of
+# it, not of the repo under review — those are different directories whenever the
+# gate is invoked from outside the checkout it is reviewing.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+
 BASE="main"
 GOAL=""
 PR=""
 MARK_READY=0
 MAX_DIFF_BYTES=200000
 GATES=""   # empty means "discover what this repo has" (see build_default_gates)
-WRAPPER="$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh"
+CONSTRAINTS=""  # empty means "discover" (see resolve_constraints)
+HEADING=""      # empty means "the conventional invariants headings"
+# Overridable because the wrapper lives outside the repo, at a path that differs
+# per machine and per skill-install root. Flag beats env beats default.
+WRAPPER="${REVIEW_GATE_WRAPPER:-$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh}"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -46,7 +66,12 @@ while [ $# -gt 0 ]; do
     --pr) PR="$2"; shift 2 ;;
     --mark-ready) MARK_READY=1; shift ;;
     --max-diff-bytes) MAX_DIFF_BYTES="$2"; shift 2 ;;
-    -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+    --wrapper) WRAPPER="$2"; shift 2 ;;
+    --constraints) CONSTRAINTS="$2"; shift 2 ;;
+    --constraints-heading) HEADING="$2"; shift 2 ;;
+    # Print the header block by structure, not by line number: a hardcoded range
+    # silently starts lying the first time this header grows.
+    -h|--help) awk 'NR>1 && /^#/ { sub(/^# ?/,""); print; next } NR>1 { exit }' "$0"; exit 0 ;;
     *) echo "unknown arg: $1" >&2; exit 1 ;;
   esac
 done
@@ -57,7 +82,7 @@ done
 # the repo does not define is skipped, and anything it adds later is picked up
 # automatically. Override wholesale with --gates.
 build_default_gates() {
-  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract build check:exports"
+  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract test:review-gate build check:exports"
   local parts=""
   local s
   for s in $candidates; do
@@ -72,9 +97,224 @@ build_default_gates() {
   printf '%s' "$parts"
 }
 
+# The reviewer is told which invariants a finding must respect. Those are repo
+# property, not script property: hardcoding one repo's rules here means every
+# other repo silently gets reviewed against constraints that do not apply to it —
+# a wrong review that still exits 0. So resolve them, and when there is nothing
+# to resolve, say nothing rather than substituting someone else's rules.
+#
+# Order: --constraints > .review-gate/constraints.md > the invariants section of
+# AGENTS.md > none. Sets CONSTRAINTS_TEXT and CONSTRAINTS_SRC (used for the
+# provenance line, so the prompt never misstates where the rules came from).
+CONSTRAINTS_TEXT=""
+CONSTRAINTS_SRC=""
+# Every finding on this file so far has been the same bug: the review proceeds
+# with fewer constraints than intended and still reports CLEAN. The causes keep
+# differing — a symlink, a parser miss, a swallowed exit code, a subshell `exit` —
+# so the defence is to stop treating "no constraints" as a default that any code
+# path can fall into. It must be stated: exactly one path may set this to `none`,
+# and that path is "this repo has no constraints source at all". Everything else
+# aborts. The assertion after resolve_constraints enforces it, so a future path
+# that forgets fails loudly instead of quietly reviewing less.
+CONSTRAINTS_STATE="unset"
+
+# Auto-discovered inputs are attacker-controllable. Both [ -f ] and cat follow
+# symlinks, so a PR that commits .review-gate/constraints.md (or AGENTS.md) as a
+# link to ~/.ssh/id_rsa, .env, or any readable file gets that file copied into the
+# review input and shipped to an external reviewer — on a run that still exits 0.
+# This is the read-side twin of ensure_regular(): regular file only, and the
+# resolved path must stay inside the repo, which also catches a symlinked PARENT
+# directory. Explicitly passed --constraints is operator intent and is exempt;
+# discovery is not.
+# Absent is a normal negative (fall through to the next source). Present but
+# unsafe is FATAL, not a warning: degrading silently to "no constraints" would
+# hand the reviewer a weaker review than the operator thinks they asked for, and
+# still exit 0 — the same fail-open shape as the bug this guard exists to close.
+# Every other refusal in this script exits 1; so does this one.
+safe_repo_file() {
+  local f="$1" dir phys
+  if [ -L "$f" ]; then
+    echo "review-gate: $f is a symlink — refusing to read it into the review input." >&2
+    echo "  Auto-discovered constraint files must be regular files inside the repo." >&2
+    echo "  Pass --constraints <path> if you really mean to read through a link." >&2
+    exit 1
+  fi
+  [ -e "$f" ] || return 1
+  if [ ! -f "$f" ]; then
+    echo "review-gate: $f is not a regular file — refusing to read it." >&2
+    exit 1
+  fi
+  dir="$(dirname "$f")"
+  phys="$(cd "$dir" 2>/dev/null && pwd -P)" || return 1
+  case "$phys/" in
+    "$ROOT_PHYS"/*) return 0 ;;
+    *)
+      echo "review-gate: $f resolves outside the repository ($phys) — refusing to read it." >&2
+      exit 1
+      ;;
+  esac
+}
+
+# Section extraction lives in scripts/extract-constraints.mjs, not here.
+#
+# It was an inline awk scanner for three review rounds, and each round found
+# another CommonMark rule it had approximated: naive fence toggling, then nested
+# fences, then closing fences carrying an info string, then indented ATX headings.
+# Every miss had the same shape — section silently truncated or not found, a short
+# or empty constraints block, and a CLEAN verdict anyway. Patching rule-by-rule
+# was losing to the spec, so it moved to a real line scanner with direct unit
+# tests. See that file for the supported subset and what is deliberately out of it.
+#
+# Prerequisites are checked HERE, in the parent shell, and never inside a function
+# that runs in a command substitution.
+#
+# `exit` inside "$(...)" terminates the SUBSHELL, not the script. These two checks
+# used to live in extract_section, which is only ever called as "$(extract_section
+# ...)", so their `exit 1` became an ordinary status 1 by the time the caller saw
+# it — indistinguishable from the scanner's "no such section", which the caller
+# tolerates. A missing node or a missing sibling scanner therefore resumed the
+# review with no constraints and reached CLEAN. Anything that must abort the run
+# has to be evaluated outside the substitution.
+#
+# Resolved against THIS script's directory, not the repo under review: the two
+# differ whenever the gate runs from outside the checkout it is reviewing, and a
+# copy of this script in another repo must find its own scanner.
+SCANNER="$SCRIPT_DIR/extract-constraints.mjs"
+# Must match SENTINEL in that file. The scanner's own tests assert the constant;
+# the harness tests assert this pairing end-to-end.
+SCANNER_SENTINEL='#__REVIEW_GATE_CONSTRAINTS__:'
+
+require_scanner() {
+  command -v node >/dev/null 2>&1 || {
+    echo "review-gate: node is required to read invariants out of AGENTS.md." >&2
+    echo "  Install node, or pass --constraints <file> to skip extraction." >&2
+    exit 1
+  }
+  [ -f "$SCANNER" ] || {
+    echo "review-gate: $SCANNER is missing — it ships alongside this script." >&2
+    echo "  Copy it too, or pass --constraints <file> to skip extraction." >&2
+    exit 1
+  }
+}
+
+# Pure invocation: no exits, so its status is only ever the scanner's own.
+# 0 = section found, 1 = no such section, >1 = the scanner itself failed.
+run_scanner() {
+  if [ -n "${2:-}" ]; then
+    node "$SCANNER" "$1" --heading "$2"
+  else
+    node "$SCANNER" "$1"
+  fi
+}
+
+resolve_constraints() {
+  if [ -n "$CONSTRAINTS" ]; then
+    [ -f "$CONSTRAINTS" ] || { echo "review-gate: --constraints file not found: $CONSTRAINTS" >&2; exit 1; }
+    CONSTRAINTS_TEXT="$(cat "$CONSTRAINTS")"
+    CONSTRAINTS_SRC="$CONSTRAINTS"
+    [ -n "$CONSTRAINTS_TEXT" ] || { echo "review-gate: --constraints file is empty: $CONSTRAINTS" >&2; exit 1; }
+    CONSTRAINTS_STATE="found"
+    return
+  fi
+  if safe_repo_file .review-gate/constraints.md; then
+    CONSTRAINTS_TEXT="$(cat .review-gate/constraints.md)"
+    if [ -n "$CONSTRAINTS_TEXT" ]; then
+      CONSTRAINTS_SRC=".review-gate/constraints.md"
+      CONSTRAINTS_STATE="found"
+      return
+    fi
+    echo "review-gate: .review-gate/constraints.md is empty — it exists to carry rules." >&2
+    echo "  Remove it, or fill it in; an empty rule file is not the same as no rules." >&2
+    exit 1
+  fi
+  if safe_repo_file AGENTS.md; then
+    # Prerequisites first, in this shell — see require_scanner. Then the scanner's
+    # exit codes, which are load-bearing: 1 is "no such section", a normal miss,
+    # and anything else is a real failure. `if` supplies the errexit exemption so
+    # the status can be captured rather than killing the shell.
+    require_scanner
+    # The scanner's TRAILER is authoritative, not its exit status. A status cannot
+    # separate "no matching section" from "that script has a syntax error" or "an
+    # exception escaped" — node exits 1 for all of them — so trusting the status
+    # let a broken scanner read as a benign miss. Same rule this gate applies to
+    # Codex: no parseable result is never a pass. The status is captured only to
+    # quote back in the error.
+    local rc=0 raw="" trailer=""
+    if raw="$(run_scanner AGENTS.md "$HEADING")"; then rc=0; else rc=$?; fi
+    trailer="$(printf '%s\n' "$raw" | tail -1)"
+    case "$trailer" in
+      "$SCANNER_SENTINEL FOUND")
+        CONSTRAINTS_TEXT="$(printf '%s\n' "$raw" | sed '$d')"
+        if [ -z "$CONSTRAINTS_TEXT" ]; then
+          echo "review-gate: the constraints scanner reported FOUND with an empty body." >&2
+          echo "  Refusing to review with constraints it could not actually produce." >&2
+          exit 1
+        fi
+        CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
+        CONSTRAINTS_STATE="found"
+        return
+        ;;
+      "$SCANNER_SENTINEL NONE")
+        CONSTRAINTS_TEXT=""
+        ;;
+      *)
+        echo "review-gate: the constraints scanner produced no parseable result (exit $rc)." >&2
+        echo "  Expected a final line of '$SCANNER_SENTINEL FOUND' or '$SCANNER_SENTINEL NONE'." >&2
+        echo "  A crashed or half-finished scanner is not the same as a repo with no rules;" >&2
+        echo "  refusing to review rather than review without them." >&2
+        echo "  Fix the scanner, or pass --constraints <file> to bypass extraction." >&2
+        exit 1
+        ;;
+    esac
+  fi
+  # The one benign route to an absent constraints block: no source exists here.
+  CONSTRAINTS_TEXT=""
+  CONSTRAINTS_SRC=""
+  CONSTRAINTS_STATE="none"
+}
+
+# Belt to resolve_constraints' braces. If a future path returns without stating an
+# outcome, or states one its variables contradict, that is a bug in this script
+# and must not become a quietly weaker review.
+assert_constraints_resolved() {
+  case "$CONSTRAINTS_STATE" in
+    found)
+      [ -n "$CONSTRAINTS_TEXT" ] && [ -n "$CONSTRAINTS_SRC" ] && return 0
+      echo "review-gate: internal error — constraints reported found but are empty." >&2
+      ;;
+    none)
+      [ -z "$CONSTRAINTS_TEXT" ] && return 0
+      echo "review-gate: internal error — constraints reported absent but are set." >&2
+      ;;
+    *)
+      echo "review-gate: internal error — constraint resolution did not state an outcome." >&2
+      ;;
+  esac
+  echo "  Refusing to review rather than review with unknown constraints." >&2
+  exit 1
+}
+
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
+# Physical (symlink-resolved) root, so safe_repo_file compares like with like.
+ROOT_PHYS="$(pwd -P)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+# Which AGENTS.md heading holds the invariants. --constraints-heading names one
+# exactly; the default accepts the few conventional spellings, matched exactly
+# after normalization rather than by substring.
+# An operator-supplied heading is an exact string, compared as a literal by the
+# extractor — never interpolated into a pattern, which once let "C++ rules" match
+# "## C rules". The default set lives in extract-constraints.mjs so there is one
+# copy of it.
+if [ -n "$HEADING" ]; then
+  HEADING_LABEL="$HEADING"
+else
+  HEADING_LABEL="invariants"
+fi
+
+resolve_constraints
+assert_constraints_resolved
 
 if [ -z "$GATES" ]; then
   GATES="$(build_default_gates)"
@@ -94,8 +334,32 @@ fi
 SHA="$(git rev-parse HEAD)"
 SHORT="$(git rev-parse --short HEAD)"
 
-[ -x "$WRAPPER" ] || { echo "review-gate: codex wrapper not found at $WRAPPER" >&2; exit 1; }
+[ -x "$WRAPPER" ] || {
+  echo "review-gate: codex wrapper not found at $WRAPPER" >&2
+  echo "  Point at it with --wrapper <path> or REVIEW_GATE_WRAPPER=<path>." >&2
+  exit 1
+}
 git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BASE' not found" >&2; exit 1; }
+
+# Everything --mark-ready needs is checked HERE, before the gates and before a
+# review that can run 15 minutes. Discovering a missing --pr or an unauthenticated
+# gh at the end throws away the whole round for a typo.
+if [ "$MARK_READY" = "1" ]; then
+  [ -n "$PR" ] || { echo "review-gate: --mark-ready needs --pr <n>" >&2; exit 1; }
+  command -v gh >/dev/null 2>&1 || { echo "review-gate: --mark-ready needs the gh CLI on PATH" >&2; exit 1; }
+  # No global `gh auth status` here: it reports on every known host and account,
+  # so a stale GitHub Enterprise login unrelated to this repo would block a PR
+  # that gh can actually read. The call below is the repo-scoped check that
+  # matters — it fails on bad auth, bad PR number, and no access alike.
+  PR_HEAD="$(gh pr view "$PR" --json headRefOid -q .headRefOid 2>/dev/null)" || {
+    echo "review-gate: cannot read PR #$PR — check the number, this repo's remote, and gh auth for this host." >&2
+    exit 1
+  }
+  # Advisory only. Pushing while the review runs is a legitimate flow, so the
+  # authoritative head check stays at mark time — this just surfaces the common
+  # "forgot to push" case in one second instead of after the review.
+  [ "$PR_HEAD" = "$SHA" ] || echo "  note: PR #$PR head ($PR_HEAD) is not HEAD yet — push before this finishes, or marking ready will refuse."
+fi
 
 # Artefact storage. Review inputs embed the full private diff, so this deliberately
 # avoids /tmp entirely: no shared directory means no symlink swap, no check/create
@@ -173,20 +437,11 @@ fi
   echo '```'
   echo "Result: $GATE_RESULT (full log withheld; re-runnable above)"
   echo
-  echo "Repo constraints that findings must respect (from AGENTS.md):"
-  cat <<'EOF'
-- css/weft.css is a pure token file: no @media, no component selectors. It is
-  injected verbatim into sandboxed panel iframes by a consumer.
-- Token-only colors. Raw hex/rgb/hsl live only in css/ token files; everything
-  in src/ reads var(--weft-*).
-- manifest.json is lockstep with src/ui/*.tsx: sorted, paths match, showcase
-  entries carry semver, designSystemVersion equals package.json version.
-- props-snapshot.json is a committed contract. A breaking prop-surface change
-  requires a MAJOR component bump; additive changes require a bump too.
-- The published tarball must ship src/ (a consumer deep-imports it).
-- Byte-stability matters: never reformat css/ as a side effect.
-EOF
-  echo
+  if [ -n "$CONSTRAINTS_TEXT" ]; then
+    echo "Repo constraints that findings must respect (from $CONSTRAINTS_SRC):"
+    echo "$CONSTRAINTS_TEXT"
+    echo
+  fi
   echo "Changed files:"
   git diff --stat "$BASE...HEAD"
   echo
