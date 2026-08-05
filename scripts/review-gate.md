@@ -120,6 +120,13 @@ This is the rule the gate already applies to Codex — a missing or unparseable
 verdict is never a pass — turned inward. Two attempts to fix this with exit codes
 (`|| true`, then `rc > 1`) both failed because the channel itself was ambiguous.
 
+The scanner sets `process.exitCode` and never calls `process.exit()`. With stdout
+on a pipe — which is how `"$(...)"` reads it — writes are asynchronous and
+`process.exit()` drops whatever has not drained; a section over the 64 KiB pipe
+buffer arrived truncated with the trailer gone, aborting a valid review. That
+direction is at least the safe one: losing the tail loses the trailer, so the gate
+refuses rather than reviewing without rules.
+
 **Absent constraints is a stated outcome, not a default.** Every finding against
 this harness has been the same defect wearing a different hat: the review proceeds
 with fewer constraints than intended and still reports `CLEAN`. A symlinked file,

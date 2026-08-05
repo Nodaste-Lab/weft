@@ -24,7 +24,13 @@ function runCli(body, args = []) {
   const dir = mkdtempSync(join(tmpdir(), 'extract-cli-'));
   const file = join(dir, 'AGENTS.md');
   writeFileSync(file, body);
-  return spawnSync(process.execPath, [CLI, file, ...args], { encoding: 'utf8' });
+  // maxBuffer well above spawnSync's 1MB default: the large-output test
+  // deliberately exceeds it, and hitting the cap reports status null, which reads
+  // like a crash rather than a harness limit.
+  return spawnSync(process.execPath, [CLI, file, ...args], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
 }
 
 const doc = (...lines) => lines.join('\n');
@@ -252,6 +258,20 @@ test('CLI: a body line impersonating the trailer is refused', () => {
   assert.equal(r.status, 2);
   assert.match(r.stderr, /reserved/);
   assert.ok(!r.stdout.includes('FOUND'), 'emitted a forgeable trailer');
+});
+
+test('CLI: a section larger than the pipe buffer survives intact', () => {
+  // process.exit() discards undrained async writes when stdout is a pipe — which
+  // is exactly how review-gate.sh reads this. A body over the 64KiB pipe buffer
+  // came through truncated with the trailer lost, aborting a valid review.
+  const rule = `- ${'x'.repeat(200)}\n`;
+  let body = '# Repo\n\n## Invariants\n';
+  while (body.length < 1024 * 1024) body += rule;
+  const r = runCli(body);
+  assert.equal(r.status, 0);
+  const lines = r.stdout.trimEnd().split('\n');
+  assert.equal(lines[lines.length - 1], `${SENTINEL} FOUND`, 'trailer lost on a large body');
+  assert.ok(r.stdout.length > 1024 * 1024, `output truncated to ${r.stdout.length} bytes`);
 });
 
 test('CLI: unusable input emits no trailer at all', () => {

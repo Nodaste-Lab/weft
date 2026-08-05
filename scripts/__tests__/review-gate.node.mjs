@@ -506,6 +506,25 @@ test('a stand-in scanner reporting NONE is accepted as benign', () => {
   assert.equal(res.status, 0, 'a well-formed NONE was not accepted');
 });
 
+test('a large invariants section reaches the review input intact', () => {
+  // End-to-end companion to the scanner's pipe-buffer test: review-gate.sh reads
+  // the scanner through "$(...)", so a truncated stream would lose the trailer
+  // and abort a valid run.
+  const s = sandbox();
+  const rule = `- ${'x'.repeat(200)}\n`;
+  let agents = '# Repo\n\n## Invariants\n';
+  while (agents.length < 200 * 1024) agents += rule;
+  agents += '\n## Release\nunrelated\n';
+  s.write('AGENTS.md', agents);
+  s.commit();
+  const r = s.run();
+  assert.equal(r.status, 0, 'a large but valid AGENTS.md aborted the run');
+  const block = constraintsBlock(r.input);
+  assert.ok(block, 'no constraints block for a large section');
+  assert.ok(block.body.length > 190 * 1024, `constraints truncated to ${block.body.length} bytes`);
+  assert.ok(!block.body.includes('unrelated'));
+});
+
 test('a genuine no-match is not treated as a scanner failure', () => {
   const s = sandbox();
   s.write('AGENTS.md', '# Repo\n\n## Setup\nnothing matching here\n');

@@ -228,6 +228,13 @@ function main(argv) {
 }
 
 // Only run as a CLI, so the test file can import the functions directly.
+//
+// process.exitCode, never process.exit(). When stdout is a pipe — which is
+// exactly how review-gate.sh reads this, via "$(...)" — writes are asynchronous,
+// and process.exit() discards whatever has not drained. A section larger than the
+// pipe buffer came through truncated at 65,536 bytes with the trailer lost, so a
+// perfectly valid AGENTS.md aborted the gate. Setting exitCode lets the event loop
+// flush first and exit on its own.
 if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
-  process.exit(main(process.argv.slice(2)));
+  process.exitCode = main(process.argv.slice(2));
 }
