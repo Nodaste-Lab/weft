@@ -108,6 +108,15 @@ build_default_gates() {
 # provenance line, so the prompt never misstates where the rules came from).
 CONSTRAINTS_TEXT=""
 CONSTRAINTS_SRC=""
+# Every finding on this file so far has been the same bug: the review proceeds
+# with fewer constraints than intended and still reports CLEAN. The causes keep
+# differing — a symlink, a parser miss, a swallowed exit code, a subshell `exit` —
+# so the defence is to stop treating "no constraints" as a default that any code
+# path can fall into. It must be stated: exactly one path may set this to `none`,
+# and that path is "this repo has no constraints source at all". Everything else
+# aborts. The assertion after resolve_constraints enforces it, so a future path
+# that forgets fails loudly instead of quietly reviewing less.
+CONSTRAINTS_STATE="unset"
 
 # Auto-discovered inputs are attacker-controllable. Both [ -f ] and cat follow
 # symlinks, so a PR that commits .review-gate/constraints.md (or AGENTS.md) as a
@@ -156,27 +165,42 @@ safe_repo_file() {
 # was losing to the spec, so it moved to a real line scanner with direct unit
 # tests. See that file for the supported subset and what is deliberately out of it.
 #
-# Args: FILE [EXACT_HEADING]. Prints the section; exit 1 = no match.
-extract_section() {
-  local file="$1" heading="${2:-}"
+# Prerequisites are checked HERE, in the parent shell, and never inside a function
+# that runs in a command substitution.
+#
+# `exit` inside "$(...)" terminates the SUBSHELL, not the script. These two checks
+# used to live in extract_section, which is only ever called as "$(extract_section
+# ...)", so their `exit 1` became an ordinary status 1 by the time the caller saw
+# it — indistinguishable from the scanner's "no such section", which the caller
+# tolerates. A missing node or a missing sibling scanner therefore resumed the
+# review with no constraints and reached CLEAN. Anything that must abort the run
+# has to be evaluated outside the substitution.
+#
+# Resolved against THIS script's directory, not the repo under review: the two
+# differ whenever the gate runs from outside the checkout it is reviewing, and a
+# copy of this script in another repo must find its own scanner.
+SCANNER="$SCRIPT_DIR/extract-constraints.mjs"
+
+require_scanner() {
   command -v node >/dev/null 2>&1 || {
-    echo "review-gate: node is required to read invariants out of $file." >&2
+    echo "review-gate: node is required to read invariants out of AGENTS.md." >&2
     echo "  Install node, or pass --constraints <file> to skip extraction." >&2
     exit 1
   }
-  # Resolved against THIS script's directory, not the repo under review: the two
-  # differ whenever the gate is run from outside the checkout it is reviewing, and
-  # a copy of this script in another repo must find its own scanner.
-  local scanner="$SCRIPT_DIR/extract-constraints.mjs"
-  [ -f "$scanner" ] || {
-    echo "review-gate: $scanner is missing — it ships alongside this script." >&2
+  [ -f "$SCANNER" ] || {
+    echo "review-gate: $SCANNER is missing — it ships alongside this script." >&2
     echo "  Copy it too, or pass --constraints <file> to skip extraction." >&2
     exit 1
   }
-  if [ -n "$heading" ]; then
-    node "$scanner" "$file" --heading "$heading"
+}
+
+# Pure invocation: no exits, so its status is only ever the scanner's own.
+# 0 = section found, 1 = no such section, >1 = the scanner itself failed.
+run_scanner() {
+  if [ -n "${2:-}" ]; then
+    node "$SCANNER" "$1" --heading "$2"
   else
-    node "$scanner" "$file"
+    node "$SCANNER" "$1"
   fi
 }
 
@@ -186,24 +210,28 @@ resolve_constraints() {
     CONSTRAINTS_TEXT="$(cat "$CONSTRAINTS")"
     CONSTRAINTS_SRC="$CONSTRAINTS"
     [ -n "$CONSTRAINTS_TEXT" ] || { echo "review-gate: --constraints file is empty: $CONSTRAINTS" >&2; exit 1; }
+    CONSTRAINTS_STATE="found"
     return
   fi
   if safe_repo_file .review-gate/constraints.md; then
     CONSTRAINTS_TEXT="$(cat .review-gate/constraints.md)"
     if [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC=".review-gate/constraints.md"
+      CONSTRAINTS_STATE="found"
       return
     fi
+    echo "review-gate: .review-gate/constraints.md is empty — it exists to carry rules." >&2
+    echo "  Remove it, or fill it in; an empty rule file is not the same as no rules." >&2
+    exit 1
   fi
   if safe_repo_file AGENTS.md; then
-    # The scanner's exit codes are load-bearing and must not be flattened: 1 is
-    # "no such section", which is a normal miss, but anything else is a real
-    # failure — a crash, an unreadable file, or its own symlink refusal. Turning
-    # those into an empty constraints block would resume the review minus the
-    # repo's rules and still reach CLEAN, which is the exact fail-open shape this
-    # whole file keeps being bitten by. `if` supplies the errexit exemption.
+    # Prerequisites first, in this shell — see require_scanner. Then the scanner's
+    # exit codes, which are load-bearing: 1 is "no such section", a normal miss,
+    # and anything else is a real failure. `if` supplies the errexit exemption so
+    # the status can be captured rather than killing the shell.
+    require_scanner
     local rc=0
-    if CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING")"; then
+    if CONSTRAINTS_TEXT="$(run_scanner AGENTS.md "$HEADING")"; then
       rc=0
     else
       rc=$?
@@ -216,12 +244,36 @@ resolve_constraints() {
     fi
     if [ "$rc" -eq 0 ] && [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
+      CONSTRAINTS_STATE="found"
       return
     fi
     CONSTRAINTS_TEXT=""
   fi
+  # The one benign route to an absent constraints block: no source exists here.
   CONSTRAINTS_TEXT=""
   CONSTRAINTS_SRC=""
+  CONSTRAINTS_STATE="none"
+}
+
+# Belt to resolve_constraints' braces. If a future path returns without stating an
+# outcome, or states one its variables contradict, that is a bug in this script
+# and must not become a quietly weaker review.
+assert_constraints_resolved() {
+  case "$CONSTRAINTS_STATE" in
+    found)
+      [ -n "$CONSTRAINTS_TEXT" ] && [ -n "$CONSTRAINTS_SRC" ] && return 0
+      echo "review-gate: internal error — constraints reported found but are empty." >&2
+      ;;
+    none)
+      [ -z "$CONSTRAINTS_TEXT" ] && return 0
+      echo "review-gate: internal error — constraints reported absent but are set." >&2
+      ;;
+    *)
+      echo "review-gate: internal error — constraint resolution did not state an outcome." >&2
+      ;;
+  esac
+  echo "  Refusing to review rather than review with unknown constraints." >&2
+  exit 1
 }
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -244,6 +296,7 @@ else
 fi
 
 resolve_constraints
+assert_constraints_resolved
 
 if [ -z "$GATES" ]; then
   GATES="$(build_default_gates)"

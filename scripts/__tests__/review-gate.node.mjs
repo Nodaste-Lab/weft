@@ -381,6 +381,58 @@ test('a scanner failure is fatal, not an empty constraints block', () => {
   assert.match(res.stderr, /scanner failed/i);
 });
 
+test('a missing sibling scanner is fatal, not a tolerated no-match', () => {
+  // `exit` inside "$(...)" kills only the subshell, so a prerequisite failure
+  // raised there arrives as plain status 1 — the same status the caller tolerates
+  // as "no such section". The run then proceeds with no constraints and reaches
+  // CLEAN. Prerequisites must therefore be checked outside the substitution.
+  const s = sandbox();
+  s.write('AGENTS.md', '# Repo\n\n## Invariants\n- a rule\n');
+  s.commit();
+
+  const lonely = join(s.repo, '..', 'lonely');
+  mkdirSync(lonely, { recursive: true });
+  const gateCopy = join(lonely, 'review-gate.sh');   // copied WITHOUT its sibling
+  writeFileSync(gateCopy, readFileSync(GATE, 'utf8'));
+  chmodSync(gateCopy, 0o755);
+
+  const res = spawnSync('bash', [gateCopy, '--base', 'main', '--wrapper', s.wrapper], {
+    cwd: s.repo,
+    env: { ...process.env, CAPTURE: s.capture },
+    encoding: 'utf8',
+  });
+  assert.equal(res.status, 1, 'a missing scanner did not stop the run');
+  assert.match(res.stderr, /extract-constraints\.mjs is missing/);
+  let built = true;
+  try { readFileSync(s.capture, 'utf8'); } catch { built = false; }
+  assert.equal(built, false, 'a review was built without the constraints it needed');
+});
+
+test('a missing node is fatal when AGENTS.md needs scanning', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', '# Repo\n\n## Invariants\n- a rule\n');
+  s.commit();
+  // A PATH with the coreutils the script needs but no node. --gates sidesteps
+  // gate discovery, which would otherwise need node for its own reasons.
+  const res = spawnSync('bash', [GATE, '--base', 'main', '--wrapper', s.wrapper, '--gates', 'true'], {
+    cwd: s.repo,
+    env: { ...process.env, PATH: '/usr/bin:/bin', CAPTURE: s.capture },
+    encoding: 'utf8',
+  });
+  assert.equal(res.status, 1, 'a missing node did not stop the run');
+  assert.match(res.stderr, /node is required/);
+});
+
+test('an empty .review-gate/constraints.md is fatal, not silently skipped', () => {
+  const s = sandbox();
+  s.write('.review-gate/constraints.md', '');
+  s.write('AGENTS.md', '# Repo\n\n## Invariants\n- would be a fallback\n');
+  s.commit();
+  const r = s.run();
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /empty/);
+});
+
 test('a genuine no-match is not treated as a scanner failure', () => {
   const s = sandbox();
   s.write('AGENTS.md', '# Repo\n\n## Setup\nnothing matching here\n');

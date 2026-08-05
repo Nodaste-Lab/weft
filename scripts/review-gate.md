@@ -113,6 +113,24 @@ exits 1 for a genuine miss and 2 for unusable input; the caller distinguishes
 them, and anything above 1 aborts the run. Collapsing the two — which one `|| true`
 did — resumed the review without the repo's rules and still reached `CLEAN`.
 
+**Absent constraints is a stated outcome, not a default.** Every finding against
+this harness has been the same defect wearing a different hat: the review proceeds
+with fewer constraints than intended and still reports `CLEAN`. A symlinked file,
+six parser approximations, a swallowed exit code, and an `exit` trapped in a
+command substitution all produced it. Point fixes kept missing the next one, so
+the invariant is now explicit: `resolve_constraints` must set `CONSTRAINTS_STATE`
+to `found` or `none`, exactly one path may choose `none` (this repo has no
+constraints source at all), and `assert_constraints_resolved` aborts if the state
+is unset or contradicts the variables. A future path that forgets fails loudly
+instead of quietly reviewing less.
+
+**Nothing that must abort the run may be evaluated inside `$(...)`.** `exit` in a
+command substitution ends the subshell, so `exit 1` from a prerequisite check
+arrived at the caller as plain status 1 — indistinguishable from the tolerated
+"no such section", which let a missing `node` or a missing sibling scanner sail
+through. Prerequisites live in `require_scanner`, called from the parent shell;
+`run_scanner` is a pure invocation whose status is only ever the scanner's own.
+
 **`--constraints-heading` is exact; the built-in defaults are lenient.** The two
 use different comparisons on purpose. An operator-supplied heading is matched
 verbatim apart from emphasis and the closing `#` sequence, so `Security: strict`
