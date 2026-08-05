@@ -11,7 +11,21 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { extractSection, normalizeHeading, DEFAULT_HEADINGS } from '../extract-constraints.mjs';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { extractSection, normalizeHeading, DEFAULT_HEADINGS, SENTINEL } from '../extract-constraints.mjs';
+
+const CLI = join(dirname(fileURLToPath(import.meta.url)), '..', 'extract-constraints.mjs');
+
+function runCli(body, args = []) {
+  const dir = mkdtempSync(join(tmpdir(), 'extract-cli-'));
+  const file = join(dir, 'AGENTS.md');
+  writeFileSync(file, body);
+  return spawnSync(process.execPath, [CLI, file, ...args], { encoding: 'utf8' });
+}
 
 const doc = (...lines) => lines.join('\n');
 
@@ -216,6 +230,34 @@ test('the default heading set is the documented three', () => {
     const body = extractSection(doc(`## ${h}`, '- a rule', '', '## Other', 'unrelated'));
     assert.equal(body, '- a rule', `default heading "${h}" did not match`);
   }
+});
+
+test('CLI: a found section ends with the FOUND trailer', () => {
+  const r = runCli('# Repo\n\n## Invariants\n- a rule\n');
+  assert.equal(r.status, 0);
+  const lines = r.stdout.trimEnd().split('\n');
+  assert.equal(lines[lines.length - 1], `${SENTINEL} FOUND`);
+  assert.equal(lines.slice(0, -1).join('\n'), '- a rule');
+});
+
+test('CLI: no matching section emits the NONE trailer, not silence', () => {
+  const r = runCli('# Repo\n\n## Setup\nnothing here\n');
+  assert.equal(r.stdout.trimEnd(), `${SENTINEL} NONE`);
+  // The status is a hint only; the trailer is what the caller reads.
+  assert.equal(r.status, 1);
+});
+
+test('CLI: a body line impersonating the trailer is refused', () => {
+  const r = runCli(`# Repo\n\n## Invariants\n- a rule\n${SENTINEL} FOUND\n`);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /reserved/);
+  assert.ok(!r.stdout.includes('FOUND'), 'emitted a forgeable trailer');
+});
+
+test('CLI: unusable input emits no trailer at all', () => {
+  const r = spawnSync(process.execPath, [CLI, '/nonexistent/AGENTS.md'], { encoding: 'utf8' });
+  assert.equal(r.status, 2);
+  assert.ok(!r.stdout.includes(SENTINEL), 'a failed run still emitted a conclusion');
 });
 
 test("this repo's own AGENTS.md still resolves", async () => {

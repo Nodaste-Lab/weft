@@ -180,6 +180,9 @@ safe_repo_file() {
 # differ whenever the gate runs from outside the checkout it is reviewing, and a
 # copy of this script in another repo must find its own scanner.
 SCANNER="$SCRIPT_DIR/extract-constraints.mjs"
+# Must match SENTINEL in that file. The scanner's own tests assert the constant;
+# the harness tests assert this pairing end-to-end.
+SCANNER_SENTINEL='#__REVIEW_GATE_CONSTRAINTS__:'
 
 require_scanner() {
   command -v node >/dev/null 2>&1 || {
@@ -230,24 +233,39 @@ resolve_constraints() {
     # and anything else is a real failure. `if` supplies the errexit exemption so
     # the status can be captured rather than killing the shell.
     require_scanner
-    local rc=0
-    if CONSTRAINTS_TEXT="$(run_scanner AGENTS.md "$HEADING")"; then
-      rc=0
-    else
-      rc=$?
-    fi
-    if [ "$rc" -gt 1 ]; then
-      echo "review-gate: the constraints scanner failed on AGENTS.md (exit $rc)." >&2
-      echo "  Refusing to review without the rules it was supposed to supply." >&2
-      echo "  Fix the scanner, or pass --constraints <file> to bypass extraction." >&2
-      exit 1
-    fi
-    if [ "$rc" -eq 0 ] && [ -n "$CONSTRAINTS_TEXT" ]; then
-      CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
-      CONSTRAINTS_STATE="found"
-      return
-    fi
-    CONSTRAINTS_TEXT=""
+    # The scanner's TRAILER is authoritative, not its exit status. A status cannot
+    # separate "no matching section" from "that script has a syntax error" or "an
+    # exception escaped" — node exits 1 for all of them — so trusting the status
+    # let a broken scanner read as a benign miss. Same rule this gate applies to
+    # Codex: no parseable result is never a pass. The status is captured only to
+    # quote back in the error.
+    local rc=0 raw="" trailer=""
+    if raw="$(run_scanner AGENTS.md "$HEADING")"; then rc=0; else rc=$?; fi
+    trailer="$(printf '%s\n' "$raw" | tail -1)"
+    case "$trailer" in
+      "$SCANNER_SENTINEL FOUND")
+        CONSTRAINTS_TEXT="$(printf '%s\n' "$raw" | sed '$d')"
+        if [ -z "$CONSTRAINTS_TEXT" ]; then
+          echo "review-gate: the constraints scanner reported FOUND with an empty body." >&2
+          echo "  Refusing to review with constraints it could not actually produce." >&2
+          exit 1
+        fi
+        CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
+        CONSTRAINTS_STATE="found"
+        return
+        ;;
+      "$SCANNER_SENTINEL NONE")
+        CONSTRAINTS_TEXT=""
+        ;;
+      *)
+        echo "review-gate: the constraints scanner produced no parseable result (exit $rc)." >&2
+        echo "  Expected a final line of '$SCANNER_SENTINEL FOUND' or '$SCANNER_SENTINEL NONE'." >&2
+        echo "  A crashed or half-finished scanner is not the same as a repo with no rules;" >&2
+        echo "  refusing to review rather than review without them." >&2
+        echo "  Fix the scanner, or pass --constraints <file> to bypass extraction." >&2
+        exit 1
+        ;;
+    esac
   fi
   # The one benign route to an absent constraints block: no source exists here.
   CONSTRAINTS_TEXT=""

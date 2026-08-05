@@ -108,10 +108,17 @@ run length, indent, and the rule that a closing fence takes no info string).
 headings with `===` or `---` yields no match, which is the safe direction — no
 block rather than the wrong block — and is recoverable with `--constraints`.
 
-**"No such section" and "the scanner broke" are different outcomes.** The scanner
-exits 1 for a genuine miss and 2 for unusable input; the caller distinguishes
-them, and anything above 1 aborts the run. Collapsing the two — which one `|| true`
-did — resumed the review without the repo's rules and still reached `CLEAN`.
+**The scanner reports through a trailer, not an exit status.** Its last stdout
+line is `#__REVIEW_GATE_CONSTRAINTS__: FOUND` (after the body) or
+`… : NONE`, and anything else — a crash, a truncated run, plausible output with
+no trailer — aborts the gate.
+
+The status cannot carry this. Node exits 1 for a syntax error and for an uncaught
+exception, so an exit code reserved for "no matching section" is indistinguishable
+from "this scanner is broken", and a broken scanner read as a repo with no rules.
+This is the rule the gate already applies to Codex — a missing or unparseable
+verdict is never a pass — turned inward. Two attempts to fix this with exit codes
+(`|| true`, then `rc > 1`) both failed because the channel itself was ambiguous.
 
 **Absent constraints is a stated outcome, not a default.** Every finding against
 this harness has been the same defect wearing a different hat: the review proceeds

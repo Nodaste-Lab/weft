@@ -17,13 +17,30 @@
 // --constraints. See scripts/review-gate.md.
 //
 // Usage: extract-constraints.mjs <file> [--heading "<exact heading>"]
-// Exit:  0 section found (printed to stdout)
-//        1 no matching section
-//        2 unusable input (unsafe path, unreadable file, bad arguments)
+//
+// Output protocol. The LAST line of stdout is always one of:
+//
+//   #__REVIEW_GATE_CONSTRAINTS__: FOUND    (preceded by the section body)
+//   #__REVIEW_GATE_CONSTRAINTS__: NONE     (no matching section; benign)
+//
+// and its absence means this process did not reach a conclusion.
+//
+// The exit status is deliberately NOT the channel. A process's status cannot
+// distinguish "no matching section" from "this script has a syntax error" or
+// "an exception escaped" — Node exits 1 for all three — so a broken scanner read
+// as a benign miss and the gate reviewed on without the repo's rules. That is the
+// same rule review-gate.sh already applies to Codex: a missing or unparseable
+// verdict is never a pass. It applies here too. Statuses are still set (0 found,
+// 1 none, 2 unusable input) but only as a hint; the trailer is authoritative.
+//
+// Exit:  0 section found   1 no matching section   2 unusable input
 
 import { readFileSync, lstatSync } from 'node:fs';
 
 export const DEFAULT_HEADINGS = ['invariants', 'hard invariants', 'repo invariants'];
+
+/** Trailer marking a completed run. Its absence means the process did not finish. */
+export const SENTINEL = '#__REVIEW_GATE_CONSTRAINTS__:';
 
 /**
  * Strip only markup, not meaning: the optional closing #-sequence and emphasis
@@ -194,8 +211,19 @@ function main(argv) {
   }
 
   const section = extractSection(text, heading ? { exact: heading } : {});
-  if (section === null || section === '') return 1;
-  process.stdout.write(section + '\n');
+  if (section === null || section === '') {
+    process.stdout.write(`${SENTINEL} NONE\n`);
+    return 1;
+  }
+  // A body line that looks like the trailer would let a truncated run be read as
+  // a complete one. Pathological, and cheap to rule out entirely.
+  if (section.split('\n').some((line) => line.trimEnd().startsWith(SENTINEL))) {
+    process.stderr.write(
+      `extract-constraints: ${file} contains a line beginning with ${SENTINEL}, which is reserved.\n`,
+    );
+    return 2;
+  }
+  process.stdout.write(`${section}\n${SENTINEL} FOUND\n`);
   return 0;
 }
 

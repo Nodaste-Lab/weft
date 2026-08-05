@@ -378,7 +378,7 @@ test('a scanner failure is fatal, not an empty constraints block', () => {
     encoding: 'utf8',
   });
   assert.equal(res.status, 1, 'a failing scanner did not stop the run');
-  assert.match(res.stderr, /scanner failed/i);
+  assert.match(res.stderr, /no parseable result/);
 });
 
 test('a missing sibling scanner is fatal, not a tolerated no-match', () => {
@@ -431,6 +431,79 @@ test('an empty .review-gate/constraints.md is fatal, not silently skipped', () =
   const r = s.run();
   assert.equal(r.status, 1);
   assert.match(r.stderr, /empty/);
+});
+
+/** Run the gate from a copy placed beside a stand-in scanner. */
+function withScanner(s, scannerSource) {
+  const dir = join(s.repo, '..', `stand-in-${Math.random().toString(36).slice(2)}`);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'extract-constraints.mjs'), scannerSource);
+  const gateCopy = join(dir, 'review-gate.sh');
+  writeFileSync(gateCopy, readFileSync(GATE, 'utf8'));
+  chmodSync(gateCopy, 0o755);
+  return spawnSync('bash', [gateCopy, '--base', 'main', '--wrapper', s.wrapper], {
+    cwd: s.repo,
+    env: { ...process.env, CAPTURE: s.capture },
+    encoding: 'utf8',
+  });
+}
+
+const AGENTS_WITH_RULES = '# Repo\n\n## Invariants\n- a rule\n';
+
+test('a scanner with a syntax error is fatal, not a tolerated no-match', () => {
+  // node exits 1 for a SyntaxError — the same status a benign "no section" once
+  // used, which is why the exit status cannot be the channel.
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'this is not valid javascript {{{\n');
+  assert.equal(res.status, 1, 'a scanner syntax error did not stop the run');
+  assert.match(res.stderr, /no parseable result/);
+});
+
+test('a scanner throwing an uncaught exception is fatal', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'throw new Error("boom");\n');
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /no parseable result/);
+});
+
+test('a scanner that exits 0 with no trailer is fatal', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'process.stdout.write("- some plausible rules\\n"); process.exit(0);\n');
+  assert.equal(res.status, 1, 'plausible output without a trailer was accepted');
+  assert.match(res.stderr, /no parseable result/);
+});
+
+test('a scanner truncated mid-body is fatal', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'process.stdout.write("- half a rule\\n"); process.exit(1);\n');
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /no parseable result/);
+});
+
+test('a scanner reporting FOUND with an empty body is fatal', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'process.stdout.write("#__REVIEW_GATE_CONSTRAINTS__: FOUND\\n");\n');
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /empty body/);
+});
+
+test('a stand-in scanner reporting NONE is accepted as benign', () => {
+  // Proves the fatal cases above are not simply "any stand-in fails".
+  const s = sandbox();
+  s.write('AGENTS.md', AGENTS_WITH_RULES);
+  s.commit();
+  const res = withScanner(s, 'process.stdout.write("#__REVIEW_GATE_CONSTRAINTS__: NONE\\n"); process.exit(1);\n');
+  assert.equal(res.status, 0, 'a well-formed NONE was not accepted');
 });
 
 test('a genuine no-match is not treated as a scanner failure', () => {
