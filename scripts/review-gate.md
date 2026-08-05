@@ -108,6 +108,19 @@ run length, indent, and the rule that a closing fence takes no info string).
 headings with `===` or `---` yields no match, which is the safe direction — no
 block rather than the wrong block — and is recoverable with `--constraints`.
 
+**"No such section" and "the scanner broke" are different outcomes.** The scanner
+exits 1 for a genuine miss and 2 for unusable input; the caller distinguishes
+them, and anything above 1 aborts the run. Collapsing the two — which one `|| true`
+did — resumed the review without the repo's rules and still reached `CLEAN`.
+
+**`--constraints-heading` is exact; the built-in defaults are lenient.** The two
+use different comparisons on purpose. An operator-supplied heading is matched
+verbatim apart from emphasis and the closing `#` sequence, so `Security: strict`
+matches `## Security: strict` and `Security` alone does not. The built-in aliases
+additionally drop a trailing `— clause` / `- clause` / `: clause`, which is
+appropriate for a guess and wrong for a string someone typed. Applying the lenient
+form to both sides is what once made a verbatim-copied heading return nothing.
+
 In this repo that resolves to `AGENTS.md` § *Hard invariants*, so the reviewer
 gets the live text rather than a paraphrase that drifts. The last case is the
 important one: a script that hardcodes one repo's rules hands them to every other

@@ -26,21 +26,39 @@ import { readFileSync, lstatSync } from 'node:fs';
 export const DEFAULT_HEADINGS = ['invariants', 'hard invariants', 'repo invariants'];
 
 /**
- * Normalize an ATX heading's raw text for exact comparison.
- * Drops the optional closing #-sequence, emphasis/code marks, and a trailing
- * " — clause" / " - clause" / ": clause", so "Hard invariants — breaking these
- * breaks consumers silently" compares equal to "hard invariants".
+ * Strip only markup, not meaning: the optional closing #-sequence and emphasis
+ * or code marks, then collapse whitespace and case-fold.
+ *
+ * This is the comparison used for an operator-supplied heading, and it is applied
+ * to BOTH sides. Applying different normalizations to the two sides is what made
+ * `--constraints-heading 'Security: strict'` fail to match `## Security: strict`
+ * — the file's heading lost its colon clause while the operator's string kept it.
+ * Punctuation is content here; a heading that says "Security: strict" is matched
+ * by typing exactly that.
  */
-export function normalizeHeading(text) {
+export function lightNormalize(text) {
   return text
     .replace(/[ \t]+#+[ \t]*$/, '')
     .replace(/[*_`]/g, '')
-    .replace(/\s+—\s.*$/, '')
-    .replace(/\s+-\s.*$/, '')
-    .replace(/:.*$/, '')
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
+}
+
+/**
+ * The alias form, used ONLY for the built-in default headings. On top of
+ * lightNormalize it drops a trailing " — clause" / " - clause" / ": clause", so
+ * "Hard invariants — breaking these breaks consumers silently" reduces to
+ * "hard invariants" and matches the alias list without the operator naming the
+ * whole heading. That leniency is appropriate for a built-in guess and wrong for
+ * a string the operator typed, which is why the two are separate.
+ */
+export function normalizeHeading(text) {
+  return lightNormalize(text)
+    .replace(/\s+—\s.*$/, '')
+    .replace(/\s+-\s.*$/, '')
+    .replace(/:.*$/, '')
+    .trim();
 }
 
 // 0-3 spaces of indent, 1-6 '#', then whitespace or end of line. Four or more
@@ -50,12 +68,20 @@ const ATX = /^ {0,3}(#{1,6})(?:[ \t]+(.*?))?[ \t]*$/;
 const FENCE = /^ {0,3}(`{3,}|~{3,})(.*)$/;
 
 /**
- * Return the body of the section introduced by a heading matching `headings`,
- * up to the next heading of the same or higher level. Returns null if no
- * heading matches.
+ * Return the body of the section introduced by a matching heading, up to the next
+ * heading of the same or higher level. Returns null if no heading matches.
+ *
+ * options.exact  — an operator-supplied heading, compared with lightNormalize on
+ *                  both sides. Punctuation is significant.
+ * options.aliases — the built-in candidate list, compared with normalizeHeading.
+ *                  Ignored when `exact` is set.
  */
-export function extractSection(markdown, headings = DEFAULT_HEADINGS) {
-  const wanted = headings.map((h) => h.toLowerCase());
+export function extractSection(markdown, options = {}) {
+  const exact = options.exact ?? null;
+  const aliases = (options.aliases ?? DEFAULT_HEADINGS).map((h) => normalizeHeading(h));
+  const exactWanted = exact === null ? null : lightNormalize(exact);
+  const headingMatches = (raw) =>
+    exactWanted === null ? aliases.includes(normalizeHeading(raw)) : lightNormalize(raw) === exactWanted;
   const lines = markdown.split('\n');
   const out = [];
   let fence = null;
@@ -99,7 +125,7 @@ export function extractSection(markdown, headings = DEFAULT_HEADINGS) {
       const thisLevel = atxMatch[1].length;
       if (grabbing && thisLevel <= level) break;
       if (!grabbing) {
-        if (wanted.includes(normalizeHeading(atxMatch[2] ?? ''))) {
+        if (headingMatches(atxMatch[2] ?? '')) {
           grabbing = true;
           found = true;
           level = thisLevel;
@@ -167,7 +193,7 @@ function main(argv) {
     return 2;
   }
 
-  const section = extractSection(text, heading ? [heading] : DEFAULT_HEADINGS);
+  const section = extractSection(text, heading ? { exact: heading } : {});
   if (section === null || section === '') return 1;
   process.stdout.write(section + '\n');
   return 0;

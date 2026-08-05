@@ -356,6 +356,40 @@ test('--constraints-heading selects a non-conventional heading', () => {
   assert.ok(!block.body.includes('nope'));
 });
 
+test('a scanner failure is fatal, not an empty constraints block', () => {
+  // The scanner reserves exit 1 for "no such section" and anything else for a
+  // real failure. Collapsing those would resume the review without the repo's
+  // rules and still reach CLEAN. Simulated with a stand-in scanner that errors,
+  // placed next to a copy of the gate so SCRIPT_DIR resolves to it.
+  const s = sandbox();
+  s.write('AGENTS.md', '# Repo\n\n## Invariants\n- a rule\n');
+  s.commit();
+
+  const fakeDir = join(s.repo, '..', 'fakebin');
+  mkdirSync(fakeDir, { recursive: true });
+  writeFileSync(join(fakeDir, 'extract-constraints.mjs'), 'console.error("boom"); process.exit(2);\n');
+  const gateCopy = join(fakeDir, 'review-gate.sh');
+  writeFileSync(gateCopy, readFileSync(GATE, 'utf8'));
+  chmodSync(gateCopy, 0o755);
+
+  const res = spawnSync('bash', [gateCopy, '--base', 'main', '--wrapper', s.wrapper], {
+    cwd: s.repo,
+    env: { ...process.env, CAPTURE: s.capture },
+    encoding: 'utf8',
+  });
+  assert.equal(res.status, 1, 'a failing scanner did not stop the run');
+  assert.match(res.stderr, /scanner failed/i);
+});
+
+test('a genuine no-match is not treated as a scanner failure', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', '# Repo\n\n## Setup\nnothing matching here\n');
+  s.commit();
+  const r = s.run();
+  assert.equal(r.status, 0, 'a section that simply is not there must not be fatal');
+  assert.equal(constraintsBlock(r.input), null);
+});
+
 test('--mark-ready without --pr fails before the gates run', () => {
   const s = sandbox();
   s.commit();

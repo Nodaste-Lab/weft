@@ -153,8 +153,43 @@ test('heading level governs the boundary: a deeper heading does not end it', () 
 
 test('a custom heading is matched literally, not as a pattern', () => {
   const md = doc('## C rules', 'WRONG', '', '## C++ rules', '- right', '', '## Other', 'unrelated');
-  assert.equal(extractSection(md, ['C++ rules']), '- right');
-  assert.equal(extractSection(md, ['.*']), null);
+  assert.equal(extractSection(md, { exact: 'C++ rules' }), '- right');
+  assert.equal(extractSection(md, { exact: '.*' }), null);
+});
+
+test('an exact heading keeps its punctuation significant', () => {
+  // The two sides once went through different normalizations: the file's heading
+  // lost its colon clause while the operator's string kept it, so this returned
+  // null for a heading the operator had copied verbatim.
+  const md = doc('## Security: strict', '- the rule', '', '## Other', 'unrelated');
+  assert.equal(extractSection(md, { exact: 'Security: strict' }), '- the rule');
+});
+
+test('an exact heading with a dash clause matches verbatim', () => {
+  const md = doc('## Rules — the long form', '- the rule', '', '## Other', 'unrelated');
+  assert.equal(extractSection(md, { exact: 'Rules — the long form' }), '- the rule');
+});
+
+test('exact matching ignores emphasis on either side', () => {
+  assert.equal(
+    extractSection(doc('## **Security**', '- a', '', '## Other', 'x'), { exact: 'Security' }),
+    '- a',
+  );
+  assert.equal(
+    extractSection(doc('## Security', '- a', '', '## Other', 'x'), { exact: '**Security**' }),
+    '- a',
+  );
+});
+
+test('exact matching does not silently fall back to clause trimming', () => {
+  // "truly exact" means a partial heading is a miss, not a fuzzy hit.
+  const md = doc('## Security: strict', '- the rule', '', '## Other', 'unrelated');
+  assert.equal(extractSection(md, { exact: 'Security' }), null);
+});
+
+test('the alias path still tolerates a clause, which is why it is separate', () => {
+  const md = doc('## Hard invariants — breaking these breaks consumers', '- the rule', '', '## Other', 'x');
+  assert.equal(extractSection(md), '- the rule');
 });
 
 test('a backtick fence whose info string contains a backtick is not a fence', () => {

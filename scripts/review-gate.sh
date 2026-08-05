@@ -27,8 +27,10 @@
 #                     operator intent; discovered paths must be regular files
 #                     inside the repo, never symlinks.
 #   --constraints-heading
-#                     exact AGENTS.md heading holding the invariants
-#                     (default: Invariants / Hard invariants / Repo invariants)
+#                     exact AGENTS.md heading holding the invariants, matched
+#                     verbatim apart from emphasis and any closing '#' run
+#                     (default: Invariants / Hard invariants / Repo invariants,
+#                     which additionally tolerate a trailing dash/colon clause)
 #
 # Exit codes
 #   0  double-clean (and PR marked ready if asked)
@@ -194,11 +196,29 @@ resolve_constraints() {
     fi
   fi
   if safe_repo_file AGENTS.md; then
-    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING" || true)"
-    if [ -n "$CONSTRAINTS_TEXT" ]; then
+    # The scanner's exit codes are load-bearing and must not be flattened: 1 is
+    # "no such section", which is a normal miss, but anything else is a real
+    # failure — a crash, an unreadable file, or its own symlink refusal. Turning
+    # those into an empty constraints block would resume the review minus the
+    # repo's rules and still reach CLEAN, which is the exact fail-open shape this
+    # whole file keeps being bitten by. `if` supplies the errexit exemption.
+    local rc=0
+    if CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING")"; then
+      rc=0
+    else
+      rc=$?
+    fi
+    if [ "$rc" -gt 1 ]; then
+      echo "review-gate: the constraints scanner failed on AGENTS.md (exit $rc)." >&2
+      echo "  Refusing to review without the rules it was supposed to supply." >&2
+      echo "  Fix the scanner, or pass --constraints <file> to bypass extraction." >&2
+      exit 1
+    fi
+    if [ "$rc" -eq 0 ] && [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
       return
     fi
+    CONSTRAINTS_TEXT=""
   fi
   CONSTRAINTS_TEXT=""
   CONSTRAINTS_SRC=""
