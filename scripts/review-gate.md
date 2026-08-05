@@ -68,9 +68,26 @@ input carries them. They are resolved, never hardcoded, in this order:
 
 1. `--constraints <file>`
 2. `.review-gate/constraints.md`
-3. the invariants section of `AGENTS.md` — the first heading whose text contains
-   "invariant", up to the next heading of the same or higher level
+3. the invariants section of `AGENTS.md` — the heading whose normalized text is
+   exactly `Invariants`, `Hard invariants`, or `Repo invariants` (override with
+   `--constraints-heading`), up to the next heading of the same or higher level
 4. nothing — the block is omitted
+
+**Discovered files are attacker-controllable; explicit ones are not.** A PR can
+commit `.review-gate/constraints.md` or `AGENTS.md` as a symlink, and both
+`[ -f ]` and `cat` follow symlinks — so the gate would copy `~/.ssh/id_rsa`,
+`.env`, or any readable file into the review input and ship it to an external
+reviewer, on a run that still exits `0`. Discovered paths must therefore be
+regular files that resolve inside the repository, which also catches a symlinked
+parent directory. Violations are **fatal**, not warnings: silently continuing
+with no constraints would hand the reviewer a weaker review than the operator
+believes they asked for, which is the same fail-open shape as the bug itself.
+A path passed explicitly to `--constraints` is operator intent and is exempt.
+
+**Heading matching is exact and fence-aware.** Substring matching was wrong twice:
+`## Why the invariant policy exists` would beat a later `## Hard invariants`, and
+a `##` line inside a fenced code block counted as the next heading and silently
+truncated the section. Both still produced `CLEAN`.
 
 In this repo that resolves to `AGENTS.md` § *Hard invariants*, so the reviewer
 gets the live text rather than a paraphrase that drifts. The last case is the
@@ -91,9 +108,20 @@ letter of a stated goal, tighten the goal or the code; do not quietly narrow the
 claim.
 
 **Everything `--mark-ready` needs is checked before the review, not after.** A
-missing `--pr`, an absent or unauthenticated `gh`, or an unreadable PR number now
-fails in about a second. Finding a typo after a full gate battery and a review
-that can run fifteen minutes throws away the whole round.
+missing `--pr`, an absent `gh`, or an unreadable PR number now fails in about a
+second. Finding a typo after a full gate battery and a review that can run
+fifteen minutes throws away the whole round. The preflight deliberately does not
+call `gh auth status`: that reports on every known host and account, so a stale
+GitHub Enterprise login unrelated to this repo would block a PR `gh` can read
+perfectly well. `gh pr view` is the repo-scoped check, and it already fails on
+bad auth, bad number, and no access alike.
+
+**The gate has its own tests.** `npm run test:review-gate` builds throwaway git
+repos, runs the real script against a stub wrapper, and asserts on the review
+input it generates — the artefact that actually reaches an external reviewer.
+It is in the discovered gate battery, so the gate runs it on itself. Every defect
+it pins failed *open*: symlink disclosure, wrong-section selection, and fenced-`##`
+truncation all exited `0` with a `CLEAN` verdict.
 
 ## Running it in another repo
 
@@ -103,6 +131,9 @@ Two things are machine- or repo-specific and both are overridable:
 # the wrapper lives outside the repo; flag beats env beats default
 export REVIEW_GATE_WRAPPER=~/.agents/skills/codex-review-partner/scripts/run-review.sh
 ./scripts/review-gate.sh --base main --constraints .review-gate/constraints.md
+
+# or let it discover, naming a heading that is not one of the conventional three
+./scripts/review-gate.sh --base main --constraints-heading "House rules"
 ```
 
 Gate discovery is still the npm-shaped part: `build_default_gates()` probes

@@ -23,7 +23,12 @@
 #                     reported to Codex and in the log rather than hidden
 #   --wrapper         codex review-partner wrapper (env: REVIEW_GATE_WRAPPER)
 #   --constraints     file of repo invariants to hand the reviewer; default is
-#                     discovered (see resolve_constraints)
+#                     discovered (see resolve_constraints). An explicit path is
+#                     operator intent; discovered paths must be regular files
+#                     inside the repo, never symlinks.
+#   --constraints-heading
+#                     exact AGENTS.md heading holding the invariants
+#                     (default: Invariants / Hard invariants / Repo invariants)
 #
 # Exit codes
 #   0  double-clean (and PR marked ready if asked)
@@ -41,6 +46,7 @@ MARK_READY=0
 MAX_DIFF_BYTES=200000
 GATES=""   # empty means "discover what this repo has" (see build_default_gates)
 CONSTRAINTS=""  # empty means "discover" (see resolve_constraints)
+HEADING=""      # empty means "the conventional invariants headings"
 # Overridable because the wrapper lives outside the repo, at a path that differs
 # per machine and per skill-install root. Flag beats env beats default.
 WRAPPER="${REVIEW_GATE_WRAPPER:-$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh}"
@@ -55,6 +61,7 @@ while [ $# -gt 0 ]; do
     --max-diff-bytes) MAX_DIFF_BYTES="$2"; shift 2 ;;
     --wrapper) WRAPPER="$2"; shift 2 ;;
     --constraints) CONSTRAINTS="$2"; shift 2 ;;
+    --constraints-heading) HEADING="$2"; shift 2 ;;
     # Print the header block by structure, not by line number: a hardcoded range
     # silently starts lying the first time this header grows.
     -h|--help) awk 'NR>1 && /^#/ { sub(/^# ?/,""); print; next } NR>1 { exit }' "$0"; exit 0 ;;
@@ -68,7 +75,7 @@ done
 # the repo does not define is skipped, and anything it adds later is picked up
 # automatically. Override wholesale with --gates.
 build_default_gates() {
-  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract build check:exports"
+  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract test:review-gate build check:exports"
   local parts=""
   local s
   for s in $candidates; do
@@ -95,14 +102,70 @@ build_default_gates() {
 CONSTRAINTS_TEXT=""
 CONSTRAINTS_SRC=""
 
-# Extract a markdown section by heading keyword, up to the next heading of the
-# same or higher level. Sub-headings inside the section are kept.
+# Auto-discovered inputs are attacker-controllable. Both [ -f ] and cat follow
+# symlinks, so a PR that commits .review-gate/constraints.md (or AGENTS.md) as a
+# link to ~/.ssh/id_rsa, .env, or any readable file gets that file copied into the
+# review input and shipped to an external reviewer — on a run that still exits 0.
+# This is the read-side twin of ensure_regular(): regular file only, and the
+# resolved path must stay inside the repo, which also catches a symlinked PARENT
+# directory. Explicitly passed --constraints is operator intent and is exempt;
+# discovery is not.
+# Absent is a normal negative (fall through to the next source). Present but
+# unsafe is FATAL, not a warning: degrading silently to "no constraints" would
+# hand the reviewer a weaker review than the operator thinks they asked for, and
+# still exit 0 — the same fail-open shape as the bug this guard exists to close.
+# Every other refusal in this script exits 1; so does this one.
+safe_repo_file() {
+  local f="$1" dir phys
+  if [ -L "$f" ]; then
+    echo "review-gate: $f is a symlink — refusing to read it into the review input." >&2
+    echo "  Auto-discovered constraint files must be regular files inside the repo." >&2
+    echo "  Pass --constraints <path> if you really mean to read through a link." >&2
+    exit 1
+  fi
+  [ -e "$f" ] || return 1
+  if [ ! -f "$f" ]; then
+    echo "review-gate: $f is not a regular file — refusing to read it." >&2
+    exit 1
+  fi
+  dir="$(dirname "$f")"
+  phys="$(cd "$dir" 2>/dev/null && pwd -P)" || return 1
+  case "$phys/" in
+    "$ROOT_PHYS"/*) return 0 ;;
+    *)
+      echo "review-gate: $f resolves outside the repository ($phys) — refusing to read it." >&2
+      exit 1
+      ;;
+  esac
+}
+
+# Extract a markdown section by EXACT normalized heading, up to the next heading
+# of the same or higher level.
+#
+# Substring matching was wrong twice over: "## Why the invariant policy exists"
+# would win over a later "## Hard invariants", and a `## ...` line inside a fenced
+# code block counted as the next heading and silently truncated the section. Both
+# failures still produced a CLEAN verdict, which is the worst shape for a bug in a
+# gate. So: fences are tracked, and the heading is normalized (emphasis stripped,
+# a trailing " — clause" / " - clause" / ": clause" dropped) and matched exactly
+# against an anchored alternation.
 extract_section() {
   awk -v want="$2" '
+    /^[ \t]*(```|~~~)/ { if (grab) print; fence = !fence; next }
+    fence { if (grab) print; next }
     /^#+[ \t]/ {
       match($0, /^#+/); n = RLENGTH
       if (grab && n <= lvl) exit
-      if (!grab && tolower($0) ~ want) { grab = 1; lvl = n; next }
+      if (!grab) {
+        h = substr($0, n + 1)
+        sub(/^[ \t]+/, "", h)
+        sub(/ +— .*$/, "", h)
+        sub(/ +- .*$/, "", h)
+        sub(/:.*$/, "", h)
+        gsub(/[*_`]/, "", h)
+        sub(/[ \t]+$/, "", h)
+        if (tolower(h) ~ want) { grab = 1; lvl = n; next }
+      }
     }
     grab { print }
   ' "$1"
@@ -116,17 +179,17 @@ resolve_constraints() {
     [ -n "$CONSTRAINTS_TEXT" ] || { echo "review-gate: --constraints file is empty: $CONSTRAINTS" >&2; exit 1; }
     return
   fi
-  if [ -f .review-gate/constraints.md ]; then
+  if safe_repo_file .review-gate/constraints.md; then
     CONSTRAINTS_TEXT="$(cat .review-gate/constraints.md)"
     if [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC=".review-gate/constraints.md"
       return
     fi
   fi
-  if [ -f AGENTS.md ]; then
-    CONSTRAINTS_TEXT="$(extract_section AGENTS.md invariant)"
+  if safe_repo_file AGENTS.md; then
+    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING_RE")"
     if [ -n "$CONSTRAINTS_TEXT" ]; then
-      CONSTRAINTS_SRC="AGENTS.md (invariants section)"
+      CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
       return
     fi
   fi
@@ -136,7 +199,21 @@ resolve_constraints() {
 
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
+# Physical (symlink-resolved) root, so safe_repo_file compares like with like.
+ROOT_PHYS="$(pwd -P)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+# Which AGENTS.md heading holds the invariants. --constraints-heading names one
+# exactly; the default accepts the few conventional spellings, matched exactly
+# after normalization rather than by substring.
+if [ -n "$HEADING" ]; then
+  HEADING_RE="^$(printf '%s' "$HEADING" | tr '[:upper:]' '[:lower:]')$"
+  HEADING_LABEL="$HEADING"
+else
+  HEADING_RE='^(invariants|hard invariants|repo invariants)$'
+  HEADING_LABEL="invariants"
+fi
+
 resolve_constraints
 
 if [ -z "$GATES" ]; then
@@ -170,9 +247,12 @@ git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BA
 if [ "$MARK_READY" = "1" ]; then
   [ -n "$PR" ] || { echo "review-gate: --mark-ready needs --pr <n>" >&2; exit 1; }
   command -v gh >/dev/null 2>&1 || { echo "review-gate: --mark-ready needs the gh CLI on PATH" >&2; exit 1; }
-  gh auth status >/dev/null 2>&1 || { echo "review-gate: gh is not authenticated (run: gh auth login)" >&2; exit 1; }
+  # No global `gh auth status` here: it reports on every known host and account,
+  # so a stale GitHub Enterprise login unrelated to this repo would block a PR
+  # that gh can actually read. The call below is the repo-scoped check that
+  # matters — it fails on bad auth, bad PR number, and no access alike.
   PR_HEAD="$(gh pr view "$PR" --json headRefOid -q .headRefOid 2>/dev/null)" || {
-    echo "review-gate: cannot read PR #$PR (wrong number, or no access from this repo)" >&2
+    echo "review-gate: cannot read PR #$PR — check the number, this repo's remote, and gh auth for this host." >&2
     exit 1
   }
   # Advisory only. Pushing while the review runs is a legitimate flow, so the
