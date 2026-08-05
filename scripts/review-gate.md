@@ -34,7 +34,7 @@ this way; the script is the part that actually blocks.
 | Code | Meaning | What to do |
 |---|---|---|
 | 0 | Double-clean | Ready to mark |
-| 1 | Dirty tree, setup problem, or **repo gates failed** | Fix; nothing was reviewed |
+| 1 | Dirty tree, setup/preflight problem, or **repo gates failed** | Fix; nothing was reviewed |
 | 2 | Codex reported issues | Fix or rebut, commit, re-run |
 | 3 | Codex ran but produced no parseable verdict | Treated as **not** clean |
 
@@ -62,10 +62,21 @@ the lot.
 that does not pass its own repo's checks wastes a review round on findings the
 gates already know about.
 
-**Repo constraints are handed to the reviewer.** The input includes the
-`AGENTS.md` invariants (pure token file, token-only colours, manifest lockstep,
-prop-surface contracts, tarball ships `src/`, byte-stability) so findings respect
-them instead of proposing changes that would break a consumer.
+**Repo constraints are handed to the reviewer, and they are the repo's own.**
+Findings have to respect the invariants a change could break silently, so the
+input carries them. They are resolved, never hardcoded, in this order:
+
+1. `--constraints <file>`
+2. `.review-gate/constraints.md`
+3. the invariants section of `AGENTS.md` — the first heading whose text contains
+   "invariant", up to the next heading of the same or higher level
+4. nothing — the block is omitted
+
+In this repo that resolves to `AGENTS.md` § *Hard invariants*, so the reviewer
+gets the live text rather than a paraphrase that drifts. The last case is the
+important one: a script that hardcodes one repo's rules hands them to every other
+repo it runs in, and a review against constraints that do not apply still exits
+`0`. Saying nothing is correct; substituting someone else's rules is not.
 
 **The reviewer is told the gates are necessary but not sufficient.** Otherwise a
 green suite reads as permission to rubber-stamp.
@@ -78,6 +89,28 @@ test that already covers it — recorded in the next round's `--goal` so the
 disagreement is visible rather than buried. If the reviewer is right about the
 letter of a stated goal, tighten the goal or the code; do not quietly narrow the
 claim.
+
+**Everything `--mark-ready` needs is checked before the review, not after.** A
+missing `--pr`, an absent or unauthenticated `gh`, or an unreadable PR number now
+fails in about a second. Finding a typo after a full gate battery and a review
+that can run fifteen minutes throws away the whole round.
+
+## Running it in another repo
+
+Two things are machine- or repo-specific and both are overridable:
+
+```bash
+# the wrapper lives outside the repo; flag beats env beats default
+export REVIEW_GATE_WRAPPER=~/.agents/skills/codex-review-partner/scripts/run-review.sh
+./scripts/review-gate.sh --base main --constraints .review-gate/constraints.md
+```
+
+Gate discovery is still the npm-shaped part: `build_default_gates()` probes
+`package.json` for a known set of script names and also picks up this repo's two
+`scripts/check-*.mjs` helpers. In a non-Node repo it finds nothing and exits 1
+telling you to pass `--gates` — an honest failure rather than a silent pass, but
+it does mean `--gates` is mandatory there. Making discovery config-driven is the
+remaining piece of real portability and has not been done.
 
 ## What this does not cover
 

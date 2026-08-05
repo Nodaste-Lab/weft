@@ -12,6 +12,7 @@
 # Usage
 #   scripts/review-gate.sh --base main [--gates "<cmd>"] [--goal "<text>"]
 #                          [--pr <n>] [--mark-ready] [--max-diff-bytes N]
+#                          [--wrapper <path>] [--constraints <file>]
 #
 #   --base            branch/ref to diff against (default: main)
 #   --gates           gate command; default is this repo's set
@@ -20,6 +21,9 @@
 #   --mark-ready      on double-clean, flip the PR out of draft and post evidence
 #   --max-diff-bytes  cap the diff sent to Codex (default 200000); truncation is
 #                     reported to Codex and in the log rather than hidden
+#   --wrapper         codex review-partner wrapper (env: REVIEW_GATE_WRAPPER)
+#   --constraints     file of repo invariants to hand the reviewer; default is
+#                     discovered (see resolve_constraints)
 #
 # Exit codes
 #   0  double-clean (and PR marked ready if asked)
@@ -36,7 +40,10 @@ PR=""
 MARK_READY=0
 MAX_DIFF_BYTES=200000
 GATES=""   # empty means "discover what this repo has" (see build_default_gates)
-WRAPPER="$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh"
+CONSTRAINTS=""  # empty means "discover" (see resolve_constraints)
+# Overridable because the wrapper lives outside the repo, at a path that differs
+# per machine and per skill-install root. Flag beats env beats default.
+WRAPPER="${REVIEW_GATE_WRAPPER:-$HOME/.agents/skills/codex-review-partner/scripts/run-review.sh}"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -46,7 +53,11 @@ while [ $# -gt 0 ]; do
     --pr) PR="$2"; shift 2 ;;
     --mark-ready) MARK_READY=1; shift ;;
     --max-diff-bytes) MAX_DIFF_BYTES="$2"; shift 2 ;;
-    -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+    --wrapper) WRAPPER="$2"; shift 2 ;;
+    --constraints) CONSTRAINTS="$2"; shift 2 ;;
+    # Print the header block by structure, not by line number: a hardcoded range
+    # silently starts lying the first time this header grows.
+    -h|--help) awk 'NR>1 && /^#/ { sub(/^# ?/,""); print; next } NR>1 { exit }' "$0"; exit 0 ;;
     *) echo "unknown arg: $1" >&2; exit 1 ;;
   esac
 done
@@ -72,9 +83,61 @@ build_default_gates() {
   printf '%s' "$parts"
 }
 
+# The reviewer is told which invariants a finding must respect. Those are repo
+# property, not script property: hardcoding one repo's rules here means every
+# other repo silently gets reviewed against constraints that do not apply to it —
+# a wrong review that still exits 0. So resolve them, and when there is nothing
+# to resolve, say nothing rather than substituting someone else's rules.
+#
+# Order: --constraints > .review-gate/constraints.md > the invariants section of
+# AGENTS.md > none. Sets CONSTRAINTS_TEXT and CONSTRAINTS_SRC (used for the
+# provenance line, so the prompt never misstates where the rules came from).
+CONSTRAINTS_TEXT=""
+CONSTRAINTS_SRC=""
+
+# Extract a markdown section by heading keyword, up to the next heading of the
+# same or higher level. Sub-headings inside the section are kept.
+extract_section() {
+  awk -v want="$2" '
+    /^#+[ \t]/ {
+      match($0, /^#+/); n = RLENGTH
+      if (grab && n <= lvl) exit
+      if (!grab && tolower($0) ~ want) { grab = 1; lvl = n; next }
+    }
+    grab { print }
+  ' "$1"
+}
+
+resolve_constraints() {
+  if [ -n "$CONSTRAINTS" ]; then
+    [ -f "$CONSTRAINTS" ] || { echo "review-gate: --constraints file not found: $CONSTRAINTS" >&2; exit 1; }
+    CONSTRAINTS_TEXT="$(cat "$CONSTRAINTS")"
+    CONSTRAINTS_SRC="$CONSTRAINTS"
+    [ -n "$CONSTRAINTS_TEXT" ] || { echo "review-gate: --constraints file is empty: $CONSTRAINTS" >&2; exit 1; }
+    return
+  fi
+  if [ -f .review-gate/constraints.md ]; then
+    CONSTRAINTS_TEXT="$(cat .review-gate/constraints.md)"
+    if [ -n "$CONSTRAINTS_TEXT" ]; then
+      CONSTRAINTS_SRC=".review-gate/constraints.md"
+      return
+    fi
+  fi
+  if [ -f AGENTS.md ]; then
+    CONSTRAINTS_TEXT="$(extract_section AGENTS.md invariant)"
+    if [ -n "$CONSTRAINTS_TEXT" ]; then
+      CONSTRAINTS_SRC="AGENTS.md (invariants section)"
+      return
+    fi
+  fi
+  CONSTRAINTS_TEXT=""
+  CONSTRAINTS_SRC=""
+}
+
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+resolve_constraints
 
 if [ -z "$GATES" ]; then
   GATES="$(build_default_gates)"
@@ -94,8 +157,29 @@ fi
 SHA="$(git rev-parse HEAD)"
 SHORT="$(git rev-parse --short HEAD)"
 
-[ -x "$WRAPPER" ] || { echo "review-gate: codex wrapper not found at $WRAPPER" >&2; exit 1; }
+[ -x "$WRAPPER" ] || {
+  echo "review-gate: codex wrapper not found at $WRAPPER" >&2
+  echo "  Point at it with --wrapper <path> or REVIEW_GATE_WRAPPER=<path>." >&2
+  exit 1
+}
 git rev-parse --verify "$BASE" >/dev/null 2>&1 || { echo "review-gate: base '$BASE' not found" >&2; exit 1; }
+
+# Everything --mark-ready needs is checked HERE, before the gates and before a
+# review that can run 15 minutes. Discovering a missing --pr or an unauthenticated
+# gh at the end throws away the whole round for a typo.
+if [ "$MARK_READY" = "1" ]; then
+  [ -n "$PR" ] || { echo "review-gate: --mark-ready needs --pr <n>" >&2; exit 1; }
+  command -v gh >/dev/null 2>&1 || { echo "review-gate: --mark-ready needs the gh CLI on PATH" >&2; exit 1; }
+  gh auth status >/dev/null 2>&1 || { echo "review-gate: gh is not authenticated (run: gh auth login)" >&2; exit 1; }
+  PR_HEAD="$(gh pr view "$PR" --json headRefOid -q .headRefOid 2>/dev/null)" || {
+    echo "review-gate: cannot read PR #$PR (wrong number, or no access from this repo)" >&2
+    exit 1
+  }
+  # Advisory only. Pushing while the review runs is a legitimate flow, so the
+  # authoritative head check stays at mark time — this just surfaces the common
+  # "forgot to push" case in one second instead of after the review.
+  [ "$PR_HEAD" = "$SHA" ] || echo "  note: PR #$PR head ($PR_HEAD) is not HEAD yet — push before this finishes, or marking ready will refuse."
+fi
 
 # Artefact storage. Review inputs embed the full private diff, so this deliberately
 # avoids /tmp entirely: no shared directory means no symlink swap, no check/create
@@ -173,20 +257,11 @@ fi
   echo '```'
   echo "Result: $GATE_RESULT (full log withheld; re-runnable above)"
   echo
-  echo "Repo constraints that findings must respect (from AGENTS.md):"
-  cat <<'EOF'
-- css/weft.css is a pure token file: no @media, no component selectors. It is
-  injected verbatim into sandboxed panel iframes by a consumer.
-- Token-only colors. Raw hex/rgb/hsl live only in css/ token files; everything
-  in src/ reads var(--weft-*).
-- manifest.json is lockstep with src/ui/*.tsx: sorted, paths match, showcase
-  entries carry semver, designSystemVersion equals package.json version.
-- props-snapshot.json is a committed contract. A breaking prop-surface change
-  requires a MAJOR component bump; additive changes require a bump too.
-- The published tarball must ship src/ (a consumer deep-imports it).
-- Byte-stability matters: never reformat css/ as a side effect.
-EOF
-  echo
+  if [ -n "$CONSTRAINTS_TEXT" ]; then
+    echo "Repo constraints that findings must respect (from $CONSTRAINTS_SRC):"
+    echo "$CONSTRAINTS_TEXT"
+    echo
+  fi
   echo "Changed files:"
   git diff --stat "$BASE...HEAD"
   echo
