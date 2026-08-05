@@ -270,6 +270,52 @@ test('a tilde fence inside a backtick fence does not close it', () => {
   assert.ok(!block.body.includes('unrelated'));
 });
 
+test('an indented ATX heading resolves end-to-end through the gate', () => {
+  // Boundary and discovery rules are unit-tested in extract-constraints.node.mjs;
+  // this proves the shell wiring actually reaches that scanner.
+  const s = sandbox();
+  s.write('AGENTS.md', [
+    '# Repo',
+    '',
+    '   ## Hard invariants',
+    '- the indented rule',
+    '',
+    '  ## Release',
+    'unrelated',
+    '',
+  ].join('\n'));
+  s.commit();
+  const block = constraintsBlock(s.run().input);
+  assert.ok(block, 'an indented heading yielded no constraints block');
+  assert.match(block.body, /the indented rule/);
+  assert.ok(!block.body.includes('unrelated'));
+});
+
+test('a closing fence with an info string does not truncate, end-to-end', () => {
+  const s = sandbox();
+  s.write('AGENTS.md', [
+    '# Repo',
+    '',
+    '## Invariants',
+    '- first rule',
+    '',
+    '```',
+    '```bash',
+    '## not a heading',
+    '```',
+    '',
+    '- last rule',
+    '',
+    '## Release',
+    'unrelated',
+    '',
+  ].join('\n'));
+  s.commit();
+  const block = constraintsBlock(s.run().input);
+  assert.match(block.body, /last rule/);
+  assert.ok(!block.body.includes('unrelated'));
+});
+
 test('--constraints-heading is a literal, not a regex', () => {
   const s = sandbox();
   s.write('AGENTS.md', [

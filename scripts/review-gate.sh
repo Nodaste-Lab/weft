@@ -39,6 +39,11 @@ set -euo pipefail
 # Review inputs contain the full private diff; keep every artefact owner-only.
 umask 077
 
+# Where this script lives, resolved before any cd. Helper scripts are siblings of
+# it, not of the repo under review — those are different directories whenever the
+# gate is invoked from outside the checkout it is reviewing.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+
 BASE="main"
 GOAL=""
 PR=""
@@ -139,59 +144,38 @@ safe_repo_file() {
   esac
 }
 
-# Extract a markdown section by EXACT normalized heading, up to the next heading
-# of the same or higher level.
+# Section extraction lives in scripts/extract-constraints.mjs, not here.
 #
-# Substring matching was wrong twice over: "## Why the invariant policy exists"
-# would win over a later "## Hard invariants", and a `## ...` line inside a fenced
-# code block counted as the next heading and silently truncated the section. Both
-# failures still produced a CLEAN verdict, which is the worst shape for a bug in a
-# gate. So the heading is normalized (emphasis stripped, a trailing " — clause" /
-# " - clause" / ": clause" dropped) and matched exactly.
+# It was an inline awk scanner for three review rounds, and each round found
+# another CommonMark rule it had approximated: naive fence toggling, then nested
+# fences, then closing fences carrying an info string, then indented ATX headings.
+# Every miss had the same shape — section silently truncated or not found, a short
+# or empty constraints block, and a CLEAN verdict anyway. Patching rule-by-rule
+# was losing to the spec, so it moved to a real line scanner with direct unit
+# tests. See that file for the supported subset and what is deliberately out of it.
 #
-# Fence tracking follows CommonMark rather than toggling on any ``` or ~~~: a
-# fence closes only on the SAME marker character at AT LEAST the opening run
-# length. Toggling naively meant a three-backtick example nested inside a
-# four-backtick fence read as the close, after which a `##` still inside the outer
-# fence terminated the section — truncating the rules, silently, on a CLEAN run.
-#
-# Args: FILE LITERAL RE. LITERAL is an exact lowercase heading and wins when
-# non-empty; it is compared with == precisely so an operator-supplied heading is
-# never interpreted as a regex ("C++ rules" must not match "C rules").
+# Args: FILE [EXACT_HEADING]. Prints the section; exit 1 = no match.
 extract_section() {
-  awk -v lit="$2" -v re="$3" '
-    /^[ \t]*(```|~~~)/ {
-      line = $0
-      sub(/^[ \t]+/, "", line)
-      ch = substr(line, 1, 1)
-      run = 0
-      while (substr(line, run + 1, 1) == ch) run++
-      if (!fence) {
-        fence = 1; fch = ch; flen = run
-      } else if (ch == fch && run >= flen) {
-        fence = 0
-      }
-      if (grab) print
-      next
-    }
-    fence { if (grab) print; next }
-    /^#+[ \t]/ {
-      match($0, /^#+/); n = RLENGTH
-      if (grab && n <= lvl) exit
-      if (!grab) {
-        h = substr($0, n + 1)
-        sub(/^[ \t]+/, "", h)
-        sub(/ +— .*$/, "", h)
-        sub(/ +- .*$/, "", h)
-        sub(/:.*$/, "", h)
-        gsub(/[*_`]/, "", h)
-        sub(/[ \t]+$/, "", h)
-        h = tolower(h)
-        if (lit != "" ? (h == lit) : (h ~ re)) { grab = 1; lvl = n; next }
-      }
-    }
-    grab { print }
-  ' "$1"
+  local file="$1" heading="${2:-}"
+  command -v node >/dev/null 2>&1 || {
+    echo "review-gate: node is required to read invariants out of $file." >&2
+    echo "  Install node, or pass --constraints <file> to skip extraction." >&2
+    exit 1
+  }
+  # Resolved against THIS script's directory, not the repo under review: the two
+  # differ whenever the gate is run from outside the checkout it is reviewing, and
+  # a copy of this script in another repo must find its own scanner.
+  local scanner="$SCRIPT_DIR/extract-constraints.mjs"
+  [ -f "$scanner" ] || {
+    echo "review-gate: $scanner is missing — it ships alongside this script." >&2
+    echo "  Copy it too, or pass --constraints <file> to skip extraction." >&2
+    exit 1
+  }
+  if [ -n "$heading" ]; then
+    node "$scanner" "$file" --heading "$heading"
+  else
+    node "$scanner" "$file"
+  fi
 }
 
 resolve_constraints() {
@@ -210,7 +194,7 @@ resolve_constraints() {
     fi
   fi
   if safe_repo_file AGENTS.md; then
-    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING_LIT" "$HEADING_RE")"
+    CONSTRAINTS_TEXT="$(extract_section AGENTS.md "$HEADING" || true)"
     if [ -n "$CONSTRAINTS_TEXT" ]; then
       CONSTRAINTS_SRC="AGENTS.md § $HEADING_LABEL"
       return
@@ -229,17 +213,13 @@ BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 # Which AGENTS.md heading holds the invariants. --constraints-heading names one
 # exactly; the default accepts the few conventional spellings, matched exactly
 # after normalization rather than by substring.
-# An operator-supplied heading travels as a LITERAL, never as a regex: it is
-# documented as an exact heading, and interpolating it into ERE let
-# "C++ rules" match "## C rules" and select the wrong section. The default stays
-# an anchored alternation because it genuinely is a set of alternatives.
+# An operator-supplied heading is an exact string, compared as a literal by the
+# extractor — never interpolated into a pattern, which once let "C++ rules" match
+# "## C rules". The default set lives in extract-constraints.mjs so there is one
+# copy of it.
 if [ -n "$HEADING" ]; then
-  HEADING_LIT="$(printf '%s' "$HEADING" | tr '[:upper:]' '[:lower:]')"
-  HEADING_RE=""
   HEADING_LABEL="$HEADING"
 else
-  HEADING_LIT=""
-  HEADING_RE='^(invariants|hard invariants|repo invariants)$'
   HEADING_LABEL="invariants"
 fi
 

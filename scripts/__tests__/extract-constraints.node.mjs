@@ -1,0 +1,196 @@
+// Unit tests for the Markdown section scanner behind review-gate.sh.
+//
+// These are direct rather than end-to-end on purpose. The awk version this
+// replaced could only be tested by building a git repo and running the whole
+// gate, so each CommonMark rule it got wrong cost a full review round to find.
+// Here a case is three lines.
+//
+// The failure mode being defended against is not a crash — it is the scanner
+// silently returning a truncated section, an empty one, or the wrong one, while
+// the gate goes on to report CLEAN.
+
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { extractSection, normalizeHeading, DEFAULT_HEADINGS } from '../extract-constraints.mjs';
+
+const doc = (...lines) => lines.join('\n');
+
+test('normalizeHeading strips emphasis, closing hashes, and trailing clauses', () => {
+  assert.equal(normalizeHeading('Hard invariants'), 'hard invariants');
+  assert.equal(normalizeHeading('**Hard invariants**'), 'hard invariants');
+  assert.equal(normalizeHeading('Hard invariants ##'), 'hard invariants');
+  assert.equal(normalizeHeading('Hard invariants — breaking these breaks consumers'), 'hard invariants');
+  assert.equal(normalizeHeading('Hard invariants - and more'), 'hard invariants');
+  assert.equal(normalizeHeading('Invariants: the list'), 'invariants');
+  assert.equal(normalizeHeading('  Repo   invariants  '), 'repo invariants');
+});
+
+test('a hyphenated word in a heading is not treated as a trailing clause', () => {
+  // " - " needs surrounding whitespace; "Cross-repo" must survive intact.
+  assert.equal(normalizeHeading('Cross-repo invariants'), 'cross-repo invariants');
+});
+
+test('finds a plain section and stops at the next same-level heading', () => {
+  const body = extractSection(doc(
+    '# Repo', '', '## Setup', 'noise', '',
+    '## Invariants', '- a rule', '', '## Release', 'unrelated', '',
+  ));
+  assert.equal(body, '- a rule');
+});
+
+test('keeps sub-headings inside the section', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- a rule', '', '### Details', '- nested', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /### Details/);
+  assert.match(body, /nested/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('exact match: a heading merely containing the word does not win', () => {
+  const body = extractSection(doc(
+    '## Why the invariant policy exists', 'WRONG', '',
+    '## Hard invariants', '- right', '', '## Release', 'unrelated',
+  ));
+  assert.equal(body, '- right');
+});
+
+test('returns null when nothing matches', () => {
+  assert.equal(extractSection(doc('# Repo', '', '## Setup', 'x')), null);
+});
+
+test('a ## inside a fence does not end the section', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '```bash', '## not a heading', '```', '', '- last', '',
+    '## Release', 'unrelated',
+  ));
+  assert.match(body, /- first/);
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('a nested shorter fence does not close the outer fence', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '````markdown', '```bash', '## not a heading', '```', '````', '',
+    '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('a tilde fence does not close a backtick fence', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '```markdown', '~~~', '## not a heading', '~~~', '```', '',
+    '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('a closing fence may not carry an info string', () => {
+  // ```bash inside an open ``` fence is content, not a close. If it closed the
+  // fence, the following ## would end the section and "- last" would vanish.
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '```', '```bash', '## not a heading', '```', '',
+    '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- first/);
+  assert.match(body, /- last/, 'a fence line with an info string closed the fence');
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('a longer closing run is allowed; whitespace after it is allowed', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '```', 'code', '````   ', '', '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('an indented ATX heading (0-3 spaces) is recognized as the section start', () => {
+  const body = extractSection(doc(
+    '# Repo', '', '   ## Hard invariants', '- a rule', '', '## Release', 'unrelated',
+  ));
+  assert.equal(body, '- a rule');
+});
+
+test('an indented ATX heading is recognized as the section boundary', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- a rule', '', '  ## Release', 'unrelated',
+  ));
+  assert.equal(body, '- a rule', 'an indented boundary heading did not end the section');
+});
+
+test('four spaces of indent is an indented code block, not a heading', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '    ## not a heading', '', '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('an indented fence is tracked', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '  ```', '  ## not a heading', '  ```', '',
+    '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('a #-run with no space is not a heading', () => {
+  // "##Invariants" is not an ATX heading in CommonMark.
+  assert.equal(extractSection(doc('# Repo', '', '##Invariants', '- a rule')), null);
+});
+
+test('heading level governs the boundary: a deeper heading does not end it', () => {
+  const body = extractSection(doc(
+    '## Invariants', '- a rule', '', '#### Deep', 'still inside', '', '# Top', 'outside',
+  ));
+  assert.match(body, /still inside/);
+  assert.ok(!body.includes('outside'));
+});
+
+test('a custom heading is matched literally, not as a pattern', () => {
+  const md = doc('## C rules', 'WRONG', '', '## C++ rules', '- right', '', '## Other', 'unrelated');
+  assert.equal(extractSection(md, ['C++ rules']), '- right');
+  assert.equal(extractSection(md, ['.*']), null);
+});
+
+test('a backtick fence whose info string contains a backtick is not a fence', () => {
+  // Per CommonMark this line is paragraph text; it must not open a fence and
+  // swallow the rest of the document.
+  const body = extractSection(doc(
+    '## Invariants', '- first', '', '```js `x`', '', '- last', '', '## Release', 'unrelated',
+  ));
+  assert.match(body, /- last/);
+  assert.ok(!body.includes('unrelated'));
+});
+
+test('an unterminated fence does not leak past the section', () => {
+  const body = extractSection(doc('## Invariants', '- first', '', '```', 'code', '## Release', 'unrelated'));
+  // The fence never closes, so everything after it is fence content and stays in
+  // the section. What matters is that it terminates rather than throwing.
+  assert.match(body, /- first/);
+  assert.equal(typeof body, 'string');
+});
+
+test('the default heading set is the documented three', () => {
+  assert.deepEqual(DEFAULT_HEADINGS, ['invariants', 'hard invariants', 'repo invariants']);
+  for (const h of DEFAULT_HEADINGS) {
+    const body = extractSection(doc(`## ${h}`, '- a rule', '', '## Other', 'unrelated'));
+    assert.equal(body, '- a rule', `default heading "${h}" did not match`);
+  }
+});
+
+test("this repo's own AGENTS.md still resolves", async () => {
+  const { readFileSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const { join, dirname } = await import('node:path');
+  const agents = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'AGENTS.md');
+  const body = extractSection(readFileSync(agents, 'utf8'));
+  assert.ok(body, 'AGENTS.md no longer yields an invariants section');
+  assert.match(body, /pure token file/);
+  assert.match(body, /Byte-stability/);
+  assert.ok(!body.includes('Release flow'), 'section ran past its boundary');
+});

@@ -84,18 +84,29 @@ with no constraints would hand the reviewer a weaker review than the operator
 believes they asked for, which is the same fail-open shape as the bug itself.
 A path passed explicitly to `--constraints` is operator intent and is exempt.
 
-**Heading matching is exact, literal, and fence-aware.** Three parser defects
-lived here, and every one of them omitted rules while still producing `CLEAN`:
+**Section extraction is a real parser, in `scripts/extract-constraints.mjs`.**
+It was an inline awk scanner for three review rounds, and each round found
+another CommonMark rule it had approximated:
 
-- Substring matching let `## Why the invariant policy exists` beat a later
-  `## Hard invariants`. Headings are now normalized and matched exactly.
-- Toggling fences on any ` ``` ` or `~~~` meant a nested shorter fence read as the
-  close, after which a `##` still inside the outer fence ended the section.
-  Fences now follow CommonMark: a fence closes only on the same marker character
-  at at least the opening run length.
-- `--constraints-heading` was interpolated into an ERE, so `C++ rules` matched
-  `## C rules`. An operator-supplied heading now travels as a literal and is
-  compared with `==`; only the built-in default is an alternation.
+| Round | Approximation | Effect |
+|---|---|---|
+| 1 | substring heading match | `## Why the invariant policy exists` beat `## Hard invariants` |
+| 1 | no fence tracking | a `##` inside a fence ended the section |
+| 2 | naive fence toggling | a nested shorter fence read as the close |
+| 2 | heading interpolated into an ERE | `C++ rules` matched `## C rules` |
+| 3 | closing fence allowed an info string | ` ```bash ` inside a fence ended it |
+| 3 | column-zero headings only | an indented `   ## Hard invariants` found nothing |
+
+Every one of them omitted or mis-selected rules and still produced `CLEAN`.
+Patching rule-by-rule was losing to the spec, so the scanner moved to Node where
+it is a line scanner with direct unit tests — a case costs three lines instead of
+a review round. It handles ATX headings (0–3 spaces of indent, level-governed
+boundaries, closing `#` sequences) and fenced code blocks (backtick and tilde,
+run length, indent, and the rule that a closing fence takes no info string).
+
+**Setext headings are deliberately unsupported.** A file that underlines its
+headings with `===` or `---` yields no match, which is the safe direction — no
+block rather than the wrong block — and is recoverable with `--constraints`.
 
 In this repo that resolves to `AGENTS.md` § *Hard invariants*, so the reviewer
 gets the live text rather than a paraphrase that drifts. The last case is the
@@ -149,6 +160,10 @@ export REVIEW_GATE_WRAPPER=~/.agents/skills/codex-review-partner/scripts/run-rev
 # or let it discover, naming a heading that is not one of the conventional three
 ./scripts/review-gate.sh --base main --constraints-heading "House rules"
 ```
+
+`scripts/extract-constraints.mjs` is a sibling of `review-gate.sh` and is
+resolved against the script's own directory, not the repo under review — copy
+both, or pass `--constraints` and the scanner is never invoked.
 
 Gate discovery is still the npm-shaped part: `build_default_gates()` probes
 `package.json` for a known set of script names and also picks up this repo's two
