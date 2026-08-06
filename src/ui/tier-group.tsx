@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { Dot } from "./dot";
 import { cn } from "./utils";
 
 /*
@@ -25,11 +26,12 @@ export type TierGroupUrgency = "blocked" | "awaiting" | "fyi";
 
 const URGENCY_CLASSES: Record<
   TierGroupUrgency,
-  { border: string; head: string }
+  { border: string; head: string; tone: "stop" | "warn" | "info" }
 > = {
   blocked: {
     border: "border-[color-mix(in_srgb,var(--weft-stop)_45%,transparent)]",
     head: "bg-[color-mix(in_srgb,var(--weft-stop)_10%,transparent)]",
+    tone: "stop",
   },
   awaiting: {
     // Yellow, not amber (Katie, 2026-08) — must track the plain-CSS counterpart
@@ -37,10 +39,12 @@ const URGENCY_CLASSES: Record<
     // The border stays warn-derived; only the head background changed.
     border: "border-[color-mix(in_srgb,var(--weft-warn)_40%,transparent)]",
     head: "bg-[var(--weft-yellow-soft)]",
+    tone: "warn",
   },
   fyi: {
     border: "border-[var(--weft-rule,var(--border))]",
     head: "bg-[var(--weft-fill-soft,var(--muted))]",
+    tone: "info",
   },
 };
 
@@ -95,7 +99,7 @@ function TierGroup({
     return null;
   }
 
-  const { border, head } = URGENCY_CLASSES[urgency];
+  const { border, head, tone } = URGENCY_CLASSES[urgency];
 
   return (
     <section
@@ -117,6 +121,12 @@ function TierGroup({
           head,
         )}
       >
+        {/* The tier's dot is derived from `urgency`, never passed in. The tone
+            is fixed by meaning — blocked/stop, awaiting/warn, fyi/info — and the
+            plain-CSS contract enforces exactly that pairing, so deriving it here
+            is what keeps the React and CSS surfaces from disagreeing. Decorative:
+            the tier already has an accessible name via aria-label. */}
+        <Dot tone={tone} aria-hidden />
         <span className="truncate">{label}</span>
         {subtitle ? (
           <span className="shrink-0 text-[12px] font-normal text-[var(--weft-muted,var(--muted-foreground))]">
