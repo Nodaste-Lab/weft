@@ -68,6 +68,9 @@ const DEPRECATED_BOARD_CLASSES = [
   'weft-board-evidence',
   'weft-board-rail-search',
   'weft-board-pick',
+  // D8 kept both introduced treatments and landed them as Callout variants, so
+  // the board-local band is superseded by .weft-callout.is-band.
+  'weft-board-drawer-prov',
 ];
 
 // ── CSS tests ────────────────────────────────────────────────────────────────
@@ -170,14 +173,18 @@ test('T2-b: generator is deterministic — --output mode matches committed file'
 });
 
 // ── One primary per action row ───────────────────────────────────────────────
-// Katie's rule, 2026-08: exactly one filled .weft-btn in an action row. Two
+// Katie's rule, 2026-08: never two filled .weft-btn in an action row. Two
 // filled buttons make the operator choose between them instead of acting.
 // Caught by eye on the published page, where three specimens taught the wrong
 // pattern — including the copy-paste DOM contract in the markdown. The rule is
 // only worth stating if the reference material can't drift from it again, so it
 // is checked in both the generated page and the documented skeleton.
 const PRIMARY_BTN = /<button[^>]*\bclass="([^"]*\bweft-btn\b[^"]*)"/gi;
-const NON_PRIMARY = /\bis-(ghost|link|outline|quiet|secondary)\b/;
+// Only the variants weft-components.css actually defines as non-filled. A class
+// the stylesheet does not implement — .weft-btn.is-secondary, say — still renders
+// as a filled primary, so exempting it by name would blind the guard to exactly
+// the drift it exists to catch. Widen this only alongside a CSS variant.
+const NON_PRIMARY = /\bis-(ghost|link)\b/;
 
 function actionRowViolations(text, label) {
   const rows = [...text.matchAll(
@@ -188,11 +195,11 @@ function actionRowViolations(text, label) {
     const primaries = classes.filter((c) => !NON_PRIMARY.test(c));
     if (primaries.length <= 1) return [];
     const line = text.slice(0, row.index ?? 0).split('\n').length;
-    return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (${classes.join(' | ')})`];
+    return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (max 1) (${classes.join(' | ')})`];
   });
 }
 
-test('T2-e: action rows carry exactly one primary button', () => {
+test('T2-e: action rows carry at most one primary button', () => {
   const violations = [
     ...actionRowViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),
     ...actionRowViolations(
@@ -203,7 +210,7 @@ test('T2-e: action rows carry exactly one primary button', () => {
   assert.deepEqual(
     violations,
     [],
-    `Action rows must have exactly one filled .weft-btn; every sibling is .is-ghost or .is-link.\n${violations.join('\n')}`,
+    `Action rows must carry at most one filled .weft-btn; every sibling is .is-ghost or .is-link.\n${violations.join('\n')}`,
   );
 });
 
@@ -239,6 +246,31 @@ test('T2-e regression: the guard actually catches a second primary', () => {
     '<button class="weft-btn is-ghost" type="button">Vault</button>' +
     '</div>';
   assert.deepEqual(actionRowViolations(allGhost, 'fixture'), []);
+
+  // A variant weft-components.css does not implement is still a filled button,
+  // so it must count as a primary rather than be exempted by its class name.
+  const fakeVariant = twoPrimaries.replace('weft-btn" type="button">Reassign', 'weft-btn is-secondary" type="button">Reassign');
+  assert.equal(actionRowViolations(fakeVariant, 'fixture').length, 1);
+});
+
+// ── D5 / D6 chip split ───────────────────────────────────────────────────────
+// D6 adopted SourcePill for the mono type chip and deleted weft-board-type,
+// while D5 kept the space chip on Badge. The decision asked for a guard that the
+// two stay distinct and can coexist in one row. The page had been showing the
+// type chip as .weft-badge.is-outline — the pre-D6 pattern — so the reference
+// material silently taught something the design system had already moved past.
+test('T2-f: the row-chip specimen shows the D5/D6 split — Badge space chip beside a SourcePill', () => {
+  const html = readFileSync(generatedHtmlPath, 'utf8');
+  const row = html.match(/<div class="demo">(?:(?!<\/div>\s*<div class="meta">)[\s\S])*?weft-source-pill[\s\S]*?<div class="meta">/);
+  assert.ok(row, 'the generated page must contain a specimen using .weft-source-pill (D6)');
+  assert.ok(
+    /weft-badge is-space/.test(row[0]),
+    'the D5 Badge space chip and the D6 SourcePill must render in the same row without colliding',
+  );
+  assert.ok(
+    !/weft-board-type/.test(html),
+    'weft-board-type was deleted by D6 and must not reappear',
+  );
 });
 
 test('T2-c: generated HTML contains only real accessible controls', () => {

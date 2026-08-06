@@ -62,9 +62,9 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Priority tier | `.weft-tier-group` (`.is-blocked` / `.is-awaiting` / `.is-fyi`) / `<TierGroup>` |
 | Status dot | `.weft-dot` (`.is-ok` / `.is-warn` / `.is-stop` / `.is-info`) / `<Dot>` |
 | Action row | `.weft-hud-list-row`, `.weft-hud-list-row-col`, `.weft-hud-list-row-title`, `.weft-hud-list-row-meta`, `.weft-hud-list-row-aside` / `<HudListRow>` |
-| Row chips | `.weft-badge.is-space` for workspace; `.weft-badge.is-outline` for type |
+| Row chips | `.weft-badge.is-space` for workspace; `.weft-source-pill` / `<SourcePill>` for the mono type chip (D6) |
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |
-| Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`, `.weft-board-drawer-prov` |
+| Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`; provenance uses `.weft-callout.is-band` (D8) |
 | Drawer header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
 | Reference row | `.weft-copyable-ref`, `.weft-copyable-ref-copy` / `<CopyableRef>` |
 | Reply field | `.weft-textarea` (real `<textarea>`) / `<Textarea>` |
@@ -230,7 +230,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
   <textarea id="drawer-reply" class="weft-textarea" name="reply" rows="2"
             placeholder="Reply…"></textarea>
 
-  <div class="weft-board-drawer-prov">
+  <div class="weft-callout is-band is-info">
     <b>Why you're seeing this:</b>
     <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI
   </div>

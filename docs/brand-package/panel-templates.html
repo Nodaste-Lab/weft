@@ -71,7 +71,7 @@
   <button type="button" class="weft-btn is-ghost sp" id="t" aria-pressed="false">Toggle dark</button>
 </div>
 <div class="wrap">
-<div class="note"><b>How to read this.</b> Every specimen is rendered from the live <code>css/</code> files — not a picture. Toggle the theme to confirm each part follows it. Evidence absence renders no chip.</div><div class="tally"><div class="t"><div class="n">19</div><div class="l">REUSES</div></div><div class="t"><div class="n">1</div><div class="l">DUPLICATES</div></div><div class="t"><div class="n">8</div><div class="l">PARTIAL</div></div><div class="t"><div class="n">1</div><div class="l">NEW</div></div><div class="t"><div class="n">6</div><div class="l">Doctrine</div></div></div><h2 class="sec">Frame and header</h2><div class="grid"><div class="spec">
+<div class="note"><b>How to read this.</b> Every specimen is rendered from the live <code>css/</code> files — not a picture. Toggle the theme to confirm each part follows it. Evidence absence renders no chip.</div><div class="tally"><div class="t"><div class="n">20</div><div class="l">REUSES</div></div><div class="t"><div class="n">1</div><div class="l">DUPLICATES</div></div><div class="t"><div class="n">7</div><div class="l">PARTIAL</div></div><div class="t"><div class="n">1</div><div class="l">NEW</div></div><div class="t"><div class="n">6</div><div class="l">Doctrine</div></div></div><h2 class="sec">Frame and header</h2><div class="grid"><div class="spec">
   <div class="spec-h"><span class="nm">Board scope</span><span class="bg"><span class="b part">PARTIAL</span></span></div>
   <div class="cls">.weft-board</div>
   <div class="demo"><div class="weft-board" style="padding:14px;color:var(--weft-muted);font-size:13px">The board surface: paper, hairline rule, card radius.</div></div>
@@ -185,11 +185,11 @@
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Row chips</span><span class="bg"><span class="b ok">REUSES</span></span></div>
-  <div class="cls">.weft-badge.is-space + .weft-badge.is-outline</div>
-  <div class="demo"><div class="weft-board" style="padding:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="weft-badge is-space">Nodaste Studio</span><span class="weft-badge is-space">ccore/heddle</span><span class="weft-badge is-outline">signal</span><span class="weft-badge is-outline">decision</span></div></div>
+  <div class="cls">.weft-badge.is-space + .weft-source-pill</div>
+  <div class="demo"><div class="weft-board" style="padding:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="weft-badge is-space">Nodaste Studio</span><span class="weft-badge is-space">ccore/heddle</span><span class="weft-source-pill">signal</span><span class="weft-source-pill">decision</span></div></div>
   <div class="meta">
-    <div class="row"><span class="k">Weft has</span><span><code>.weft-badge.is-space</code> for workspace; <code>.weft-badge.is-outline</code> for type chip</span></div>
-    <div class="row"><span class="k">Action</span><span>Canonical. No evidence = no chip.</span></div>
+    <div class="row"><span class="k">Weft has</span><span><code>.weft-badge.is-space</code> (<code>weft-components.css</code>) for workspace; <code>.weft-source-pill</code> / <code>SourcePill</code> (React) for the mono type chip</span></div>
+    <div class="row"><span class="k">Action</span><span>Canonical, and the two stay distinct (D5/D6 chip split): D5 keeps the space chip on <code>Badge</code>, D6 moved only the mono chip to <code>SourcePill</code> for its truncation and muted tone. No evidence = no chip.</span></div>
   </div>
 </div></div><h2 class="sec">Provenance</h2><div class="grid"><div class="spec">
   <div class="spec-h"><span class="nm">Evidence chips</span><span class="bg"><span class="b ok">REUSES</span></span></div>
@@ -210,7 +210,7 @@
 </div></div><h2 class="sec">Item drawer</h2><div class="grid"><div class="spec">
   <div class="spec-h"><span class="nm">Drawer shell</span><span class="bg"><span class="b part">PARTIAL</span></span></div>
   <div class="cls">.weft-board-drawer (.is-wide)</div>
-  <div class="demo"><div class="weft-board"><div class="weft-board-drawer"><div class="weft-panel-header" data-size="board"><div class="weft-panel-header-title">Account Recovery dependency unresolved</div><div class="weft-panel-header-actions"><span class="weft-badge is-space">signal</span><button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button></div></div><div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div><div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div><div class="weft-action-button-row" style="padding:10px 12px"><button class="weft-btn" type="button">Resolve for me</button><button class="weft-btn is-ghost" type="button">Reassign</button><span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span></div></div></div></div>
+  <div class="demo"><div class="weft-board"><div class="weft-board-drawer"><div class="weft-panel-header" data-size="board"><div class="weft-panel-header-title">Account Recovery dependency unresolved</div><div class="weft-panel-header-actions"><span class="weft-badge is-space">signal</span><button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button></div></div><div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div><div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div><div class="weft-action-button-row" style="padding:10px 12px"><button class="weft-btn" type="button">Resolve for me</button><button class="weft-btn is-ghost" type="button">Reassign</button><span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span></div></div></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>sheet</code> — edge-mounted overlay; <code>panel-block-shell</code></span></div>
     <div class="row"><span class="k">Action</span><span>Different mount: <code>sheet</code> overlays, this sits inline. An inline detail panel is an unfilled shape.</span></div>
@@ -240,12 +240,12 @@
     <div class="row"><span class="k">Action</span><span>Canonical real textarea with accessible label.</span></div>
   </div>
 </div><div class="spec">
-  <div class="spec-h"><span class="nm">Provenance band</span><span class="bg"><span class="b part">PARTIAL</span></span></div>
-  <div class="cls">.weft-board-drawer-prov</div>
-  <div class="demo"><div class="weft-board"><div class="weft-board-drawer"><div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI (pr_9f2a…c1)</div></div></div></div>
+  <div class="spec-h"><span class="nm">Provenance band</span><span class="bg"><span class="b ok">REUSES</span></span></div>
+  <div class="cls">.weft-callout.is-band</div>
+  <div class="demo"><div class="weft-board"><div class="weft-board-drawer"><div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI (pr_9f2a…c1)</div></div></div></div>
   <div class="meta">
-    <div class="row"><span class="k">Weft has</span><span><code>callout</code> (muted)</span></div>
-    <div class="row"><span class="k">Action</span><span>Muted footer band retained as template-local.</span></div>
+    <div class="row"><span class="k">Weft has</span><span><code>.weft-callout.is-band</code> (<code>weft-components.css</code>); <code>Callout variant=&quot;band&quot;</code> (React)</span></div>
+    <div class="row"><span class="k">Action</span><span>Canonical. D8 kept the introduced band and landed it as a Callout variant, so the board-local class is deleted.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Action row</span><span class="bg"><span class="b ok">REUSES</span></span></div>

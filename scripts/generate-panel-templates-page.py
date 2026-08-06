@@ -174,14 +174,17 @@ SECTIONS = [
   '<span class="weft-badge is-space">ccore/heddle</span>'
   '<span class="weft-badge is-status is-stop">BLOCKED</span>'
   '</div></div></div>'),
- ("Row chips", ".weft-badge.is-space + .weft-badge.is-outline", S,
-  "<code>.weft-badge.is-space</code> for workspace; <code>.weft-badge.is-outline</code> for type chip",
-  "Canonical. No evidence = no chip.",
+ ("Row chips", ".weft-badge.is-space + .weft-source-pill", S,
+  "<code>.weft-badge.is-space</code> (<code>weft-components.css</code>) for workspace; "
+  "<code>.weft-source-pill</code> / <code>SourcePill</code> (React) for the mono type chip",
+  "Canonical, and the two stay distinct (D5/D6 chip split): D5 keeps the space chip on "
+  "<code>Badge</code>, D6 moved only the mono chip to <code>SourcePill</code> for its truncation "
+  "and muted tone. No evidence = no chip.",
   '<div class="weft-board" style="padding:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
   '<span class="weft-badge is-space">Nodaste Studio</span>'
   '<span class="weft-badge is-space">ccore/heddle</span>'
-  '<span class="weft-badge is-outline">signal</span>'
-  '<span class="weft-badge is-outline">decision</span>'
+  '<span class="weft-source-pill">signal</span>'
+  '<span class="weft-source-pill">decision</span>'
   '</div>'),
 ]),
 ("Provenance", [
@@ -214,7 +217,7 @@ SECTIONS = [
   '<button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button>'
   '</div></div>'
   '<div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div>'
-  '<div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
+  '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
   '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
   '<button class="weft-btn is-ghost" type="button">Reassign</button>'
@@ -246,10 +249,13 @@ SECTIONS = [
   '<textarea id="demo-reply" class="weft-textarea" name="reply" rows="2"'
   ' placeholder="Reply…"></textarea>'
   '</div>'),
- ("Provenance band", ".weft-board-drawer-prov", P,
-  "<code>callout</code> (muted)", "Muted footer band retained as template-local.",
+ ("Provenance band", ".weft-callout.is-band", S,
+  "<code>.weft-callout.is-band</code> (<code>weft-components.css</code>); "
+  "<code>Callout variant=&quot;band&quot;</code> (React)",
+  "Canonical. D8 kept the introduced band and landed it as a Callout variant, "
+  "so the board-local class is deleted.",
   '<div class="weft-board"><div class="weft-board-drawer">'
-  '<div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b>'
+  '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b>'
   ' <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI (pr_9f2a…c1)</div>'
   '</div></div>'),
  ("Action row", ".weft-action-button-row", S,

@@ -238,14 +238,15 @@
  * reinforce it.
  */
 
-.weft-board-drawer-prov {
-  padding: 9px 12px;
-  background: var(--weft-fill-soft);
-  border-bottom: 1px solid var(--weft-rule);
-  font-size: 11.5px; color: var(--weft-muted);
-  display: flex; gap: 7px; align-items: baseline; flex-wrap: wrap;
-}
-.weft-board-drawer-prov b { color: var(--weft-ink); }
+/* D8: the provenance band uses .weft-callout.is-band (weft-components.css).
+ * D8 kept both introduced treatments and landed them as Callout variants, so the
+ * board-local band is deleted rather than "retained as template-local".
+ * Plain-CSS markup:
+ *   <div class="weft-callout is-band is-info">
+ *     <b>Why you're seeing this:</b>
+ *     <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI
+ *   </div>
+ */
 
 /* D3: drawer action row uses .weft-action-button-row (weft-components.css).
  * The board-local drawer actions class is deleted.
