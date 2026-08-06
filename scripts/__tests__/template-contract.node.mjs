@@ -186,16 +186,55 @@ const PRIMARY_BTN = /<button[^>]*\bclass="([^"]*\bweft-btn\b[^"]*)"/gi;
 // the drift it exists to catch. Widen this only alongside a CSS variant.
 const NON_PRIMARY = /\bis-(ghost|link)\b/;
 
+// Depth-matched rather than terminator-matched. The first version required the
+// row's </div> to be followed by another </div> or end-of-input, which silently
+// found nothing in CSS comments — where an example ends at the comment marker —
+// so the guard reported clean on a surface it was not reading. Walking div depth
+// makes the extractor independent of what follows the row.
+function extractActionRows(text) {
+  const open = /<div[^>]*class="[^"]*\bweft-action-button-row(?![-\w])[^"]*"[^>]*>/gi;
+  const rows = [];
+  let m;
+  while ((m = open.exec(text)) !== null) {
+    const start = m.index + m[0].length;
+    const tag = /<(\/?)div\b[^>]*>/gi;
+    tag.lastIndex = start;
+    let depth = 1;
+    let end = text.length;
+    let t;
+    while (depth > 0 && (t = tag.exec(text)) !== null) {
+      depth += t[1] ? -1 : 1;
+      if (depth === 0) end = t.index;
+    }
+    rows.push({ body: text.slice(start, end), index: m.index });
+  }
+  return rows;
+}
+
 function actionRowViolations(text, label) {
-  const rows = [...text.matchAll(
-    /<div[^>]*class="[^"]*weft-action-button-row(?![-\w])[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<\/div>|$)/gi,
-  )];
-  return rows.flatMap((row) => {
-    const classes = [...row[1].matchAll(PRIMARY_BTN)].map((m) => m[1]);
+  return extractActionRows(text).flatMap((row) => {
+    const classes = [...row.body.matchAll(PRIMARY_BTN)].map((m) => m[1]);
     const primaries = classes.filter((c) => !NON_PRIMARY.test(c));
     if (primaries.length <= 1) return [];
-    const line = text.slice(0, row.index ?? 0).split('\n').length;
+    const line = text.slice(0, row.index).split('\n').length;
     return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (max 1) (${classes.join(' | ')})`];
+  });
+}
+
+// CSS authoring examples are indented under a leading " * ". Strip that decoration
+// so the markup reads the same as it does on the other two surfaces, and every
+// detector can be pointed at all three without special-casing.
+function undecorate(text) {
+  return text.split('\n').map((l) => l.replace(/^\s*\*[ \t]?/, '')).join('\n');
+}
+
+// Prose form of the D6 rule, kept separate from the markup form because a doc can
+// get this wrong either way: by showing the old markup, or by describing it.
+function proseTypeChipViolations(text, label) {
+  return text.split('\n').flatMap((line, i) => {
+    if (!/\btype chip/i.test(line)) return [];
+    if (!/weft-badge[.\s]is-outline|weft-badge is-outline/.test(line)) return [];
+    return [`${label}:${i + 1} maps the type chip to .weft-badge.is-outline — D6 moved it to .weft-source-pill`];
   });
 }
 
@@ -294,13 +333,7 @@ test('T2-g: the canonical markdown teaches no superseded mapping', () => {
   // D6: any line describing the mono/type chip must point at SourcePill, never
   // back at the Badge outline variant it moved off. Badge.is-outline is still
   // correct for evidence chips, so this is scoped by context rather than banned.
-  for (const [i, line] of md.split('\n').entries()) {
-    if (!/\btype chip/i.test(line)) continue;
-    if (/weft-badge\.is-outline/.test(line)) {
-      problems.push(`line ${i + 1} maps the type chip to .weft-badge.is-outline — D6 moved it to .weft-source-pill`);
-    }
-  }
-
+  problems.push(...proseTypeChipViolations(md, '11-panel-templates.md'));
   problems.push(...typeChipViolations(md, '11-panel-templates.md'));
   assert.deepEqual(problems, [], `Superseded mappings in 11-panel-templates.md:\n${problems.join('\n')}`);
 });
@@ -356,8 +389,10 @@ test('T2-j: authoring examples in CSS comments obey the same rules as the publis
       problems.push(`${cls} appears in a weft-templates.css authoring example — it was deleted`);
     }
   }
-  problems.push(...typeChipViolations(cssComments, 'weft-templates.css (comment)'));
-  problems.push(...actionRowViolations(cssComments, 'weft-templates.css (comment)'));
+  const examples = undecorate(cssComments);
+  problems.push(...typeChipViolations(examples, 'weft-templates.css (comment)'));
+  problems.push(...actionRowViolations(examples, 'weft-templates.css (comment)'));
+  problems.push(...proseTypeChipViolations(examples, 'weft-templates.css (comment)'));
 
   // The drawer is subordinate to the board: board scale belongs to the board's
   // own header, so drawer guidance must not hand it out. Only the markup lines
@@ -373,6 +408,30 @@ test('T2-j: authoring examples in CSS comments obey the same rules as the publis
   }
 
   assert.deepEqual(problems, [], `weft-templates.css authoring examples are out of date:\n${problems.join('\n')}`);
+
+  // Coverage proof, not just a clean result. Review demonstrated by mutation that
+  // the previous version of this test found zero action rows in CSS comments and
+  // still reported clean — a guard asserting coverage it did not have. These
+  // fixtures reproduce the comment shape, decoration and terminator included, so
+  // the test fails if the surface ever stops being read.
+  const commentShaped = [
+    '/* Plain-CSS markup:',
+    ' *   <div class="weft-action-button-row">',
+    ' *     <button class="weft-btn">Resolve</button>',
+    ' *     <button class="weft-btn">Reassign</button>',
+    ' *   </div>',
+    ' */',
+  ].join('\n');
+  assert.equal(
+    actionRowViolations(undecorate(commentShaped), 'fixture').length,
+    1,
+    'the action-row detector must read markup inside CSS comments',
+  );
+  assert.equal(
+    proseTypeChipViolations(undecorate('/* the mono type chip uses .weft-badge.is-outline */'), 'fixture').length,
+    1,
+    'the prose detector must read guidance inside CSS comments',
+  );
 });
 
 test('T2-h: item type values never wear the workspace chip', () => {
