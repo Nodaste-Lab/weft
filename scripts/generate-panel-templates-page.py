@@ -325,9 +325,17 @@ SECTIONS = [
   "Canonical, and the specimen renders the canonical class rather than the board-local one — "
   "copyable markup must not contradict the guidance. D9: notice for load failures, "
   "<code>EmptyState variant=&quot;centered&quot;</code> for genuine empty states.",
+  # Two specimens, because a one-line notice hides how the treatment behaves
+  # (Katie, 2026-08): a wrapped message is the common case on a narrow board slot,
+  # and the dashed border has to hold the block without the text crowding it.
   '<div class="weft-board" style="padding:14px">'
-  '<div class="weft-callout is-dashed">'
+  '<div class="weft-callout is-dashed" style="margin-bottom:10px">'
   '<b>Couldn\'t load action items.</b> Connecting your account…'
+  '</div>'
+  '<div class="weft-callout is-dashed" style="max-width:340px">'
+  '<b>Couldn\'t load action items from 2 of 5 spaces.</b> '
+  'ccore/archive and nodaste-studio didn\'t respond. The items below are '
+  'everything we could reach — retry to fill the gaps.'
   '</div></div>'),
  ("Loading", "—", None,
   "<code>skeleton</code>",
