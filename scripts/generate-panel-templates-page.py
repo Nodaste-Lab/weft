@@ -207,7 +207,7 @@ SECTIONS = [
   '<div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
   '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn" type="button">Reassign</button>'
+  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
   '</div></div></div>'),
  ("Drawer header", '.weft-panel-header[data-size="board"]', S,
@@ -247,7 +247,7 @@ SECTIONS = [
   "Canonical grouped actions row. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
   '<div class="weft-board"><div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn" type="button">Reassign</button>'
+  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
   '</div></div>'),
  ("Drawer buttons", ".weft-btn + .weft-btn.is-ghost + .weft-btn.is-link", S,
@@ -328,6 +328,10 @@ DOCTRINE = [
   "An empty board reads as “nothing needs you”. Show <code>EmptyState</code> or <code>Callout</code> instead."),
  ("Evidence absence renders no chip",
   "If the relation field is empty, omit the badge entirely. Never substitute a guessed chip."),
+ ("One primary per action row",
+  "Exactly one filled <code>.weft-btn</code> — the action you want taken. Everything beside it is "
+  "<code>.is-ghost</code> or <code>.is-link</code>. Two filled buttons make the operator choose "
+  "between them instead of acting, which is the opposite of what a board is for."),
 ]
 
 BADGE = {'REUSES': 'ok', 'DUPLICATES': 'dup', 'PARTIAL': 'part', 'NEW': 'new'}

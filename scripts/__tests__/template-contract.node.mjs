@@ -163,6 +163,65 @@ test('T2-b: generator is deterministic — --output mode matches committed file'
   );
 });
 
+// ── One primary per action row ───────────────────────────────────────────────
+// Katie's rule, 2026-08: exactly one filled .weft-btn in an action row. Two
+// filled buttons make the operator choose between them instead of acting.
+// Caught by eye on the published page, where three specimens taught the wrong
+// pattern — including the copy-paste DOM contract in the markdown. The rule is
+// only worth stating if the reference material can't drift from it again, so it
+// is checked in both the generated page and the documented skeleton.
+const PRIMARY_BTN = /<button[^>]*\bclass="([^"]*\bweft-btn\b[^"]*)"/gi;
+const NON_PRIMARY = /\bis-(ghost|link|outline|quiet|secondary)\b/;
+
+function actionRowViolations(text, label) {
+  const rows = [...text.matchAll(
+    /<div[^>]*class="[^"]*weft-action-button-row(?![-\w])[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<\/div>|$)/gi,
+  )];
+  return rows.flatMap((row) => {
+    const classes = [...row[1].matchAll(PRIMARY_BTN)].map((m) => m[1]);
+    const primaries = classes.filter((c) => !NON_PRIMARY.test(c));
+    if (primaries.length <= 1) return [];
+    const line = text.slice(0, row.index ?? 0).split('\n').length;
+    return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (${classes.join(' | ')})`];
+  });
+}
+
+test('T2-e: action rows carry exactly one primary button', () => {
+  const violations = [
+    ...actionRowViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),
+    ...actionRowViolations(
+      readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8'),
+      '11-panel-templates.md',
+    ),
+  ];
+  assert.deepEqual(
+    violations,
+    [],
+    `Action rows must have exactly one filled .weft-btn; every sibling is .is-ghost or .is-link.\n${violations.join('\n')}`,
+  );
+});
+
+test('T2-e regression: the guard actually catches a second primary', () => {
+  const twoPrimaries =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn" type="button">Resolve</button>' +
+    '<button class="weft-btn" type="button">Reassign</button>' +
+    '</div>';
+  assert.equal(actionRowViolations(twoPrimaries, 'fixture').length, 1);
+
+  const onePrimary = twoPrimaries.replace('weft-btn" type="button">Reassign', 'weft-btn is-ghost" type="button">Reassign');
+  assert.deepEqual(actionRowViolations(onePrimary, 'fixture'), []);
+
+  // A trailing link is not a second primary, and the trailing wrapper class
+  // must not be mistaken for the row itself.
+  const withTrailing =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn" type="button">Resolve</button>' +
+    '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open</button></span>' +
+    '</div>';
+  assert.deepEqual(actionRowViolations(withTrailing, 'fixture'), []);
+});
+
 test('T2-c: generated HTML contains only real accessible controls', () => {
   const html = readFileSync(generatedHtmlPath, 'utf8');
 
