@@ -339,6 +339,42 @@ test('T2-i: the generated page sets the density the board is designed for', () =
   );
 });
 
+// Third published surface. weft-templates.css carries plain-CSS authoring examples
+// inside its comments — the markup a panel author copies when they are not using
+// React. Every CSS guard above runs against `stripped`, which deletes comments, so
+// those examples were structurally invisible to all of them. Review found the
+// drawer-header guidance there still teaching data-size="board" after both other
+// surfaces had been corrected: the third time in this PR that a rule was enforced
+// on fewer surfaces than it covers. The same detectors now run over all three.
+const cssComments = [...templateCss.matchAll(/\/\*[\s\S]*?\*\//g)].map((m) => m[0]).join('\n');
+
+test('T2-j: authoring examples in CSS comments obey the same rules as the published pages', () => {
+  const problems = [];
+
+  for (const cls of DEPRECATED_BOARD_CLASSES) {
+    if (new RegExp(`class="[^"]*\\b${cls}\\b`).test(cssComments)) {
+      problems.push(`${cls} appears in a weft-templates.css authoring example — it was deleted`);
+    }
+  }
+  problems.push(...typeChipViolations(cssComments, 'weft-templates.css (comment)'));
+  problems.push(...actionRowViolations(cssComments, 'weft-templates.css (comment)'));
+
+  // The drawer is subordinate to the board: board scale belongs to the board's
+  // own header, so drawer guidance must not hand it out. Only the markup lines
+  // are checked — prose in the same block legitimately names data-size="board"
+  // to say what it is for, and an earlier version of this check flagged that
+  // explanation as a violation.
+  for (const block of cssComments.split('/*')) {
+    if (!/drawer header/i.test(block)) continue;
+    const markupLines = block.split('\n').filter((l) => /^\s*\*?\s*</.test(l));
+    if (markupLines.some((l) => /data-size="board"/.test(l))) {
+      problems.push('a drawer-header authoring example still sets data-size="board" — that scale is the board header\'s');
+    }
+  }
+
+  assert.deepEqual(problems, [], `weft-templates.css authoring examples are out of date:\n${problems.join('\n')}`);
+});
+
 test('T2-h: item type values never wear the workspace chip', () => {
   const violations = [
     ...typeChipViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),

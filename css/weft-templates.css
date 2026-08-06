@@ -201,10 +201,12 @@
 }
 .weft-board-drawer.is-wide { max-width: none; }
 
-/* D10: drawer header uses weft-panel-header[data-size="board"] (weft-components.css).
- * Board-local drawer header and close classes are deleted.
+/* D10: drawer header uses weft-panel-header (weft-components.css) at its DEFAULT
+ * size. Board-local drawer header and close classes are deleted.
+ * data-size="board" is for the board's own header only — the drawer is a detail
+ * panel inside the board and stays subordinate to it.
  * Plain-CSS markup:
- *   <div class="weft-panel-header" data-size="board">
+ *   <div class="weft-panel-header">
  *     <div class="weft-panel-header-title">…</div>
  *     <div class="weft-panel-header-actions">
  *       <button class="weft-panel-header-dismiss" aria-label="Close">×</button>
