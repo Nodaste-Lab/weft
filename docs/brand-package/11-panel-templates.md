@@ -291,7 +291,8 @@ The migration consolidated all board-local duplicates into canonical
 | Urgency tier + head + count | `.weft-tier-group` / `<TierGroup>` |
 | Status dot | `.weft-dot` / `<Dot>` |
 | Action item rows + chips | `.weft-hud-list-row` / `<HudListRow>` |
-| Space and type chips | `.weft-badge.is-space` / `.weft-badge.is-outline` |
+| Space chip | `.weft-badge.is-space` / `<Badge variant="space">` (D5) |
+| Mono type chip | `.weft-source-pill` / `<SourcePill>` (D6) |
 | Evidence chips | `.weft-badge.is-outline` + tone modifier |
 | Drawer header + close | `.weft-panel-header[data-size="board"]` / `<PanelHeader>` |
 | Canonical reference row + copy | `.weft-copyable-ref` / `<CopyableRef>` |

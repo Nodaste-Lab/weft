@@ -273,6 +273,37 @@ test('T2-f: the row-chip specimen shows the D5/D6 split — Badge space chip bes
   );
 });
 
+// The first version of the guard above scanned only the generated page, and
+// review immediately found a third copy of the pre-D6 mapping in a second
+// markdown table it could not see. Both files are published reference material,
+// so both are checked — a rule enforced on one surface is not enforced.
+const canonicalMdPath = join(ROOT, 'docs', 'brand-package', '11-panel-templates.md');
+
+test('T2-g: the canonical markdown teaches no superseded mapping', () => {
+  const md = readFileSync(canonicalMdPath, 'utf8');
+  const problems = [];
+
+  // Deprecated board-local classes must not survive in prose or tables either.
+  // The CSS check (T1-d) does not see this file at all.
+  for (const cls of DEPRECATED_BOARD_CLASSES) {
+    for (const m of md.matchAll(new RegExp(`\\.${cls}(?![-\\w])`, 'g'))) {
+      problems.push(`${cls} at line ${md.slice(0, m.index).split('\n').length} — deleted; docs must not teach it`);
+    }
+  }
+
+  // D6: any line describing the mono/type chip must point at SourcePill, never
+  // back at the Badge outline variant it moved off. Badge.is-outline is still
+  // correct for evidence chips, so this is scoped by context rather than banned.
+  for (const [i, line] of md.split('\n').entries()) {
+    if (!/\btype chip/i.test(line)) continue;
+    if (/weft-badge\.is-outline/.test(line)) {
+      problems.push(`line ${i + 1} maps the type chip to .weft-badge.is-outline — D6 moved it to .weft-source-pill`);
+    }
+  }
+
+  assert.deepEqual(problems, [], `Superseded mappings in 11-panel-templates.md:\n${problems.join('\n')}`);
+});
+
 test('T2-c: generated HTML contains only real accessible controls', () => {
   const html = readFileSync(generatedHtmlPath, 'utf8');
 
