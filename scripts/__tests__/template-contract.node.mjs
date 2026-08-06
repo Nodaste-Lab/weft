@@ -251,7 +251,11 @@ function undecorate(text) {
 function normalizeSurface(text) {
   return text
     .replace(/&quot;/g, '"')
-    .replace(/\bclass='([^']*)'/gi, 'class="$1"');
+    // EVERY attribute, not just class. The first version rewrote class only, so a
+    // hand-authored data-size='board' walked straight past the drawer rule — the
+    // same under-coverage this normalization exists to prevent, reintroduced by
+    // scoping it to the one attribute I happened to be thinking about.
+    .replace(/\b([a-zA-Z][\w-]*)='([^']*)'/g, '$1="$2"');
 }
 
 // A deprecated class is superseded guidance wherever it appears — inside a class
@@ -442,7 +446,9 @@ function drawerHeaderSizeViolations(text, label) {
   return extractBlocks(text, 'weft-board-drawer').flatMap((block) => {
     const headers = [...block.body.matchAll(/<div[^>]*\bclass="([^"]*)"[^>]*>/gi)]
       .filter((h) => classSet(h[1]).has('weft-panel-header'))
-      .filter((h) => /data-size="board"/.test(h[0]));
+      // Quote-agnostic as well as normalized, so the rule does not depend on the
+      // normalizer having thought of this attribute.
+      .filter((h) => /\bdata-size\s*=\s*["']board["']/i.test(h[0]));
     if (!headers.length) return [];
     const line = text.slice(0, block.index).split('\n').length;
     return [`${label}:${line} — drawer header carries data-size="board"; board scale belongs to the board's own header`];
@@ -501,6 +507,12 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<div class="weft-panel-header-title">x</div></div></div>',
   );
   assert.equal(drawerHeaderSizeViolations(boardScaleDrawer, 'f').length, 1);
+
+  // Single-quoted data-size, the exact bypass review demonstrated.
+  const singleQuotedSize = normalizeSurface(
+    "<div class='weft-board-drawer'><div class='weft-panel-header' data-size='board'>x</div></div>",
+  );
+  assert.equal(drawerHeaderSizeViolations(singleQuotedSize, 'f').length, 1, 'single-quoted attributes must not bypass the drawer rule');
   assert.deepEqual(
     drawerHeaderSizeViolations(normalizeSurface('<div class="weft-board"><div class="weft-panel-header" data-size="board">x</div></div>'), 'f'),
     [],
