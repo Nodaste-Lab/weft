@@ -179,12 +179,26 @@ test('T2-b: generator is deterministic — --output mode matches committed file'
 // pattern — including the copy-paste DOM contract in the markdown. The rule is
 // only worth stating if the reference material can't drift from it again, so it
 // is checked in both the generated page and the documented skeleton.
+const classSet = (attr) => new Set(attr.split(/\s+/).filter(Boolean));
+const hasAll = (attr, ...needed) => {
+  const set = classSet(attr);
+  return needed.every((c) => set.has(c));
+};
+
 const PRIMARY_BTN = /<button[^>]*\bclass="([^"]*\bweft-btn\b[^"]*)"/gi;
 // Only the variants weft-components.css actually defines as non-filled. A class
 // the stylesheet does not implement — .weft-btn.is-secondary, say — still renders
 // as a filled primary, so exempting it by name would blind the guard to exactly
 // the drift it exists to catch. Widen this only alongside a CSS variant.
-const NON_PRIMARY = /\bis-(ghost|link)\b/;
+// Membership, not a substring match. `\bis-ghost\b` also matches inside
+// `helper-is-ghost`, because the hyphen is a word boundary — so an unrelated
+// helper class silently exempted a filled button. The whole point of matching on
+// the set is defeated by asking a regex about the string.
+const NON_PRIMARY_CLASSES = ['is-ghost', 'is-link'];
+const isNonPrimary = (attr) => {
+  const set = classSet(attr);
+  return NON_PRIMARY_CLASSES.some((c) => set.has(c));
+};
 
 // Depth-matched rather than terminator-matched. The first version required the
 // row's </div> to be followed by another </div> or end-of-input, which silently
@@ -215,7 +229,7 @@ function extractActionRows(text) {
 function actionRowViolations(text, label) {
   return extractActionRows(text).flatMap((row) => {
     const classes = [...row.body.matchAll(PRIMARY_BTN)].map((m) => m[1]);
-    const primaries = classes.filter((c) => !NON_PRIMARY.test(c));
+    const primaries = classes.filter((c) => !isNonPrimary(c));
     if (primaries.length <= 1) return [];
     const line = text.slice(0, row.index).split('\n').length;
     return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (max 1) (${classes.join(' | ')})`];
@@ -375,11 +389,6 @@ const ITEM_TYPE_VALUES = ['signal', 'decision', 'clarification'];
 // the hand-authored markdown and CSS examples — so the guard could report clean on
 // bad published markup. Order and spelling of the attribute are not the contract;
 // the set of classes is.
-const classSet = (attr) => new Set(attr.split(/\s+/).filter(Boolean));
-const hasAll = (attr, ...needed) => {
-  const set = classSet(attr);
-  return needed.every((c) => set.has(c));
-};
 
 function typeChipViolations(text, label) {
   const types = new Set(ITEM_TYPE_VALUES);
@@ -405,6 +414,41 @@ function typeChipViolations(text, label) {
 // error messages; this one exists so that adding a rule or a surface cannot
 // quietly leave a hole. Everything is normalized first, so quoting style, class
 // order and comment decoration are not part of the contract.
+// The drawer-header rule lived only in T2-j, which reads CSS comments, so the two
+// markup surfaces could regress back to a board-scale drawer header with a green
+// suite — review confirmed it by mutating both. Same block-walk as the action row.
+function extractBlocks(text, className) {
+  const open = /<div[^>]*\bclass="([^"]*)"[^>]*>/gi;
+  const blocks = [];
+  let m;
+  while ((m = open.exec(text)) !== null) {
+    if (!classSet(m[1]).has(className)) continue;
+    const start = m.index + m[0].length;
+    const tag = /<(\/?)div\b[^>]*>/gi;
+    tag.lastIndex = start;
+    let depth = 1;
+    let end = text.length;
+    let t;
+    while (depth > 0 && (t = tag.exec(text)) !== null) {
+      depth += t[1] ? -1 : 1;
+      if (depth === 0) end = t.index;
+    }
+    blocks.push({ body: text.slice(start, end), index: m.index });
+  }
+  return blocks;
+}
+
+function drawerHeaderSizeViolations(text, label) {
+  return extractBlocks(text, 'weft-board-drawer').flatMap((block) => {
+    const headers = [...block.body.matchAll(/<div[^>]*\bclass="([^"]*)"[^>]*>/gi)]
+      .filter((h) => classSet(h[1]).has('weft-panel-header'))
+      .filter((h) => /data-size="board"/.test(h[0]));
+    if (!headers.length) return [];
+    const line = text.slice(0, block.index).split('\n').length;
+    return [`${label}:${line} — drawer header carries data-size="board"; board scale belongs to the board's own header`];
+  });
+}
+
 function publishedSurfaces() {
   return [
     ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
@@ -419,6 +463,7 @@ test('T2-k: every rule holds on every published surface', () => {
     ...typeChipViolations(text, label),
     ...proseTypeChipViolations(text, label),
     ...actionRowViolations(text, label),
+    ...drawerHeaderSizeViolations(text, label),
   ]);
   assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
 });
@@ -441,6 +486,26 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
   assert.deepEqual(typeChipViolations(normalizeSurface("<span class='weft-badge is-space'>ccore/heddle</span>"), 'f'), []);
   assert.deepEqual(actionRowViolations(normalizeSurface("<div class='weft-action-button-row'><button class='weft-btn'>Go</button></div>"), 'f'), []);
   assert.deepEqual(deprecatedClassViolations('the weft-board-drawer holds the detail panel', 'f'), []);
+
+  // A helper class must not exempt a filled button: \bis-ghost\b also matches
+  // inside `helper-is-ghost`, because the hyphen is a word boundary.
+  const helperClass = normalizeSurface(
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn">Resolve</button><button class="weft-btn helper-is-ghost">Reassign</button></div>',
+  );
+  assert.equal(actionRowViolations(helperClass, 'f').length, 1, 'an unrelated helper class must not exempt a filled button');
+
+  // The drawer-header rule must hold on the markup surfaces, not only in CSS comments.
+  const boardScaleDrawer = normalizeSurface(
+    '<div class="weft-board-drawer"><div class="weft-panel-header" data-size="board">' +
+    '<div class="weft-panel-header-title">x</div></div></div>',
+  );
+  assert.equal(drawerHeaderSizeViolations(boardScaleDrawer, 'f').length, 1);
+  assert.deepEqual(
+    drawerHeaderSizeViolations(normalizeSurface('<div class="weft-board"><div class="weft-panel-header" data-size="board">x</div></div>'), 'f'),
+    [],
+    "the board's own header keeps board scale",
+  );
 });
 
 test('T2-i: the generated page sets the density the board is designed for', () => {
