@@ -421,14 +421,18 @@ function typeChipViolations(text, label) {
 // The drawer-header rule lived only in T2-j, which reads CSS comments, so the two
 // markup surfaces could regress back to a board-scale drawer header with a green
 // suite — review confirmed it by mutating both. Same block-walk as the action row.
+// Container tags, not just <div>: the markdown skeleton wraps the board in a
+// <section>, so a div-only walker silently skipped that surface's boards.
+const CONTAINER = 'div|section|aside|article|main|nav';
+
 function extractBlocks(text, className) {
-  const open = /<div[^>]*\bclass="([^"]*)"[^>]*>/gi;
+  const open = new RegExp(`<(?:${CONTAINER})[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi');
   const blocks = [];
   let m;
   while ((m = open.exec(text)) !== null) {
     if (!classSet(m[1]).has(className)) continue;
     const start = m.index + m[0].length;
-    const tag = /<(\/?)div\b[^>]*>/gi;
+    const tag = new RegExp(`<(/?)(?:${CONTAINER})\\b[^>]*>`, 'gi');
     tag.lastIndex = start;
     let depth = 1;
     let end = text.length;
@@ -505,6 +509,40 @@ function dismissSlotViolations(text, label) {
   });
 }
 
+// ── Required ordering ────────────────────────────────────────────────────────
+// The third category, and review found it by answering the question directly:
+// prohibitions say what may not appear, obligations say what must occupy a slot,
+// and neither can express a rule about SEQUENCE. The board's own doctrine says
+// "Urgency ordering is part of the meaning — is-blocked → is-awaiting → is-fyi,
+// always," and until now a reordered specimen would have published a board that
+// teaches the wrong priority with a green suite.
+//
+// Ranked, not positional: a surface may show any subset of tiers, but whichever
+// it shows must appear in this relative order.
+const URGENCY_RANK = { blocked: 0, awaiting: 1, fyi: 2 };
+
+function tierOrderViolations(text, label) {
+  // Scope per board, so two independent boards on one page each start over.
+  const boards = extractBlocks(text, 'weft-board');
+  const scopes = boards.length ? boards : [{ body: text, index: 0 }];
+
+  return scopes.flatMap((scope) => {
+    const open = new RegExp(`<(?:${CONTAINER})[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi');
+    const seen = [];
+    let m;
+    while ((m = open.exec(scope.body)) !== null) {
+      const set = classSet(m[1]);
+      if (!set.has('weft-tier-group')) continue;   // membership: skips -head, -sub, -count
+      const urgency = Object.keys(URGENCY_RANK).find((u) => set.has(`is-${u}`));
+      if (urgency) seen.push(urgency);
+    }
+    const wrong = seen.some((u, i) => i > 0 && URGENCY_RANK[u] < URGENCY_RANK[seen[i - 1]]);
+    if (!wrong) return [];
+    const line = text.slice(0, scope.index).split('\n').length;
+    return [`${label}:${line} — urgency tiers published as ${seen.join(' → ')}; the order is semantic and must be blocked → awaiting → fyi`];
+  });
+}
+
 function publishedSurfaces() {
   return [
     ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
@@ -521,6 +559,7 @@ test('T2-k: every rule holds on every published surface', () => {
     ...actionRowViolations(text, label),
     ...drawerHeaderSizeViolations(text, label),
     ...dismissSlotViolations(text, label),
+    ...tierOrderViolations(text, label),
   ]);
   assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
 });
@@ -588,6 +627,28 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">Close</button></div>',
   );
   assert.equal(dismissSlotViolations(visibleText, 'f').length, 1, 'a visibly-labelled Close must be recognised');
+
+  // Required ordering — the third category. Sequence, not presence or occupancy.
+  const tier = (u) => `<div class="weft-tier-group is-${u}"><div class="weft-tier-group-head">${u}</div></div>`;
+  const reorderedTiers = normalizeSurface(`<div class="weft-board">${tier('awaiting')}${tier('blocked')}${tier('fyi')}</div>`);
+  assert.equal(tierOrderViolations(reorderedTiers, 'f').length, 1, 'a reordered board must fail');
+
+  const correct = normalizeSurface(`<div class="weft-board">${tier('blocked')}${tier('awaiting')}${tier('fyi')}</div>`);
+  assert.deepEqual(tierOrderViolations(correct, 'f'), []);
+
+  // A subset is fine as long as the relative order holds.
+  assert.deepEqual(tierOrderViolations(normalizeSurface(`<div class="weft-board">${tier('blocked')}${tier('fyi')}</div>`), 'f'), []);
+
+  // Two independent boards each start over, so board B may open with blocked
+  // again after board A ended on fyi.
+  const twoBoards = normalizeSurface(
+    `<div class="weft-board">${tier('blocked')}${tier('fyi')}</div><div class="weft-board">${tier('blocked')}</div>`,
+  );
+  assert.deepEqual(tierOrderViolations(twoBoards, 'f'), [], 'ordering is scoped per board');
+
+  // A <section> board must be walked too, not only a <div>.
+  const sectionBoard = normalizeSurface(`<section class="weft-board">${tier('fyi')}${tier('blocked')}</section>`);
+  assert.equal(tierOrderViolations(sectionBoard, 'f').length, 1, 'section-wrapped boards must be walked');
 
   // Canonical passes, and a non-dismiss action in the same slot is left alone.
   assert.deepEqual(
