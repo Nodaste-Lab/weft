@@ -192,10 +192,11 @@ const NON_PRIMARY = /\bis-(ghost|link)\b/;
 // so the guard reported clean on a surface it was not reading. Walking div depth
 // makes the extractor independent of what follows the row.
 function extractActionRows(text) {
-  const open = /<div[^>]*class="[^"]*\bweft-action-button-row(?![-\w])[^"]*"[^>]*>/gi;
+  const open = /<div[^>]*\bclass="([^"]*)"[^>]*>/gi;
   const rows = [];
   let m;
   while ((m = open.exec(text)) !== null) {
+    if (!classSet(m[1]).has('weft-action-button-row')) continue;
     const start = m.index + m[0].length;
     const tag = /<(\/?)div\b[^>]*>/gi;
     tag.lastIndex = start;
@@ -226,6 +227,31 @@ function actionRowViolations(text, label) {
 // detector can be pointed at all three without special-casing.
 function undecorate(text) {
   return text.split('\n').map((l) => l.replace(/^\s*\*[ \t]?/, '')).join('\n');
+}
+
+// One canonical form for every surface before any detector runs. The generated
+// page HTML-escapes its attribute quotes, the markdown and CSS examples are
+// hand-authored and may use single quotes; none of that is the contract. Doing
+// this once is why the detectors can be literal about `class="…"` without being
+// literal about how an author happened to type it.
+function normalizeSurface(text) {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/\bclass='([^']*)'/gi, 'class="$1"');
+}
+
+// A deprecated class is superseded guidance wherever it appears — inside a class
+// attribute, in a selector label like `.weft-board-drawer-prov`, or in prose.
+// The earlier checks only looked inside class="…", so a regression in the
+// generated page's selector line or in comment prose would have published the
+// old name with a green suite.
+function deprecatedClassViolations(text, label) {
+  return DEPRECATED_BOARD_CLASSES.flatMap((cls) =>
+    [...text.matchAll(new RegExp(`\\b${cls}(?![-\\w])`, 'g'))].map((m) => {
+      const line = text.slice(0, m.index).split('\n').length;
+      return `${label}:${line} — ${cls} was deleted; published material must not teach it`;
+    }),
+  );
 }
 
 // Prose form of the D6 rule, kept separate from the markup form because a doc can
@@ -344,14 +370,25 @@ test('T2-g: the canonical markdown teaches no superseded mapping', () => {
 // beside it: a known item type must never wear the workspace chip.
 const ITEM_TYPE_VALUES = ['signal', 'decision', 'clarification'];
 
+// Match on the class SET, never on the attribute string. Review found the literal
+// form missed single quotes, reordered classes and extra classes — all valid in
+// the hand-authored markdown and CSS examples — so the guard could report clean on
+// bad published markup. Order and spelling of the attribute are not the contract;
+// the set of classes is.
+const classSet = (attr) => new Set(attr.split(/\s+/).filter(Boolean));
+const hasAll = (attr, ...needed) => {
+  const set = classSet(attr);
+  return needed.every((c) => set.has(c));
+};
+
 function typeChipViolations(text, label) {
-  const pattern = new RegExp(
-    `class="weft-badge is-space"\\s*>\\s*(${ITEM_TYPE_VALUES.join('|')})\\s*<`,
-    'gi',
-  );
-  return [...text.matchAll(pattern)].map((m) => {
+  const types = new Set(ITEM_TYPE_VALUES);
+  const pattern = /<(?:span|div)[^>]*\bclass="([^"]*)"[^>]*>\s*([^<]*?)\s*</gi;
+  return [...text.matchAll(pattern)].flatMap((m) => {
+    if (!hasAll(m[1], 'weft-badge', 'is-space')) return [];
+    if (!types.has(m[2].trim().toLowerCase())) return [];
     const line = text.slice(0, m.index).split('\n').length;
-    return `${label}:${line} — "${m[1]}" is an item type, not a workspace; D6 puts it on .weft-source-pill, not .weft-badge.is-space`;
+    return [`${label}:${line} — "${m[2].trim()}" is an item type, not a workspace; D6 puts it on .weft-source-pill, not .weft-badge.is-space`];
   });
 }
 
@@ -361,6 +398,51 @@ function typeChipViolations(text, label) {
 // had shipped without it, so every control rendered at the 44px default — a third
 // too large — while the specimen text beside them explained the dense tier.
 // Katie caught it as "the preset picker looks wrong, input fields, button size".
+// ── Every rule, every published surface ──────────────────────────────────────
+// Eight of the last ten review findings on this PR were the same shape: a rule
+// enforced on fewer surfaces than it covers, or a detector too literal about how
+// an author typed something. The per-surface tests above stay for their specific
+// error messages; this one exists so that adding a rule or a surface cannot
+// quietly leave a hole. Everything is normalized first, so quoting style, class
+// order and comment decoration are not part of the contract.
+function publishedSurfaces() {
+  return [
+    ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
+    ['11-panel-templates.md', normalizeSurface(readFileSync(canonicalMdPath, 'utf8'))],
+    ['weft-templates.css (comment)', normalizeSurface(undecorate(cssComments))],
+  ];
+}
+
+test('T2-k: every rule holds on every published surface', () => {
+  const problems = publishedSurfaces().flatMap(([label, text]) => [
+    ...deprecatedClassViolations(text, label),
+    ...typeChipViolations(text, label),
+    ...proseTypeChipViolations(text, label),
+    ...actionRowViolations(text, label),
+  ]);
+  assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
+});
+
+test('T2-k coverage: the detectors survive quoting, ordering and extra classes', () => {
+  // Each of these was a real miss reported by review, in the exact form reported.
+  const singleQuoted = normalizeSurface(
+    "<div class='weft-action-button-row'>" +
+    "<button class='weft-btn'>Resolve</button><button class='weft-btn'>Reassign</button></div>",
+  );
+  assert.equal(actionRowViolations(singleQuoted, 'f').length, 1, 'single-quoted class attributes must still be read');
+
+  const reordered = normalizeSurface(`<span class='is-space weft-badge is-compact'>signal</span>`);
+  assert.equal(typeChipViolations(reordered, 'f').length, 1, 'class order and extra classes must not defeat the chip check');
+
+  const selectorLabel = 'The band lives at .weft-board-drawer-prov in the template layer.';
+  assert.equal(deprecatedClassViolations(selectorLabel, 'f').length, 1, 'a deprecated class in prose or a selector label must be caught');
+
+  // And the negatives, so the detectors are not simply always-on.
+  assert.deepEqual(typeChipViolations(normalizeSurface("<span class='weft-badge is-space'>ccore/heddle</span>"), 'f'), []);
+  assert.deepEqual(actionRowViolations(normalizeSurface("<div class='weft-action-button-row'><button class='weft-btn'>Go</button></div>"), 'f'), []);
+  assert.deepEqual(deprecatedClassViolations('the weft-board-drawer holds the detail panel', 'f'), []);
+});
+
 test('T2-i: the generated page sets the density the board is designed for', () => {
   const html = readFileSync(generatedHtmlPath, 'utf8');
   const htmlTag = html.match(/<html[^>]*>/);
