@@ -553,6 +553,8 @@ function tierOrderViolations(text, label) {
 // The pairing was load-bearing in the published specimen and written down
 // nowhere, so it survived only as long as nobody edited it. Now both.
 const TIER_DOT = { blocked: 'stop', awaiting: 'warn', fyi: 'info' };
+// Every tone weft-components.css defines for .weft-dot, in source order.
+const DOT_TONES = ['ok', 'warn', 'stop', 'info', 'muted'];
 
 function tierDotPairingViolations(text, label) {
   return extractBlocks(text, 'weft-tier-group').flatMap((tier) => {
@@ -567,8 +569,13 @@ function tierDotPairingViolations(text, label) {
       .find((cs) => cs.has('weft-dot'));
     if (!dot) return [];
     const want = TIER_DOT[urgency];
-    if (dot.has(`is-${want}`)) return [];
-    const got = [...dot].find((c) => c.startsWith('is-')) ?? '(no tone)';
+    // Exactly one tone, and it must be the right one. Presence alone is not
+    // enough: `is-stop is-info` carries the required class while css/weft-components.css
+    // declares .is-info after .is-stop at equal specificity, so the dot renders
+    // info — the precise defect this rule exists to prevent, passed by the rule.
+    const tones = DOT_TONES.filter((t) => dot.has(`is-${t}`));
+    if (tones.length === 1 && tones[0] === want) return [];
+    const got = tones.length ? tones.map((t) => `is-${t}`).join(' + ') : '(no tone)';
     const line = text.slice(0, tier.index).split('\n').length;
     return [`${label}:${line} — the is-${urgency} tier carries a ${got} dot; its meaning requires is-${want}`];
   });
@@ -698,6 +705,13 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<span class="weft-dot is-stop"></span>Blockers</div>' +
     '<div class="weft-hud-list-row"><span class="weft-dot is-info"></span>row</div></div>';
   assert.deepEqual(tierDotPairingViolations(normalizeSurface(rowDot), 'f'), [], "a row's own dot is not the tier's signal");
+
+  // Two tones on one dot: the required class is present, but the later CSS rule
+  // wins, so the tier renders the wrong signal. Presence is not agreement.
+  const conflicting =
+    '<div class="weft-tier-group is-blocked"><div class="weft-tier-group-head">' +
+    '<span class="weft-dot is-stop is-info"></span>Blockers</div></div>';
+  assert.equal(tierDotPairingViolations(normalizeSurface(conflicting), 'f').length, 1, 'a conflicting second tone must fail');
 
   // Canonical passes, and a non-dismiss action in the same slot is left alone.
   assert.deepEqual(
