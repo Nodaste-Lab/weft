@@ -338,10 +338,11 @@ DOCTRINE = [
   "An empty board reads as “nothing needs you”. Show <code>EmptyState</code> or <code>Callout</code> instead."),
  ("Evidence absence renders no chip",
   "If the relation field is empty, omit the badge entirely. Never substitute a guessed chip."),
- ("One primary per action row",
-  "Exactly one filled <code>.weft-btn</code> — the action you want taken. Everything beside it is "
-  "<code>.is-ghost</code> or <code>.is-link</code>. Two filled buttons make the operator choose "
-  "between them instead of acting, which is the opposite of what a board is for."),
+ ("Never two primary buttons",
+  "At most one filled <code>.weft-btn</code> in an action row — the action you want taken. "
+  "Everything beside it is <code>.is-ghost</code> or <code>.is-link</code>. Two filled buttons make "
+  "the operator choose between them instead of acting, which is the opposite of what a board is for. "
+  "A row of peer actions (a toolbar) correctly has none."),
 ]
 
 BADGE = {'REUSES': 'ok', 'DUPLICATES': 'dup', 'PARTIAL': 'part', 'NEW': 'new'}

@@ -198,10 +198,16 @@ uses a real `<textarea class="weft-textarea">`. Actions go in `.weft-action-butt
 a trailing link gets wrapped in `.weft-action-button-row-trailing` to push it to
 the far right without descendant-selector child styling.
 
-**One primary per action row.** Exactly one filled `.weft-btn` — the action you
-want taken. Every sibling is `.is-ghost` or `.is-link`. Two filled buttons make
-the operator choose between them instead of acting, which is the opposite of what
-a board is for. Enforced by `npm run test:template-contract`.
+**Never two primary buttons.** At most one filled `.weft-btn` in an action row —
+the action you want taken. Every sibling is `.is-ghost` or `.is-link`. Two filled
+buttons make the operator choose between them instead of acting, which is the
+opposite of what a board is for.
+
+Zero is fine and is not a violation: `.weft-action-button-row` is also the
+container for peer-action toolbars (Copy / Email / Vault / Generate — see
+[09-app-primitives.md](09-app-primitives.md)), where every control is a ghost and
+none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
+`npm run test:template-contract`.
 
 ```html
 <div class="weft-board-drawer">

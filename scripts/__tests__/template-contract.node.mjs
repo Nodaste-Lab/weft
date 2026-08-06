@@ -226,6 +226,19 @@ test('T2-e regression: the guard actually catches a second primary', () => {
     '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open</button></span>' +
     '</div>';
   assert.deepEqual(actionRowViolations(withTrailing, 'fixture'), []);
+
+  // Zero primaries is deliberately allowed, not an oversight. The rule is a
+  // ceiling, not a quota: .weft-action-button-row is also the container for
+  // peer-action toolbars (Copy / Email / Vault / Generate — 09-app-primitives.md
+  // §action-button-row), where every control is a ghost and none is *the*
+  // action. Requiring exactly one would fail that documented use.
+  const allGhost =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn is-ghost" type="button">Copy</button>' +
+    '<button class="weft-btn is-ghost" type="button">Email</button>' +
+    '<button class="weft-btn is-ghost" type="button">Vault</button>' +
+    '</div>';
+  assert.deepEqual(actionRowViolations(allGhost, 'fixture'), []);
 });
 
 test('T2-c: generated HTML contains only real accessible controls', () => {
