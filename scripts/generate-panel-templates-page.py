@@ -213,7 +213,7 @@ SECTIONS = [
   '<div class="weft-panel-header" data-size="board">'
   '<div class="weft-panel-header-title">Account Recovery dependency unresolved</div>'
   '<div class="weft-panel-header-actions">'
-  '<span class="weft-badge is-space">signal</span>'
+  '<span class="weft-source-pill">signal</span>'
   '<button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button>'
   '</div></div>'
   '<div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div>'

@@ -214,7 +214,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
   <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
-      <span class="weft-badge is-space">signal</span>
+      <span class="weft-source-pill">signal</span>
       <button type="button" class="weft-btn is-ghost" aria-label="Close">×</button>
     </div>
   </div>

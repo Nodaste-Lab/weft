@@ -301,7 +301,38 @@ test('T2-g: the canonical markdown teaches no superseded mapping', () => {
     }
   }
 
+  problems.push(...typeChipViolations(md, '11-panel-templates.md'));
   assert.deepEqual(problems, [], `Superseded mappings in 11-panel-templates.md:\n${problems.join('\n')}`);
+});
+
+// Prose-matching was not enough: review found `signal` — a type value — rendered
+// as a space badge in two drawer examples, on lines that never say "type chip".
+// The durable check is on the markup and the vocabulary, not on the description
+// beside it: a known item type must never wear the workspace chip.
+const ITEM_TYPE_VALUES = ['signal', 'decision', 'clarification'];
+
+function typeChipViolations(text, label) {
+  const pattern = new RegExp(
+    `class="weft-badge is-space"\\s*>\\s*(${ITEM_TYPE_VALUES.join('|')})\\s*<`,
+    'gi',
+  );
+  return [...text.matchAll(pattern)].map((m) => {
+    const line = text.slice(0, m.index).split('\n').length;
+    return `${label}:${line} — "${m[1]}" is an item type, not a workspace; D6 puts it on .weft-source-pill, not .weft-badge.is-space`;
+  });
+}
+
+test('T2-h: item type values never wear the workspace chip', () => {
+  const violations = [
+    ...typeChipViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),
+    ...typeChipViolations(readFileSync(canonicalMdPath, 'utf8'), '11-panel-templates.md'),
+  ];
+  assert.deepEqual(violations, [], `D5/D6 chip split violated:\n${violations.join('\n')}`);
+
+  // Both directions, so the fixture proves the matcher rather than the file.
+  assert.equal(typeChipViolations('<span class="weft-badge is-space">signal</span>', 'f').length, 1);
+  assert.deepEqual(typeChipViolations('<span class="weft-badge is-space">ccore/heddle</span>', 'f'), []);
+  assert.deepEqual(typeChipViolations('<span class="weft-source-pill">signal</span>', 'f'), []);
 });
 
 test('T2-c: generated HTML contains only real accessible controls', () => {
