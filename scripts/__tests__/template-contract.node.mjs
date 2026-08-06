@@ -572,8 +572,15 @@ function tierDotPairingViolations(text, label) {
     const dot = [...scope.matchAll(new RegExp(`<(?:${CONTAINER}|span)[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi'))]
       .map((d) => classSet(d[1]))
       .find((cs) => cs.has('weft-dot'));
-    if (!dot) return [];
     const want = TIER_DOT[urgency];
+    // A missing dot is a violation, not a pass. React derives the dot from
+    // urgency and always renders one; if the plain-CSS surfaces could drop it
+    // silently the two would disagree again — the same asymmetry that made the
+    // pairing rule unreachable from React in the first place.
+    if (!dot) {
+      const line = text.slice(0, tier.index).split('\n').length;
+      return [`${label}:${line} — the is-${urgency} tier has no .weft-dot; its urgency must carry an is-${want} dot`];
+    }
     // Exactly one tone, and it must be the right one. Presence alone is not
     // enough: `is-stop is-info` carries the required class while css/weft-components.css
     // declares .is-info after .is-stop at equal specificity, so the dot renders
@@ -744,6 +751,12 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<div class="weft-tier-group is-blocked"><div class="weft-tier-group-head">' +
     '<span class="weft-dot is-stop is-info"></span>Blockers</div></div>';
   assert.equal(tierDotPairingViolations(normalizeSurface(conflicting), 'f').length, 1, 'a conflicting second tone must fail');
+
+  // No dot at all — previously passed, which let the CSS surfaces drop the dot
+  // while React always renders one.
+  const dotless =
+    '<div class="weft-tier-group is-awaiting"><div class="weft-tier-group-head">Awaiting you</div></div>';
+  assert.equal(tierDotPairingViolations(normalizeSurface(dotless), 'f').length, 1, 'a tier with no dot must fail');
 
   // Canonical passes, and a non-dismiss action in the same slot is left alone.
   assert.deepEqual(
