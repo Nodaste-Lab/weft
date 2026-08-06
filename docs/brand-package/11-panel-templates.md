@@ -60,7 +60,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | List header | `.weft-board-context`, `.weft-board-context-sub`, `.weft-board-context-note` |
 | Degradation toast | `.weft-board-toast`, `.weft-board-toast-icon`, `.weft-board-toast-sub`, `.weft-board-toast-retry`, `.weft-board-toast-close` |
 | Priority tier | `.weft-tier-group` (`.is-blocked` / `.is-awaiting` / `.is-fyi`) / `<TierGroup>` |
-| Status dot | `.weft-dot` (`.is-ok` / `.is-warn` / `.is-stop` / `.is-info`) / `<Dot>` |
+| Status dot | `.weft-dot` (`.is-ok` / `.is-warn` / `.is-stop` / `.is-info`) / `<Dot>` — a **tier's** dot is fixed by its urgency: `is-blocked`→`.is-stop`, `is-awaiting`→`.is-warn`, `is-fyi`→`.is-info`. Per-item dots on rows are independent |
 | Action row | `.weft-hud-list-row`, `.weft-hud-list-row-col`, `.weft-hud-list-row-title`, `.weft-hud-list-row-meta`, `.weft-hud-list-row-aside` / `<HudListRow>` |
 | Row chips | `.weft-badge.is-space` for workspace; `.weft-source-pill` / `<SourcePill>` for the mono type chip (D6) |
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |

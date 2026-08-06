@@ -340,6 +340,11 @@ DOCTRINE = [
   "A signal, a decision and a clarification all sit in <code>is-awaiting</code> if they need a response."),
  ("Urgency ordering is part of the meaning",
   "<code>is-blocked</code> → <code>is-awaiting</code> → <code>is-fyi</code>, always."),
+ ("A tier's dot must agree with its urgency",
+  "<code>is-blocked</code> takes <code>.weft-dot.is-stop</code>, <code>is-awaiting</code> takes "
+  "<code>.is-warn</code>, <code>is-fyi</code> takes <code>.is-info</code>. A tier whose colour "
+  "contradicts its meaning is the signal itself being wrong. Per-item dots on the rows below are "
+  "a separate thing."),
  ("Never invent provenance",
   "A row with no relation evidence gets <b>no chip</b>, never a guessed one."),
  ("Never render an empty tier set",

@@ -441,7 +441,7 @@ function extractBlocks(text, className) {
       depth += t[1] ? -1 : 1;
       if (depth === 0) end = t.index;
     }
-    blocks.push({ body: text.slice(start, end), index: m.index });
+    blocks.push({ body: text.slice(start, end), index: m.index, classes: m[1] });
   }
   return blocks;
 }
@@ -543,6 +543,37 @@ function tierOrderViolations(text, label) {
   });
 }
 
+// ── Required pairing ─────────────────────────────────────────────────────────
+// The fourth category. Ordering checks the sequence of tiers; this checks that
+// each tier's own state is internally consistent. A blocked tier carrying an info
+// dot is not a prohibited class, not an empty slot, and not out of order — it is
+// simply a tier whose colour contradicts its meaning, which on an operator board
+// is the signal itself being wrong.
+//
+// The pairing was load-bearing in the published specimen and written down
+// nowhere, so it survived only as long as nobody edited it. Now both.
+const TIER_DOT = { blocked: 'stop', awaiting: 'warn', fyi: 'info' };
+
+function tierDotPairingViolations(text, label) {
+  return extractBlocks(text, 'weft-tier-group').flatMap((tier) => {
+    const set = classSet(tier.classes);
+    const urgency = Object.keys(TIER_DOT).find((u) => set.has(`is-${u}`));
+    if (!urgency) return [];
+    // The head carries the tier's own dot; dots on rows below are per-item.
+    const heads = extractBlocks(tier.body, 'weft-tier-group-head');
+    const scope = heads.length ? heads[0].body : tier.body;
+    const dot = [...scope.matchAll(new RegExp(`<(?:${CONTAINER}|span)[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi'))]
+      .map((d) => classSet(d[1]))
+      .find((cs) => cs.has('weft-dot'));
+    if (!dot) return [];
+    const want = TIER_DOT[urgency];
+    if (dot.has(`is-${want}`)) return [];
+    const got = [...dot].find((c) => c.startsWith('is-')) ?? '(no tone)';
+    const line = text.slice(0, tier.index).split('\n').length;
+    return [`${label}:${line} — the is-${urgency} tier carries a ${got} dot; its meaning requires is-${want}`];
+  });
+}
+
 function publishedSurfaces() {
   return [
     ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
@@ -560,6 +591,7 @@ test('T2-k: every rule holds on every published surface', () => {
     ...drawerHeaderSizeViolations(text, label),
     ...dismissSlotViolations(text, label),
     ...tierOrderViolations(text, label),
+    ...tierDotPairingViolations(text, label),
   ]);
   assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
 });
@@ -649,6 +681,23 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
   // A <section> board must be walked too, not only a <div>.
   const sectionBoard = normalizeSurface(`<section class="weft-board">${tier('fyi')}${tier('blocked')}</section>`);
   assert.equal(tierOrderViolations(sectionBoard, 'f').length, 1, 'section-wrapped boards must be walked');
+
+  // Required pairing — the fourth category. The tier's colour must agree with
+  // its meaning; on an operator board a mismatched dot IS the wrong signal.
+  const paired = (u, tone) =>
+    `<div class="weft-tier-group is-${u}"><div class="weft-tier-group-head">` +
+    `<span class="weft-dot is-${tone}" aria-hidden="true"></span>${u}</div></div>`;
+  assert.equal(tierDotPairingViolations(normalizeSurface(paired('blocked', 'info')), 'f').length, 1, 'a blocked tier with an info dot must fail');
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('blocked', 'stop')), 'f'), []);
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('awaiting', 'warn')), 'f'), []);
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('fyi', 'info')), 'f'), []);
+
+  // Per-item dots on rows below the head are not the tier's own signal.
+  const rowDot =
+    '<div class="weft-tier-group is-blocked"><div class="weft-tier-group-head">' +
+    '<span class="weft-dot is-stop"></span>Blockers</div>' +
+    '<div class="weft-hud-list-row"><span class="weft-dot is-info"></span>row</div></div>';
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(rowDot), 'f'), [], "a row's own dot is not the tier's signal");
 
   // Canonical passes, and a non-dismiss action in the same slot is left alone.
   assert.deepEqual(
