@@ -474,15 +474,28 @@ function drawerHeaderSizeViolations(text, label) {
 // This is the first OBLIGATION rule: a named slot must be filled by its
 // designated control. Prohibition checks cannot express that, which is why
 // eleven rounds of them missed it.
-const DISMISS_NAME = /aria-label="[^"]*\b(close|dismiss)\b/i;
+// Approximating the accessible name, not reading one attribute. The first version
+// checked aria-label plus a literal glyph, which review showed would miss an
+// icon-only <svg><title>Close</title></svg> and a plain visible "Close" — the same
+// wrong occupant, just named differently. Each of the four ways a close control
+// announces itself is recognised.
+const DISMISS_NAME = /(?:aria-label|title)="[^"]*\b(?:close|dismiss)\b/i;
+const DISMISS_SVG_TITLE = /<title>\s*(?:close|dismiss)\b[^<]*<\/title>/i;
 const DISMISS_GLYPH = /^\s*(?:×|✕|⨯|&times;|X)\s*$/;
+const DISMISS_TEXT = /^\s*(?:close|dismiss)\b/i;
 
 function dismissSlotViolations(text, label) {
   return extractBlocks(text, 'weft-panel-header-actions').flatMap((block) => {
     const buttons = [...block.body.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)];
     return buttons.flatMap((b) => {
       const attrs = b[1];
-      const isDismiss = DISMISS_NAME.test(attrs) || DISMISS_GLYPH.test(b[2].replace(/<[^>]*>/g, ''));
+      const inner = b[2];
+      const stripped = inner.replace(/<[^>]*>/g, '').trim();
+      const isDismiss =
+        DISMISS_NAME.test(attrs) ||
+        DISMISS_SVG_TITLE.test(inner) ||
+        DISMISS_GLYPH.test(stripped) ||
+        DISMISS_TEXT.test(stripped);
       if (!isDismiss) return [];
       const cls = attrs.match(/\bclass="([^"]*)"/);
       if (cls && classSet(cls[1]).has('weft-panel-header-dismiss')) return [];
@@ -564,6 +577,17 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">×</button></div>',
   );
   assert.equal(dismissSlotViolations(glyphOnly, 'f').length, 1, 'an unlabelled × must still be recognised as the dismiss slot');
+
+  // Both forms review demonstrated would slip past an aria-label-only recogniser.
+  const svgTitled = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost"><svg aria-hidden="true"><title>Close</title></svg></button></div>',
+  );
+  assert.equal(dismissSlotViolations(svgTitled, 'f').length, 1, 'an icon-only dismiss named by <title> must be recognised');
+
+  const visibleText = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">Close</button></div>',
+  );
+  assert.equal(dismissSlotViolations(visibleText, 'f').length, 1, 'a visibly-labelled Close must be recognised');
 
   // Canonical passes, and a non-dismiss action in the same slot is left alone.
   assert.deepEqual(
