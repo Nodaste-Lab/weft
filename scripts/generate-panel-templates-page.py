@@ -214,7 +214,7 @@ SECTIONS = [
   '<div class="weft-panel-header-title">Account Recovery dependency unresolved</div>'
   '<div class="weft-panel-header-actions">'
   '<span class="weft-source-pill">signal</span>'
-  '<button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button>'
+  '<button class="weft-panel-header-dismiss" type="button" aria-label="Close drawer">×</button>'
   '</div></div>'
   '<div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div>'
   '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
@@ -233,7 +233,7 @@ SECTIONS = [
   '<div class="weft-panel-header-title">Account Recovery dependency</div>'
   '<div class="weft-panel-header-actions">'
   '<span class="weft-badge is-space">ccore/heddle</span>'
-  '<button class="weft-btn is-ghost" type="button" aria-label="Close">×</button>'
+  '<button class="weft-panel-header-dismiss" type="button" aria-label="Close">×</button>'
   '</div></div></div></div>'),
  ("Reference row", ".weft-copyable-ref + .weft-copyable-ref-copy", S,
   "<code>.weft-copyable-ref</code> (<code>weft-components.css</code>); <code>CopyableRef</code> (React)",

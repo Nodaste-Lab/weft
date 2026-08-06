@@ -66,6 +66,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |
 | Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`; provenance uses `.weft-callout.is-band` (D8) |
 | Drawer header | `.weft-panel-header` (default size — the drawer stays subordinate to the board) / `<PanelHeader>` |
+| Dismiss | `.weft-panel-header-dismiss` / `<PanelHeaderDismiss>` — borderless 24×24 glyph. **Not** a `.weft-btn`: a ghost button draws a bordered box at full control height, which is the wrong shape for a close affordance (D10 names dismiss as its own slot) |
 | Reference row | `.weft-copyable-ref`, `.weft-copyable-ref-copy` / `<CopyableRef>` |
 | Reply field | `.weft-textarea` (real `<textarea>`) / `<Textarea>` |
 | Action row | `.weft-action-button-row`; `.weft-action-button-row-trailing` for the trailing link slot / `<ActionButtonRow>` |
@@ -215,7 +216,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
       <span class="weft-source-pill">signal</span>
-      <button type="button" class="weft-btn is-ghost" aria-label="Close">×</button>
+      <button type="button" class="weft-panel-header-dismiss" aria-label="Close">×</button>
     </div>
   </div>
 

@@ -455,6 +455,43 @@ function drawerHeaderSizeViolations(text, label) {
   });
 }
 
+// ── Slot occupancy ───────────────────────────────────────────────────────────
+// Every rule above this point is a PROHIBITION: do not use a deleted class, do
+// not use two filled buttons, do not put board scale on a drawer. Katie found a
+// failure none of them could ever catch — the drawer's close control was a
+// .weft-btn.is-ghost, which drew a 34px bordered box where the design calls for a
+// borderless 24px glyph. Nothing was deprecated and no variant was misused; a
+// ghost button is perfectly legal Weft. It was simply the wrong occupant of a
+// named slot.
+//
+// D10 adopted PanelHeader for its three slots — title, actions, DISMISS — and
+// weft-components.css gives the dismiss slot its own control (border: 0,
+// background: none, 24x24). The specimens filled that slot by hand instead.
+// Tellingly, the plain-CSS authoring example in weft-templates.css had it right
+// all along, so the two published pages disagreed with the stylesheet's own
+// guidance and every guard reported clean.
+//
+// This is the first OBLIGATION rule: a named slot must be filled by its
+// designated control. Prohibition checks cannot express that, which is why
+// eleven rounds of them missed it.
+const DISMISS_NAME = /aria-label="[^"]*\b(close|dismiss)\b/i;
+const DISMISS_GLYPH = /^\s*(?:×|✕|⨯|&times;|X)\s*$/;
+
+function dismissSlotViolations(text, label) {
+  return extractBlocks(text, 'weft-panel-header-actions').flatMap((block) => {
+    const buttons = [...block.body.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)];
+    return buttons.flatMap((b) => {
+      const attrs = b[1];
+      const isDismiss = DISMISS_NAME.test(attrs) || DISMISS_GLYPH.test(b[2].replace(/<[^>]*>/g, ''));
+      if (!isDismiss) return [];
+      const cls = attrs.match(/\bclass="([^"]*)"/);
+      if (cls && classSet(cls[1]).has('weft-panel-header-dismiss')) return [];
+      const line = text.slice(0, block.index).split('\n').length;
+      return [`${label}:${line} — the panel-header dismiss slot is filled by "${cls ? cls[1] : '(no class)'}"; it must be .weft-panel-header-dismiss (borderless 24px), not a bordered button`];
+    });
+  });
+}
+
 function publishedSurfaces() {
   return [
     ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
@@ -470,6 +507,7 @@ test('T2-k: every rule holds on every published surface', () => {
     ...proseTypeChipViolations(text, label),
     ...actionRowViolations(text, label),
     ...drawerHeaderSizeViolations(text, label),
+    ...dismissSlotViolations(text, label),
   ]);
   assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
 });
@@ -513,6 +551,30 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     "<div class='weft-board-drawer'><div class='weft-panel-header' data-size='board'>x</div></div>",
   );
   assert.equal(drawerHeaderSizeViolations(singleQuotedSize, 'f').length, 1, 'single-quoted attributes must not bypass the drawer rule');
+
+  // Slot occupancy — the failure Katie found by eye. A ghost button is legal
+  // Weft, so only an obligation rule catches it.
+  const ghostDismiss = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost" aria-label="Close">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(ghostDismiss, 'f').length, 1, 'a bordered button must not fill the dismiss slot');
+
+  // Recognised by glyph too, not only by accessible name.
+  const glyphOnly = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(glyphOnly, 'f').length, 1, 'an unlabelled × must still be recognised as the dismiss slot');
+
+  // Canonical passes, and a non-dismiss action in the same slot is left alone.
+  assert.deepEqual(
+    dismissSlotViolations(normalizeSurface('<div class="weft-panel-header-actions"><button class="weft-panel-header-dismiss" aria-label="Close">×</button></div>'), 'f'),
+    [],
+  );
+  assert.deepEqual(
+    dismissSlotViolations(normalizeSurface('<div class="weft-panel-header-actions"><button class="weft-btn is-ghost" aria-label="Refresh board">⟳</button></div>'), 'f'),
+    [],
+    'a refresh action is not a dismiss and keeps its button treatment',
+  );
   assert.deepEqual(
     drawerHeaderSizeViolations(normalizeSurface('<div class="weft-board"><div class="weft-panel-header" data-size="board">x</div></div>'), 'f'),
     [],
