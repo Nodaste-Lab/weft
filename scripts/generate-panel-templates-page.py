@@ -209,8 +209,8 @@ SECTIONS = [
  ("Drawer shell", ".weft-board-drawer (.is-wide)", P,
   "<code>sheet</code> — edge-mounted overlay; <code>panel-block-shell</code>",
   "Different mount: <code>sheet</code> overlays, this sits inline. An inline detail panel is an unfilled shape.",
-  '<div class="weft-board"><div class="weft-board-drawer">'
-  '<div class="weft-panel-header">'
+  '<div class="weft-board"><div class="weft-board-drawer is-blocked">'
+  '<div class="weft-panel-header" data-size="board">'
   '<div class="weft-panel-header-title">Account Recovery dependency unresolved</div>'
   '<div class="weft-panel-header-actions">'
   '<span class="weft-source-pill">signal</span>'
@@ -220,16 +220,15 @@ SECTIONS = [
   '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
   '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
   '</div></div></div>'),
- ("Drawer header", '.weft-panel-header (default size)', S,
-  "<code>.weft-panel-header</code> (<code>weft-components.css</code>); <code>PanelHeader</code> (React)",
-  "Canonical, at the default size. The drawer is a detail panel <i>inside</i> the board, so it stays "
-  "subordinate to it — <code>data-size=&quot;board&quot;</code> is for the board's own header (D10). "
-  "Nothing is inherited; the size is set explicitly or left default.",
+ ("Drawer header", '.weft-panel-header[data-size="board"]', S,
+  "<code>.weft-panel-header</code> (<code>weft-components.css</code>); <code>PanelHeader size=&quot;board&quot;</code> (React)",
+  "Canonical, at board scale. One panel-header scale across the board and its drawer (Katie, 2026-08) — "
+  "the drawer is not treated as subordinate. The size is set explicitly; nothing is inherited.",
   '<div class="weft-board"><div class="weft-board-drawer">'
-  '<div class="weft-panel-header">'
+  '<div class="weft-panel-header" data-size="board">'
   '<div class="weft-panel-header-title">Account Recovery dependency</div>'
   '<div class="weft-panel-header-actions">'
   '<span class="weft-badge is-space">ccore/heddle</span>'
@@ -262,18 +261,30 @@ SECTIONS = [
   '</div></div>'),
  ("Action row", ".weft-action-button-row", S,
   "<code>.weft-action-button-row</code> (<code>weft-components.css</code>); <code>ActionButtonRow</code> (React; <code>dense</code> is opt-in, default false)",
-  "Canonical grouped actions row. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
-  '<div class="weft-board"><div class="weft-action-button-row" style="padding:10px 12px">'
+  "Canonical grouped actions row. <b>Fill is spent only where urgency is real (D3):</b> a blocked "
+  "item's drawer gets the filled primary; awaiting and FYI drawers use a ghost primary with link "
+  "secondaries. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
+  '<div class="weft-board" style="padding:12px">'
+  '<div style="font:10px var(--weft-font-mono);color:var(--weft-muted);text-transform:uppercase;margin-bottom:4px">blocked — act now</div>'
+  '<div class="weft-board-drawer is-blocked" style="margin-bottom:12px">'
+  '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
-  '</div></div>'),
+  '</div></div>'
+  '<div style="font:10px var(--weft-font-mono);color:var(--weft-muted);text-transform:uppercase;margin-bottom:4px">awaiting / fyi — no fill</div>'
+  '<div class="weft-board-drawer">'
+  '<div class="weft-action-button-row" style="padding:10px 12px">'
+  '<button class="weft-btn is-ghost" type="button">Resolve for me</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
+  '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
+  '</div></div></div>'),
  ("Drawer buttons", ".weft-btn + .weft-btn.is-ghost + .weft-btn.is-link", S,
   "<code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)",
   "Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.",
   '<div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
   '<button class="weft-btn" type="button">Resolve</button>'
-  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<button class="weft-btn is-link" type="button">Open ↗</button>'
   '</div>'),
  ("Status chip", ".weft-badge.is-status + tone", S,
@@ -348,6 +359,10 @@ DOCTRINE = [
   "A signal, a decision and a clarification all sit in <code>is-awaiting</code> if they need a response."),
  ("Urgency ordering is part of the meaning",
   "<code>is-blocked</code> → <code>is-awaiting</code> → <code>is-fyi</code>, always."),
+ ("Fill is a signal, not decoration",
+  "A filled <code>.weft-btn</code> appears only in a blocked item's drawer, where acting now is the "
+  "point. Awaiting and FYI drawers use a ghost primary with link secondaries. Spending fill on every "
+  "drawer makes it mean nothing, and puts two competing boxes in a row the operator is scanning."),
  ("A tier's dot must agree with its urgency",
   "<code>is-blocked</code> takes <code>.weft-dot.is-stop</code>, <code>is-awaiting</code> takes "
   "<code>.is-warn</code>, <code>is-fyi</code> takes <code>.is-info</code>. A tier whose colour "

@@ -65,11 +65,12 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Row chips | `.weft-badge.is-space` for workspace; `.weft-source-pill` / `<SourcePill>` for the mono type chip (D6) |
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |
 | Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`; provenance uses `.weft-callout.is-band` (D8) |
-| Drawer header | `.weft-panel-header` (default size — the drawer stays subordinate to the board) / `<PanelHeader>` |
+| Drawer header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` — one header scale across the board and its drawer |
 | Dismiss | `.weft-panel-header-dismiss` / `<PanelHeaderDismiss>` — borderless 24×24 glyph. **Not** a `.weft-btn`: a ghost button draws a bordered box at full control height, which is the wrong shape for a close affordance (D10 names dismiss as its own slot) |
 | Reference row | `.weft-copyable-ref`, `.weft-copyable-ref-copy` / `<CopyableRef>` |
 | Reply field | `.weft-textarea` (real `<textarea>`) / `<Textarea>` |
 | Action row | `.weft-action-button-row`; `.weft-action-button-row-trailing` for the trailing link slot / `<ActionButtonRow>` |
+| Drawer urgency | `.weft-board-drawer.is-blocked` — a blocked item's drawer. Only this drawer gets a filled `.weft-btn` (D3); awaiting and FYI use a ghost primary with link secondaries |
 | Button | `.weft-btn`, `.weft-btn.is-ghost`, `.weft-btn.is-link` / `<Button>` |
 | Status chip | `.weft-badge.is-status` + tone / `<Badge variant="status">` |
 | Compact variant | `.weft-board-panel`, `.weft-board-panel-head`, `.weft-board-panel-body` + `.weft-stat-row` / `<StatRow>` |
@@ -199,6 +200,12 @@ uses a real `<textarea class="weft-textarea">`. Actions go in `.weft-action-butt
 a trailing link gets wrapped in `.weft-action-button-row-trailing` to push it to
 the far right without descendant-selector child styling.
 
+**Fill is a signal, not decoration.** A filled `.weft-btn` appears only in a
+blocked item's drawer (`.weft-board-drawer.is-blocked`), where acting now is the
+point. Awaiting and FYI drawers use a ghost primary with link secondaries.
+Spending fill on every drawer makes it mean nothing, and puts two competing
+boxes in a row the operator is scanning. Decided by Katie, 2026-08.
+
 **Never two primary buttons.** At most one filled `.weft-btn` in an action row —
 the action you want taken. Every sibling is `.is-ghost` or `.is-link`. Two filled
 buttons make the operator choose between them instead of acting, which is the
@@ -212,7 +219,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
 
 ```html
 <div class="weft-board-drawer">
-  <div class="weft-panel-header">
+  <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
       <span class="weft-source-pill">signal</span>
@@ -295,7 +302,7 @@ The migration consolidated all board-local duplicates into canonical
 | Space chip | `.weft-badge.is-space` / `<Badge variant="space">` (D5) |
 | Mono type chip | `.weft-source-pill` / `<SourcePill>` (D6) |
 | Evidence chips | `.weft-badge.is-outline` + tone modifier |
-| Drawer header + close | `.weft-panel-header` (default size) / `<PanelHeader>` |
+| Drawer header + close | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
 | Canonical reference row + copy | `.weft-copyable-ref` / `<CopyableRef>` |
 | Reply div (display-only) | `.weft-textarea` (real `<textarea>`) |
 | Drawer action row | `.weft-action-button-row` / `<ActionButtonRow>` |

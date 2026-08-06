@@ -446,18 +446,15 @@ function extractBlocks(text, className) {
   return blocks;
 }
 
-function drawerHeaderSizeViolations(text, label) {
-  return extractBlocks(text, 'weft-board-drawer').flatMap((block) => {
-    const headers = [...block.body.matchAll(/<div[^>]*\bclass="([^"]*)"[^>]*>/gi)]
-      .filter((h) => classSet(h[1]).has('weft-panel-header'))
-      // Quote-agnostic as well as normalized, so the rule does not depend on the
-      // normalizer having thought of this attribute.
-      .filter((h) => /\bdata-size\s*=\s*["']board["']/i.test(h[0]));
-    if (!headers.length) return [];
-    const line = text.slice(0, block.index).split('\n').length;
-    return [`${label}:${line} — drawer header carries data-size="board"; board scale belongs to the board's own header`];
-  });
-}
+// REMOVED (Katie, 2026-08): the drawer-header scale rule. It briefly required the
+// drawer header to be default-size, on the reasoning that a detail panel is
+// subordinate to the board containing it. That was my judgement rather than a
+// recorded decision, and it was reversed — one panel-header scale applies across
+// the board and its drawer. Left as a note rather than deleted silently, so the
+// reversal is visible to whoever wonders why the drawer is board-scale.
+//
+// extractBlocks() above is still used by the dismiss-slot, tier-order and
+// tier-pairing rules; only this detector went away.
 
 // ── Slot occupancy ───────────────────────────────────────────────────────────
 // Every rule above this point is a PROHIBITION: do not use a deleted class, do
@@ -595,7 +592,6 @@ test('T2-k: every rule holds on every published surface', () => {
     ...typeChipViolations(text, label),
     ...proseTypeChipViolations(text, label),
     ...actionRowViolations(text, label),
-    ...drawerHeaderSizeViolations(text, label),
     ...dismissSlotViolations(text, label),
     ...tierOrderViolations(text, label),
     ...tierDotPairingViolations(text, label),
@@ -630,18 +626,7 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
   );
   assert.equal(actionRowViolations(helperClass, 'f').length, 1, 'an unrelated helper class must not exempt a filled button');
 
-  // The drawer-header rule must hold on the markup surfaces, not only in CSS comments.
-  const boardScaleDrawer = normalizeSurface(
-    '<div class="weft-board-drawer"><div class="weft-panel-header" data-size="board">' +
-    '<div class="weft-panel-header-title">x</div></div></div>',
-  );
-  assert.equal(drawerHeaderSizeViolations(boardScaleDrawer, 'f').length, 1);
 
-  // Single-quoted data-size, the exact bypass review demonstrated.
-  const singleQuotedSize = normalizeSurface(
-    "<div class='weft-board-drawer'><div class='weft-panel-header' data-size='board'>x</div></div>",
-  );
-  assert.equal(drawerHeaderSizeViolations(singleQuotedSize, 'f').length, 1, 'single-quoted attributes must not bypass the drawer rule');
 
   // Slot occupancy — the failure Katie found by eye. A ghost button is legal
   // Weft, so only an obligation rule catches it.
@@ -723,11 +708,6 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     [],
     'a refresh action is not a dismiss and keeps its button treatment',
   );
-  assert.deepEqual(
-    drawerHeaderSizeViolations(normalizeSurface('<div class="weft-board"><div class="weft-panel-header" data-size="board">x</div></div>'), 'f'),
-    [],
-    "the board's own header keeps board scale",
-  );
 });
 
 test('T2-i: the generated page sets the density the board is designed for', () => {
@@ -763,18 +743,9 @@ test('T2-j: authoring examples in CSS comments obey the same rules as the publis
   problems.push(...actionRowViolations(examples, 'weft-templates.css (comment)'));
   problems.push(...proseTypeChipViolations(examples, 'weft-templates.css (comment)'));
 
-  // The drawer is subordinate to the board: board scale belongs to the board's
-  // own header, so drawer guidance must not hand it out. Only the markup lines
-  // are checked — prose in the same block legitimately names data-size="board"
-  // to say what it is for, and an earlier version of this check flagged that
-  // explanation as a violation.
-  for (const block of cssComments.split('/*')) {
-    if (!/drawer header/i.test(block)) continue;
-    const markupLines = block.split('\n').filter((l) => /^\s*\*?\s*</.test(l));
-    if (markupLines.some((l) => /data-size="board"/.test(l))) {
-      problems.push('a drawer-header authoring example still sets data-size="board" — that scale is the board header\'s');
-    }
-  }
+  // (The drawer-header scale check that used to sit here was removed with the
+  // rule itself — see the note above drawerHeader... for why. The CSS authoring
+  // example now correctly shows data-size="board" on the drawer header.)
 
   assert.deepEqual(problems, [], `weft-templates.css authoring examples are out of date:\n${problems.join('\n')}`);
 

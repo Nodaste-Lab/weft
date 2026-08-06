@@ -201,12 +201,21 @@
 }
 .weft-board-drawer.is-wide { max-width: none; }
 
-/* D10: drawer header uses weft-panel-header (weft-components.css) at its DEFAULT
- * size. Board-local drawer header and close classes are deleted.
- * data-size="board" is for the board's own header only — the drawer is a detail
- * panel inside the board and stays subordinate to it.
+/* D3 (Katie, 2026-08): a filled primary is spent only where urgency is real.
+ * The drawer for a blocked item carries .is-blocked and gets the filled button;
+ * awaiting and FYI drawers use a ghost primary with link secondaries. Fill is
+ * therefore a signal, not the default decoration on every drawer. The border
+ * tint mirrors .weft-tier-group.is-blocked so the drawer reads as part of that
+ * tier rather than as an unrelated surface. */
+.weft-board-drawer.is-blocked {
+  border-color: color-mix(in srgb, var(--weft-stop) 45%, transparent);
+}
+
+/* D10: drawer header uses weft-panel-header[data-size="board"] (weft-components.css).
+ * Board-local drawer header and close classes are deleted.
+ * One header scale across the board and its drawer (Katie, 2026-08).
  * Plain-CSS markup:
- *   <div class="weft-panel-header">
+ *   <div class="weft-panel-header" data-size="board">
  *     <div class="weft-panel-header-title">…</div>
  *     <div class="weft-panel-header-actions">
  *       <button class="weft-panel-header-dismiss" aria-label="Close">×</button>
