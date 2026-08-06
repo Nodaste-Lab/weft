@@ -32,8 +32,11 @@ const URGENCY_CLASSES: Record<
     head: "bg-[color-mix(in_srgb,var(--weft-stop)_10%,transparent)]",
   },
   awaiting: {
+    // Yellow, not amber (Katie, 2026-08) — must track the plain-CSS counterpart
+    // in weft-components.css, or React consumers keep the rejected treatment.
+    // The border stays warn-derived; only the head background changed.
     border: "border-[color-mix(in_srgb,var(--weft-warn)_40%,transparent)]",
-    head: "bg-[color-mix(in_srgb,var(--weft-warn)_10%,transparent)]",
+    head: "bg-[var(--weft-yellow-soft)]",
   },
   fyi: {
     border: "border-[var(--weft-rule,var(--border))]",

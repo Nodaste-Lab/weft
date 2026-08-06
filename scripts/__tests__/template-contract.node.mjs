@@ -499,7 +499,15 @@ function dismissSlotViolations(text, label) {
         DISMISS_TEXT.test(stripped);
       if (!isDismiss) return [];
       const cls = attrs.match(/\bclass="([^"]*)"/);
-      if (cls && classSet(cls[1]).has('weft-panel-header-dismiss')) return [];
+      // Presence is not agreement — the same trap as the tier-dot tones. A
+      // control carrying BOTH weft-panel-header-dismiss and weft-btn renders as
+      // the bordered ghost button, because .weft-btn.is-ghost outranks the
+      // single-class dismiss rule. So the dismiss class must be there AND the
+      // button classes must not.
+      if (cls) {
+        const set = classSet(cls[1]);
+        if (set.has('weft-panel-header-dismiss') && !set.has('weft-btn')) return [];
+      }
       const line = text.slice(0, block.index).split('\n').length;
       return [`${label}:${line} — the panel-header dismiss slot is filled by "${cls ? cls[1] : '(no class)'}"; it must be .weft-panel-header-dismiss (borderless 24px), not a bordered button`];
     });
@@ -747,6 +755,14 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     [],
     'a refresh action is not a dismiss and keeps its button treatment',
   );
+
+  // Both classes at once: the dismiss class is present but .weft-btn.is-ghost
+  // outranks it, so the control still renders as a bordered box.
+  const dualClass = normalizeSurface(
+    '<div class="weft-panel-header-actions">' +
+    '<button class="weft-panel-header-dismiss weft-btn is-ghost" aria-label="Close">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(dualClass, 'f').length, 1, 'a dismiss carrying weft-btn still renders bordered and must fail');
 });
 
 test('T2-i: the generated page sets the density the board is designed for', () => {

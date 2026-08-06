@@ -279,13 +279,16 @@ SECTIONS = [
   '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
   '</div></div></div>'),
- ("Drawer buttons", ".weft-btn + .weft-btn.is-ghost + .weft-btn.is-link", S,
+ ("Button treatments", ".weft-btn / .is-ghost / .is-link", S,
   "<code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)",
-  "Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.",
+  "The three treatments, shown together. <b>Which one is primary is decided by urgency, not by "
+  "position (D3)</b> — filled belongs to a blocked item's drawer; elsewhere the primary is the ghost. "
+  "The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, "
+  "set by the application.",
   '<div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
-  '<button class="weft-btn" type="button">Resolve</button>'
-  '<button class="weft-btn is-link" type="button">Reassign</button>'
-  '<button class="weft-btn is-link" type="button">Open ↗</button>'
+  '<button class="weft-btn" type="button">Filled</button>'
+  '<button class="weft-btn is-ghost" type="button">Ghost</button>'
+  '<button class="weft-btn is-link" type="button">Link ↗</button>'
   '</div>'),
  ("Status chip", ".weft-badge.is-status + tone", S,
   "<code>.weft-badge.is-status</code> (<code>weft-components.css</code>); <code>Badge variant=&quot;status&quot;</code> (React)",

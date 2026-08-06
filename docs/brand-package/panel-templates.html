@@ -262,12 +262,12 @@
     <div class="row"><span class="k">Action</span><span>Canonical grouped actions row. <b>Fill is spent only where urgency is real (D3):</b> a blocked item's drawer gets the filled primary; awaiting and FYI drawers use a ghost primary with link secondaries. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.</span></div>
   </div>
 </div><div class="spec">
-  <div class="spec-h"><span class="nm">Drawer buttons</span><span class="bg"><span class="b ok">REUSES</span></span></div>
-  <div class="cls">.weft-btn + .weft-btn.is-ghost + .weft-btn.is-link</div>
-  <div class="demo"><div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="weft-btn" type="button">Resolve</button><button class="weft-btn is-link" type="button">Reassign</button><button class="weft-btn is-link" type="button">Open ↗</button></div></div>
+  <div class="spec-h"><span class="nm">Button treatments</span><span class="bg"><span class="b ok">REUSES</span></span></div>
+  <div class="cls">.weft-btn / .is-ghost / .is-link</div>
+  <div class="demo"><div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="weft-btn" type="button">Filled</button><button class="weft-btn is-ghost" type="button">Ghost</button><button class="weft-btn is-link" type="button">Link ↗</button></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)</span></div>
-    <div class="row"><span class="k">Action</span><span>Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.</span></div>
+    <div class="row"><span class="k">Action</span><span>The three treatments, shown together. <b>Which one is primary is decided by urgency, not by position (D3)</b> — filled belongs to a blocked item's drawer; elsewhere the primary is the ghost. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Status chip</span><span class="bg"><span class="b ok">REUSES</span></span></div>
