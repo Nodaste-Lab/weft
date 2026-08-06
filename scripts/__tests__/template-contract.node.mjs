@@ -322,6 +322,23 @@ function typeChipViolations(text, label) {
   });
 }
 
+// The page renders every specimen live from css/, which is only faithful if the
+// page puts itself in the density the board is designed for. T2 placed the 34px
+// tier on :root as an application preference; this page is the application. It
+// had shipped without it, so every control rendered at the 44px default — a third
+// too large — while the specimen text beside them explained the dense tier.
+// Katie caught it as "the preset picker looks wrong, input fields, button size".
+test('T2-i: the generated page sets the density the board is designed for', () => {
+  const html = readFileSync(generatedHtmlPath, 'utf8');
+  const htmlTag = html.match(/<html[^>]*>/);
+  assert.ok(htmlTag, 'generated page must have an <html> tag');
+  assert.match(
+    htmlTag[0],
+    /data-density="dense"/,
+    `The breakdown page must render at the board's density, or its specimens misrepresent the template. Got: ${htmlTag[0]}`,
+  );
+});
+
 test('T2-h: item type values never wear the workspace chip', () => {
   const violations = [
     ...typeChipViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),

@@ -65,7 +65,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Row chips | `.weft-badge.is-space` for workspace; `.weft-source-pill` / `<SourcePill>` for the mono type chip (D6) |
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |
 | Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`; provenance uses `.weft-callout.is-band` (D8) |
-| Drawer header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
+| Drawer header | `.weft-panel-header` (default size — the drawer stays subordinate to the board) / `<PanelHeader>` |
 | Reference row | `.weft-copyable-ref`, `.weft-copyable-ref-copy` / `<CopyableRef>` |
 | Reply field | `.weft-textarea` (real `<textarea>`) / `<Textarea>` |
 | Action row | `.weft-action-button-row`; `.weft-action-button-row-trailing` for the trailing link slot / `<ActionButtonRow>` |
@@ -211,7 +211,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
 
 ```html
 <div class="weft-board-drawer">
-  <div class="weft-panel-header" data-size="board">
+  <div class="weft-panel-header">
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
       <span class="weft-source-pill">signal</span>
@@ -294,7 +294,7 @@ The migration consolidated all board-local duplicates into canonical
 | Space chip | `.weft-badge.is-space` / `<Badge variant="space">` (D5) |
 | Mono type chip | `.weft-source-pill` / `<SourcePill>` (D6) |
 | Evidence chips | `.weft-badge.is-outline` + tone modifier |
-| Drawer header + close | `.weft-panel-header[data-size="board"]` / `<PanelHeader>` |
+| Drawer header + close | `.weft-panel-header` (default size) / `<PanelHeader>` |
 | Canonical reference row + copy | `.weft-copyable-ref` / `<CopyableRef>` |
 | Reply div (display-only) | `.weft-textarea` (real `<textarea>`) |
 | Drawer action row | `.weft-action-button-row` / `<ActionButtonRow>` |
