@@ -261,10 +261,22 @@
 
 /* D3: drawer action row uses .weft-action-button-row (weft-components.css).
  * The board-local drawer actions class is deleted.
- * Plain-CSS markup:
- *   <div class="weft-action-button-row">
- *     <button class="weft-btn">Resolve</button>
- *     <button class="weft-btn is-link">Open ↗</button>
+ * Fill is spent only where urgency is real (D3, Katie 2026-08): the filled
+ * primary belongs to a blocked item's drawer. Awaiting and FYI drawers drop
+ * .is-blocked and take a ghost primary.
+ * Plain-CSS markup — blocked:
+ *   <div class="weft-board-drawer is-blocked">
+ *     <div class="weft-action-button-row">
+ *       <button class="weft-btn">Resolve</button>
+ *       <button class="weft-btn is-link">Open ↗</button>
+ *     </div>
+ *   </div>
+ * Plain-CSS markup — awaiting / fyi:
+ *   <div class="weft-board-drawer">
+ *     <div class="weft-action-button-row">
+ *       <button class="weft-btn is-ghost">Resolve</button>
+ *       <button class="weft-btn is-link">Open ↗</button>
+ *     </div>
  *   </div>
  */
 

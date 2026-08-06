@@ -578,6 +578,24 @@ function tierDotPairingViolations(text, label) {
   });
 }
 
+// D3 (Katie, 2026-08): fill is spent only where urgency is real. A filled
+// .weft-btn belongs to a blocked item's drawer; awaiting and FYI drawers take a
+// ghost primary. Review caught the rule being stated in prose while the very
+// next code block — the copy-paste skeleton — showed a filled button in a
+// non-blocked drawer. Same shape as every earlier miss: a rule asserted on one
+// surface and contradicted on the others, so it is a detector rather than a note.
+function drawerFillViolations(text, label) {
+  return extractBlocks(text, 'weft-board-drawer').flatMap((drawer) => {
+    if (classSet(drawer.classes).has('is-blocked')) return [];
+    const filled = [...drawer.body.matchAll(PRIMARY_BTN)]
+      .map((m) => m[1])
+      .filter((c) => !isNonPrimary(c));
+    if (!filled.length) return [];
+    const line = text.slice(0, drawer.index).split('\n').length;
+    return [`${label}:${line} — a filled .weft-btn sits in a drawer without .is-blocked; fill belongs to blocked items only (D3)`];
+  });
+}
+
 function publishedSurfaces() {
   return [
     ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
@@ -595,6 +613,7 @@ test('T2-k: every rule holds on every published surface', () => {
     ...dismissSlotViolations(text, label),
     ...tierOrderViolations(text, label),
     ...tierDotPairingViolations(text, label),
+    ...drawerFillViolations(text, label),
   ]);
   assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
 });
@@ -690,6 +709,26 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
     '<span class="weft-dot is-stop"></span>Blockers</div>' +
     '<div class="weft-hud-list-row"><span class="weft-dot is-info"></span>row</div></div>';
   assert.deepEqual(tierDotPairingViolations(normalizeSurface(rowDot), 'f'), [], "a row's own dot is not the tier's signal");
+
+  // D3 fill rule. Review found the prose and the skeleton disagreeing, so the
+  // rule is checked rather than described.
+  const row = (cls) => `<div class="weft-action-button-row"><button class="${cls}">Resolve</button>` +
+    '<button class="weft-btn is-link">Open</button></div>';
+  assert.equal(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer">${row('weft-btn')}</div>`), 'f').length,
+    1,
+    'a filled primary in a non-blocked drawer must fail',
+  );
+  assert.deepEqual(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer is-blocked">${row('weft-btn')}</div>`), 'f'),
+    [],
+    'a blocked drawer earns the fill',
+  );
+  assert.deepEqual(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer">${row('weft-btn is-ghost')}</div>`), 'f'),
+    [],
+    'a ghost primary is fine anywhere',
+  );
 
   // Two tones on one dot: the required class is present, but the later CSS rule
   // wins, so the tier renders the wrong signal. Presence is not agreement.

@@ -218,7 +218,10 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
 `npm run test:template-contract`.
 
 ```html
-<div class="weft-board-drawer">
+<!-- .is-blocked: this drawer belongs to a blocked item, which is what earns
+     the filled primary below. An awaiting or FYI drawer drops .is-blocked and
+     its primary becomes .weft-btn.is-ghost (D3). -->
+<div class="weft-board-drawer is-blocked">
   <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
@@ -245,7 +248,7 @@ none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
 
   <div class="weft-action-button-row">
     <button type="button" class="weft-btn">Resolve for me</button>
-    <button type="button" class="weft-btn is-ghost">Reassign</button>
+    <button type="button" class="weft-btn is-link">Reassign</button>
     <span class="weft-action-button-row-trailing">
       <button type="button" class="weft-btn is-link">Open ↗</button>
     </span>
