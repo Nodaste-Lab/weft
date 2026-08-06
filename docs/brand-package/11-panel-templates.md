@@ -198,6 +198,11 @@ uses a real `<textarea class="weft-textarea">`. Actions go in `.weft-action-butt
 a trailing link gets wrapped in `.weft-action-button-row-trailing` to push it to
 the far right without descendant-selector child styling.
 
+**One primary per action row.** Exactly one filled `.weft-btn` — the action you
+want taken. Every sibling is `.is-ghost` or `.is-link`. Two filled buttons make
+the operator choose between them instead of acting, which is the opposite of what
+a board is for. Enforced by `npm run test:template-contract`.
+
 ```html
 <div class="weft-board-drawer">
   <div class="weft-panel-header" data-size="board">
@@ -226,7 +231,7 @@ the far right without descendant-selector child styling.
 
   <div class="weft-action-button-row">
     <button type="button" class="weft-btn">Resolve for me</button>
-    <button type="button" class="weft-btn">Reassign</button>
+    <button type="button" class="weft-btn is-ghost">Reassign</button>
     <span class="weft-action-button-row-trailing">
       <button type="button" class="weft-btn is-link">Open ↗</button>
     </span>
