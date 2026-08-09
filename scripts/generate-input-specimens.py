@@ -204,11 +204,15 @@ def naming_section():
         + control_html('input', 'naming', 'nm-visible') + '</div>',
         'name "Project name" — the case the markup uses')
 
-    row('placeholder-only', 'Placeholder only',
+    row('placeholder-as-hint', 'Placeholder as a format hint',
         '<div class="weft-field">'
-        + control_html('input', 'naming', 'nm-placeholder', placeholder='Search projects…')
+        '<label class="weft-sr-only" for="nm-placeholder">Search projects</label>'
+        + control_html('input', 'naming', 'nm-placeholder', placeholder='e.g. weft-board')
         + '</div>',
-        'a failure — a placeholder is not a name (this is the case axe passes)')
+        'name "Search projects" from the hidden label; the placeholder shows the '
+        'format and is never the name. Before this rung existed the control was '
+        'named "Search projects…" by its placeholder alone — which axe lists under '
+        'passes, and which disappears the moment the user types.')
 
     row('aria-label-only', 'aria-label only',
         '<div class="weft-field">'
@@ -221,6 +225,18 @@ def naming_section():
         '<label class="weft-sr-only" for="nm-hidden">Filter results</label>'
         + control_html('input', 'naming', 'nm-hidden') + '</div>',
         'name "Filter results", and the label occupies no layout space')
+
+    row('aria-label-icon', 'aria-label on an icon-only control',
+        '<button type="button" class="weft-btn is-ghost" id="nm-icon" '
+        'aria-label="Refresh results">&#8635;</button>',
+        'the one rung where aria-label is sanctioned: there is no text to label, '
+        'and the glyph carries no name of its own')
+
+    row('sr-only-focusable', 'Hidden until focused',
+        '<a class="weft-sr-only weft-sr-only-focusable" id="nm-skip" '
+        'href="#naming-end">Skip to the end of this section</a>'
+        '<span class="expect">Tab to it — it takes layout space only while focused.</span>',
+        'the skip-link case: hidden at rest, visible on focus, named throughout')
 
     row('group-legend', 'Group legend',
         '<fieldset class="weft-field-group" data-spec="naming" data-control="group" '

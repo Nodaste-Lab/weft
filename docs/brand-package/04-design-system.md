@@ -617,15 +617,15 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 >
 > **Parts of this section still describe intent rather than shipped code, and the
 > page shows which.** Remaining: no field boundary reaches the 3:1 non-text
-> contrast floor, the visible label rewrites the name it exposes, there is no
-> visually-hidden utility, and the class names below are unprefixed while the
-> shipped CSS is `weft-` prefixed throughout. Each gap is recorded with its
-> measured shortfall in `tests/contract/known-defects.ts` and is owned by a later
-> phase; this note comes out when the last of them does.
+> contrast floor, a focused control under sticky chrome can be entirely
+> obscured, the textarea floor tracks no tier, and the class names below are
+> unprefixed while the shipped CSS is `weft-` prefixed throughout. Each gap is
+> recorded with its measured shortfall in `tests/contract/known-defects.ts` and is
+> owned by a later phase; this note comes out when the last of them does.
 >
 > Closed since: control height at every tier, disabled and read-only in the
 > plain-CSS layer, a focus ring an author shadow cannot delete, description
-> wiring, and the required marker.
+> wiring, the required marker, and the naming ladder below.
 
 Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-paper` surface with a `--weft-rule` border and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
 
@@ -648,6 +648,29 @@ Every input sits inside a `.field` that stacks label + control + hint vertically
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.
 - Border transitions at `--weft-dur-fast`. No hover scale, no color bleed, no ring.
 - Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input. **It is delivered twice, as an `outline` and as a `box-shadow` with identical geometry.** One carrier alone was deletable: `:where()` contributes nothing to specificity, so any page's `.shadow { box-shadow: … }` declared later replaced the ring outright, with no error and no gate. A shadow utility cannot touch `outline`; an author `outline: none` cannot touch `box-shadow`.
+
+#### How a control gets its name
+
+There is an order, and it is not a menu. Take the first rung that fits.
+
+| Rung | Use when | How |
+|---|---|---|
+| **Visible label** | The default. Nearly always. | `.field-label` with `for`, or wrap the control |
+| **Hidden label** | The surface genuinely cannot carry a visible label — a rail 258px wide, a toolbar of icons and one field | `.sr-only` on a real `<label for>` |
+| **`aria-label`** | Icon-only controls, and nothing else | on the control |
+
+**A placeholder is never a name.** It is a format hint. A control named only by its placeholder loses its name the moment the user types, and this is the case a tool-based check will not catch: axe reports it under *passes*, because a placeholder satisfies the accessible-name computation. `tests/contract/input-semantics.spec.ts` checks every control on the specimen page that carries a placeholder, not just the one demonstrating the rule.
+
+**`aria-label` is sanctioned only for icon-only controls.** An invisible name on a text input cannot be verified by the person using the surface and drifts from its visible context as the copy around it changes — and now that `.sr-only` exists there is no cost to using a real label instead. The argument for it was that a hidden label plus a visible placeholder is more markup for the same outcome; that is true and it is worth the markup.
+
+**`.sr-only` uses `clip-path`, never `display: none` or `visibility: hidden`.** Both of those take the element out of the accessibility tree along with the layout, which is the opposite of the point. `.sr-only-focusable` reveals on focus, for skip-link-style content.
+
+```html
+<label class="sr-only" for="rail-search">Search projects</label>
+<input class="input" id="rail-search" type="search" placeholder="e.g. weft-board" />
+```
+
+**Labels are sentence case, and that is an accessibility rule wearing a typographic hat.** The accessible name is computed from *rendered* text, so `text-transform: uppercase` did not restyle the label — it rewrote the name. Markup reading "Project name" was exposed as "PROJECT NAME". The scope is the input surface only: `.eyebrow`, `.pill` and the React primitives keep their uppercase, and §03 keeps its rule everywhere outside a field.
 
 #### Associating help and error text
 

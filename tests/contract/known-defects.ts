@@ -41,33 +41,6 @@ export interface KnownDefect {
 }
 
 export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freeze({
-  // ── Naming (P3) ───────────────────────────────────────────────────────────
-  'naming/visible-label/name-matches-markup': {
-    why:
-      'P3 — .weft-field-label sets text-transform: uppercase, and the accessible name is ' +
-      'computed from rendered text. Markup "Project name" is exposed as "PROJECT NAME".',
-    shortfall: 1,
-  },
-  'naming/group-legend/name-matches-markup': {
-    why:
-      'P3 — .weft-field-group > legend has the same uppercase transform. Markup ' +
-      '"Retention policy" is exposed as "RETENTION POLICY".',
-    shortfall: 1,
-  },
-  'naming/placeholder-only/placeholder-is-not-a-name': {
-    why:
-      'P3 — a placeholder satisfies the accessible-name computation, so the rail search ' +
-      'resolves to a named searchbox and axe lists it under passes. The name is gone the ' +
-      'moment the user types.',
-    shortfall: 1,
-  },
-  'naming/hidden-label/occupies-no-layout-space': {
-    why:
-      'P3 — there is no .weft-sr-only or equivalent anywhere in the shipped CSS, so the only ' +
-      'route to a name is a visible label. This is the gap that changed the board rail design. ' +
-      'Shortfall is the rendered area in px².',
-    shortfall: 4899,
-  },
 
   // ── Geometry (P5) ─────────────────────────────────────────────────────────
   // P2 closed the control-height defects at their cause; what is left here is

@@ -53,20 +53,70 @@ test('aria-label names a control', async ({ page }) => {
   });
 });
 
-test('a placeholder is not a name', async ({ page }) => {
-  const node = await axNode(page, '#nm-placeholder');
-  const placeholder = await page.locator('#nm-placeholder').getAttribute('placeholder');
+test('no control anywhere is named by its placeholder', async ({ page }) => {
+  // Page-wide, not one specimen. The rule is "a placeholder is a format hint,
+  // never a name", and a rule checked on the single control that exists to
+  // demonstrate it is a demonstration, not a rule. Every control on the page
+  // that carries a placeholder is checked, so adding a placeholder-named field
+  // anywhere fails here.
+  const withPlaceholder = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('[placeholder]')].map((el) => ({
+      id: el.id,
+      placeholder: el.getAttribute('placeholder')!,
+    })),
+  );
+  expect(withPlaceholder.length, 'no control on the page carries a placeholder').toBeGreaterThan(0);
+
+  const named: string[] = [];
+  const readings: string[] = [];
+  for (const { id, placeholder } of withPlaceholder) {
+    const node = await axNode(page, `#${id}`);
+    readings.push(`#${id}: name ${JSON.stringify(node.name)}, placeholder ${JSON.stringify(placeholder)}`);
+    if ((node.name ?? '').trim() === placeholder.trim()) named.push(`#${id}`);
+  }
+
   await measure({
     key: 'naming/placeholder-only/placeholder-is-not-a-name',
-    shortfall: binary(node.name !== placeholder),
-    evidence: `name ${JSON.stringify(node.name)}, placeholder ${JSON.stringify(placeholder)}`,
+    shortfall: named.length,
+    evidence: readings.join('; '),
     // The failure has to name the control and say why, because the tool-based
     // check passes this case and a bare "expected true" would send the next
     // reader to axe.
     failure:
-      '#nm-placeholder is named only by its placeholder. That satisfies the accessible-name ' +
+      `Named only by a placeholder: ${named.join(', ')}. That satisfies the accessible-name ` +
       'computation and axe lists it under passes, but the name disappears the moment the user ' +
       'types. A placeholder is a format hint, never a name.',
+  });
+});
+
+test('the hidden-until-focused utility takes space only while focused', async ({ page }) => {
+  const link = page.locator('#nm-skip');
+  const at = async () => {
+    const box = await link.boundingBox();
+    return box ? Math.round(box.width * box.height) : 0;
+  };
+  const resting = await at();
+  await link.focus();
+  const focused = await at();
+  await measure({
+    key: 'naming/sr-only-focusable/reveals-on-focus',
+    shortfall: binary(resting <= 1 && focused > 1),
+    evidence: `${resting}px² at rest, ${focused}px² focused`,
+    failure:
+      'A skip-link-style usage has to be reachable and then visible once reached. It is either ' +
+      'taking space at rest or staying invisible after focus.',
+  });
+});
+
+test('an icon-only control is named by aria-label', async ({ page }) => {
+  // The one rung of the ladder where aria-label is sanctioned. There is no text
+  // to associate, and the glyph carries no name of its own.
+  const node = await axNode(page, '#nm-icon');
+  await measure({
+    key: 'naming/aria-label-icon-only/name',
+    shortfall: binary(node.name === 'Refresh results'),
+    evidence: `name ${JSON.stringify(node.name)}`,
+    failure: 'The icon-only control has lost the only name it can have.',
   });
 });
 

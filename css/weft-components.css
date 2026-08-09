@@ -51,6 +51,40 @@
   }
 }
 
+/* ── Visually hidden — a name without a visible label ─────────────────────── */
+/* Weft had no such utility, and that absence is what produced the ticket this
+ * work came from: every control needs an accessible name, the only route Weft
+ * offered was a visible label, so an accessibility requirement silently changed
+ * the board rail's visual design and nobody made a decision.
+ *
+ * clip-path, NOT display:none or visibility:hidden. Both of those remove the
+ * element from the accessibility tree along with the layout, which is the exact
+ * opposite of what this is for. Asserted:
+ * tests/contract/input-semantics.spec.ts checks the name is still computed AND
+ * that neither property is in play.
+ *
+ * `.weft-sr-only-focusable` reveals on focus, for the skip-link case where the
+ * content is hidden until a keyboard user reaches it. (0,2,0) against the base
+ * class's (0,1,0), so it wins wherever both are present. */
+.weft-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.weft-sr-only-focusable:focus-visible,
+.weft-sr-only-focusable:active {
+  position: static;
+  width: auto; height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+}
+
 /* ── Card — paper surface, hairline rule, card radius ─────────────────────── */
 .weft-card {
   background: var(--weft-paper);
@@ -148,10 +182,24 @@
   margin-bottom: var(--weft-space-5);
   font-family: var(--weft-font-sans);
 }
+/* SENTENCE CASE, and the reason is not typographic.
+ *
+ * The accessible name is computed from RENDERED text, so `text-transform:
+ * uppercase` did not merely restyle the label — it rewrote the name. Markup
+ * reading "Project name" was exposed as "PROJECT NAME". Decision 6 scoped the
+ * change to the input surface only: `.weft-eyebrow`, `.weft-pill` and the ten
+ * React primitives keep their uppercase, and brand-package section 03 keeps its
+ * rule for everything outside a field.
+ *
+ * The mono voice survives, because this class sets the family explicitly rather
+ * than inheriting it from the uppercase rule — verified inside the injected
+ * panel frame, not just here. Tracking drops from 0.12em to 0.01em because
+ * caps-tracking applied to lowercase reads as a mistake, and the size goes 11px
+ * to 12px because sentence case at 11px reads smaller than caps at 11px. */
 .weft-field-label {
   font-family: var(--weft-font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--weft-muted);
 }
 /* Heuristic 7 marks the minority, and decision 4 fixed what the marker IS: real
@@ -306,10 +354,13 @@
   border: none; padding: 0; margin: 0 0 var(--weft-space-5);
   display: flex; flex-direction: column; gap: 10px;
 }
+/* Same change, same reason: a legend names its group, and the uppercase
+ * transform rewrote that name too — "Retention policy" exposed as
+ * "RETENTION POLICY". */
 .weft-field-group > legend {
   font-family: var(--weft-font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--weft-muted);
   margin-bottom: 4px; padding: 0;
 }
