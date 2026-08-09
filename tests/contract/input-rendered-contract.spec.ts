@@ -19,7 +19,7 @@
  * page it composites over white and measures a surface no consumer has. The
  * panel condition is tested where it actually exists — consumer-iframe.spec.ts.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import {
   BOUNDARY_FLOOR,
   DENSITIES,
@@ -28,12 +28,11 @@ import {
   THEMES,
   VISIBLE_DELTA,
   applyAxes,
-  captureDocument,
   captureRegion,
   contrastRatio,
-  documentRects,
   maxChannelDelta,
   readBoundary,
+  readBoundaryOf,
   rgbText,
   samplePoints,
   settle,
@@ -70,20 +69,21 @@ test.beforeEach(async ({ page }) => {
 for (const theme of THEMES) {
   for (const density of DENSITIES) {
     test.describe(`resting boundary — ${theme}, ${density}`, () => {
-      let shared: import('@playwright/test').Page;
-      let cellsByGround: Map<Ground, { id: string; rect: Rect }[]>;
+      let shared: Page;
+      let idsByGround: Map<Ground, string[]>;
 
       test.beforeAll(async ({ browser }) => {
         shared = await browser.newPage();
         await shared.goto(SPECIMEN_PAGE);
         await applyAxes(shared, { theme, density });
-        const rects = await documentRects(shared, '[data-spec="boundary"]');
-        await captureDocument(shared);
-        cellsByGround = new Map();
-        for (const [id, rect] of rects) {
+        const ids = await shared.evaluate(() =>
+          [...document.querySelectorAll<HTMLElement>('[data-spec="boundary"]')].map((el) => el.id),
+        );
+        idsByGround = new Map();
+        for (const id of ids) {
           const ground = groundOf(id);
-          if (!cellsByGround.has(ground)) cellsByGround.set(ground, []);
-          cellsByGround.get(ground)!.push({ id, rect });
+          if (!idsByGround.has(ground)) idsByGround.set(ground, []);
+          idsByGround.get(ground)!.push(id);
         }
       });
 
@@ -93,13 +93,15 @@ for (const theme of THEMES) {
 
       for (const ground of GROUNDS) {
         test(`on ${ground}`, async () => {
-          const cells = cellsByGround.get(ground) ?? [];
-          expect(cells.length, `no boundary specimens on the ${ground} ground`).toBeGreaterThan(0);
+          const ids = idsByGround.get(ground) ?? [];
+          expect(ids.length, `no boundary specimens on the ${ground} ground`).toBeGreaterThan(0);
 
           const readings: string[] = [];
           const failures: string[] = [];
-          for (const { id, rect } of cells) {
-            const r = await readBoundary(shared, rect);
+          for (const id of ids) {
+            // One capture per control. See readBoundaryOf for why this is not
+            // batched into a single whole-page capture.
+            const r = await readBoundaryOf(shared, shared.locator(`#${id}`));
             const line =
               `${id}: border ${r.borderRatio.toFixed(2)}:1 ${rgbText(r.border)}, ` +
               `fill ${r.fillRatio.toFixed(2)}:1 ${rgbText(r.fill)}, on ${rgbText(r.ground)}`;
@@ -109,15 +111,14 @@ for (const theme of THEMES) {
 
           await measure({
             key: `boundary/${theme}/${density}/${ground}`,
-            // Shortfall is the number of cells under the floor, so a
-            // combination cannot quietly deepen behind a key that is already
-            // recorded as failing.
+            // Shortfall is the number of cells under the floor, so a combination
+            // cannot quietly deepen behind a key already recorded as failing.
             shortfall: failures.length,
-            evidence: `${cells.length} cells; ${failures.length} under ${BOUNDARY_FLOOR}:1 — ${readings[0]}`,
+            evidence: `${ids.length} cells; ${failures.length} under ${BOUNDARY_FLOOR}:1 — ${readings[0]}`,
             failure:
               `Heuristic 2: at least one of border-against-surface or fill-against-surface has ` +
               `to reach ${BOUNDARY_FLOOR}:1. On the ${ground} ground in ${theme}/${density}, ` +
-              `${failures.length} of ${cells.length} cells reach neither:\n  ` +
+              `${failures.length} of ${ids.length} cells reach neither:\n  ` +
               failures.join('\n  '),
           });
         });
@@ -161,6 +162,7 @@ for (const theme of THEMES) {
             width: box!.width + pad * 2,
             height: box!.height + pad * 2,
           });
+          // Not readBoundaryOf: scrolling now would drop the hover.
           const r = await readBoundary(page, box!);
           const line =
             `${ground}/${control}/${state}: border ${r.borderRatio.toFixed(2)}:1, ` +
@@ -232,14 +234,15 @@ interface StateReading {
   border: Rgb;
 }
 
-async function readStateBlock(page: import('@playwright/test').Page, theme: Theme): Promise<StateReading[]> {
+async function readStateBlock(page: Page, theme: Theme): Promise<StateReading[]> {
   await applyAxes(page, { theme });
-  const rects = await documentRects(page, '[data-spec="state"]');
-  await captureDocument(page);
+  const ids = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('[data-spec="state"]')].map((el) => el.id),
+  );
   const out: StateReading[] = [];
-  for (const [id, rect] of rects) {
+  for (const id of ids) {
     const [, control, state] = id.split('-');
-    const r = await readBoundary(page, rect);
+    const r = await readBoundaryOf(page, page.locator(`#${id}`));
     out.push({ control, state, fill: r.fill, border: r.border });
   }
   return out;
@@ -322,18 +325,15 @@ test('a read-only value stays readable', async ({ page }) => {
   // dimmed would make a value the user is meant to read fail text contrast.
   await applyAxes(page, { theme: 'light' });
   const locator = page.locator('#st-input-readonly');
-  await locator.scrollIntoViewIfNeeded();
+  const fillReading = await readBoundaryOf(page, locator);
   const box = (await locator.boundingBox())!;
-  // Pad by more than readBoundary's ±6 gutter sample, or the ground read falls
-  // outside the capture.
-  await captureRegion(page, { x: box.x - 12, y: box.y - 12, width: box.width + 24, height: box.height + 24 });
 
   // Scan the text band for the darkest pixel — the glyph core — and read it
   // against the control's own fill.
   const pts: [number, number][] = [];
   for (let dx = 4; dx < Math.min(box.width - 4, 160); dx += 1) pts.push([box.x + dx, box.y + box.height / 2]);
   const samples = await samplePoints(page, pts);
-  const fill = (await readBoundary(page, box)).fill;
+  const fill = fillReading.fill;
   let darkest = samples[0];
   for (const s of samples) if (s[0] + s[1] + s[2] < darkest[0] + darkest[1] + darkest[2]) darkest = s;
   const ratio = contrastRatio(darkest, fill);

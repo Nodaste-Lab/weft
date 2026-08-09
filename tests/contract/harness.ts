@@ -179,25 +179,21 @@ async function decodeInto(page: Page, png: Buffer, { originX, originY }: Capture
 }
 
 /**
- * Capture the whole document once and decode it inside the page. Sample points
- * are then in DOCUMENT coordinates.
+ * Capture one region. Sample points are in VIEWPORT coordinates.
  *
- * One capture per axis combination rather than one per specimen: the boundary
- * matrix runs to a hundred-odd cells, and a screenshot each would make the
- * suite too slow to keep in the gate battery — which is the same as not having
- * it. Chromium decodes its own PNG, so no image codec enters this repository's
- * dependency graph.
- */
-export async function captureDocument(page: Page): Promise<void> {
-  const png = await page.screenshot({ fullPage: true });
-  await decodeInto(page, png, { originX: 0, originY: 0 });
-}
-
-/**
- * Capture one region. Sample points are then in VIEWPORT coordinates.
+ * THIS IS THE ONLY CAPTURE MODE, and the absence of a whole-document one is
+ * deliberate. An earlier version captured the full page once per axis
+ * combination and sampled every specimen out of it — much faster, and quietly
+ * wrong. `page.screenshot({ fullPage: true })` CHANGES THE LAYOUT and does not
+ * restore it: measured in the pinned Linux container, document height 3888px
+ * before the capture and 3833px after, with every control 5px higher. Rects read
+ * before the capture therefore described a different page from the bitmap, the
+ * border sample landed inside the fill, and every boundary read came back at
+ * 1.07:1.
  *
- * Used for the states a capture cannot batch — hover and focus apply to one
- * element at a time, so the whole-document capture has nothing to offer them.
+ * It passed on macOS, where the two layouts happen to coincide, and failed on
+ * the first CI run. Region capture is exact in both — the border pixel lands on
+ * the row the rect predicts, to the pixel.
  */
 export async function captureRegion(page: Page, clip: Rect): Promise<void> {
   const safe = {
@@ -210,20 +206,29 @@ export async function captureRegion(page: Page, clip: Rect): Promise<void> {
   await decodeInto(page, png, { originX: safe.x, originY: safe.y });
 }
 
-/** Document-space rects for every element matching a selector, keyed by element id. */
-export async function documentRects(page: Page, selector: string): Promise<Map<string, Rect>> {
-  const entries = await page.evaluate((sel) => {
-    const out: [string, { x: number; y: number; width: number; height: number }][] = [];
-    for (const el of document.querySelectorAll<HTMLElement>(sel)) {
-      const r = el.getBoundingClientRect();
-      out.push([
-        el.id,
-        { x: r.left + window.scrollX, y: r.top + window.scrollY, width: r.width, height: r.height },
-      ]);
-    }
-    return out;
-  }, selector);
-  return new Map(entries);
+/** Padding around a captured control. Must exceed readBoundary's ±6 gutter sample. */
+const CAPTURE_PAD = 12;
+
+/**
+ * Scroll a control into view, capture around it, and read its boundary.
+ *
+ * One call rather than three, so no caller can pair a rect with a capture taken
+ * at a different moment — which is exactly the bug above.
+ */
+export async function readBoundaryOf(
+  page: Page,
+  locator: import('@playwright/test').Locator,
+): Promise<BoundaryReading> {
+  await locator.scrollIntoViewIfNeeded();
+  const box = await locator.boundingBox();
+  if (!box) throw new Error('harness: the control has no box — is it displayed?');
+  await captureRegion(page, {
+    x: box.x - CAPTURE_PAD,
+    y: box.y - CAPTURE_PAD,
+    width: box.width + CAPTURE_PAD * 2,
+    height: box.height + CAPTURE_PAD * 2,
+  });
+  return readBoundary(page, box);
 }
 
 /** Read points out of the captured bitmap. Out-of-bounds points throw rather than clamp. */
