@@ -372,7 +372,13 @@ def select_chrome_section():
 # The two author-* classes are the exception and exist to BE hostile — they are
 # the realistic reproduction of the focus defect at class specificity.
 CHROME = """
-:root { color-scheme: light dark; }
+:root {
+  color-scheme: light dark;
+  /* This page has a sticky bar, so it declares its height — exactly what a
+   * consumer surface does. Weft ships the mechanism and the default of 0; the
+   * surface supplies the number, because Weft cannot know it. */
+  --weft-sticky-chrome-h: 68px;   /* the sticky bar computes to 65px */
+}
 body { margin: 0; padding: 0 0 64px; }
 .bar {
   position: sticky; top: 0; z-index: 10;

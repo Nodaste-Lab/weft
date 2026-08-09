@@ -615,19 +615,15 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 > the same surface a sandboxed panel iframe receives. `npm run test:contract`
 > measures it.
 >
-> **Parts of this section still describe intent rather than shipped code, and the
-> page shows which.** Remaining: no field boundary reaches the 3:1 non-text
-> contrast floor, a focused control under sticky chrome can be entirely
-> obscured, the textarea floor tracks no tier, and the class names below are
-> unprefixed while the shipped CSS is `weft-` prefixed throughout. Each gap is
-> recorded with its measured shortfall in `tests/contract/known-defects.ts` and is
-> owned by a later phase; this note comes out when the last of them does.
->
-> Closed since: control height at every tier, disabled and read-only in the
-> plain-CSS layer, a focus ring an author shadow cannot delete, description
-> wiring, the required marker, and the naming ladder below.
+> **One recorded gap remains:** the textarea floor is a hardcoded 96px and
+> tracks no tier, owned by the sizing phase. The class names below are also still
+> unprefixed while the shipped CSS is `weft-` prefixed throughout, which the
+> doctrine merge settles. Everything else this section describes is measured:
+> control height at every tier, disabled and read-only, a focus ring an author
+> shadow cannot delete, description wiring, the required marker, the naming
+> ladder, the 3:1 boundary, and focus not obscured.
 
-Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-paper` surface with a `--weft-rule` border and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
+Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-control-fill` wash with a `--weft-control-border` boundary and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
 
 **Disabled and read-only are different promises, and they look different.** Disabled dims the whole control to 0.55 and takes `cursor: not-allowed` — it is not available. Read-only keeps full text contrast and changes only its fill to `--weft-control-fill-static` — the value is present and meant to be read, just not edited. Neither sets a border colour, deliberately: `.weft-input:disabled` weighs exactly as much as `.weft-input[aria-invalid="true"]` and is declared later, so a border colour there would silently outrank the error border on a disabled invalid field. `<select>` has no read-only in its content model, so that pairing does not exist for it.
 
@@ -648,6 +644,33 @@ Every input sits inside a `.field` that stacks label + control + hint vertically
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.
 - Border transitions at `--weft-dur-fast`. No hover scale, no color bleed, no ring.
 - Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input. **It is delivered twice, as an `outline` and as a `box-shadow` with identical geometry.** One carrier alone was deletable: `:where()` contributes nothing to specificity, so any page's `.shadow { box-shadow: … }` declared later replaced the ring outright, with no error and no gate. A shadow utility cannot touch `outline`; an author `outline: none` cannot touch `box-shadow`.
+
+#### The boundary: a field has to look like a control
+
+**At least one of border-against-surface or fill-against-surface reaches 3:1** (WCAG 1.4.11 non-text contrast), on every surface, in both themes, at every density, in every state except disabled — which the criterion exempts as an inactive component. Before this rule the field had neither: the border measured 1.30:1 light and 1.38:1 dark, and the fill was the same token as the card behind it, at 1.00:1.
+
+**The border carries it; the fill is decorative.** That is a measured conclusion rather than a preference. Reaching 3:1 as a *fill alone* needs 45% ink over white, and at that fill the muted placeholder drops to 1.90:1 and fails text contrast — so fill-without-border, which heuristic 2 offers as an option, is not available in this palette. One border value covers both light surfaces: `--weft-control-border` measures 3.35:1 on paper and 3.15:1 on cream by calculation, 3.50:1 and 3.48:1 as painted.
+
+**Hover deepens from a boundary that already clears the floor.** It used to go to `--weft-rule-strong`, which at 1.90:1 is now weaker than rest — hover would have been *removing* a boundary. Heuristic 3: hover may reinforce, never carry, because it does not exist on touch and does not exist for a keyboard-first user.
+
+Two rules about *how* to change this, both learned by shipping the mistake:
+
+- **Edit the declarations inside the existing `.weft-input, .weft-textarea, .weft-select` rule. Never add a selector.** A new selector ties on specificity with `.weft-input[aria-invalid="true"]` and, being later, wins — so every error field renders with the ordinary border while the diff looks correct.
+- **Use longhands. Never the `background` shorthand.** It resets `background-image`, `-repeat`, `-position` and `-size`. On `.weft-select` that deletes the chevron in light and, because the dark theme's chevron rule restores the image but not the repeat, tiles a 12px glyph across the whole control in dark.
+
+Both have permanent guards that assert painted pixels: `states/invalid-renders-distinctly` and `tests/contract/select-chrome.spec.ts`.
+
+#### Focus survives the chrome
+
+SC 2.4.11. A control scrolled to by an in-page navigation top-aligns, which on a surface with a sticky header lands it underneath — measured at 99% covered.
+
+Weft cannot know the chrome's height, so **the surface declares it and the component layer turns it into scroll padding**:
+
+```css
+:root { --weft-sticky-chrome-h: 68px; }   /* your sticky header's height */
+```
+
+The default is `0`, so a panel iframe with no chrome is unaffected. The token is declared in its own bare `:root` block for a reason worth knowing: every other Weft token lives under `:root, :root[data-palette="weft"]`, which weighs (0,2,0), so the obvious `:root { … }` override in a consumer stylesheet would lose silently. At (0,1,0) it ties and, loading later, wins.
 
 #### How a control gets its name
 

@@ -43,6 +43,19 @@
   box-shadow: var(--weft-focus-ring);
   border-radius: 3px;
 }
+/* SC 2.4.11 Focus Not Obscured (Minimum), Level AA — heuristic 9.
+ *
+ * Focusing a control below the fold scrolls it flush to the viewport top, which
+ * on any surface with a sticky header puts it entirely underneath. Measured on
+ * the specimen page before this rule: 100% of the focused control covered.
+ *
+ * Weft cannot know the chrome's height, so the surface declares it in
+ * --weft-sticky-chrome-h and this turns it into scroll padding. The default is
+ * 0, so a panel iframe with no chrome is unaffected — a rule that imposed
+ * padding on every injected panel would be the cure being worse. */
+html {
+  scroll-padding-top: var(--weft-sticky-chrome-h, 0px);
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -162,11 +175,21 @@
 }
 .weft-btn:hover:not(:disabled) { background: var(--weft-blue-deep); }
 .weft-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+/* The ghost button carried the identical 1.30:1 hairline as the field and fails
+ * heuristic 2 for the identical reason, so it takes the same border token.
+ *
+ * It does NOT take the field's translucent fill. Option C's wash is decorative
+ * and the border is what carries the floor, so the fill buys nothing here — and
+ * a ghost button is placed on coloured slabs where going translucent would let
+ * the slab show through. Narrower change, same compliance.
+ *
+ * Longhand rather than the `background` shorthand, which would reset the image
+ * slot on any ghost button a consumer has given an icon. */
 .weft-btn.is-ghost {
-  background: var(--weft-paper); color: var(--weft-ink);
-  border-color: var(--weft-rule);
+  background-color: var(--weft-paper); color: var(--weft-ink);
+  border-color: var(--weft-control-border);
 }
-.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-rule-strong); background: var(--weft-paper); }
+.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-ink); }
 /* Link-style inline action — no border, no background, just a colored text
  * button. Use for trailing "View all" or "Retry" actions in dense rows.
  * margin-left: auto pushes it to the trailing edge in a flex row. */
@@ -234,8 +257,26 @@
   font-family: var(--weft-font-sans);
   font-size: var(--weft-control-text); line-height: 1.4;
   color: var(--weft-ink);
-  background: var(--weft-paper);
-  border: 1px solid var(--weft-rule);
+  /* THE BOUNDARY, changed INSIDE this rule and with longhands. Both of those are
+   * structural guards, and each exists because the alternative already shipped a
+   * bug once:
+   *
+   * 1. A NEW SELECTOR would tie on specificity with `.weft-input[aria-invalid]`
+   *    below and, being later, win — so every error field would render with the
+   *    ordinary border while the diff looked correct. Found by rendering, not by
+   *    reading. `states/invalid-renders-distinctly` is the permanent guard.
+   * 2. The `background` SHORTHAND resets background-image, -repeat, -position and
+   *    -size. On `.weft-select` that deleted the chevron in light and, because
+   *    the dark theme's chevron rule restores the image and not the repeat, tiled
+   *    a 12px glyph across the whole control in dark. `select-chrome.spec.ts` is
+   *    the permanent guard, and it asserts painted pixels rather than trusting
+   *    the declaration.
+   *
+   * The border carries WCAG 1.4.11 at 3:1; the fill is decorative and is not
+   * asked to. See --weft-control-border in weft.css for why fill-alone is not
+   * available in this palette. */
+  background-color: var(--weft-control-fill);
+  border: 1px solid var(--weft-control-border);
   border-radius: var(--weft-radius-card);
   /* HEIGHT, NOT MIN-HEIGHT, and no vertical padding.
    *
@@ -259,9 +300,13 @@
     background-color var(--weft-dur-fast) var(--weft-ease-out);
 }
 .weft-input::placeholder, .weft-textarea::placeholder { color: var(--weft-muted); }
-.weft-input:hover:not(:disabled),
-.weft-textarea:hover:not(:disabled),
-.weft-select:hover:not(:disabled) { border-color: var(--weft-rule-strong); }
+/* Hover deepens from a boundary that already clears the floor. It used to go to
+ * --weft-rule-strong, which at 1.90:1 is now WEAKER than rest — hover would have
+ * been removing a boundary rather than reinforcing one. Read-only is excluded:
+ * it is not editable, so advertising interactivity on hover is a lie. */
+.weft-input:hover:not(:disabled):not([readonly]),
+.weft-textarea:hover:not(:disabled):not([readonly]),
+.weft-select:hover:not(:disabled) { border-color: var(--weft-ink); }
 .weft-input[aria-invalid="true"],
 .weft-textarea[aria-invalid="true"],
 .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }

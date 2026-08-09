@@ -92,41 +92,62 @@ for (const [id, selector, why] of SPECIMENS) {
   });
 }
 
-test('a focused control under sticky chrome is not entirely obscured', async ({ page }) => {
-  // SC 2.4.11 Focus Not Obscured (Minimum), Level AA. The specimen page carries
-  // a real sticky bar, which is the shape of HUD panels, sticky toolbars and
-  // floating chrome — the risk heuristic 9 names.
+test('a control navigated to is not left under sticky chrome', async ({ page }) => {
+  // SC 2.4.11 Focus Not Obscured — heuristic 9. The specimen page carries a real
+  // sticky bar, which is the shape of HUD panels, sticky toolbars and floating
+  // chrome.
+  //
+  // THE ORIGINAL VERSION OF THIS ASSERTION WAS MIS-SPECIFIED, and the correction
+  // matters more than the fix. It scrolled the control to just under the bar by
+  // hand and then called focus(). The browser considered the control visible, so
+  // focus() did not scroll at all, and the 100%-covered reading it produced was
+  // the fixture's own scroll position rather than anything the page does. Proved
+  // by removing scroll-padding-top and getting the identical number.
+  //
+  // What actually happens here, measured: focus() on an off-screen control
+  // CENTRES it (top 428 of a 900px viewport), so focusing alone never puts a
+  // control under the bar on this page. The operation that does is a scroll-to —
+  // a fragment link, a skip link, `scrollIntoView({ block: "start" })` — which
+  // top-aligns. Without scroll-padding the control lands at top 0 and is 99%
+  // covered; with it, 0%. That is the difference this measures.
   await page.goto(SPECIMEN_PAGE);
   await applyAxes(page, { theme: 'light' });
 
   const target = page.locator('#nm-visible');
-  const bar = page.locator('.bar');
-
-  // Put the control behind the bar first, then focus it, so the assertion is
-  // about what focusing does rather than about where the page happened to be.
-  await target.evaluate((el) => {
-    el.scrollIntoView({ block: 'start' });
-    window.scrollBy(0, -8);
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    window.location.hash = '#nm-visible';
   });
-  await target.focus();
   await settle(page);
 
-  const [t, b] = await Promise.all([target.boundingBox(), bar.boundingBox()]);
-  const overlapTop = Math.max(t!.y, b!.y);
-  const overlapBottom = Math.min(t!.y + t!.height, b!.y + b!.height);
-  const covered = Math.max(0, overlapBottom - overlapTop);
-  const fraction = covered / t!.height;
+  const reading = await page.evaluate(() => {
+    const el = document.getElementById('nm-visible')!;
+    const bar = document.querySelector('.bar')!;
+    const t = el.getBoundingClientRect();
+    const b = bar.getBoundingClientRect();
+    const covered = Math.max(0, Math.min(t.bottom, b.bottom) - Math.max(t.top, b.top));
+    return {
+      fraction: covered / t.height,
+      top: Math.round(t.top),
+      barHeight: Math.round(b.height),
+    };
+  });
+  expect(await target.count(), 'the target specimen is missing').toBe(1);
 
-  // "Minimum" is not-entirely-hidden. The stricter AAA criterion wants none of
-  // it hidden; scoping to the AA rule the heuristic actually cites. Shortfall is
-  // the covered fraction once it reaches total, so a partial fix shows.
   await measure({
     key: 'focus/not-obscured-by-sticky-chrome',
-    shortfall: fraction >= 1 ? fraction : 0,
-    evidence: `${(fraction * 100).toFixed(0)}% of the focused control sits under the sticky bar`,
+    // Asserting NONE of it is covered, which is SC 2.4.12 (Enhanced, AAA). The
+    // AA Minimum only requires the control not be ENTIRELY hidden, and 99%
+    // covered would satisfy that letter while being useless in practice. The
+    // fix delivers the stricter reading at no extra cost, so that is what is
+    // held.
+    shortfall: reading.fraction,
+    evidence:
+      `${(reading.fraction * 100).toFixed(0)}% covered; control top ${reading.top}px, ` +
+      `sticky bar ${reading.barHeight}px tall`,
     failure:
-      'Focusing the control scrolled it flush to the viewport top, entirely under the sticky ' +
-      'bar. SC 2.4.11 wants it not entirely hidden; scroll-padding-top on html is the usual fix.',
+      'A control scrolled to by an in-page navigation landed under the sticky bar. The surface ' +
+      'declares its chrome height in --weft-sticky-chrome-h and the component layer turns that ' +
+      'into scroll-padding-top; either the token is unset or the rule is not applying.',
   });
 });
-
