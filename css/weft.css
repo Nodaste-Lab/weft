@@ -55,6 +55,13 @@
   --weft-shadow:       0 4px 12px rgba(11, 16, 32, 0.08);  /* resting card elevation */
   --weft-fill-soft:    rgba(11, 16, 32, 0.025);            /* subtle section wash */
   --weft-stop-soft:    rgba(248, 113, 113, 0.22);          /* danger surface tint */
+  /* Fill for a control that is present but not editable — disabled and
+   * read-only. Deliberately its own token rather than --weft-fill-soft: at
+   * 0.025 that wash lands 8/255 from paper, exactly on the threshold where two
+   * renderings stop being distinguishable, and a state that separates itself by
+   * the smallest visible amount is not separating itself. 0.055 reads as a
+   * distinctly static field at 14/255 and still leaves value text at 18.9:1. */
+  --weft-control-fill-static: rgba(11, 16, 32, 0.055);
 
   /* ── On-blue tier (WCAG calibrated) ──────────────────────────────────── */
   /* 0.95 = AA NORMAL (4.55:1). 0.88 / 0.78 = AA LARGE ONLY — only at ≥18pt or ≥14pt bold. */
@@ -195,6 +202,7 @@
   --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
   --weft-fill-soft:    rgba(244, 241, 232, 0.03);
   --weft-stop-soft:    rgba(248, 113, 113, 0.20);
+  --weft-control-fill-static: rgba(244, 241, 232, 0.07);
 
   --weft-blue:         #c4b5fd;  /* violet-300 — lifted primary */
   --weft-blue-deep:    #a78bfa;  /* violet-400 — deep */
@@ -246,6 +254,7 @@
   --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
   --weft-fill-soft:    rgba(244, 241, 232, 0.03);
   --weft-stop-soft:    rgba(248, 113, 113, 0.20);
+  --weft-control-fill-static: rgba(244, 241, 232, 0.07);
 
   --weft-thread-blue:    rgba( 37,  99, 255, 0.18);
   --weft-thread-wash:    rgba( 37,  99, 255, 0.10);
@@ -388,6 +397,7 @@
   --weft-muted:               #a0a8c0;
   --weft-rule:                rgba(255, 255, 255, 0.07);
   --weft-rule-strong:         rgba(255, 255, 255, 0.18);
+  --weft-control-fill-static: rgba(255, 255, 255, 0.07);
   --weft-blue:                #2563ff;
   --weft-stop:                #ef4444;
   --weft-ok:                  #34d399;

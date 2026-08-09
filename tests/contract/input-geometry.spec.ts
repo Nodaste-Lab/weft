@@ -10,7 +10,7 @@
  */
 import { expect, test, type Page } from '@playwright/test';
 import { DENSITIES, SPECIMEN_PAGE, applyAxes, type Density } from './harness';
-import { atLeast, binary, measure, within } from './ratchet';
+import { atLeast, binary, measure, measureAll, within } from './ratchet';
 
 /** One pixel. Sub-pixel layout is normal; a whole pixel of drift is a defect. */
 const TOLERANCE = 1;
@@ -54,15 +54,22 @@ for (const density of DENSITIES) {
     test('every control matches the tier it declares', async ({ page }) => {
       const { tier, heights } = await measureDensity(page, density);
       for (const control of TIER_CONTROLS) {
-        const actual = heights[control];
-        expect(actual, `no ${control} specimen at ${density}`).toBeGreaterThan(0);
-        await measure({
-          key: `geometry/${density}/${control}`,
-          shortfall: within(actual, tier, TOLERANCE),
-          evidence: `${actual}px against a ${tier}px tier`,
-          failure: `The ${control} misses its own tier by ${Math.abs(actual - tier).toFixed(2)}px.`,
-        });
+        expect(heights[control], `no ${control} specimen at ${density}`).toBeGreaterThan(0);
       }
+      // measureAll, not a loop of measure: every control in the row has to be
+      // measured even when an earlier one fails, or the run that flips the first
+      // key is the run that stops checking the rest.
+      await measureAll(
+        TIER_CONTROLS.map((control) => {
+          const actual = heights[control];
+          return {
+            key: `geometry/${density}/${control}`,
+            shortfall: within(actual, tier, TOLERANCE),
+            evidence: `${actual}px against a ${tier}px tier`,
+            failure: `The ${control} misses its own tier by ${Math.abs(actual - tier).toFixed(2)}px.`,
+          };
+        }),
+      );
     });
 
     test('controls in one toolbar row agree on their height', async ({ page }) => {

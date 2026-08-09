@@ -175,14 +175,22 @@ test.describe('the required marker', () => {
     });
   });
 
-  test('does not put punctuation in the name', async ({ page }) => {
+  test('reads as words in the name, not punctuation and not one word', async ({ page }) => {
     const node = await axNode(page, '#nm-required');
     const name = node.name ?? '';
+    // Two things, because the first fix produced the second bug. Removing the
+    // glyph is not enough if the marker then fuses onto the label — the first
+    // pass at this exposed "RETENTIONREQUIRED", one word, because
+    // accessible-name computation concatenates text nodes and the markup had no
+    // space between them.
+    const problems: string[] = [];
+    if (name.includes('*')) problems.push('the marker glyph is in the name');
+    if (!/retention\s+required/i.test(name)) problems.push('the marker is not a separate word');
     await measure({
       key: 'naming/required-marker/name-carries-no-marker-glyph',
-      shortfall: binary(!name.includes('*')),
+      shortfall: problems.length,
       evidence: `name ${JSON.stringify(name)}`,
-      failure: 'The marker glyph is inside the accessible name, where it reads as punctuation.',
+      failure: `The required marker is not readable as text: ${problems.join('; ')}.`,
     });
   });
 });

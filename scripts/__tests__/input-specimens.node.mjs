@@ -84,6 +84,61 @@ test('S5: the states and boundary matrices are complete', () => {
   assert.deepEqual(missing, [], `boundary specimens missing:\n  ${missing.join('\n  ')}`);
 });
 
+test('S7: every hint carrying an id is referenced by its control', () => {
+  // The plain-CSS layer cannot produce ARIA. What it ships is a markup
+  // convention — hint ids of the form `<control-id>-hint` / `-error`, listed in
+  // the control's aria-describedby — and a convention nothing checks is a
+  // paragraph. Enforced across the whole page rather than on the two specimens
+  // that exist to demonstrate it, so wiring one field and not the next fails
+  // here instead of downstream.
+  const describedBy = new Set(
+    [...html.matchAll(/aria-describedby="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)),
+  );
+  const hintIds = [...html.matchAll(/class="weft-field-hint[^"]*"[^>]*\bid="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(hintIds.length >= 3, `expected several identified hints, found ${hintIds.length}`);
+
+  const dangling = hintIds.filter((id) => !describedBy.has(id));
+  assert.deepEqual(
+    dangling,
+    [],
+    `Hints carry an id but no control points at them, so they are decoration:\n  ${dangling.join('\n  ')}`,
+  );
+});
+
+test('S8: hint ids follow the documented pattern, and every reference resolves', () => {
+  const ids = new Set([...html.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]));
+  const problems = [];
+  for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
+    for (const ref of list.split(/\s+/)) {
+      if (!ids.has(ref)) problems.push(`${ref} is referenced but no element has that id`);
+      if (!/-(hint|error)$/.test(ref)) problems.push(`${ref} does not end in -hint or -error`);
+    }
+  }
+  assert.deepEqual(problems, [], `Description wiring is broken:\n  ${problems.join('\n  ')}`);
+});
+
+test('S9: a required marker is real text and its control carries the attribute', () => {
+  // Decision 4. A bare glyph lands in the accessible name as punctuation while
+  // `required` stays false — observed name "RETENTION*", required false.
+  const markers = [...html.matchAll(/<span class="weft-req">([^<]*)<\/span>/g)].map((m) => m[1]);
+  assert.ok(markers.length > 0, 'the page has no required marker to check');
+  const glyphs = markers.filter((text) => !/[a-z]/i.test(text));
+  assert.deepEqual(glyphs, [], `Required markers that are punctuation rather than text: ${glyphs.join(', ')}`);
+
+  // Every label containing a marker must point at a control declaring `required`.
+  for (const match of html.matchAll(/<label class="weft-field-label" for="([^"]+)">([\s\S]*?)<\/label>/g)) {
+    const [, forId, inner] = match;
+    if (!inner.includes('weft-req')) continue;
+    const control = new RegExp(`<(?:input|select|textarea)[^>]*\\bid="${forId}"[^>]*>`).exec(html);
+    assert.ok(control, `the marked label points at #${forId}, which does not exist`);
+    assert.match(
+      control[0],
+      /\brequired\b/,
+      `#${forId} is marked required in its label but the control does not declare the attribute`,
+    );
+  }
+});
+
 test('S6: every control on the page has an accessible name, except where absence is the point', () => {
   // Mirrors T2-c in the template contract. The exception is deliberate and
   // narrow: #nm-placeholder exists precisely to be a control with no name, and

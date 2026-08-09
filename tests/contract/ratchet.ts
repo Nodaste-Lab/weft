@@ -98,6 +98,31 @@ export async function measure({ key, shortfall, evidence, failure }: Claim): Pro
   }
 }
 
+/**
+ * Measure several claims and report on all of them.
+ *
+ * `measure()` throws, so a bare loop stops at the first claim that fails and the
+ * rest of the row is never measured — which is how a matrix quietly shrinks to
+ * its first cell. It bites hardest at exactly the wrong moment: the run where a
+ * phase flips one key is the run where the keys after it stop being checked, and
+ * the coverage guard then reports them as unmeasured rather than as passing.
+ */
+export async function measureAll(claims: Claim[]): Promise<void> {
+  const failures: string[] = [];
+  for (const claim of claims) {
+    try {
+      await measure(claim);
+    } catch (error) {
+      failures.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+  if (failures.length) {
+    throw new Error(
+      `${failures.length} of ${claims.length} claims failed:\n\n${failures.join('\n\n')}`,
+    );
+  }
+}
+
 function round(n: number): number {
   return Math.round(n * 100) / 100;
 }

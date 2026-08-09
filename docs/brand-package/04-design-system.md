@@ -615,15 +615,21 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 > the same surface a sandboxed panel iframe receives. `npm run test:contract`
 > measures it.
 >
-> **Parts of this section describe intent rather than shipped code, and the page
-> shows which.** The 44px floor is missed at two of three densities, disabled has
-> no rule in the plain-CSS layer, no class wires `aria-describedby`, and the class
-> names below are unprefixed while the shipped CSS is `weft-` prefixed throughout.
-> Each gap is recorded with its measured value in `tests/contract/known-defects.ts`
-> and is owned by a later phase of the input design system; this note comes out
-> when the last of them does.
+> **Parts of this section still describe intent rather than shipped code, and the
+> page shows which.** Remaining: no field boundary reaches the 3:1 non-text
+> contrast floor, the visible label rewrites the name it exposes, there is no
+> visually-hidden utility, and the class names below are unprefixed while the
+> shipped CSS is `weft-` prefixed throughout. Each gap is recorded with its
+> measured shortfall in `tests/contract/known-defects.ts` and is owned by a later
+> phase; this note comes out when the last of them does.
+>
+> Closed since: control height at every tier, disabled and read-only in the
+> plain-CSS layer, a focus ring an author shadow cannot delete, description
+> wiring, and the required marker.
 
-Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-paper` surface with a `--weft-rule` border and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`). Disabled isn't documented yet — reach for it if needed, but prefer hiding the control or explaining in prose why it's unavailable.
+Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-paper` surface with a `--weft-rule` border and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
+
+**Disabled and read-only are different promises, and they look different.** Disabled dims the whole control to 0.55 and takes `cursor: not-allowed` — it is not available. Read-only keeps full text contrast and changes only its fill to `--weft-control-fill-static` — the value is present and meant to be read, just not edited. Neither sets a border colour, deliberately: `.weft-input:disabled` weighs exactly as much as `.weft-input[aria-invalid="true"]` and is declared later, so a border colour there would silently outrank the error border on a disabled invalid field. `<select>` has no read-only in its content model, so that pairing does not exist for it.
 
 #### Field wrapper
 
@@ -638,10 +644,27 @@ Every input sits inside a `.field` that stacks label + control + hint vertically
 </div>
 ```
 
-- `.input` height is 44px min (WCAG 2.5.5 target size).
+- `.input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.
 - Border transitions at `--weft-dur-fast`. No hover scale, no color bleed, no ring.
-- Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input.
+- Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input. **It is delivered twice, as an `outline` and as a `box-shadow` with identical geometry.** One carrier alone was deletable: `:where()` contributes nothing to specificity, so any page's `.shadow { box-shadow: … }` declared later replaced the ring outright, with no error and no gate. A shadow utility cannot touch `outline`; an author `outline: none` cannot touch `box-shadow`.
+
+#### Associating help and error text
+
+The plain-CSS layer cannot produce ARIA, so what Weft ships here is a markup convention, and `scripts/__tests__/input-specimens.node.mjs` enforces it across the whole specimen page:
+
+- a hint carries `id="<control-id>-hint"`; an error carries `id="<control-id>-error"`;
+- the control lists them in `aria-describedby`, in reading order;
+- the React layer wires the same relationship by construction in `FormControl`, so a consumer using the primitives gets it without writing ids.
+
+A hint with an id that nothing points at is decoration. That is what shipped before this convention existed: `aria-invalid` was exposed and the description was empty.
+
+**The required marker is real text plus the attribute** (heuristic 7, and it marks the minority — never both). A bare `*` lands inside the accessible name as punctuation while `required` stays false; the observed name was "RETENTION\*" with `required` false. Write the word, keep the space before it — the name concatenates text nodes, so without it you get "Retentionrequired" — and set the attribute:
+
+```html
+<label class="weft-field-label" for="retention">Retention <span class="weft-req">required</span></label>
+<input class="weft-input" id="retention" required />
+```
 
 #### `.textarea`
 

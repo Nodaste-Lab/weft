@@ -66,89 +66,20 @@ export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freez
       'P3 — there is no .weft-sr-only or equivalent anywhere in the shipped CSS, so the only ' +
       'route to a name is a visible label. This is the gap that changed the board rail design. ' +
       'Shortfall is the rendered area in px².',
-    shortfall: 4900,
+    shortfall: 4899,
   },
 
-  // ── Description wiring (P2) ───────────────────────────────────────────────
-  'naming/help-text/description-exposes-help': {
-    why:
-      'P2 — .weft-field-hint is an unassociated sibling. Nothing wires aria-describedby, for ' +
-      'help text or for error text.',
-    shortfall: 1,
-  },
-  'naming/error-text/description-exposes-error': {
-    why: 'P2 — aria-invalid is exposed; the description is empty.',
-    shortfall: 1,
-  },
-  'naming/help-then-error/description-carries-each-message-once': {
-    why: 'P2 — no description is attached at all, so "exactly once" cannot yet be true. Shortfall counts the messages missing.',
-    shortfall: 2,
-  },
-
-  // ── Required marker (P2, decision 4) ──────────────────────────────────────
-  'naming/required-marker/required-is-true': {
-    why:
-      'P2 — .weft-req renders a bare red asterisk and nothing sets the required attribute. ' +
-      'Observed: required false.',
-    shortfall: 1,
-  },
-  'naming/required-marker/name-carries-no-marker-glyph': {
-    why: 'P2 — the asterisk lands inside the accessible name. Observed name "RETENTION*".',
-    shortfall: 1,
-  },
-
-  // ── Geometry (P2, and the textarea in P5) ─────────────────────────────────
-  // Padding plus line-height outgrows min-height. Only the dense tier was
-  // hand-tuned (pad-y 6px) to fit, which is why this hid at two tiers.
-  // Shortfall is pixels past the one-pixel tolerance.
-  'geometry/marketing/input': { why: 'P2 — 46.39px against a 44px tier.', shortfall: 1.39 },
-  'geometry/marketing/select': { why: 'P2 — 46.39px against a 44px tier.', shortfall: 1.39 },
-  'geometry/marketing/row-heights-agree': {
-    why: 'P2 — input and select stand 2.39px taller than the button beside them.',
-    shortfall: 1.39,
-  },
-  'geometry/compact/input': { why: 'P2 — 43.59px against a 36px tier.', shortfall: 6.59 },
-  'geometry/compact/select': { why: 'P2 — 43.59px against a 36px tier.', shortfall: 6.59 },
-  'geometry/compact/row-heights-agree': {
-    why: 'P2 — input and select stand 7.59px taller than the button beside them.',
-    shortfall: 6.59,
-  },
+  // ── Geometry (P5) ─────────────────────────────────────────────────────────
+  // P2 closed the control-height defects at their cause; what is left here is
+  // the textarea, whose floor was never a tier in the first place.
   'geometry/textarea/tracks-density': {
     why: 'P5 — .weft-textarea min-height is a hardcoded 96px and tracks no token at any tier.',
     shortfall: 1,
   },
 
-  // ── States (P2) ───────────────────────────────────────────────────────────
-  // Shortfall counts the controls whose two renderings did not separate.
-  'states/disabled-renders-distinctly': {
-    why:
-      'P2 — .weft-input defines no disabled rule. A disabled field renders at opacity 1 with an ' +
-      'unchanged background, visually identical to an editable one. The React Input does style ' +
-      'both. The select separates by 7, under the 8 floor, on native UA dimming alone.',
-    shortfall: 3,
-  },
-  'states/readonly-renders-distinctly': {
-    why: 'P2 — .weft-input defines no read-only rule either.',
-    shortfall: 2,
-  },
-  'states/disabled-differs-from-readonly': {
-    why: 'P2 — neither state is styled, so the two are the same pixels.',
-    shortfall: 2,
-  },
-
-  // ── Focus (P2, obscuring in P4) ───────────────────────────────────────────
-  // The global rule is :where(...):focus-visible — the :where() contributes
-  // nothing, so the whole selector is (0,1,0) and any author rule at class
-  // specificity, declared later, replaces the ring with no error and no gate.
-  // Shortfall counts ring pixels short of the quarter-perimeter threshold.
-  'focus/author-shadow-class/indicator-survives': {
-    why: 'P2 — an author box-shadow at class specificity deletes the ring outright: 0 of 40 ring pixels change.',
-    shortfall: 10,
-  },
-  'focus/author-shadow-inline/indicator-survives': {
-    why: 'P2 — an inline box-shadow deletes the ring outright: 0 of 40 ring pixels change.',
-    shortfall: 10,
-  },
+  // ── Focus (P4) ────────────────────────────────────────────────────────────
+  // P2 gave the ring a second carrier, so an author shadow no longer deletes it.
+  // What is left is the criterion about the page around the control.
   'focus/not-obscured-by-sticky-chrome': {
     why:
       'P4 — heuristic 9, SC 2.4.11. Focusing a control that sits under the sticky bar scrolls it ' +
@@ -172,7 +103,7 @@ export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freez
   'boundary/light/marketing/card': { why: 'P4 — the field fill is the card fill, 1.00:1.', shortfall: 5 },
   'boundary/light/compact/paper': { why: 'P4 — 6 of 12 cells under 3:1; best 1.30:1.', shortfall: 6 },
   'boundary/light/compact/cream': { why: 'P4 — under 3:1.', shortfall: 6 },
-  'boundary/light/compact/card': { why: 'P4 — under 3:1.', shortfall: 6 },
+  'boundary/light/compact/card': { why: 'P4 — under 3:1.', shortfall: 5 },
   'boundary/light/dense/paper': { why: 'P4 — under 3:1; best 1.30:1.', shortfall: 6 },
   'boundary/light/dense/cream': { why: 'P4 — under 3:1.', shortfall: 6 },
   'boundary/light/dense/card': { why: 'P4 — under 3:1.', shortfall: 5 },
@@ -181,7 +112,7 @@ export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freez
   'boundary/dark/marketing/card': { why: 'P4 — under 3:1.', shortfall: 5 },
   'boundary/dark/compact/paper': { why: 'P4 — 6 of 12 cells under 3:1.', shortfall: 6 },
   'boundary/dark/compact/cream': { why: 'P4 — under 3:1.', shortfall: 6 },
-  'boundary/dark/compact/card': { why: 'P4 — under 3:1.', shortfall: 6 },
+  'boundary/dark/compact/card': { why: 'P4 — under 3:1.', shortfall: 5 },
   'boundary/dark/dense/paper': { why: 'P4 — under 3:1.', shortfall: 6 },
   'boundary/dark/dense/cream': { why: 'P4 — under 3:1.', shortfall: 6 },
   'boundary/dark/dense/card': { why: 'P4 — under 3:1.', shortfall: 5 },
@@ -202,13 +133,6 @@ export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freez
   },
 
   // ── Consumer iframe (P2, P4) ──────────────────────────────────────────────
-  'iframe/focus-survives-host-shadow-utility': {
-    why:
-      'P2 — the panel box-shadow utility in the adversarial fixture deletes the ring inside the ' +
-      'frame, exactly as it does on the page, in both themes. This is the case that made the ' +
-      'iframe harness worth building before anything changed.',
-    shortfall: 2,
-  },
   'iframe/boundary/light': { why: 'P4 — the same hairline inside the injected panel iframe.', shortfall: 2 },
   'iframe/boundary/dark': { why: 'P4 — the same hairline inside the injected panel iframe.', shortfall: 2 },
 });

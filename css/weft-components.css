@@ -16,8 +16,30 @@
  */
 
 /* ── Accessibility base: focus ring + reduced motion ──────────────────────── */
+/* TWO CARRIERS, ONE APPEARANCE.
+ *
+ * The ring used to be a box-shadow alone. `:where()` contributes nothing to
+ * specificity, so this whole selector weighs (0,1,0) — the same as any page's
+ * `.shadow { box-shadow: … }` — and an author rule declared later replaced the
+ * ring outright, with no error and no gate. Measured: 0 of 40 ring pixels
+ * painted, on the page and inside an injected panel iframe alike.
+ *
+ * Delivering the same ring through `outline` as well closes the class rather
+ * than the instance. A shadow utility cannot touch `outline`; an author
+ * `outline: none` cannot touch `box-shadow`. Deleting the indicator now takes
+ * deleting both, which is a deliberate act rather than an accident.
+ *
+ * The geometry is deliberately identical, so nothing moves: --weft-focus-ring
+ * paints 2px of cream then 2px of ring colour, and `outline: 2px` at
+ * `outline-offset: 2px` lands in that same 2–4px band. Both follow the element's
+ * border-radius.
+ *
+ * `:where()` stays, so a component can still override the ring deliberately.
+ * tests/contract/input-focus.spec.ts measures painted pixels rather than either
+ * property, so this can be reshaped again without rewriting the test. */
 :where(a, button, [tabindex], input, select, textarea):focus-visible {
-  outline: none;
+  outline: 2px solid var(--weft-focus-ring-color);
+  outline-offset: 2px;
   box-shadow: var(--weft-focus-ring);
   border-radius: 3px;
 }
@@ -132,7 +154,26 @@
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--weft-muted);
 }
-.weft-field-label .weft-req { color: var(--weft-stop); margin-left: 2px; }
+/* Heuristic 7 marks the minority, and decision 4 fixed what the marker IS: real
+ * text plus the `required` attribute, never a bare glyph. A `*` alone landed
+ * inside the accessible name as punctuation while `required` stayed false —
+ * observed name "RETENTION*", required false. The word carries meaning wherever
+ * the name is read, and the attribute carries the state.
+ *
+ *   <label class="weft-field-label" for="x">Retention <span class="weft-req">required</span></label>
+ *   <input class="weft-input" id="x" required />
+ *
+ * The literal space before the span is load-bearing. Accessible-name
+ * computation concatenates the label's text nodes, and without it the name
+ * comes out "Retentionrequired" — one word, which is not what decision 4
+ * settled and not what anyone would want read out.
+ */
+.weft-field-label .weft-req {
+  color: var(--weft-stop);
+  margin-left: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
 .weft-field-hint { font-size: 13px; color: var(--weft-muted); line-height: 1.4; }
 .weft-field-hint.is-error { color: var(--weft-stop); }
 
@@ -148,8 +189,23 @@
   background: var(--weft-paper);
   border: 1px solid var(--weft-rule);
   border-radius: var(--weft-radius-card);
-  padding: var(--weft-control-pad-y, 11px) var(--weft-control-pad-x);
+  /* HEIGHT, NOT MIN-HEIGHT, and no vertical padding.
+   *
+   * The control used to reach its tier through `min-height` while padding plus
+   * line-height pushed straight past it, so the declared tier never governed:
+   * 46.39px against a 44px token at marketing, 43.59px against 36px at compact.
+   * Only the dense tier fitted, and only because its pad-y had been hand-tuned
+   * to 6px — which is exactly how this stayed invisible at two tiers out of
+   * three, and why the fix is at the cause rather than a third hand-tune.
+   *
+   * A single-line control centres its own text in the content box, so vertical
+   * padding has no work to do here. min-height is kept alongside height so a
+   * consumer setting `height: auto` still cannot collapse the control.
+   * .weft-textarea overrides both below: it is genuinely multi-line. */
+  height: var(--weft-control-h);
   min-height: var(--weft-control-h);
+  padding-block: 0;
+  padding-inline: var(--weft-control-pad-x);
   transition:
     border-color var(--weft-dur-fast) var(--weft-ease-out),
     background-color var(--weft-dur-fast) var(--weft-ease-out);
@@ -162,7 +218,42 @@
 .weft-textarea[aria-invalid="true"],
 .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }
 
-.weft-textarea { min-height: 96px; resize: vertical; }
+/* Disabled and read-only are different promises, and until now the plain-CSS
+ * layer made neither: a disabled field rendered at opacity 1 with an unchanged
+ * background, pixel-identical to an editable one, while the React `Input`
+ * styled both. Disabled DIMS — the control is not available. Read-only keeps
+ * full contrast and changes its fill — the value is present and meant to be
+ * read, just not edited.
+ *
+ * NEITHER SETS border-color, deliberately. `.weft-input:disabled` weighs
+ * (0,2,0), exactly as much as `.weft-input[aria-invalid="true"]` above, and it
+ * is declared later — so a border colour here would silently outrank the error
+ * border on a disabled invalid field. Same cascade trap as the boundary work,
+ * avoided by not entering the property. */
+.weft-input:disabled,
+.weft-textarea:disabled,
+.weft-select:disabled {
+  background-color: var(--weft-control-fill-static);
+  opacity: 0.55;                      /* matches .weft-btn:disabled and React's disabled:opacity-50 */
+  cursor: not-allowed;
+}
+/* <select> has no read-only in its content model — the attribute is ignored —
+ * so the pair genuinely does not exist for it. Absent, not overlooked. */
+.weft-input[readonly],
+.weft-textarea[readonly] {
+  background-color: var(--weft-control-fill-static);
+  cursor: default;
+}
+
+.weft-textarea {
+  /* Genuinely multi-line, so it keeps padding and a floor rather than a fixed
+   * height. The floor is still a hardcoded 96px tracking no tier — P5 owns that,
+   * and geometry/textarea/tracks-density records it. */
+  height: auto;
+  min-height: 96px;
+  padding-block: var(--weft-control-pad-y, 11px);
+  resize: vertical;
+}
 
 .weft-select {
   appearance: none; -webkit-appearance: none;

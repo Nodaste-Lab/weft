@@ -77,7 +77,8 @@ SELECT_OPTIONS = '<option>Thirty days</option><option>Ninety days</option>'
 
 
 def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='',
-                 placeholder=None, label_text=None, value=None):
+                 placeholder=None, label_text=None, value=None, describedby=None,
+                 required=False):
     """One bare control. Empty by default — a painted-contrast sample must not
     land on glyphs, so the boundary specimens carry no value and no placeholder."""
     attrs = [f'id="{ident}"', f'data-spec="{spec}"', f'data-control="{kind}"',
@@ -92,6 +93,10 @@ def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='
         attrs.append('disabled')
     elif state == 'readonly':
         attrs.append('readonly')
+    if describedby:
+        attrs.append(f'aria-describedby="{E(describedby)}"')
+    if required:
+        attrs.append('required')
     if extra_attrs:
         attrs.append(extra_attrs)
     a = ' '.join(attrs)
@@ -231,7 +236,7 @@ def naming_section():
     row('help-text', 'Help text',
         '<div class="weft-field">'
         '<label class="weft-field-label" for="nm-help">Webhook URL</label>'
-        + control_html('input', 'naming', 'nm-help')
+        + control_html('input', 'naming', 'nm-help', describedby='nm-help-hint')
         + '<span class="weft-field-hint" id="nm-help-hint">Must be reachable over HTTPS.</span>'
           '</div>',
         'description contains "Must be reachable over HTTPS."')
@@ -239,7 +244,8 @@ def naming_section():
     row('error-text', 'Error text',
         '<div class="weft-field">'
         '<label class="weft-field-label" for="nm-error">Webhook URL</label>'
-        + control_html('input', 'naming', 'nm-error', state='invalid', value='not-a-url')
+        + control_html('input', 'naming', 'nm-error', state='invalid', value='not-a-url',
+                       describedby='nm-error-hint')
         + '<span class="weft-field-hint is-error" id="nm-error-hint">'
           'That address did not resolve. Check the host, then try again.</span>'
           '</div>',
@@ -248,7 +254,8 @@ def naming_section():
     row('help-then-error', 'Help plus error',
         '<div class="weft-field">'
         '<label class="weft-field-label" for="nm-both">Retention window</label>'
-        + control_html('input', 'naming', 'nm-both', state='invalid', value='0')
+        + control_html('input', 'naming', 'nm-both', state='invalid', value='0',
+                       describedby='nm-both-hint nm-both-error')
         + '<span class="weft-field-hint" id="nm-both-hint">Whole days, 1 or more.</span>'
           '<span class="weft-field-hint is-error" id="nm-both-error">'
           'Zero is not a window. Enter 1 or more days.</span>'
@@ -257,16 +264,23 @@ def naming_section():
 
     row('required-marker', 'Required marker',
         '<div class="weft-field">'
-        '<label class="weft-field-label" for="nm-required">Retention'
-        '<span class="weft-req">*</span></label>'
-        + control_html('input', 'naming', 'nm-required') + '</div>',
-        'required is true, and the name carries no marker glyph')
+        '<label class="weft-field-label" for="nm-required">Retention '
+        '<span class="weft-req">required</span></label>'
+        + control_html('input', 'naming', 'nm-required', required=True) + '</div>',
+        'name "Retention required", required true, and no marker glyph in the name')
 
     return section(
         'naming', 'Naming — what does this control expose?',
         'Names and descriptions are read from the accessibility tree. That proves '
         'exposure, never announcement — what a screen reader does with a string is '
-        'product-dependent and is not claimed here.',
+        'product-dependent and is not claimed here.<br />'
+        'The plain-CSS layer cannot produce ARIA, so what it ships is a markup '
+        'convention: a hint carries <code>id="&lt;control-id&gt;-hint"</code>, an error '
+        'carries <code>id="&lt;control-id&gt;-error"</code>, and the control lists them in '
+        '<code>aria-describedby</code> in reading order. The React layer wires the same '
+        'relationship by construction in <code>FormControl</code>. '
+        'scripts/__tests__/input-specimens.node.mjs enforces the convention across this '
+        'whole page, so it is a rule rather than two hand-wired specimens.',
         f'<div class="grid">{"".join(rows)}</div>')
 
 
