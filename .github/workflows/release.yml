@@ -34,10 +34,22 @@ jobs:
           npm run test:css-contract
           npm run test:contrast
           npm run test:template-contract
+          npm run test:specimens
+          npm run test:review-gate
           node scripts/check-pure-token-file.mjs
           node scripts/check-raw-colors.mjs
           npx vitest run
+      # The measured input contract needs a browser, so it installs one here.
+      # It belongs in this job and not only in PR CI: with branch protection
+      # unavailable, THIS is the gate, and a check that runs on the PR but not
+      # before publish is a check the release can walk past.
+      - name: Install Chromium for the contract suite
+        run: npx playwright install --with-deps chromium
+      - name: Input contract (names, geometry, painted contrast, focus, iframe consumer)
+        run: npm run test:contract
       - run: npm run build
+      - name: Packed artifact (every contract file by exact path)
+        run: npm run test:packed
       - name: Exports contract (packed tarball resolves all consumer specifiers)
         run: npm run check:exports
       - name: Create release PR or publish to GitHub Packages

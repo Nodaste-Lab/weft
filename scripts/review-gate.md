@@ -180,6 +180,60 @@ GitHub Enterprise login unrelated to this repo would block a PR `gh` can read
 perfectly well. `gh pr view` is the repo-scoped check, and it already fails on
 bad auth, bad number, and no access alike.
 
+## What the discovered battery runs in this repo
+
+The candidate list in `build_default_gates` is repo-agnostic; these are the ones
+Weft defines today, in the order they run. Anything a repo has not defined is
+skipped rather than mistaken for a failure.
+
+| Gate | What breaks if it is missing |
+|---|---|
+| `test` | vitest: the React primitives and their a11y suites |
+| `verify` | `manifest.json` ↔ `src/ui` lockstep, semver, version integrity |
+| `props` / `test:props` | the committed prop-surface contract, and the gate's own tests |
+| `tokens` | token values change only with a version bump |
+| `test:css-contract` | selector semantics and the contrast floors |
+| `test:contrast` | AA on paper, both themes |
+| `test:template-contract` | the weft-board template layer |
+| `test:specimens` | the input specimen page is fresh and its generator deterministic |
+| `test:review-gate` | this script's own harness |
+| `test:contract` | **the measured input contract** — accessible names and descriptions, control geometry per density, painted boundary contrast, focus survival, the select chevron, and the sandboxed-iframe consumer condition. Needs a Chromium install (`npx playwright install chromium`). |
+| `build` | the ESM bundle, before anything that inspects build output |
+| `test:packed` | every contract file is in the tarball, by exact path |
+| `check:exports` | every consumer specifier resolves from the packed tarball |
+
+Plus `node scripts/check-raw-colors.mjs` and `node scripts/check-pure-token-file.mjs`.
+
+**`test:contract` fails in three directions, which is unusual and deliberate.**
+It carries a ratchet. Every measured claim reports a *shortfall* — a number that
+is zero when the claim holds and grows as the surface gets further from holding
+— and `tests/contract/known-defects.ts` records the shortfall each known defect
+had when it was written. So:
+
+- a recorded claim that starts **holding** fails the run, because a fix moved a
+  number and the entry has to come out with it;
+- a recorded claim that gets **worse than its recorded shortfall** fails the run,
+  because a known defect is a floor and not a licence;
+- a claim **not recorded** that fails is an ordinary regression.
+
+The second direction was added after review caught its absence. The recorded
+measurements used to be prose, so `boundary/light/marketing/paper` could have
+degraded from five cells under the contrast floor to twelve and stayed green —
+it was still failing, which was all the ratchet checked. A gate that checks only
+the direction of a claim and not its magnitude is a list of things nobody is
+watching.
+
+A complete run also fails on a recorded defect nothing measured, so an entry
+cannot outlive its assertion. The reason for all of this is in that file's
+header: axe-core reports zero violations on the current input surface, so a
+conventional gate would go green over every defect it records.
+
+**The pack smoke moved out of CI YAML.** It used to be eleven lines of inline
+`node -e` in `.github/workflows/ci.yml` asserting seven paths — which meant it
+could not be run before pushing and was not in this battery. It is now
+`scripts/__tests__/packed-artifact.node.mjs`, it asserts the full contract list
+by exact path, and CI runs the same script everyone else can run.
+
 **The gate has its own tests, and CI runs them.** `npm run test:review-gate`
 builds throwaway git repos, runs the real script against a stub wrapper, and
 asserts on the review input it generates — the artefact that actually reaches an

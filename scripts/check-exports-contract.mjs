@@ -25,6 +25,7 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/tooling/raw-colors',
   '@nodaste-lab/weft/manifest.json',
   '@nodaste-lab/weft/props-snapshot.json',
+  '@nodaste-lab/weft/tokens-snapshot.json',
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',

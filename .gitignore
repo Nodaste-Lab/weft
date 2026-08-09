@@ -4,3 +4,8 @@ dist/
 dist-site/
 playwright-report/
 test-results/
+.specimens-scratch/
+# Scratch artifacts from design threads. Underscore-prefixed at the repo root
+# marks "working file, not a deliverable" — the deliverables live in
+# docs/brand-package/ and thoughts/plans/.
+/_*
