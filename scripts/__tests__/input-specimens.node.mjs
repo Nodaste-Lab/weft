@@ -162,19 +162,74 @@ test('S10: no text-entry control is named by aria-label', () => {
 
 test('S11: the rendered reference page teaches the shipped input contract', () => {
   // docs/brand-package/design-system.html is self-contained — it carries its own
-  // copy of the CSS rather than linking css/ — so it can describe one contract in
-  // prose while rendering another. It did: the prose was updated for the new
-  // boundary and the embedded styles still painted --weft-rule at 1.30:1 with
-  // mono-caps labels and a bare-asterisk marker. A rendered reference that
-  // contradicts the code is worse than no rendered reference.
+  // copy of the CSS rather than linking css/ — so it can describe one contract
+  // in prose while rendering another. It did, twice, and the second time was
+  // because the first version of THIS GUARD was too weak: it matched one literal
+  // marker shape and the presence of two token names, so it passed a page that
+  // still had `outline: none` on focus, an uppercase legend, and a stale
+  // syntax-highlighted code sample. A guard that only checks the thing you
+  // happened to fix will pass the thing you happened to miss.
+  //
+  // Each check below is therefore aimed at a CONTRACT, and at every form the
+  // page can express it in: rendered markup, embedded CSS, and escaped samples.
   const page = readFileSync(join(ROOT, 'docs', 'brand-package', 'design-system.html'), 'utf8');
+  // TWO views of the page, and both are needed. Stripping tags turns the escaped
+  // code samples into real markup, which is the only way to inspect them — but it
+  // also destroys the RENDERED markup, so a check run only against the decoded
+  // copy silently skips every real specimen. The first version of this guard did
+  // exactly that and passed a bare asterisk sitting in the page.
+  const decoded = page
+    .replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+  const views = [
+    ['rendered markup', page],
+    ['a code sample', decoded],
+  ];
   const problems = [];
-  if (/class="req">\s*\*/.test(page)) problems.push('a bare-asterisk required marker survives');
-  if (/\.field-label\s*\{[^}]*text-transform:\s*uppercase/.test(page)) {
-    problems.push('.field-label still uppercases, which rewrites the accessible name');
+
+  // The focus ring has two carriers. One alone is deletable.
+  const focusRule = /:focus-visible\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/outline:\s*\d/.test(focusRule)) problems.push('the focus rule paints no outline');
+  if (!/box-shadow:/.test(focusRule)) problems.push('the focus rule paints no box-shadow');
+  if (/outline:\s*none/.test(focusRule)) problems.push('the focus rule still resets the outline');
+
+  // Field labels and legends are sentence case: an uppercase transform rewrites
+  // the accessible name. Every OTHER uppercase on the page is legitimate.
+  for (const selector of ['.field-label', 'legend']) {
+    const rule = new RegExp(`${selector.replace('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(page)?.[1] ?? '';
+    if (/text-transform:\s*uppercase/.test(rule)) {
+      problems.push(`${selector} still uppercases, which rewrites the accessible name`);
+    }
   }
-  if (!/--weft-control-border/.test(page)) problems.push('the embedded CSS does not use --weft-control-border');
-  if (!/--weft-control-fill/.test(page)) problems.push('the embedded CSS does not use --weft-control-fill');
+
+  // The boundary tokens, in the embedded copy.
+  for (const token of ['--weft-control-border', '--weft-control-fill']) {
+    if (!page.includes(token)) problems.push(`the embedded CSS does not use ${token}`);
+  }
+
+  for (const [where, view] of views) {
+    // The required marker is a word, never punctuation.
+    for (const [, marker] of view.matchAll(/class="req">([^<]*)</g)) {
+      if (!/[a-z]/i.test(marker)) {
+        problems.push(`in ${where}, a marker reads ${JSON.stringify(marker)} rather than a word`);
+      }
+    }
+    // And a control whose label says required must actually be required. Paired
+    // by `for`/`id` rather than by proximity: the first attempt bounded the
+    // search by the next closing tag within 400 characters, which a <select>
+    // full of <option>s comfortably outruns — so it silently checked nothing for
+    // exactly the specimen that was wrong.
+    for (const [, forId, inner] of view.matchAll(/<label\b[^>]*\bfor="([^"]+)"[^>]*>([\s\S]*?)<\/label>/g)) {
+      if (!inner.includes('class="req"')) continue;
+      const control = new RegExp(`<(?:input|select|textarea)\\b[^>]*\\bid="${forId}"[^>]*>`).exec(view);
+      if (!control) {
+        problems.push(`in ${where}, a label marked required points at #${forId}, which does not exist`);
+      } else if (!/\brequired\b/.test(control[0])) {
+        problems.push(`in ${where}, #${forId} is marked required in its label but the control is not`);
+      }
+    }
+  }
+
   assert.deepEqual(problems, [], `docs/brand-package/design-system.html has drifted:\n  ${problems.join('\n  ')}`);
 });
 
