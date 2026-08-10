@@ -139,6 +139,27 @@ test('S9: a required marker is real text and its control carries the attribute',
   }
 });
 
+test('S10: no text-entry control is named by aria-label', () => {
+  // The ladder sanctions aria-label for icon-only controls and nothing else. A
+  // rule stated in doctrine and broken by the page that demonstrates it teaches
+  // the breach, so this is enforced across every input, select and textarea on
+  // the page — including the measurement specimens, which are not exempt. If
+  // they needed to be, the rule would be wrong.
+  const offenders = [];
+  for (const [, tag, attrs] of html.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
+    if (!/\baria-label="/.test(attrs)) continue;
+    const id = /\bid="([^"]+)"/.exec(attrs)?.[1] ?? '(no id)';
+    offenders.push(`<${tag} id="${id}">`);
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    'These controls are named by aria-label, which the naming ladder sanctions only for ' +
+      `icon-only controls. Use a real <label>, hidden with .weft-sr-only if the surface cannot ` +
+      `carry a visible one:\n  ${offenders.join('\n  ')}`,
+  );
+});
+
 test('S6: every control on the page has an accessible name, except where absence is the point', () => {
   // Mirrors T2-c in the template contract. The exception is deliberate and
   // narrow: #nm-placeholder exists precisely to be a control with no name, and

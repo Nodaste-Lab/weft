@@ -41,18 +41,6 @@ test('a group legend names its group', async ({ page }) => {
   });
 });
 
-test('aria-label names a control', async ({ page }) => {
-  const node = await axNode(page, '#nm-arialabel');
-  // Not a known defect: this rung already works, and the assertion exists so a
-  // labelling change cannot quietly remove it.
-  await measure({
-    key: 'naming/aria-label-only/name',
-    shortfall: binary(node.name === 'Filter results'),
-    evidence: `name ${JSON.stringify(node.name)}`,
-    failure: 'aria-label no longer names the control.',
-  });
-});
-
 test('no control anywhere is named by its placeholder', async ({ page }) => {
   // Page-wide, not one specimen. The rule is "a placeholder is a format hint,
   // never a name", and a rule checked on the single control that exists to

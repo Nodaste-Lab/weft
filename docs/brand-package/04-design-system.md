@@ -629,16 +629,18 @@ Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.selec
 
 #### Field wrapper
 
-Every input sits inside a `.field` that stacks label + control + hint vertically. Labels are mono caps (`--weft-font-mono` at 11px, 0.12em, muted). Required fields get a `.req` asterisk colored `--weft-stop`. Error hints reuse the `.field-hint` with `.is-error`.
+Every input sits inside a `.field` that stacks label + control + hint vertically. Labels are mono **sentence case** (`--weft-font-mono` at 12px, 0.01em, muted) — see *How a control gets its name* below for why the case is a naming rule rather than a typographic one. A required field carries the word `required` in a `.req` span coloured `--weft-stop` **and the `required` attribute**; a bare asterisk lands in the accessible name as punctuation while leaving `required` false. Error hints reuse `.field-hint` with `.is-error`, and are associated by id.
 
 ```html
 <div class="field">
-  <label class="field-label" for="email">Email<span class="req">*</span></label>
-  <input class="input" id="email" type="email"
+  <label class="field-label" for="email">Email <span class="req">required</span></label>
+  <input class="input" id="email" type="email" required
          aria-invalid="true" aria-describedby="email-hint" />
   <span class="field-hint is-error" id="email-hint">Needs a full address.</span>
 </div>
 ```
+
+Note the space before the `.req` span: the accessible name concatenates the label's text nodes, so without it the name is "Emailrequired".
 
 - `.input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.

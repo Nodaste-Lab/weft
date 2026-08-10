@@ -95,7 +95,7 @@ SECTIONS = [
   "Canonical real form control with accessible label.",
   '<div class="weft-board" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-since">Updated since</label>'
-  '<select id="demo-since" class="weft-select" name="since" aria-label="Updated since">'
+  '<select id="demo-since" class="weft-select" name="since">'
   '<option value="">Any date</option>'
   '<option value="7d">Last 7 days</option>'
   '<option value="30d">Last 30 days</option>'
@@ -234,7 +234,7 @@ SECTIONS = [
   '<div class="weft-board" style="padding:12px">'
   '<label class="weft-field-label" for="demo-reply">Reply</label>'
   '<textarea id="demo-reply" class="weft-textarea" name="reply" rows="2"'
-  ' placeholder="Reply…" aria-label="Reply to this item"></textarea>'
+  ' placeholder="Reply…"></textarea>'
   '</div>'),
  ("Provenance band", ".weft-board-drawer-prov", P,
   "<code>callout</code> (muted)", "Muted footer band retained as template-local.",

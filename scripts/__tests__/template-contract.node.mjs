@@ -257,6 +257,30 @@ test('T2-d: generator source references no deprecated board-local class names in
 
 // ── Canonical markdown ───────────────────────────────────────────────────────
 
+test('T2-e: no text-entry control in the template specimens is named by aria-label', () => {
+  // The naming ladder sanctions aria-label for icon-only controls and nothing
+  // else (docs/brand-package/04-design-system.md). These specimens are published
+  // guidance, so a forbidden pattern here teaches it regardless of what the
+  // prose says. Both offenders found by review already had a perfectly good
+  // visible <label for>, and the aria-label was silently overriding it — on the
+  // reply textarea with different words.
+  //
+  // Icon-only BUTTONS are the sanctioned case and are not matched here; nor are
+  // role="group"/"region" containers, which are not form controls.
+  const html = readFileSync(join(ROOT, 'docs', 'brand-package', 'panel-templates.html'), 'utf8');
+  const offenders = [];
+  for (const [, tag, attrs] of html.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
+    if (!/\baria-label="/.test(attrs)) continue;
+    offenders.push(`<${tag} ${/\bid="([^"]+)"/.exec(attrs)?.[1] ?? '(no id)'}>`);
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `Template specimens naming a text-entry control with aria-label:\n  ${offenders.join('\n  ')}\n` +
+      'Use a real <label>, hidden with .weft-sr-only where the surface cannot carry a visible one.',
+  );
+});
+
 test('T3: docs/brand-package/11-panel-templates.md exists and is non-empty', () => {
   const mdPath = join(ROOT, 'docs', 'brand-package', '11-panel-templates.md');
   assert.ok(existsSync(mdPath), '11-panel-templates.md must exist');

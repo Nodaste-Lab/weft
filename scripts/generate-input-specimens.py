@@ -85,8 +85,6 @@ def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='
              f'data-state="{state}"']
     if placeholder is not None:
         attrs.append(f'placeholder="{E(placeholder)}"')
-    if label_text is not None:
-        attrs.append(f'aria-label="{E(label_text)}"')
     if state == 'invalid':
         attrs.append('aria-invalid="true"')
     elif state == 'disabled':
@@ -103,12 +101,18 @@ def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='
     cls = {'input': 'weft-input', 'textarea': 'weft-textarea', 'select': 'weft-select'}[kind]
     if cls_extra:
         cls = f'{cls} {cls_extra}'
+    # A REAL hidden label, never aria-label. The ladder sanctions aria-label for
+    # icon-only controls and nothing else, and a page that teaches a rule while
+    # breaking it 40 times over teaches the breach. Measurement specimens are not
+    # exempt: if the exemption were needed, the rule would be wrong.
+    lbl = (f'<label class="weft-sr-only" for="{ident}">{E(label_text)}</label>'
+           if label_text is not None else '')
     if kind == 'select':
-        return f'<select class="{cls}" {a}>{SELECT_OPTIONS}</select>'
+        return f'{lbl}<select class="{cls}" {a}>{SELECT_OPTIONS}</select>'
     if kind == 'textarea':
-        return f'<textarea class="{cls}" {a}>{E(value or "")}</textarea>'
+        return f'{lbl}<textarea class="{cls}" {a}>{E(value or "")}</textarea>'
     v = f' value="{E(value)}"' if value else ''
-    return f'<input class="{cls}" type="text"{v} {a} />'
+    return f'{lbl}<input class="{cls}" type="text"{v} {a} />'
 
 
 def section(sid, title, note, body):
@@ -213,12 +217,6 @@ def naming_section():
         'format and is never the name. Before this rung existed the control was '
         'named "Search projects…" by its placeholder alone — which axe lists under '
         'passes, and which disappears the moment the user types.')
-
-    row('aria-label-only', 'aria-label only',
-        '<div class="weft-field">'
-        + control_html('input', 'naming', 'nm-arialabel', label_text='Filter results')
-        + '</div>',
-        'name "Filter results"')
 
     row('hidden-label', 'Hidden label',
         '<div class="weft-field">'
