@@ -657,7 +657,7 @@ Note the space before the `.req` span: the accessible name concatenates the labe
 
 #### The boundary: a field has to look like a control
 
-**At least one of border-against-surface or fill-against-surface reaches 3:1** (WCAG 1.4.11 non-text contrast), on every surface, in both themes, at every density, in every state except disabled — which the criterion exempts as an inactive component. Before this rule the field had neither: the border measured 1.30:1 light and 1.38:1 dark, and the fill was the same token as the card behind it, at 1.00:1.
+**At least one of border-against-surface or fill-against-surface reaches 3:1** (WCAG 1.4.11 non-text contrast), on every surface, in both themes, at every density, in every state except disabled — which the criterion exempts as an inactive component. **This holds for the `weft-` component classes.** The React primitives paint from the flat shadcn bridge, where `--input` still maps to `--weft-paper`, so they keep the old hairline; that is a recorded parity gap owned by the layer-parity phase, not a claim being made here. Before this rule the field had neither: the border measured 1.30:1 light and 1.38:1 dark, and the fill was the same token as the card behind it, at 1.00:1.
 
 **The border carries it; the fill is decorative.** That is a measured conclusion rather than a preference. Reaching 3:1 as a *fill alone* needs 45% ink over white, and at that fill the muted placeholder drops to 1.90:1 and fails text contrast — so fill-without-border, which heuristic 2 offers as an option, is not available in this palette. One border value covers both light surfaces: `--weft-control-border` measures 3.35:1 on paper and 3.15:1 on cream by calculation, 3.50:1 and 3.48:1 as painted.
 

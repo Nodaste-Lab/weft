@@ -160,6 +160,24 @@ test('S10: no text-entry control is named by aria-label', () => {
   );
 });
 
+test('S11: the rendered reference page teaches the shipped input contract', () => {
+  // docs/brand-package/design-system.html is self-contained — it carries its own
+  // copy of the CSS rather than linking css/ — so it can describe one contract in
+  // prose while rendering another. It did: the prose was updated for the new
+  // boundary and the embedded styles still painted --weft-rule at 1.30:1 with
+  // mono-caps labels and a bare-asterisk marker. A rendered reference that
+  // contradicts the code is worse than no rendered reference.
+  const page = readFileSync(join(ROOT, 'docs', 'brand-package', 'design-system.html'), 'utf8');
+  const problems = [];
+  if (/class="req">\s*\*/.test(page)) problems.push('a bare-asterisk required marker survives');
+  if (/\.field-label\s*\{[^}]*text-transform:\s*uppercase/.test(page)) {
+    problems.push('.field-label still uppercases, which rewrites the accessible name');
+  }
+  if (!/--weft-control-border/.test(page)) problems.push('the embedded CSS does not use --weft-control-border');
+  if (!/--weft-control-fill/.test(page)) problems.push('the embedded CSS does not use --weft-control-fill');
+  assert.deepEqual(problems, [], `docs/brand-package/design-system.html has drifted:\n  ${problems.join('\n  ')}`);
+});
+
 test('S6: every control on the page has an accessible name, except where absence is the point', () => {
   // Mirrors T2-c in the template contract. The exception is deliberate and
   // narrow: #nm-placeholder exists precisely to be a control with no name, and

@@ -26,6 +26,9 @@
     --weft-ink: #0b1020;
     --weft-muted: #5a6485;
     --weft-rule: rgba(11, 16, 32, 0.12);
+    --weft-control-border: rgba(11, 16, 32, 0.48);
+    --weft-control-fill: rgba(11, 16, 32, 0.035);
+    --weft-control-fill-static: rgba(11, 16, 32, 0.075);
     --weft-rule-strong: rgba(11, 16, 32, 0.28);                 /* border on hover, input emphasis */
 
     /* ==== Semantic / accessible ==== */
@@ -94,6 +97,9 @@
     --weft-ink:         #f4f1e8;                       /* text = warm off-white */
     --weft-muted:       #8b93b0;                       /* lightened blue-slate */
     --weft-rule:        rgba(244, 241, 232, 0.12);
+    --weft-control-border: rgba(244, 241, 232, 0.38);
+    --weft-control-fill: rgba(244, 241, 232, 0.05);
+    --weft-control-fill-static: rgba(244, 241, 232, 0.10);
     --weft-rule-strong: rgba(244, 241, 232, 0.28);
     --weft-yellow-soft: #2a241a;                       /* warm-dark for ghost numerals */
     --weft-mark:        rgba(255, 216, 102, 0.28);     /* translucent so off-white reads through */
@@ -267,11 +273,14 @@
   }
   .field-label {
     font-family: var(--weft-font-mono);
-    font-size: 11px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.01em;
     color: var(--weft-muted);
   }
-  .field-label .req { color: var(--weft-stop); margin-left: 2px; }
+  .field-label .req {
+    color: var(--weft-stop); margin-left: 3px;
+    font-size: 10px; letter-spacing: 0.06em;
+  }
   .field-hint {
     font-size: 13px; color: var(--weft-muted); line-height: 1.4;
   }
@@ -281,25 +290,35 @@
     font-family: var(--weft-font-sans);
     font-size: 16px; line-height: 1.4;
     color: var(--weft-ink);
-    background: var(--weft-paper);
-    border: 1px solid var(--weft-rule);
+    background-color: var(--weft-control-fill);
+    border: 1px solid var(--weft-control-border);
     border-radius: var(--weft-radius-card);
-    padding: 11px 14px;
+    padding-block: 0;
+    padding-inline: 14px;
+    height: 44px;
     min-height: 44px;
+    box-sizing: border-box;
     width: 100%;
     transition:
       border-color var(--weft-dur-fast) var(--weft-ease-out),
       background-color var(--weft-dur-fast) var(--weft-ease-out);
   }
   .input::placeholder, .textarea::placeholder { color: var(--weft-muted); }
-  .input:hover:not(:disabled),
-  .textarea:hover:not(:disabled),
-  .select:hover:not(:disabled) { border-color: var(--weft-rule-strong); }
+  .input:hover:not(:disabled):not([readonly]),
+  .textarea:hover:not(:disabled):not([readonly]),
+  .select:hover:not(:disabled) { border-color: var(--weft-ink); }
   .input[aria-invalid="true"],
   .textarea[aria-invalid="true"],
   .select[aria-invalid="true"] { border-color: var(--weft-stop); }
+  .input:disabled, .textarea:disabled, .select:disabled {
+    background-color: var(--weft-control-fill-static);
+    opacity: 0.55; cursor: not-allowed;
+  }
+  .input[readonly], .textarea[readonly] {
+    background-color: var(--weft-control-fill-static); cursor: default;
+  }
 
-  .textarea { min-height: 96px; resize: vertical; }
+  .textarea { height: auto; min-height: 96px; padding-block: 11px; resize: vertical; }
 
   .select {
     appearance: none; -webkit-appearance: none;
@@ -1910,7 +1929,7 @@
               <span class="field-hint">Default</span>
             </div>
             <div class="field">
-              <label class="field-label" for="demo-select-error">Primary tool<span class="req">*</span></label>
+              <label class="field-label" for="demo-select-error">Primary tool <span class="req">required</span></label>
               <select class="select" id="demo-select-error" aria-invalid="true" aria-describedby="demo-select-error-hint">
                 <option value="">Pick one&hellip;</option>
                 <option>Claude</option>
