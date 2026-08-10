@@ -23,6 +23,7 @@
  */
 import { expect, test } from '@playwright/test';
 import {
+  PALETTES,
   SPECIMEN_PAGE,
   THEMES,
   VISIBLE_DELTA,
@@ -30,6 +31,7 @@ import {
   captureRegion,
   maxChannelDelta,
   readBoundary,
+  relativeLuminance,
   rgbText,
   samplePoints,
   type Rgb,
@@ -166,4 +168,64 @@ for (const theme of THEMES) {
         `Nothing distinguishable from the fill in the chevron window: ${blank.join(', ')}`,
     });
   });
+}
+
+// ── The chevron must track the foreground, in every palette ──────────────────
+
+/** Pull an `#rrggbb` out of whatever form a computed colour or data URI takes. */
+function hexOf(value: string): Rgb | null {
+  const uri = decodeURIComponent(value);
+  const hex = /(?:%23|#)([0-9A-Fa-f]{6})/.exec(uri)?.[1];
+  if (hex) return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)) as Rgb;
+  const rgb = /rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/.exec(value);
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null;
+}
+
+/**
+ * Palette and theme are INDEPENDENT axes, and the chevron used to key on the
+ * theme alone. `hud-glass` is a dark palette in its own right — dark paper,
+ * near-white ink, whatever data-theme says — so anyone using it without dark
+ * mode got a near-black glyph on a dark control: stroke #0B1020 against ink
+ * #f5f8ff. The painted check below cannot catch it, because on this page the
+ * body is light and the translucent hud-glass fill composites light too; the
+ * failure needs the dark canvas hud-glass is designed to overlay.
+ *
+ * So the invariant is asserted instead of the instance, and asserted against
+ * the palette's own foreground rather than a list of dark palettes: the
+ * chevron's stroke has to be the same TONE as --weft-ink. A future palette that
+ * forgets the override fails here without anyone remembering to add it.
+ */
+for (const palette of PALETTES) {
+  for (const theme of THEMES) {
+    test(`the chevron tracks the foreground — ${palette}, ${theme}`, async ({ page }) => {
+      await page.goto(SPECIMEN_PAGE);
+      await applyAxes(page, { palette, theme });
+
+      const read = await page.evaluate(() => {
+        const el = document.getElementById('sc-default')!;
+        return {
+          image: getComputedStyle(el).backgroundImage,
+          ink: getComputedStyle(document.documentElement).getPropertyValue('--weft-ink').trim(),
+        };
+      });
+
+      const stroke = hexOf(read.image);
+      const ink = hexOf(read.ink);
+      expect(stroke, `no stroke colour in the chevron image for ${palette}/${theme}`).not.toBeNull();
+      expect(ink, `no --weft-ink for ${palette}/${theme}`).not.toBeNull();
+
+      const gap = Math.abs(relativeLuminance(stroke!) - relativeLuminance(ink!));
+      await measure({
+        key: `select-chrome/${palette}/${theme}/chevron-tracks-foreground`,
+        // 0.25 of relative luminance is far wider than any legitimate tuning and
+        // far narrower than the 0.9 an inverted chevron produces.
+        shortfall: Math.max(0, gap - 0.25),
+        evidence: `chevron ${rgbText(stroke!)} against --weft-ink ${rgbText(ink!)}; luminance gap ${gap.toFixed(3)}`,
+        failure:
+          `The chevron is the opposite tone to the palette's own foreground, so it is painted ` +
+          `into the control's fill rather than on top of it. Palette and theme are independent ` +
+          `axes — a dark palette needs the chevron override whether or not data-theme is set.`,
+      });
+    });
+  }
 }

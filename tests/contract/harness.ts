@@ -27,12 +27,14 @@ export const SPECIMEN_PAGE = '/docs/brand-package/input-specimens.html';
 
 export type Theme = 'light' | 'dark';
 export type Density = 'marketing' | 'compact' | 'dense';
-export type Palette = 'weft' | 'hud-glass';
+export type Palette = 'weft' | 'hud-glass' | 'heritage-purple';
 export type Ground = 'paper' | 'cream' | 'card';
 
 export const THEMES: Theme[] = ['light', 'dark'];
 export const DENSITIES: Density[] = ['marketing', 'compact', 'dense'];
 export const GROUNDS: Ground[] = ['paper', 'cream', 'card'];
+/** Every palette weft.css ships. hud-glass and heritage-purple are dark or partly dark. */
+export const PALETTES: Palette[] = ['weft', 'hud-glass', 'heritage-purple'];
 
 /** WCAG 1.4.11 non-text contrast floor for a control boundary. */
 export const BOUNDARY_FLOOR = 3;

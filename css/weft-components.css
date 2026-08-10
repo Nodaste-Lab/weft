@@ -356,7 +356,20 @@ html {
   padding-right: 40px;
   cursor: pointer;
 }
-:root[data-theme^="dark"] .weft-select {
+/* THE CHEVRON FOLLOWS THE FOREGROUND, NOT THE THEME ATTRIBUTE.
+ *
+ * Palette and theme are independent axes, and `hud-glass` is a dark palette in
+ * its own right — it overrides --weft-paper to a dark translucent and --weft-ink
+ * to #f5f8ff whatever data-theme says. Keying the cream chevron on the theme
+ * alone therefore painted a near-black glyph on a dark control for anyone using
+ * hud-glass without dark mode: measured stroke #0B1020 against ink #f5f8ff.
+ *
+ * Any future dark palette has to be added here too, so the guard in
+ * select-chrome.spec.ts asserts the invariant rather than the list: the
+ * chevron's stroke must be the same tone as --weft-ink, in every palette and
+ * theme combination. */
+:root[data-theme^="dark"] .weft-select,
+:root[data-palette="hud-glass"] .weft-select {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
 }
 
