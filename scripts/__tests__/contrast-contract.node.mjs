@@ -242,3 +242,50 @@ test('the category palette encodes on the dark panel canvas — visible, separat
     assert.notEqual(cats[i], warn, `--weft-category-${i + 1} must not be --weft-warn.`);
   }
 });
+
+/**
+ * On-primary marks must contrast with the primary they sit on, IN EVERY PALETTE.
+ *
+ * This exists because dark heritage-purple shipped without it. That block lifts
+ * --weft-blue to violet-300 (#c4b5fd) and correctly sets --primary-foreground to
+ * dark ink — the flat shadcn token the React primitives read — while the whole
+ * --weft-on-blue tier, which is what the plain-CSS component layer reads, went on
+ * inheriting white from the light block. So the same palette rendered a React
+ * button at 9.9:1 and a `.weft-btn` at 1.85:1, with the plain-CSS layer that a
+ * sandboxed panel iframe receives being the broken half. The palette's own
+ * comment already stated the correct value.
+ *
+ * Checked over every palette block that declares a primary, so a new palette
+ * cannot repeat it by being forgotten. `--weft-on-blue` carries text and is held
+ * to AA; the rule and dot tiers are decorative and are not checked here.
+ */
+test('--weft-on-blue meets AA against --weft-blue in every palette that sets one', () => {
+  const blocks = extractTokenBlocks(css);
+  const base = blocks[Object.keys(blocks).find((n) => n.includes(':root,'))] ?? {};
+
+  const failures = [];
+  const checked = [];
+  for (const [selector, tokens] of Object.entries(blocks)) {
+    // Only blocks that redefine the primary can break the pairing.
+    if (!('--weft-blue' in tokens)) continue;
+    const primary = parseHex(tokens['--weft-blue'] ?? '');
+    if (!primary) continue;  // translucent primaries are out of scope for a static check
+
+    const onBlueRaw = tokens['--weft-on-blue'] ?? base['--weft-on-blue'];
+    const onBlue = parseRgba(onBlueRaw ?? '');
+    if (!onBlue) continue;
+    // The tier is alpha over the primary, so composite before measuring.
+    const ratio = contrast(composite(onBlue.rgb, onBlue.alpha, primary), primary);
+    checked.push(`${selector}: ${ratio.toFixed(2)}:1`);
+    if (ratio < AA_NORMAL) {
+      failures.push(
+        `${selector}: --weft-on-blue on --weft-blue #${primary} = ${ratio.toFixed(2)}:1 ` +
+          `(needs ${AA_NORMAL}:1). A palette that redefines --weft-blue has to redefine the ` +
+          `--weft-on-blue tier with it, or the plain-CSS layer paints white on a light primary.`,
+      );
+    }
+  }
+
+  assert.ok(checked.length >= 2, `expected several palettes with a primary, checked ${checked.length}`);
+  assert.deepEqual(failures, [], failures.join('\n'));
+});

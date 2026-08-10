@@ -243,6 +243,24 @@
    * dark ink, not white. #1a0f33 (deep violet-ink) on #c4b5fd = 9.9:1 (AA).
    * White would be 1.85:1 (fail) — the value inherited from the light block. */
   --primary-foreground:            #1a0f33;
+
+  /* THE SAME CORRECTION FOR THE OTHER LAYER. The line above fixes the flat
+   * shadcn token the React primitives read; the whole --weft-on-blue tier is
+   * what the plain-CSS component layer reads, and it was still inheriting white
+   * from the light block. So this palette shipped a React button at 9.9:1 and a
+   * `.weft-btn` at 1.85:1 — with the plain-CSS layer, the one a sandboxed panel
+   * iframe gets, being the broken half. Same for the checked radio dot.
+   *
+   * Alphas mirror the base tier's ratios so every consumer keeps its intended
+   * emphasis, just inverted in tone. */
+  --weft-on-blue:            rgba( 26,  15,  51, 0.95);
+  --weft-on-blue-muted:      rgba( 26,  15,  51, 0.88);
+  --weft-on-blue-soft:       rgba( 26,  15,  51, 0.78);
+  --weft-on-blue-rule:       rgba( 26,  15,  51, 0.18);
+  --weft-on-blue-rule-soft:  rgba( 26,  15,  51, 0.15);
+  --weft-on-blue-dot:        rgba( 26,  15,  51, 0.12);
+  --weft-on-blue-bg:         rgba( 26,  15,  51, 0.03);
+  --weft-on-blue-bg-hover:   rgba( 26,  15,  51, 0.08);
   --accent:                        var(--weft-blue);
   --accent-foreground:             #1a0f33;
   --hud-border-accent:             var(--weft-blue);

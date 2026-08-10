@@ -397,9 +397,24 @@ html {
 .weft-checkbox:checked, .weft-radio:checked {
   background-color: var(--weft-blue); border-color: var(--weft-blue);
 }
+/* The tick is a data URI, so its stroke cannot read a token — the same problem
+ * the select chevron has, and the same fix: a palette-scoped override wherever
+ * the primary is light enough that a white glyph disappears into it. Dark
+ * heritage-purple lifts --weft-blue to violet-300 (#c4b5fd), where a white tick
+ * measures 1.85:1.
+ *
+ * The general alternative — masking a pseudo-element so the glyph reads
+ * --weft-on-blue like every other on-primary mark — is the better shape and is
+ * deliberately not taken here: it changes how a shipped control paints, for a
+ * defect that is one palette wide. Recorded so the next person weighing it has
+ * the argument rather than just the workaround. The invariant guard in
+ * contrast-contract catches any future palette either way. */
 .weft-checkbox:checked {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
   background-repeat: no-repeat; background-position: center; background-size: 12px 12px;
+}
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-checkbox:checked {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%231a0f33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
 }
 .weft-radio:checked::after {
   content: ""; position: absolute; inset: 4px;

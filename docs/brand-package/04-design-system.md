@@ -616,9 +616,17 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 > measures it.
 >
 > **One recorded gap remains:** the textarea floor is a hardcoded 96px and
-> tracks no tier, owned by the sizing phase. The class names below are also still
-> unprefixed while the shipped CSS is `weft-` prefixed throughout, which the
-> doctrine merge settles. Everything else this section describes is measured:
+> tracks no tier, owned by the sizing phase.
+>
+> **Every class name in this section is unprefixed and the shipped CSS is
+> `weft-` prefixed throughout** — `.input` is really `.weft-input`, `.field` is
+> `.weft-field`, and so on for all twelve. This drift predates the input work and
+> runs through the whole section; settling it is the doctrine merge's job,
+> because the code cannot change without breaking consumers and the document
+> cannot change piecemeal without being half-right. Read every selector below
+> with a `weft-` in front of it.
+>
+> Everything else this section describes is measured:
 > control height at every tier, disabled and read-only, a focus ring an author
 > shadow cannot delete, description wiring, the required marker, the naming
 > ladder, the 3:1 boundary, and focus not obscured.
@@ -724,7 +732,11 @@ Same styling as `.input` plus `min-height: 96px` and `resize: vertical`. Use for
 
 #### `.select`
 
-Native `<select>` with the platform caret stripped (`appearance: none`) and a single-stroke chevron re-added via inline SVG data-URL in the `background-image`. Ship two variants of the SVG — ink chevron for light mode, cream chevron under `[data-theme="dark"] .select`. Keeps the rest of the styling identical to `.input`.
+Native `<select>` with the platform caret stripped (`appearance: none`) and a single-stroke chevron re-added via inline SVG data-URL in the `background-image`. Ship two variants of the SVG, an ink one and a cream one, and select between them **by the palette's foreground rather than by `data-theme` alone**.
+
+That distinction is load-bearing. Palette and theme are independent axes: `data-palette="hud-glass"` is a dark palette in its own right — dark paper, near-white ink — whatever `data-theme` says. Keying the cream chevron on `[data-theme="dark"]` alone painted a near-black glyph into a dark control for anyone on that palette without dark mode, measured at a luminance gap of 0.932. The override therefore lists every dark palette, and `tests/contract/select-chrome.spec.ts` asserts the invariant rather than the list: the chevron's stroke must be the same tone as `--weft-ink`, in every palette × theme combination.
+
+The same trap applies to any glyph baked into a data-URI, because its colour cannot read a token — the checked-checkbox tick is the other one. Keeps the rest of the styling identical to `.input`.
 
 ```html
 <select class="select" id="team-size">
