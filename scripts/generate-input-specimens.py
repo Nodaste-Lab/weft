@@ -232,7 +232,7 @@ def naming_section():
 
     row('sr-only-focusable', 'Hidden until focused',
         '<a class="weft-sr-only weft-sr-only-focusable" id="nm-skip" '
-        'href="#naming-end">Skip to the end of this section</a>'
+        'href="#nm-naming-end">Skip to the end of this section</a>'
         '<span class="expect">Tab to it — it takes layout space only while focused.</span>',
         'the skip-link case: hidden at rest, visible on focus, named throughout')
 
@@ -257,13 +257,13 @@ def naming_section():
 
     row('error-text', 'Error text',
         '<div class="weft-field">'
-        '<label class="weft-field-label" for="nm-error">Webhook URL</label>'
-        + control_html('input', 'naming', 'nm-error', state='invalid', value='not-a-url',
-                       describedby='nm-error-hint')
-        + '<span class="weft-field-hint is-error" id="nm-error-hint">'
+        '<label class="weft-field-label" for="nm-rejected">Webhook URL</label>'
+        + control_html('input', 'naming', 'nm-rejected', state='invalid', value='not-a-url',
+                       describedby='nm-rejected-error')
+        + '<span class="weft-field-hint is-error" id="nm-rejected-error">'
           'That address did not resolve. Check the host, then try again.</span>'
           '</div>',
-        'description contains the error copy, and aria-invalid is true')
+        'description contains the error copy, aria-invalid is true, and the id ends -error')
 
     row('error-then-help', 'Error plus help',
         '<div class="weft-field">'
@@ -282,6 +282,11 @@ def naming_section():
         '<span class="weft-req">required</span></label>'
         + control_html('input', 'naming', 'nm-required', required=True) + '</div>',
         'name "Retention required", required true, and no marker glyph in the name')
+
+    rows.append('<div class="cell" id="nm-naming-end">'
+                '<span class="cap">end of section</span>'
+                '<span class="expect">The skip link above lands here. A skip link with no '
+                'target is a skip link that does nothing.</span></div>')
 
     return section(
         'naming', 'Naming — what does this control expose?',

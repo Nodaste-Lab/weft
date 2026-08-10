@@ -77,6 +77,33 @@ test('no control anywhere is named by its placeholder', async ({ page }) => {
   });
 });
 
+test('the skip link lands somewhere', async ({ page }) => {
+  // Revealing on focus is half the pattern. The specimen pointed at an id that
+  // did not exist, so it demonstrated a skip link that goes nowhere while the
+  // focus test — which only checked that it becomes visible — stayed green.
+  const link = page.locator('#nm-skip');
+  const target = (await link.getAttribute('href'))!.replace('#', '');
+  const exists = await page.locator(`#${target}`).count();
+  await link.focus();
+  await link.press('Enter');
+  await page.waitForTimeout(120);
+  const landed = await page.evaluate(
+    (id) => {
+      const el = document.getElementById(id);
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.top >= 0 && r.top < window.innerHeight;
+    },
+    target,
+  );
+  await measure({
+    key: 'naming/sr-only-focusable/lands-on-its-target',
+    shortfall: binary(exists === 1 && landed),
+    evidence: `href #${target}; target exists: ${exists === 1}; in view after activation: ${landed}`,
+    failure: `The skip link points at #${target}, which either does not exist or was not reached.`,
+  });
+});
+
 test('the hidden-until-focused utility takes space only while focused', async ({ page }) => {
   const link = page.locator('#nm-skip');
   const at = async () => {
@@ -165,7 +192,7 @@ test('help text is exposed as the field description', async ({ page }) => {
 
 test.describe('an error is exposed with the field', () => {
   test('the error copy reaches the description', async ({ page }) => {
-    const node = await axNode(page, '#nm-error');
+    const node = await axNode(page, '#nm-rejected');
     const description = node.description ?? '';
     await measure({
       key: 'naming/error-text/description-exposes-error',
@@ -176,7 +203,7 @@ test.describe('an error is exposed with the field', () => {
   });
 
   test('the control carries aria-invalid', async ({ page }) => {
-    const node = await axNode(page, '#nm-error');
+    const node = await axNode(page, '#nm-rejected');
     await measure({
       key: 'naming/error-text/aria-invalid',
       shortfall: binary(node.properties.invalid === 'true'),

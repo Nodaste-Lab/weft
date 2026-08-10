@@ -117,6 +117,21 @@ test('S8: hint ids follow the documented pattern, and every reference resolves',
   assert.deepEqual(problems, [], `Description wiring is broken:\n  ${problems.join('\n  ')}`);
 });
 
+test('S8a: an error element carries an -error id, and a hint carries -hint', () => {
+  // S8 checked that every reference resolves and is named to the convention.
+  // It never bound the element's ROLE to its id, so an `.is-error` span could
+  // wear a `-hint` id — an error masquerading as a hint, in the page that
+  // teaches the convention, with S8b's ordering check never firing because only
+  // one id was present. Exactly the shape this suite exists to refuse.
+  const problems = [];
+  for (const [, cls, id] of html.matchAll(/class="(weft-field-hint[^"]*)"[^>]*\bid="([^"]+)"/g)) {
+    const isError = /\bis-error\b/.test(cls);
+    if (isError && !id.endsWith('-error')) problems.push(`#${id} is an error but its id is not -error`);
+    if (!isError && !id.endsWith('-hint')) problems.push(`#${id} is a hint but its id is not -hint`);
+  }
+  assert.deepEqual(problems, [], `Hint and error ids must match their role:\n  ${problems.join('\n  ')}`);
+});
+
 test('S8b: where both are present, the error id comes first (amendment A5)', () => {
   // ORDER IS THE WHOLE RULE, so order is what is asserted. S7 and S8 check that
   // the ids exist, resolve, and are named correctly — all three of which the
@@ -138,6 +153,16 @@ test('S8b: where both are present, the error id comes first (amendment A5)', () 
     'Amendment A5: one ordered aria-describedby list, error id first. A field in error has ' +
       'one urgent thing to say and one background thing.\n  ' + problems.join('\n  '),
   );
+});
+
+test('S12: every in-page link has a target', () => {
+  // The skip-link specimen pointed at #naming-end, which did not exist — so the
+  // page demonstrated a broken skip link while the focus test, which only
+  // checked that the link reveals on focus, stayed green. Revealing is half the
+  // pattern; landing somewhere is the other half.
+  const ids = new Set([...html.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]));
+  const dead = [...html.matchAll(/href="#([^"]+)"/g)].map((m) => m[1]).filter((t) => !ids.has(t));
+  assert.deepEqual(dead, [], `in-page links with no target: ${dead.map((d) => '#' + d).join(', ')}`);
 });
 
 test('S9: a required marker is real text and its control carries the attribute', () => {
@@ -249,6 +274,33 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
         problems.push(`in ${where}, a label marked required points at #${forId}, which does not exist`);
       } else if (!/\brequired\b/.test(control[0])) {
         problems.push(`in ${where}, #${forId} is marked required in its label but the control is not`);
+      }
+    }
+  }
+
+  // The describedby convention, in both views. S11 claimed this page teaches the
+  // shipped contract while never checking the one rule most likely to rot in it.
+  for (const [where, view] of views) {
+    for (const [, cls, id] of view.matchAll(/class="[^"]*\b(field-hint[^"]*)"[^>]*\bid="([^"]+)"/g)) {
+      const isError = /\bis-error\b/.test(cls);
+      if (isError && !id.endsWith('-error')) {
+        problems.push(`in ${where}, #${id} is an error but its id is not -error`);
+      }
+    }
+    const idsHere = new Set([...view.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
+    for (const [, list] of view.matchAll(/aria-describedby="([^"]+)"/g)) {
+      const refs = list.split(/\s+/).filter(Boolean);
+      const e = refs.findIndex((r) => r.endsWith('-error'));
+      const h = refs.findIndex((r) => r.endsWith('-hint'));
+      if (e !== -1 && h !== -1 && e > h) {
+        problems.push(`in ${where}, "${list}" lists the help text before the error`);
+      }
+      // A reference that resolves to nothing describes nothing. Renaming the
+      // element and not its reference passes both the role check and the order
+      // check, because neither looks at whether the target exists — which is how
+      // the probe for this guard slipped through the first time.
+      for (const ref of refs) {
+        if (!idsHere.has(ref)) problems.push(`in ${where}, aria-describedby names #${ref}, which does not exist`);
       }
     }
   }
