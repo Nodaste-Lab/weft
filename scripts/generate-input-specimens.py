@@ -357,11 +357,26 @@ def select_chrome_section():
             + control_html('select', 'select-chrome', f'sc-{state}', state=state,
                            label_text=f'Select {state}')
             + '</div>')
+    cells.append(
+        '<div class="cell"><span class="cap">checkbox · checked</span>'
+        '<label class="weft-checkbox-wrap">'
+        '<input type="checkbox" class="weft-checkbox" id="sc-checkbox-checked" checked '
+        'data-spec="select-chrome" data-control="checkbox" data-state="checked" /> '
+        '<span>Checked</span></label></div>')
+    cells.append(
+        '<div class="cell"><span class="cap">radio · checked</span>'
+        '<label class="weft-radio-wrap">'
+        '<input type="radio" name="sc-radio" class="weft-radio" id="sc-radio-checked" checked '
+        'data-spec="select-chrome" data-control="radio" data-state="checked" /> '
+        '<span>Checked</span></label></div>')
     return section(
-        'select-chrome', 'Select chrome — the chevron guard',
+        'select-chrome', 'Glyph chrome — the chevron and tick guards',
         'Permanent guard for the background-shorthand regression: a shorthand resets '
         'background-image, -repeat, -position and -size, which deleted the chevron in '
-        'light and tiled it across the whole control in dark.',
+        'light and tiled it across the whole control in dark.<br />'
+        'These glyphs are data URIs, so their colour cannot read a token — each needs a '
+        'palette-scoped override wherever the surface behind it flips. The checked tick '
+        'and dot are here for the same reason as the chevron.',
         f'<div class="grid">{"".join(cells)}</div>')
 
 

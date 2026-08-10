@@ -16,11 +16,14 @@
  * Usage: node scripts/serve-repo.mjs [port]
  */
 import { createServer } from 'node:http';
-import { createReadStream, statSync } from 'node:fs';
+import { createReadStream, realpathSync, statSync } from 'node:fs';
 import { join, relative, isAbsolute, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// ROOT itself may sit under a symlink (a git worktree often does), so resolve it
+// once and compare like with like.
+const realRoot = realpathSync(ROOT);
 const PORT = Number(process.argv[2] ?? process.env.PORT ?? 4318);
 
 const TYPES = {
@@ -41,8 +44,22 @@ const server = createServer((req, res) => {
   // characters — `/…/input-ds-impl-secret/x` passes a prefix test against
   // `/…/input-ds-impl`. relative() answers the question actually being asked.
   const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-  const full = join(ROOT, path);
-  const rel = relative(ROOT, full);
+  const requested = join(ROOT, path);
+
+  // Containment is checked on the RESOLVED path, not the lexical one. relative()
+  // alone answers "does this string sit under ROOT", and statSync and
+  // createReadStream both follow symlinks — so a symlink committed inside the
+  // repo and pointing outside it would pass the string test and then be served.
+  // realpath collapses the link first, so the check and the read agree about
+  // which file they mean.
+  let full;
+  try {
+    full = realpathSync(requested);
+  } catch {
+    res.writeHead(404).end('not found');
+    return;
+  }
+  const rel = relative(realRoot, full);
   if (rel !== '' && (rel.startsWith('..') || isAbsolute(rel))) {
     res.writeHead(403).end('forbidden');
     return;

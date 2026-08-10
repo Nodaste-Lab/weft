@@ -356,7 +356,7 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 **`calendar`** (react-day-picker) — header row: month/year in Heading/H3 / Body/Default Medium center, navigation lucide chevrons left/right (24×24, text/muted). Weekday labels: Label/Small mono caps text/muted. Day cells: 32×32 (compact) / 40×40 (marketing), rounded radius/card. Today: bg `brand/yellow-soft`. Selected: bg brand/blue, text on-blue/text. Hover: bg cream. Out-of-month: text/muted at 50% alpha. AA 24px touch-target floor is met at both densities; AAA 44×44 isn't a target for this primitive.
 
-**`label`** — Body/Small Medium in marketing, Label/Small mono caps in compact form layouts. text/muted color. Required indicator: `state/stop` asterisk after the label, no extra space.
+**`label`** — Body/Small Medium in marketing, Label/Small mono caps in compact form layouts. text/muted color. Required indicator: the word `required` in `state/stop` after the label, **with a space before it** — the accessible name concatenates the label's text nodes, so without one the name reads "Emailrequired". A bare asterisk is not used: it lands in the name as punctuation while leaving the control's `required` state false. The control carries the `required` attribute too; the word and the attribute are both required.
 
 **`form`** — wrapper for label + control + hint, mirrors the Field component from Weft v1. Compact: stack gap 4px between label/control, 4px between control/hint. Marketing: 8px each.
 

@@ -207,7 +207,7 @@ the far right without descendant-selector child styling.
 
   <label class="weft-field-label" for="drawer-reply">Reply</label>
   <textarea id="drawer-reply" class="weft-textarea" name="reply" rows="2"
-            placeholder="Reply…" aria-label="Reply to this item"></textarea>
+            placeholder="Reply…"></textarea>
 
   <div class="weft-board-drawer-prov">
     <b>Why you're seeing this:</b>

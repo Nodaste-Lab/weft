@@ -106,13 +106,20 @@ test('the textarea floor tracks the density tier', async ({ page }) => {
     const { heights } = await measureDensity(page, density);
     seen[density] = heights.textarea;
   }
+  // Shortfall counts the tiers that FAIL to differ, not merely whether any two
+  // do. `distinct.size > 1` would have been satisfied by 96/96/80 — a fix that
+  // moved dense and left compact still wearing the marketing floor. The three
+  // control tiers are all different, so a textarea tracking them has three
+  // distinct floors; anything less is a partial fix and the number says how
+  // partial.
   const distinct = new Set(Object.values(seen));
   await measure({
     key: 'geometry/textarea/tracks-density',
-    shortfall: binary(distinct.size > 1),
-    evidence: `heights ${JSON.stringify(seen)}`,
+    shortfall: DENSITIES.length - distinct.size,
+    evidence: `heights ${JSON.stringify(seen)}; ${distinct.size} distinct of ${DENSITIES.length} tiers`,
     failure:
-      'The textarea min-height is the same at every tier, so it tracks no token — a compact ' +
-      'surface gets a marketing-sized textarea.',
+      `The textarea floor takes ${distinct.size} distinct values across ${DENSITIES.length} ` +
+      'density tiers, so it does not track them — a compact surface gets a marketing-sized ' +
+      'textarea.',
   });
 });

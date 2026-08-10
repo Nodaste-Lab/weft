@@ -29,6 +29,7 @@ import {
   VISIBLE_DELTA,
   applyAxes,
   captureRegion,
+  contrastRatio,
   maxChannelDelta,
   readBoundary,
   relativeLuminance,
@@ -225,6 +226,80 @@ for (const palette of PALETTES) {
           `The chevron is the opposite tone to the palette's own foreground, so it is painted ` +
           `into the control's fill rather than on top of it. Palette and theme are independent ` +
           `axes — a dark palette needs the chevron override whether or not data-theme is set.`,
+      });
+    });
+  }
+}
+
+/**
+ * The checked tick and dot, held to the same invariant as the chevron.
+ *
+ * The tick is a data URI with a hardcoded `stroke='white'`, so its colour cannot
+ * read a token at all; the dot reads --weft-on-blue. Both are painted onto
+ * --weft-blue by `:checked`. The token-pair guard in contrast-contract checks
+ * --weft-on-blue against --weft-blue and therefore covers the dot — but NOT the
+ * tick, which is exactly the hole review found: a future palette could set
+ * --weft-on-blue correctly and still ship an invisible tick.
+ *
+ * Measured in the real cascade rather than reasoned about from the stylesheet,
+ * because whether a palette-scoped override applies is a cascade question.
+ */
+for (const palette of PALETTES) {
+  for (const theme of THEMES) {
+    test(`checked marks stay visible on the primary — ${palette}, ${theme}`, async ({ page }) => {
+      await page.goto(SPECIMEN_PAGE);
+      await applyAxes(page, { palette, theme });
+
+      const read = await page.evaluate(() => {
+        const box = document.getElementById('sc-checkbox-checked')!;
+        const dot = document.getElementById('sc-radio-checked')!;
+        const boxStyle = getComputedStyle(box);
+
+        // The stroke may be a hex OR a bare CSS keyword — the shipped tick uses
+        // `white`, which is itself part of the problem: a keyword cannot track a
+        // token by any means. Resolve whatever it is through the browser rather
+        // than keeping a colour-name table here.
+        const raw = decodeURIComponent(boxStyle.backgroundImage);
+        const stroke = /stroke='([^']+)'/.exec(raw)?.[1] ?? null;
+        let strokeRgb: string | null = null;
+        if (stroke) {
+          const probe = document.createElement('span');
+          probe.style.color = stroke;
+          document.body.appendChild(probe);
+          strokeRgb = getComputedStyle(probe).color;
+          probe.remove();
+        }
+        return {
+          strokeRgb,
+          // :checked sets background-color: var(--weft-blue) on both.
+          primary: boxStyle.backgroundColor,
+          dotMark: getComputedStyle(dot, '::after').backgroundColor,
+        };
+      });
+
+      const tick = read.strokeRgb ? hexOf(read.strokeRgb) : null;
+      const primary = hexOf(read.primary);
+      const dot = hexOf(read.dotMark);
+      expect(tick, 'no stroke colour in the tick image').not.toBeNull();
+      expect(primary, 'the checked control has no primary fill').not.toBeNull();
+      expect(dot, 'the checked radio has no dot colour').not.toBeNull();
+
+      const tickRatio = contrastRatio(tick!, primary!);
+      const dotRatio = contrastRatio(dot!, primary!);
+      // 3:1 — these are non-text marks (WCAG 1.4.11), not body copy.
+      const failures: string[] = [];
+      if (tickRatio < 3) failures.push(`tick ${rgbText(tick!)} on ${rgbText(primary!)} = ${tickRatio.toFixed(2)}:1`);
+      if (dotRatio < 3) failures.push(`dot ${rgbText(dot!)} on ${rgbText(primary!)} = ${dotRatio.toFixed(2)}:1`);
+
+      await measure({
+        key: `select-chrome/${palette}/${theme}/checked-marks-visible`,
+        shortfall: failures.length,
+        evidence: `tick ${tickRatio.toFixed(2)}:1, dot ${dotRatio.toFixed(2)}:1 on ${rgbText(primary!)}`,
+        failure:
+          `A checked control's mark has to be visible on the primary it is painted onto. ` +
+          `The tick is a data URI whose stroke cannot read a token, so a palette that lifts ` +
+          `--weft-blue needs a scoped override for it as well as a corrected --weft-on-blue:\n  ` +
+          failures.join('\n  '),
       });
     });
   }

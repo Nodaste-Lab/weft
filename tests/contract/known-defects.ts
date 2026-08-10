@@ -46,8 +46,11 @@ export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freez
   // P2 closed the control-height defects at their cause; what is left here is
   // the textarea, whose floor was never a tier in the first place.
   'geometry/textarea/tracks-density': {
-    why: 'P5 — .weft-textarea min-height is a hardcoded 96px and tracks no token at any tier.',
-    shortfall: 1,
+    why:
+      'P5 — .weft-textarea min-height is a hardcoded 96px and tracks no token at any tier, so ' +
+      'all three densities share one floor. Shortfall counts the tiers that fail to differ, so ' +
+      'a fix that moves one density and leaves another cannot close this entry.',
+    shortfall: 2,
   },
 
 });

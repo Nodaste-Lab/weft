@@ -1846,7 +1846,7 @@
 
       <!-- FORM INPUTS — TEXT -->
       <div class="spec-row">
-        <div class="spec-label">.input<span>Single-line text field. Sans 16px on paper surface, 1px <code>--weft-rule</code> border, 4px radius, 44px min-height. Label above in mono caps. Focus ring comes from the global <code>:focus-visible</code> rule. Hover deepens border to <code>--weft-rule-strong</code>. Error sets <code>aria-invalid="true"</code> which swaps border to <code>--weft-stop</code> and surfaces a red hint via <code>aria-describedby</code>.</span></div>
+        <div class="spec-label">.input<span>Single-line text field. Sans 16px on a <code>--weft-control-fill</code> wash, 1px <code>--weft-control-border</code> boundary carrying the 3:1 non-text contrast floor, 4px radius, and the exact height its density tier declares. Label above in mono <em>sentence case</em> &mdash; the accessible name is computed from rendered text, so an uppercase transform rewrites it. Focus comes from the global <code>:focus-visible</code> rule, delivered as an outline <em>and</em> a box-shadow so neither an author shadow nor an author outline reset can delete it. Hover deepens the border to <code>--weft-ink</code>. Disabled dims to 0.55; read-only keeps full contrast and changes only its fill. Error sets <code>aria-invalid="true"</code>, swapping the border to <code>--weft-stop</code> and surfacing the hint via <code>aria-describedby</code>.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
             <div class="field">
@@ -1860,8 +1860,8 @@
               <span class="field-hint">Filled</span>
             </div>
             <div class="field">
-              <label class="field-label" for="demo-input-error">Email<span class="req">*</span></label>
-              <input class="input" id="demo-input-error" type="email" value="ana@" aria-invalid="true" aria-describedby="demo-input-error-hint" />
+              <label class="field-label" for="demo-input-error">Email <span class="req">required</span></label>
+              <input class="input" id="demo-input-error" type="email" value="ana@" required aria-invalid="true" aria-describedby="demo-input-error-hint" />
               <span class="field-hint is-error" id="demo-input-error-hint">Needs a full address &middot; ana@nodaste.com</span>
             </div>
             <div class="field">

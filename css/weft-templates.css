@@ -228,8 +228,12 @@
 /* D11: reply field uses .weft-textarea (weft-components.css) with a real <textarea>.
  * The board-local display-only reply div is deleted.
  * Plain-CSS markup:
- *   <textarea class="weft-textarea" name="reply" rows="2" placeholder="Reply…"
- *             aria-label="Reply to this item"></textarea>
+ *   <label class="weft-field-label" for="reply">Reply</label>
+ *   <textarea class="weft-textarea" id="reply" name="reply" rows="2" placeholder="Reply…"></textarea>
+ *
+ * The visible label names it. aria-label is sanctioned for icon-only controls
+ * and nothing else, and adding one here would override the label rather than
+ * reinforce it.
  */
 
 .weft-board-drawer-prov {
