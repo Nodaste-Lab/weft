@@ -52,8 +52,24 @@
  * Weft cannot know the chrome's height, so the surface declares it in
  * --weft-sticky-chrome-h and this turns it into scroll padding. The default is
  * 0, so a panel iframe with no chrome is unaffected — a rule that imposed
- * padding on every injected panel would be the cure being worse. */
-html {
+ * padding on every injected panel would be the cure being worse.
+ *
+ * AND IT CANNOT KNOW WHICH ELEMENT SCROLLS EITHER. scroll-padding applies to the
+ * scrollport, so `html` alone covers only surfaces where the document scrolls.
+ * Inside a HUD panel the panel BODY usually scrolls, and padding on `html` does
+ * exactly nothing there — which is the shape of consumer this whole plan is
+ * built around. Weft ships no scroll container of its own, so the surface marks
+ * its scrollport:
+ *
+ *   <div class="weft-scrollport"> … </div>
+ *   <div data-weft-scrollport> … </div>
+ *
+ * Either marker works; the attribute exists for surfaces that generate markup
+ * and would rather not fight a className. Proved on a panel-body scrollport
+ * inside the injected iframe, not only on the specimen document. */
+html,
+.weft-scrollport,
+[data-weft-scrollport] {
   scroll-padding-top: var(--weft-sticky-chrome-h, 0px);
 }
 @media (prefers-reduced-motion: reduce) {

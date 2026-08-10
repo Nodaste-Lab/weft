@@ -683,6 +683,15 @@ Weft cannot know the chrome's height, so **the surface declares it and the compo
 
 The default is `0`, so a panel iframe with no chrome is unaffected. The token is declared in its own bare `:root` block for a reason worth knowing: every other Weft token lives under `:root, :root[data-palette="weft"]`, which weighs (0,2,0), so the obvious `:root { … }` override in a consumer stylesheet would lose silently. At (0,1,0) it ties and, loading later, wins.
 
+**And mark the element that scrolls.** `scroll-padding` applies to the *scrollport*, so putting it on `html` covers only surfaces where the document scrolls. Inside a HUD panel the panel **body** usually scrolls, and padding on `html` does nothing at all there — measured at 100% of the focused control covered. Weft ships no scroll container of its own, so the surface says which element is one:
+
+```html
+<div class="weft-scrollport"> … </div>
+<div data-weft-scrollport> … </div>
+```
+
+Either marker works; the attribute is there for surfaces that generate markup and would rather not fight a `className`. Proved on a panel-body scrollport inside the injected iframe, not only on a scrolling document.
+
 #### How a control gets its name
 
 There is an order, and it is not a menu. Take the first rung that fits.

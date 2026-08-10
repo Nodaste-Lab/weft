@@ -485,3 +485,52 @@ for (const theme of THEMES) {
     });
   });
 }
+
+// ── SC 2.4.11 on the scrollport that actually scrolls ────────────────────────
+
+test('a control reached inside a panel scrollport is not left under its sticky chrome', async ({ page }) => {
+  // The specimen-page version of this proves it for the DOCUMENT scrollport.
+  // That is the easy half and it is not the half that bites: inside a HUD panel
+  // the panel BODY scrolls, `scroll-padding-top` on `html` does nothing there,
+  // and a control reached by an in-page navigation lands under the panel's own
+  // sticky header. Which is the consumer condition this whole harness exists for
+  // — so it is measured here, in the injected frame, not on the page.
+  await fillFrame(page, 'panel', { withWeft: true });
+
+  const reading = await page.evaluate(() => {
+    const doc = (document.getElementById('panel') as HTMLIFrameElement).contentDocument!;
+    const port = doc.getElementById('p-scrollport')!;
+    const chrome = doc.getElementById('p-scroll-chrome')!;
+    const field = doc.getElementById('p-deep')!;
+
+    port.scrollTop = 0;
+    // A scroll-to, the operation scroll-padding governs — the same shape as a
+    // fragment link or a skip link landing on a field.
+    field.scrollIntoView({ block: 'start' });
+
+    const f = field.getBoundingClientRect();
+    const c = chrome.getBoundingClientRect();
+    const covered = Math.max(0, Math.min(f.bottom, c.bottom) - Math.max(f.top, c.top));
+    return {
+      fraction: covered / f.height,
+      scrollPadding: doc.defaultView!.getComputedStyle(port).scrollPaddingTop,
+      chromeHeight: Math.round(c.height),
+      scrolled: port.scrollTop > 0,
+    };
+  });
+
+  expect(reading.scrolled, 'the fixture must actually scroll the panel body').toBe(true);
+
+  await measure({
+    key: 'iframe/panel-scrollport-not-obscured',
+    shortfall: reading.fraction,
+    evidence:
+      `${(reading.fraction * 100).toFixed(0)}% covered; scroll-padding-top ` +
+      `${reading.scrollPadding} against ${reading.chromeHeight}px of sticky chrome`,
+    failure:
+      'A control reached inside the panel body landed under the panel\'s sticky header. ' +
+      'scroll-padding applies to the SCROLLPORT, so `html` alone does nothing when the panel ' +
+      'body is what scrolls — the surface marks its scroll container with .weft-scrollport or ' +
+      'data-weft-scrollport.',
+  });
+});

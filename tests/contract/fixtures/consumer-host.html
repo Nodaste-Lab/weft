@@ -95,6 +95,17 @@
    * boundary sampler reads. Fixture hygiene, not a design claim. */
   .panel-row { display: flex; gap: 24px; align-items: center; margin-bottom: 16px; }
   .panel-own { padding-top: 16px; }
+  /* A panel that scrolls its own body under its own sticky header — the shape
+   * SC 2.4.11 actually bites in, and the one `scroll-padding-top: html` cannot
+   * reach. The surface declares its chrome height, exactly as a real panel does. */
+  :root { --weft-sticky-chrome-h: 48px; }
+  .panel-scroll { height: 240px; overflow-y: auto; position: relative; border: 1px solid #999; }
+  .panel-sticky {
+    position: sticky; top: 0; height: 44px; z-index: 2;
+    display: flex; align-items: center; padding: 0 12px;
+    background: #dcdcdc; font-size: 13px;
+  }
+  .panel-filler { height: 400px; }
 </template>
 
 <template id="panel-css-hostile">
@@ -141,6 +152,17 @@
     <label class="weft-checkbox-wrap" id="p-checkwrap">
       <input type="checkbox" class="weft-checkbox" id="p-checkbox" /> <span>Only mine</span>
     </label>
+  </div>
+
+  <!-- A scrolling panel body under sticky chrome. The control is deep enough
+       that reaching it has to scroll, and the scrollport is the div rather than
+       the document — which is what makes scroll-padding on `html` useless here. -->
+  <div class="panel-scroll" data-weft-scrollport id="p-scrollport">
+    <div class="panel-sticky" id="p-scroll-chrome">Panel header</div>
+    <div class="panel-filler"></div>
+    <label class="weft-sr-only" for="p-deep">Deep field</label>
+    <input class="weft-input" id="p-deep" />
+    <div class="panel-filler"></div>
   </div>
 
   <!-- The panel's own markup. Weft must not touch any of it.
