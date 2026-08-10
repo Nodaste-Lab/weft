@@ -265,16 +265,16 @@ def naming_section():
           '</div>',
         'description contains the error copy, and aria-invalid is true')
 
-    row('help-then-error', 'Help plus error',
+    row('error-then-help', 'Error plus help',
         '<div class="weft-field">'
         '<label class="weft-field-label" for="nm-both">Retention window</label>'
         + control_html('input', 'naming', 'nm-both', state='invalid', value='0',
-                       describedby='nm-both-hint nm-both-error')
-        + '<span class="weft-field-hint" id="nm-both-hint">Whole days, 1 or more.</span>'
-          '<span class="weft-field-hint is-error" id="nm-both-error">'
+                       describedby='nm-both-error nm-both-hint')
+        + '<span class="weft-field-hint is-error" id="nm-both-error">'
           'Zero is not a window. Enter 1 or more days.</span>'
+          '<span class="weft-field-hint" id="nm-both-hint">Whole days, 1 or more.</span>'
           '</div>',
-        'description contains each message exactly once')
+        'one ordered list, error id first — amendment A5. Each message exactly once.')
 
     row('required-marker', 'Required marker',
         '<div class="weft-field">'
@@ -291,8 +291,11 @@ def naming_section():
         'The plain-CSS layer cannot produce ARIA, so what it ships is a markup '
         'convention: a hint carries <code>id="&lt;control-id&gt;-hint"</code>, an error '
         'carries <code>id="&lt;control-id&gt;-error"</code>, and the control lists them in '
-        '<code>aria-describedby</code> in reading order. The React layer wires the same '
-        'relationship by construction in <code>FormControl</code>. '
+        '<code>aria-describedby</code> as ONE ORDERED LIST WITH THE ERROR FIRST '
+        '(amendment A5) — a field in error has one urgent thing to say and one '
+        'background thing, and leading with the format hint buries the reason the '
+        'value was rejected. The React layer wires the same order by construction in '
+        '<code>FormControl</code>. '
         'scripts/__tests__/input-specimens.node.mjs enforces the convention across this '
         'whole page, so it is a rule rather than two hand-wired specimens.',
         f'<div class="grid">{"".join(rows)}</div>')

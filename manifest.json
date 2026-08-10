@@ -323,7 +323,7 @@
       "category": "forms",
       "summary": "Form field helpers built on labels and slots.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "hover-card",

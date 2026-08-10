@@ -643,8 +643,9 @@ Every input sits inside a `.field` that stacks label + control + hint vertically
 <div class="field">
   <label class="field-label" for="email">Email <span class="req">required</span></label>
   <input class="input" id="email" type="email" required
-         aria-invalid="true" aria-describedby="email-hint" />
-  <span class="field-hint is-error" id="email-hint">Needs a full address.</span>
+         aria-invalid="true" aria-describedby="email-error email-hint" />
+  <span class="field-hint is-error" id="email-error">Needs a full address.</span>
+  <span class="field-hint" id="email-hint">Work addresses only.</span>
 </div>
 ```
 
@@ -710,8 +711,10 @@ There is an order, and it is not a menu. Take the first rung that fits.
 The plain-CSS layer cannot produce ARIA, so what Weft ships here is a markup convention, and `scripts/__tests__/input-specimens.node.mjs` enforces it across the whole specimen page:
 
 - a hint carries `id="<control-id>-hint"`; an error carries `id="<control-id>-error"`;
-- the control lists them in `aria-describedby`, in reading order;
-- the React layer wires the same relationship by construction in `FormControl`, so a consumer using the primitives gets it without writing ids.
+- the control lists them in `aria-describedby` as **one ordered list with the error first**;
+- the React layer wires the same order by construction in `FormControl`, so a consumer using the primitives gets it without writing ids.
+
+**Error first is the rule, not a preference** (amendment A5). A field in error has one urgent thing to say and one background thing; leading with the format hint buries the reason the value was rejected behind text the user has already read. Order is asserted directly — in `src/ui/__tests__/form-describedby-order.test.tsx` for React and by `S8b` for the plain-CSS recipe — because both ids present in the *wrong* order satisfy every existence and resolution check, and did.
 
 A hint with an id that nothing points at is decoration. That is what shipped before this convention existed: `aria-invalid` was exposed and the description was empty.
 

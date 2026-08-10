@@ -112,10 +112,17 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
     <Slot
       data-slot="form-control"
       id={formItemId}
+      // A5: ONE ordered list, ERROR FIRST. A field in error has one urgent
+      // thing to say and one background thing; leading with the format hint
+      // buries the reason the value was rejected behind text the user has
+      // already read. Order is the whole rule, which is why
+      // __tests__/form-describedby-order.test.tsx asserts position rather than
+      // presence — both ids in the wrong order satisfy every existence and
+      // resolution check ever written against this, and did.
       aria-describedby={
         !error
           ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+          : `${formMessageId} ${formDescriptionId}`
       }
       aria-invalid={!!error}
       {...props}

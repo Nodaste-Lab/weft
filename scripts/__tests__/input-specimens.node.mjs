@@ -117,6 +117,29 @@ test('S8: hint ids follow the documented pattern, and every reference resolves',
   assert.deepEqual(problems, [], `Description wiring is broken:\n  ${problems.join('\n  ')}`);
 });
 
+test('S8b: where both are present, the error id comes first (amendment A5)', () => {
+  // ORDER IS THE WHOLE RULE, so order is what is asserted. S7 and S8 check that
+  // the ids exist, resolve, and are named correctly — all three of which the
+  // WRONG order satisfies perfectly, which is exactly how this shipped
+  // backwards: every guard around the rule was true and none was about it.
+  const problems = [];
+  for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
+    const refs = list.split(/\s+/).filter(Boolean);
+    const errorAt = refs.findIndex((r) => r.endsWith('-error'));
+    const hintAt = refs.findIndex((r) => r.endsWith('-hint'));
+    if (errorAt === -1 || hintAt === -1) continue;  // only one kind present
+    if (errorAt > hintAt) {
+      problems.push(`"${list}" lists the help text before the error`);
+    }
+  }
+  assert.deepEqual(
+    problems,
+    [],
+    'Amendment A5: one ordered aria-describedby list, error id first. A field in error has ' +
+      'one urgent thing to say and one background thing.\n  ' + problems.join('\n  '),
+  );
+});
+
 test('S9: a required marker is real text and its control carries the attribute', () => {
   // Decision 4. A bare glyph lands in the accessible name as punctuation while
   // `required` stays false — observed name "RETENTION*", required false.
