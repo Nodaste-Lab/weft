@@ -13,6 +13,17 @@
  * check, and a test fixture that needs an install step is a fixture that gets
  * skipped.
  *
+ * IT SERVES AN ALLOWLIST, NOT THE WORKTREE. Four paths is all the suites ever
+ * request, so hosting the whole checkout — .git metadata, ignored scratch,
+ * untracked local files, anything a developer happens to have lying about —
+ * bought nothing and risked all of it, on a server CI and the release job both
+ * run. With an exact allowlist, a traversal or symlink bug cannot matter:
+ * there is nothing outside these four paths to reach. The containment check
+ * below stays anyway, because one of these paths could itself become a symlink.
+ *
+ * Adding a path here is deliberate. If a suite needs a fifth file, that is a
+ * line in this list and a moment's thought about why.
+ *
  * Usage: node scripts/serve-repo.mjs [port]
  */
 import { createServer } from 'node:http';
@@ -25,6 +36,14 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // once and compare like with like.
 const realRoot = realpathSync(ROOT);
 const PORT = Number(process.argv[2] ?? process.env.PORT ?? 4318);
+
+/** Every path the tests/contract/ suites fetch. Nothing else is served. */
+const ALLOWED = new Set([
+  '/docs/brand-package/input-specimens.html',   // the specimen fixture
+  '/tests/contract/fixtures/consumer-host.html', // the injected-iframe fixture
+  '/css/weft.css',                               // read live by the specimen page
+  '/css/weft-components.css',                    // read live by the specimen page
+]);
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -44,6 +63,10 @@ const server = createServer((req, res) => {
   // characters — `/…/input-ds-impl-secret/x` passes a prefix test against
   // `/…/input-ds-impl`. relative() answers the question actually being asked.
   const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+  if (!ALLOWED.has(path)) {
+    res.writeHead(403).end('forbidden');
+    return;
+  }
   const requested = join(ROOT, path);
 
   // Containment is checked on the RESOLVED path, not the lexical one. relative()
