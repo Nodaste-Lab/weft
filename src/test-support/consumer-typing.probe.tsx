@@ -49,8 +49,9 @@ export function CommitBoundaryConsumer() {
       <button
         type="button"
         onPointerDown={(e) => {
-          if (e.button === 0 && e.isPrimary) boundary.registerExplicitSave();
+          if (e.button === 0 && e.isPrimary && !e.ctrlKey) boundary.registerExplicitSave();
         }}
+        onContextMenu={boundary.cancelExplicitSave}
         onPointerLeave={boundary.cancelExplicitSave}
         onPointerCancel={boundary.cancelExplicitSave}
         onClick={() => boundary.commit("explicit-save")}

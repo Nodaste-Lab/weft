@@ -75,24 +75,33 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
     // from state seeded by defaultValue and fed by change events.
     const [innerValue, setInnerValue] = React.useState(String(props.defaultValue ?? ""));
 
-    // Native form.reset() restores the DOM value WITHOUT firing input/change,
-    // so the uncontrolled mirror above would go stale — a clear button shown
-    // for an empty field, or missing for a restored default, either way a
-    // wrong accessible affordance. Resync from the DOM after the reset's
-    // default action lands (the event fires first; the restoration follows in
-    // the same task, so a microtask reads the settled value). No commit is
-    // emitted — reset is not a boundary, and the helper already proves that.
+    // Three native paths write the DOM value WITHOUT firing input/change, and
+    // each would strand the uncontrolled mirror above — a clear button shown
+    // for an empty field, or missing over real content, either way a wrong
+    // accessible affordance: form.reset() (restores defaults), session
+    // restore (the browser refills the field it remembers), and autofill.
+    // The sync is the same for all three: read the DOM's settled value.
+    // No commit is ever emitted — none of these is a boundary.
     React.useEffect(() => {
       const el = innerRef.current;
-      const form = el?.form;
-      if (!form) return;
-      const onReset = () => {
-        queueMicrotask(() => {
-          if (innerRef.current) setInnerValue(innerRef.current.value);
-        });
+      if (!el) return;
+      const sync = () => {
+        if (innerRef.current) setInnerValue(innerRef.current.value);
       };
-      form.addEventListener("reset", onReset);
-      return () => form.removeEventListener("reset", onReset);
+      // Session restore can land before effects run: reconcile at mount.
+      if (el.value !== String(props.defaultValue ?? "")) sync();
+      // reset(): the event fires first, the restoration follows in the same
+      // task — a microtask reads the settled value.
+      const onReset = () => queueMicrotask(sync);
+      // pageshow: bfcache restores fire no input events at all.
+      const form = el.form;
+      form?.addEventListener("reset", onReset);
+      window.addEventListener("pageshow", sync);
+      return () => {
+        form?.removeEventListener("reset", onReset);
+        window.removeEventListener("pageshow", sync);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-time reconciliation only
     }, []);
 
     const value = props.value !== undefined ? String(props.value) : innerValue;
@@ -173,16 +182,21 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
             type="button"
             aria-label={clearLabel}
             onPointerDown={(e) => {
-              // Primary activation only. A right-click (context menu) or a
-              // secondary touch fires pointerdown but never the click that
-              // commits — an armed registration with no activation coming
+              // Primary activation only. A right-click (context menu), a
+              // secondary touch, or a macOS Ctrl-click — which arrives as
+              // BUTTON 0 with ctrlKey — fires pointerdown but never the click
+              // that commits; an armed registration with no activation coming
               // would suppress and swallow the next blur.
-              if (e.button !== 0 || !e.isPrimary) return;
+              if (e.button !== 0 || !e.isPrimary || e.ctrlKey) return;
               // Keep focus in the field on a pointer clear; register for the
               // keyboard path, where focus genuinely moves and blurs first.
               e.preventDefault();
               boundary.registerExplicitSave();
             }}
+            // The net under the gate: however a context menu arrives, it means
+            // no activation is coming — release the registration, replaying
+            // any already-suppressed blur.
+            onContextMenu={boundary.cancelExplicitSave}
             onPointerLeave={boundary.cancelExplicitSave}
             onPointerCancel={boundary.cancelExplicitSave}
             onBlur={() => {

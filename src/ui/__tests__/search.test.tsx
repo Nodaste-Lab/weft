@@ -140,6 +140,22 @@ describe('clearing', () => {
     ]);
   });
 
+  it('a macOS Ctrl-click arms nothing either — button 0, but a context menu, not an activation', () => {
+    const commits: CommitDetail[] = [];
+    render(
+      <SearchField label="Search projects" defaultValue="weft" onCommit={(d) => commits.push(d)} />,
+    );
+    const box = screen.getByRole('searchbox') as HTMLInputElement;
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    box.focus();
+    fireEvent.pointerDown(clear, { button: 0, isPrimary: true, ctrlKey: true });
+    fireEvent.contextMenu(clear);
+    fireEvent.blur(box);
+    expect(commits, 'primary-button gestures that open menus are not activations').toEqual([
+      { reason: 'blur', sources: ['blur'] },
+    ]);
+  });
+
   it('tabbing through the clear without activating replays the blur — one commit, nothing swallowed', () => {
     const commits: CommitDetail[] = [];
     render(
@@ -243,6 +259,24 @@ describe('the commit boundary rides along', () => {
       const box = screen.getByRole('searchbox', { name: 'Search projects' });
       expect(box.getAttribute('aria-label')).toBeNull();
       expect(box.getAttribute('aria-labelledby')).toBeNull();
+    });
+  });
+
+  describe('DOM writes React never hears about', () => {
+    it('a bfcache/session restore that refills the field brings the clear with it', () => {
+      render(<SearchField label="Search projects" />);
+      const box = screen.getByRole('searchbox') as HTMLInputElement;
+      expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
+      // The browser restores the remembered value straight into the DOM —
+      // no input, no change, no React involvement at all.
+      box.value = 'restored query';
+      act(() => {
+        window.dispatchEvent(new Event('pageshow'));
+      });
+      expect(
+        screen.getByRole('button', { name: 'Clear search' }),
+        'content exists; hiding the clear makes the restored value un-clearable',
+      ).toBeTruthy();
     });
   });
 

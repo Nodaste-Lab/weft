@@ -869,13 +869,15 @@ const boundary = useCommitBoundary({
 // the user crossed is never swallowed by a save that never happened.
 <Button type="button"
         onPointerDown={(e) => {
-          // Primary activation only: a right-click or secondary touch fires
-          // pointerdown with no click coming, and an armed registration with
-          // no activation would suppress and swallow the next blur.
-          if (e.button === 0 && e.isPrimary) boundary.registerExplicitSave();
+          // Primary activation only: a right-click, a secondary touch, or a
+          // macOS Ctrl-click (button 0 + ctrlKey!) fires pointerdown with no
+          // click coming, and an armed registration with no activation would
+          // suppress and swallow the next blur.
+          if (e.button === 0 && e.isPrimary && !e.ctrlKey) boundary.registerExplicitSave();
         }}
         onPointerLeave={boundary.cancelExplicitSave}
         onPointerCancel={boundary.cancelExplicitSave}
+        onContextMenu={boundary.cancelExplicitSave}
         onClick={() => boundary.commit('explicit-save')}>Save</Button>
 ```
 
