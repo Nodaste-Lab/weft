@@ -48,7 +48,9 @@ export function CommitBoundaryConsumer() {
       <input {...boundary.getFieldProps()} />
       <button
         type="button"
-        onPointerDown={boundary.registerExplicitSave}
+        onPointerDown={(e) => {
+          if (e.button === 0 && e.isPrimary) boundary.registerExplicitSave();
+        }}
         onPointerLeave={boundary.cancelExplicitSave}
         onPointerCancel={boundary.cancelExplicitSave}
         onClick={() => boundary.commit("explicit-save")}

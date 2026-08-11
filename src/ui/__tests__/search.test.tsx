@@ -50,7 +50,7 @@ describe('clearing', () => {
     const box = screen.getByRole('searchbox') as HTMLInputElement;
     box.focus();
     const clear = screen.getByRole('button', { name: 'Clear search' });
-    fireEvent.pointerDown(clear);
+    fireEvent.pointerDown(clear, { button: 0, isPrimary: true });
     fireEvent.click(clear);
     await Promise.resolve(); // the commit lands one microtask later, after React's flush
     expect(box.value).toBe('');
@@ -70,7 +70,10 @@ describe('clearing', () => {
     }
     render(<Controlled />);
     const box = screen.getByRole('searchbox') as HTMLInputElement;
-    fireEvent.pointerDown(screen.getByRole('button', { name: 'Clear search' }));
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Clear search' }), {
+      button: 0,
+      isPrimary: true,
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
     expect(box.value).toBe('');
     expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
@@ -84,7 +87,7 @@ describe('clearing', () => {
       </form>,
     );
     const clear = screen.getByRole('button', { name: 'Clear search' });
-    fireEvent.pointerDown(clear);
+    fireEvent.pointerDown(clear, { button: 0, isPrimary: true });
     fireEvent.click(clear);
     expect(onSubmit, 'a clear that submits is the classic defect').not.toHaveBeenCalled();
   });
@@ -119,6 +122,24 @@ describe('clearing', () => {
     expect(commits[0].reason).toBe('explicit-save');
   });
 
+  it('a right-click on the clear arms nothing — the next blur commits normally', () => {
+    // A secondary press fires pointerdown with no click coming (the context
+    // menu eats it), and none of the cancel paths fire either — an armed
+    // registration here would suppress and swallow the next blur.
+    const commits: CommitDetail[] = [];
+    render(
+      <SearchField label="Search projects" defaultValue="weft" onCommit={(d) => commits.push(d)} />,
+    );
+    const box = screen.getByRole('searchbox') as HTMLInputElement;
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    box.focus();
+    fireEvent.pointerDown(clear, { button: 2, isPrimary: true }); // context-menu press
+    fireEvent.blur(box); // later: focus leaves for somewhere unrelated
+    expect(commits, 'the blur must not be suppressed by a save that never comes').toEqual([
+      { reason: 'blur', sources: ['blur'] },
+    ]);
+  });
+
   it('tabbing through the clear without activating replays the blur — one commit, nothing swallowed', () => {
     const commits: CommitDetail[] = [];
     render(
@@ -147,7 +168,7 @@ describe('clearing', () => {
     }
     render(<Controlled />);
     const clear = screen.getByRole('button', { name: 'Clear search' });
-    fireEvent.pointerDown(clear);
+    fireEvent.pointerDown(clear, { button: 0, isPrimary: true });
     fireEvent.click(clear);
     await Promise.resolve();
     expect(

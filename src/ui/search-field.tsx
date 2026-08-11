@@ -173,6 +173,11 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
             type="button"
             aria-label={clearLabel}
             onPointerDown={(e) => {
+              // Primary activation only. A right-click (context menu) or a
+              // secondary touch fires pointerdown but never the click that
+              // commits — an armed registration with no activation coming
+              // would suppress and swallow the next blur.
+              if (e.button !== 0 || !e.isPrimary) return;
               // Keep focus in the field on a pointer clear; register for the
               // keyboard path, where focus genuinely moves and blurs first.
               e.preventDefault();

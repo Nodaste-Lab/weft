@@ -764,7 +764,7 @@ The same trap applies to any glyph baked into a data-URI, because its colour can
 
 #### `.checkbox` and `.radio`
 
-Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 44px `.checkbox-wrap` (or `.radio-wrap`) for touch-target AA. Checked fills the tile with `--weft-blue` and draws a crisp glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a dot for the radio reading `--weft-on-blue`. In the Weft palette the glyph is white, not `--weft-cream` or `--weft-paper`, because there the blue fill is theme-invariant — the glyph must be too. The tick is a data URI whose stroke cannot read a token, so a palette that lifts its primary light carries a scoped override (dark `heritage-purple` does), and `select-chrome.spec.ts` measures every palette × theme pairing. Grouped radios wrap in a `<fieldset class="field-group">` with a `<legend>` mono-cap label.
+Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 32px `.checkbox-wrap` (or `.radio-wrap`) choice row — clearing the 24px control floor — and adjacent rows stack with a 12px gap so their centres sit exactly 44px apart: the clearance rule is met **by construction of the stack**, not by inflating the row (decision 1, clearance reading (b)). Checked fills the tile with `--weft-blue` and draws a crisp glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a dot for the radio reading `--weft-on-blue`. In the Weft palette the glyph is white, not `--weft-cream` or `--weft-paper`, because there the blue fill is theme-invariant — the glyph must be too. The tick is a data URI whose stroke cannot read a token, so a palette that lifts its primary light carries a scoped override (dark `heritage-purple` does), and `select-chrome.spec.ts` measures every palette × theme pairing. Grouped radios wrap in a `<fieldset class="field-group">` with a `<legend>` mono-cap label.
 
 ```html
 <label class="checkbox-wrap">
@@ -868,7 +868,12 @@ const boundary = useCommitBoundary({
 // which cancelExplicitSave REPLAYS as an ordinary blur commit — a boundary
 // the user crossed is never swallowed by a save that never happened.
 <Button type="button"
-        onPointerDown={boundary.registerExplicitSave}
+        onPointerDown={(e) => {
+          // Primary activation only: a right-click or secondary touch fires
+          // pointerdown with no click coming, and an armed registration with
+          // no activation would suppress and swallow the next blur.
+          if (e.button === 0 && e.isPrimary) boundary.registerExplicitSave();
+        }}
         onPointerLeave={boundary.cancelExplicitSave}
         onPointerCancel={boundary.cancelExplicitSave}
         onClick={() => boundary.commit('explicit-save')}>Save</Button>
