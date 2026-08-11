@@ -36,7 +36,7 @@ const buttonVariants = cva(
         // fallbacks so a consumer rendering without weft.css sees exactly the
         // pre-P5 heights.
         default: "h-[var(--weft-control-h,36px)] px-4 py-2 has-[>svg]:px-3",
-        sm: "h-[var(--weft-control-h-sm,32px)] rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        sm: "h-[var(--weft-control-h-sm,32px)] rounded-md gap-1.5 px-[var(--weft-control-pad-x-sm,12px)] has-[>svg]:px-2.5",
         // Outside the compose axis, deliberately: lg and icon are React-only
         // conveniences with no plain-CSS counterpart or decided tier map, and
         // dense is the legacy escape hatch for emulating the dense tier inside

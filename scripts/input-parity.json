@@ -21,7 +21,8 @@
       "claim": "native select with token chevron; read-only exists in neither content model",
       "react": "src/ui/select.tsx",
       "plainCss": ".weft-select",
-      "status": "parity"
+      "status": "divergence",
+      "ref": "select-mechanism"
     },
     {
       "capability": "switch",
@@ -168,6 +169,13 @@
       "react": "src/ui/radio-group.tsx",
       "plainCss": ".weft-radio-wrap",
       "rationale": "The ROW is a plain-CSS recipe: .weft-checkbox-wrap/.weft-radio-wrap carry the 32px row height and the 12px stack gap that puts adjacent rows exactly 44px apart. React ships the bare control and composes rows through Label/FormItem, where the surface owns spacing — a React Row primitive would duplicate a layout the form composition already answers. Deliberate and permanent, like RangeBounds: an expiry would imply a Row component is coming, and it is not. The clearance contract itself is measured on the recipe by input-geometry and input-clearance, and React surfaces inherit it by adopting the stack pattern, which the gallery demonstrates."
+    },
+    {
+      "id": "select-mechanism",
+      "capability": "select — choosing one option from a list",
+      "react": "src/ui/select.tsx",
+      "plainCss": ".weft-select",
+      "rationale": "React Select is Radix: a popover listbox with typeahead, portalled content and styled options. The plain-CSS .weft-select is a native <select> whose dropdown belongs to the platform and cannot be styled by design. Same need, permanently different mechanisms — an expiry would imply the native picker will someday grow Radix behaviour. What IS held common and tested: the trigger geometry (tier + sm step through the same tokens), the boundary pair, the chevron invariant across palettes, name/description wiring, and form serialization."
     }
   ]
 }

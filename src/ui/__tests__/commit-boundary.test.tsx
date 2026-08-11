@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { useCommitBoundary, type CommitDetail } from '../use-commit-boundary';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../form';
@@ -293,6 +293,60 @@ describe('the explicit-save transaction', () => {
       h().commits[1],
       'the stale registration must not suppress a boundary in the NEXT transaction',
     ).toEqual({ reason: 'blur', sources: ['blur'] });
+  });
+
+  it('form.reset() clears an OPEN transaction — stale blur evidence never survives the wipe', () => {
+    // The tracking board's probe, verbatim: register → blur (suppressed) →
+    // form.reset() → commit('explicit-save'). Before the reset listener the
+    // commit reported sources ["blur", "explicit-save"] — evidence about a
+    // value the reset had already wiped. Cleared, never replayed: a replay
+    // would commit a boundary crossed by a value that no longer exists.
+    const commits: CommitDetail[] = [];
+    let boundary!: ReturnType<typeof useCommitBoundary>;
+    function Fixture() {
+      boundary = useCommitBoundary({ onCommit: (d) => commits.push(d) });
+      return (
+        <form>
+          <input aria-label="Inside a form" {...boundary.getFieldProps()} />
+        </form>
+      );
+    }
+    render(<Fixture />);
+    const control = screen.getByRole('textbox');
+    fireEvent.focus(control);
+    boundary.registerExplicitSave();
+    fireEvent.blur(control); // suppressed for the registered save
+    expect(commits).toHaveLength(0);
+    act(() => {
+      (document.querySelector('form') as HTMLFormElement).reset();
+    });
+    expect(commits, 'reset is not a boundary').toHaveLength(0);
+    boundary.commit('explicit-save');
+    expect(commits).toEqual([{ reason: 'explicit-save', sources: ['explicit-save'] }]);
+  });
+
+  it('form.reset() disarms a registration that has not yet suppressed anything', () => {
+    const commits: CommitDetail[] = [];
+    let boundary!: ReturnType<typeof useCommitBoundary>;
+    function Fixture() {
+      boundary = useCommitBoundary({ onCommit: (d) => commits.push(d) });
+      return (
+        <form>
+          <input aria-label="Inside a form" {...boundary.getFieldProps()} />
+        </form>
+      );
+    }
+    render(<Fixture />);
+    const control = screen.getByRole('textbox');
+    fireEvent.focus(control);
+    boundary.registerExplicitSave();
+    act(() => {
+      (document.querySelector('form') as HTMLFormElement).reset();
+    });
+    fireEvent.blur(control);
+    expect(commits, 'the pre-reset registration must not suppress this blur').toEqual([
+      { reason: 'blur', sources: ['blur'] },
+    ]);
   });
 
   it('a canceled pointer Save replays the suppressed blur — the boundary is never swallowed', () => {

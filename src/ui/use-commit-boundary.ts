@@ -152,6 +152,41 @@ export function useCommitBoundary({
     }
   }, [emit]);
 
+  // Native form.reset() must leave no helper state behind — including a
+  // transaction already OPEN when the reset lands. Without this listener, a
+  // suppressed blur survived the reset and a later commit reported
+  // sources: ["blur", "explicit-save"] — evidence about a value the reset
+  // had already wiped (found by the PR's antagonistic tracking board, with
+  // this exact probe). The form is observed lazily from the events the
+  // helper already receives; the state is CLEARED, never replayed: a replay
+  // would commit a boundary crossed by a value that no longer exists.
+  const formRef = React.useRef<HTMLFormElement | null>(null);
+  const detachResetRef = React.useRef<(() => void) | null>(null);
+
+  const onFormReset = React.useCallback(() => {
+    saveRegisteredRef.current = false;
+    suppressedBlurRef.current = false;
+    composingRef.current = false;
+  }, []);
+
+  const observeForm = React.useCallback(
+    (el: EventTarget | null) => {
+      const form = (el as HTMLInputElement | null)?.form ?? null;
+      if (form === formRef.current) return;
+      detachResetRef.current?.();
+      formRef.current = form;
+      if (form) {
+        form.addEventListener("reset", onFormReset);
+        detachResetRef.current = () => form.removeEventListener("reset", onFormReset);
+      } else {
+        detachResetRef.current = null;
+      }
+    },
+    [onFormReset],
+  );
+
+  React.useEffect(() => () => detachResetRef.current?.(), []);
+
   const handleBlur = React.useCallback(() => {
     // A blur mid-composition ends the composition; the boundary is real.
     composingRef.current = false;
@@ -217,14 +252,17 @@ export function useCommitBoundary({
       return {
         ...supplied,
         onBlur: (event: React.FocusEvent<FieldElement>) => {
+          observeForm(event.currentTarget);
           supplied.onBlur?.(event);
           handleBlur();
         },
         onFocus: (event: React.FocusEvent<FieldElement>) => {
+          observeForm(event.currentTarget);
           supplied.onFocus?.(event);
           handleFocus();
         },
         onKeyDown: (event: React.KeyboardEvent<FieldElement>) => {
+          observeForm(event.currentTarget);
           supplied.onKeyDown?.(event);
           handleKeyDown(event);
         },
@@ -238,7 +276,7 @@ export function useCommitBoundary({
         },
       };
     },
-    [handleBlur, handleFocus, handleKeyDown, handleCompositionStart, handleCompositionEnd],
+    [observeForm, handleBlur, handleFocus, handleKeyDown, handleCompositionStart, handleCompositionEnd],
   );
 
   return { getFieldProps, registerExplicitSave, cancelExplicitSave, commit };
