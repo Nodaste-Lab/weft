@@ -193,6 +193,19 @@ describe('clearing', () => {
     ).toEqual(['']);
   });
 
+  it('the trailing reserve reads the shared token, not a fixed pixel class', () => {
+    // jsdom does no layout, so what a React-side test can honestly pin is the
+    // MECHANISM: the clearable input's padding class resolves through
+    // --weft-search-pad-end — the same token the plain-CSS recipe reads and
+    // the plain-layer geometry suite measures painted at 36/32/30. A fixed
+    // pr-8 here kept React at 32px in every density while the recipe
+    // followed the owner-called map: same visual, silent parity drift.
+    render(<SearchField label="Search projects" defaultValue="weft" />);
+    const box = screen.getByRole('searchbox') as HTMLInputElement;
+    expect(box.className).toContain('pr-[var(--weft-search-pad-end');
+    expect(box.className, 'the fixed-pixel class must not come back').not.toMatch(/\bpr-8\b/);
+  });
+
   it('takes a consumer clear label', () => {
     render(<SearchField label="Search notes" defaultValue="x" clearLabel="Clear note search" />);
     expect(screen.getByRole('button', { name: 'Clear note search' })).toBeTruthy();

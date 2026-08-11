@@ -178,8 +178,16 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
           id={inputId}
           ref={setRef}
           type="search"
-          // Provisional trailing padding — P5 finalizes against document B.
-          className={cn("pl-8", clearable && "pr-8", "[&::-webkit-search-cancel-button]:appearance-none")}
+          // The trailing reserve reads the same token the plain-CSS recipe
+          // reads — document B's owner-called map, 36/32/30 by density. The
+          // fallback is the old fixed 32px, so rendering without weft.css is
+          // unchanged. The leading 32px is the icon reserve, fixed in both
+          // layers alike.
+          className={cn(
+            "pl-8",
+            clearable && "pr-[var(--weft-search-pad-end,32px)]",
+            "[&::-webkit-search-cancel-button]:appearance-none",
+          )}
         />
         {clearable ? (
           <button
