@@ -2,6 +2,7 @@ import * as React from "react";
 import { Pencil, X } from "lucide-react";
 import { Textarea } from "./textarea";
 import { HudListRow } from "./hud-list-row";
+import { useCommitBoundary } from "./use-commit-boundary";
 import { cn } from "./utils";
 
 /*
@@ -9,8 +10,21 @@ import { cn } from "./utils";
  *
  * A specialization of the canonical HudListRow (frame=false): HudListRow owns the
  * leading/body/trailing layout; this component owns the inline-edit behavior
- * (click to edit, Enter/Escape, commit-on-blur, hover-revealed actions). Public
- * API + data-slots + visual unchanged.
+ * (click to edit, commit-on-blur, hover-revealed actions).
+ *
+ * The editing state rides the commit boundary (v2.0.0, proposals document C §5
+ * — decided: migrate). Three behaviours changed, each away from a contract
+ * breach the old implementation shipped:
+ *
+ * - Enter inserts a newline. It used to preventDefault and commit — a textarea's
+ *   Enter is never a boundary, and a multi-line editor whose Enter leaves is
+ *   unusable as a multi-line editor.
+ * - An emptied value is a value. Select-all, delete, leave commits "" — it used
+ *   to restore the previous text, which is data loss with a tidy appearance.
+ * - Escape OFFERS a discard rather than performing one: the first press shows
+ *   the offer and touches nothing, a second press — the user choosing, with the
+ *   offer visible — performs it, and typing withdraws it. Nothing happens to
+ *   the user's work while they are not looking.
  */
 interface InlineEditListRowProps extends Omit<React.ComponentProps<"div">, "onUpdate"> {
   text: string;
@@ -59,20 +73,30 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
     const [editing, setEditing] = React.useState(false);
     const [draft, setDraft] = React.useState(text);
     const [hovered, setHovered] = React.useState(false);
+    // Escape's two-step: the first press sets this and shows the hint; the
+    // second performs the discard. Typing, blur or close withdraws it.
+    const [discardOffered, setDiscardOffered] = React.useState(false);
+    const discardHintId = React.useId();
 
     React.useEffect(() => {
       if (!editing) setDraft(text);
     }, [text, editing]);
 
-    const commit = () => {
-      const trimmed = draft.trim();
-      if (trimmed && trimmed !== text) onUpdate(trimmed);
-      else setDraft(text);
-      setEditing(false);
-    };
+    // The helper says WHEN the field committed; applying the draft is this
+    // component's (the consumer's) side of the line. Empty is a value —
+    // whitespace trims to "" and "" commits like anything else.
+    const boundary = useCommitBoundary({
+      onCommit: () => {
+        const trimmed = draft.trim();
+        if (trimmed !== text) onUpdate(trimmed);
+        setDiscardOffered(false);
+        setEditing(false);
+      },
+    });
 
     const startEdit = () => {
       setDraft(text);
+      setDiscardOffered(false);
       setEditing(true);
     };
 
@@ -97,24 +121,50 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
           leading={leading}
           {...props}
         >
-          <Textarea
-            autoFocus
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                commit();
-              }
-              if (e.key === "Escape") {
-                setDraft(text);
-                setEditing(false);
-              }
-            }}
-            onBlur={commit}
-            aria-label={editAriaLabel}
-            rows={rows}
-          />
+          <div className="flex w-full flex-col gap-1">
+            <Textarea
+              {...boundary.getFieldProps({
+                autoFocus: true,
+                value: draft,
+                onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  setDraft(e.target.value);
+                  // The user kept working; the offer no longer stands.
+                  setDiscardOffered(false);
+                },
+                onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                  // Enter falls through: on a textarea it is a newline, and the
+                  // boundary helper emits nothing for it.
+                  if (e.key !== "Escape") return;
+                  if (draft === text) {
+                    // Nothing to lose — close without ceremony.
+                    setDiscardOffered(false);
+                    setEditing(false);
+                    return;
+                  }
+                  if (!discardOffered) {
+                    setDiscardOffered(true);
+                    return;
+                  }
+                  // Second press with the offer visible: the user chose this.
+                  setDraft(text);
+                  setDiscardOffered(false);
+                  setEditing(false);
+                },
+                "aria-label": editAriaLabel,
+                "aria-describedby": discardOffered ? discardHintId : undefined,
+                rows,
+              })}
+            />
+            {discardOffered ? (
+              <span
+                id={discardHintId}
+                data-slot="inline-edit-list-row-discard-hint"
+                className="text-[10px] leading-tight text-[var(--hud-text-3)]"
+              >
+                Unsaved edit — press Escape again to discard, or click away to save.
+              </span>
+            ) : null}
+          </div>
         </HudListRow>
       );
     }

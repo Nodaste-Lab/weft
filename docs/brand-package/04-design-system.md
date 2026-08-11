@@ -883,12 +883,15 @@ Weft today. That is the first entry in the input parity record
 and an expiry; a panel that needs the behaviour wires its own listeners to the
 sequence contract above, which the stylesheet contributes nothing to.
 
-**One shipped primitive predates this contract and contradicts it**:
-`InlineEditListRow` commits Enter on a textarea, reverts on Escape, and
-restores the previous text over an emptied value — the last one is silent data
-loss with a tidy appearance. Its migration onto the helper is decided
-(proposals document C) and scheduled as its own change with a version bump; its
-current behaviour is not blessed by appearing in the same package as this rule.
+**`InlineEditListRow` is the first migrated consumer** (v2.0.0 — a behaviour
+change, decided in proposals document C). It used to do three things this
+contract forbids: commit Enter on a textarea, silently revert on Escape, and
+restore the previous text over an emptied value — the last one silent data
+loss with a tidy appearance. Now its editing state rides the helper: blur
+commits, Enter inserts a newline, an emptied value commits as `""`, and Escape
+*offers* a discard — the first press shows the offer and touches nothing, a
+second press performs it, typing withdraws it. The offer is exposed through
+`aria-describedby` while it stands.
 
 ---
 

@@ -467,9 +467,9 @@
       "id": "inline-edit-list-row",
       "path": "src/ui/inline-edit-list-row.tsx",
       "category": "data-display",
-      "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Used in recap beats + mysteries.",
+      "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Editing rides the commit boundary: blur commits, Enter is a newline, an emptied value survives, Escape offers a two-step discard. Used in recap beats + mysteries.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "2.0.0"
     },
     {
       "id": "input",
