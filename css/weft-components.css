@@ -1010,6 +1010,17 @@ html,
   background-color: transparent;
   border-radius: 0;
 }
+/* Hover deepens the UNDERLINE, and only the underline. The base hover rule is
+ * class + :hover + two :not()s — (0,4,0) — which outweighs the (0,2,0) tier
+ * modifier and would repaint all four sides with --weft-ink, turning the
+ * underline tier into a boxed field exactly while the user reaches for it
+ * (P7 review round 1). Extra class weight, declared later, longhands only. */
+.weft-input.is-underline:hover:not(:disabled):not([readonly]),
+.weft-textarea.is-underline:hover:not(:disabled):not([readonly]) {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
 .weft-input.is-low, .weft-textarea.is-low, .weft-select.is-low {
   background-color: transparent;
   color: var(--weft-muted);
