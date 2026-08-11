@@ -50,6 +50,8 @@ jobs:
         run: npm run test:packed
       - name: Input parity record (allowlist owners + unexpired expiries)
         run: npm run test:parity
+      - name: Consumer-typing probe (public surface compiles under strict consumer TS)
+        run: npm run test:types
 
   visual-regression:
     runs-on: ubuntu-latest

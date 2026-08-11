@@ -59,6 +59,7 @@
     "test:specimens": "node --test scripts/__tests__/input-specimens.node.mjs",
     "test:packed": "node --test scripts/__tests__/packed-artifact.node.mjs",
     "test:parity": "node --test scripts/__tests__/input-parity.node.mjs",
+    "test:types": "tsc --noEmit --strict --jsx react-jsx --module esnext --moduleResolution bundler --target es2022 --skipLibCheck src/test-support/consumer-typing.probe.tsx",
     "tokens": "node scripts/design-system-tokens.mjs",
     "tokens:write": "node scripts/design-system-tokens.mjs --write",
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",

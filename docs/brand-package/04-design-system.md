@@ -855,8 +855,12 @@ const boundary = useCommitBoundary({
   />
 </FormControl>
 
-// Pointer Save: register BEFORE focus moves, then commit.
-<Button onPointerDown={boundary.registerExplicitSave}
+// Pointer Save: register BEFORE focus moves, then commit. type="button" is
+// load-bearing — a native button inside a form defaults to type="submit", so
+// without it this example would submit the form on every Save click, which is
+// exactly the submission-state line the helper exists to stay behind.
+<Button type="button"
+        onPointerDown={boundary.registerExplicitSave}
         onClick={() => boundary.commit('explicit-save')}>Save</Button>
 ```
 

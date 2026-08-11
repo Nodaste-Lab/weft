@@ -80,9 +80,7 @@ export type UseCommitBoundaryReturn = {
    * handlers (react-hook-form's `field.onBlur` included) are called first and
    * are never swallowed; the helper only listens.
    */
-  getFieldProps: <P extends Partial<BoundaryHandlers> & Record<string, unknown>>(
-    props?: P,
-  ) => P & BoundaryHandlers;
+  getFieldProps: <P extends Partial<BoundaryHandlers>>(props?: P) => P & BoundaryHandlers;
   /**
    * Register an explicit-save transaction BEFORE focus leaves the field — on
    * the Save control's `pointerdown`, or in a shortcut handler that runs while
@@ -182,9 +180,12 @@ export function useCommitBoundary({
   }, []);
 
   const getFieldProps = React.useCallback(
-    <P extends Partial<BoundaryHandlers> & Record<string, unknown>>(
-      props?: P,
-    ): P & BoundaryHandlers => {
+    // No index-signature constraint (`Record<string, unknown>` was here once):
+    // it rejects ordinary typed prop objects — React.ComponentProps<"input">,
+    // or any consumer interface extending it — because interfaces carry no
+    // string index signature. Partial<BoundaryHandlers> alone still infers P
+    // and preserves every extra prop in the return type.
+    <P extends Partial<BoundaryHandlers>>(props?: P): P & BoundaryHandlers => {
       const supplied = (props ?? {}) as P;
       return {
         ...supplied,
