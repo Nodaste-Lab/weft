@@ -334,14 +334,20 @@
   }
 
   .checkbox-wrap, .radio-wrap {
-    display: inline-flex; align-items: center; gap: 10px;
-    min-height: 44px;
+    display: flex; align-items: center; gap: 10px;
+    /* The choice row (P5/P7, decision 1 reading (b)): 32px clears the 24px
+     * control floor on its own, and adjacent rows stack 12px apart so their
+     * centres sit exactly 44px — the clearance band met by construction of
+     * the stack, never by inflating the row. */
+    min-height: 32px;
     cursor: pointer;
     font-family: var(--weft-font-sans);
     font-size: 15px; color: var(--weft-ink);
   }
+  /* Adjacent rows stack 12px apart: 32 + 12 puts row centres exactly 44px
+   * apart — the clearance band by construction. */
   .checkbox-wrap + .checkbox-wrap,
-  .radio-wrap + .radio-wrap { margin-left: 20px; }
+  .radio-wrap + .radio-wrap { margin-top: 12px; }
   .checkbox, .radio {
     appearance: none; -webkit-appearance: none;
     width: 18px; height: 18px;
@@ -1950,7 +1956,7 @@
 
       <!-- FORM INPUTS — CHECKBOX + RADIO -->
       <div class="spec-row">
-        <div class="spec-label">.checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 44px min-height clickable wrap. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
+        <div class="spec-label">.checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 32px choice row; adjacent rows stack with a 12px gap so their centres sit exactly 44px apart — the clearance band met by construction of the stack, not by inflating the row. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 640px;">
             <div>

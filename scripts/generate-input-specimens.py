@@ -421,15 +421,22 @@ def clearance_section():
         # A choice row whose label wraps to three lines, with a trailing
         # icon-button action — the trailing target must clear the row's own
         # checkbox despite the wrap changing the row's height.
+        # The action sits BESIDE the label, never inside it: a real button
+        # nested in a label is invalid interactive-in-label markup, and a
+        # click on it ambiguously toggles the checkbox — the label association
+        # runs through for/id instead, and the flex row keeps the trailing
+        # geometry this fixture exists to measure.
         '<div class="cell"><span class="cap">long label + trailing action</span>'
-        '<div data-clearance="long-label" style="width:240px">'
-        '<label class="weft-checkbox-wrap" style="align-items:flex-start">'
+        '<div data-clearance="long-label" style="width:240px;display:flex;'
+        'align-items:flex-start;gap:8px">'
+        '<label class="weft-checkbox-wrap" for="cl-long" style="align-items:flex-start">'
         '<input type="checkbox" class="weft-checkbox" id="cl-long" /> '
         '<span>Retention notes and every archived thread from the studio workspace, '
         'including drafts nobody has opened since the spring migration</span>'
+        '</label>'
         '<button type="button" class="weft-btn is-ghost is-sm" aria-label="Retention help" '
         'style="margin-inline-start:auto">?</button>'
-        '</label></div></div>'
+        '</div></div>'
         # The 258px rail with mixed stacked controls — the surface the board
         # actually ships, in miniature.
         '<div class="cell"><span class="cap">narrow rail, mixed stack</span>'

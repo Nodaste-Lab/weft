@@ -187,6 +187,35 @@ test('S9: a required marker is real text and its control carries the attribute',
   }
 });
 
+test('S12: a label wraps at most ONE interactive element — the control it labels', () => {
+  // A label wrapping its own control is the legal wrapping pattern (the
+  // page's axis switchers do it). The defect class is a label holding a
+  // SECOND interactive element beside the labelled one — the clearance
+  // fixtures shipped a button inside a checkbox's label once, and clicking
+  // that button ambiguously forwards to the checkbox. Links are flagged
+  // outright: an <a> is not a labelable element and never belongs inside.
+  // The first shape of this guard flagged every wrapped select on the page —
+  // a guard that fails legal markup teaches people to delete the guard.
+  const page = readFileSync(join(ROOT, 'docs', 'brand-package', 'input-specimens.html'), 'utf8');
+  const problems = [];
+  const labelRe = /<label\b[^>]*>([\s\S]*?)<\/label>/gi;
+  let m;
+  while ((m = labelRe.exec(page)) !== null) {
+    const inner = m[1];
+    const interactive = inner.match(/<(button|input|select|textarea)\b/gi) ?? [];
+    if (interactive.length > 1) {
+      problems.push(
+        `a label holds ${interactive.length} interactive elements (${interactive.join(', ')}): ` +
+          `${m[0].slice(0, 90)}…`,
+      );
+    }
+    if (/<a\b/i.test(inner)) {
+      problems.push(`a link nests inside a label: ${m[0].slice(0, 90)}…`);
+    }
+  }
+  assert.deepEqual(problems, [], `ambiguous label activation shipped:\n  ${problems.join('\n  ')}`);
+});
+
 test('S10: no text-entry control is named by aria-label', () => {
   // The ladder sanctions aria-label for icon-only controls and nothing else. A
   // rule stated in doctrine and broken by the page that demonstrates it teaches
@@ -238,6 +267,24 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
   // The focus ring has two carriers. One alone is deletable.
   const focusRule = /:focus-visible\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
   if (!/outline:\s*\d/.test(focusRule)) problems.push('the focus rule paints no outline');
+
+  // The choice-row model (P5/P7, decision 1 reading (b)): the ROW is 32px and
+  // the STACK carries the 44px clearance, 12px gap between rows. The retired
+  // model — a 44px min-height wrap — survived here for a release after the
+  // code moved, because this guard checked markers and tokens but never the
+  // row model. Now it does, in both the embedded CSS and the prose.
+  const wrapRule = /\.checkbox-wrap,\s*\.radio-wrap\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/min-height:\s*32px/.test(wrapRule)) {
+    problems.push('the embedded checkbox/radio wrap rule does not carry the 32px choice row');
+  }
+  if (/min-height:\s*44px/.test(wrapRule)) {
+    problems.push('the embedded checkbox/radio wrap rule teaches the retired 44px row');
+  }
+  for (const [where, view] of views) {
+    if (/44px[^.]{0,80}(?:min-height[^.]{0,40})?wrap/i.test(view)) {
+      problems.push(`in ${where}, the prose still describes a 44px wrap — the row is 32px and the stack carries the clearance`);
+    }
+  }
   if (!/box-shadow:/.test(focusRule)) problems.push('the focus rule paints no box-shadow');
   if (/outline:\s*none/.test(focusRule)) problems.push('the focus rule still resets the outline');
 
