@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         data-variant={variant}
         data-size={size}
         className={cn(
-          "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input text-foreground flex h-[var(--weft-control-h,36px)] w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input text-foreground flex h-[var(--weft-control-h,36px)] w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:border-dashed disabled:opacity-50 md:text-sm",
           // The sm step of the current tier — the same token .is-sm reads.
           size === "sm" && "h-[var(--weft-control-h-sm,32px)] px-[var(--weft-control-pad-x-sm,8px)]",
           "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",

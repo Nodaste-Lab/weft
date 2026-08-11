@@ -9,3 +9,9 @@ test-results/
 # marks "working file, not a deliverable" — the deliverables live in
 # docs/brand-package/ and thoughts/plans/.
 /_*
+
+# Local macOS visual runs write darwin-suffixed snapshots on first miss;
+# the committed visual contract is the Linux set, verified in the pinned
+# container. Keep the local artifacts out of the tree so the review gate
+# never binds a verdict to a dirty checkout.
+tests/visual/**/*-darwin.png

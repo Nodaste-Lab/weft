@@ -196,6 +196,11 @@ def switch_slider_section():
         '<div class="cell"><span class="cap">switch · in a row</span>'
         '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
         'id="sw-row" /> <span>Email me a digest</span></label></div>'
+        # B's disabled card: lock glyph beside the label, dashed muted track —
+        # state never carried by colour alone.
+        '<div class="cell"><span class="cap">switch · disabled, in a row</span>'
+        '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
+        'id="sw-row-disabled" checked disabled /> <span>Locked on</span></label></div>'
 
         '<div class="cell"><span class="cap">slider</span>'
         '<label class="weft-sr-only" for="sl-default">Volume</label>'

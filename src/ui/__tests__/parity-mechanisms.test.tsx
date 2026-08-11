@@ -20,6 +20,15 @@ describe('the React layer rides the shared contract', () => {
     expect(el.className, 'the fixed floor must not return').not.toMatch(/\bmin-h-16\b/);
   });
 
+  it('the disabled dashed boundary rides the same variant in all three text controls', () => {
+    // The owner's visual pass: a dimmed fill separates by measurement, not by
+    // glance. Disabled carries the HUD's dashed unavailable stroke — plain
+    // CSS via :disabled (painted and asserted in the contract suite), React
+    // via the disabled: variant pinned here.
+    const { container } = render(<Textarea aria-label="Notes" disabled />);
+    expect(container.querySelector('textarea')!.className).toContain('disabled:border-dashed');
+  });
+
   it('Switch carries document B’s 40×24 control box — the 24px floor bare', () => {
     const { container } = render(<Switch aria-label="Notifications" />);
     const root = container.querySelector('[data-slot="switch"]')!;

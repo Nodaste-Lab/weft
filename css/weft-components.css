@@ -190,7 +190,9 @@ html,
   transition: background-color var(--weft-dur-fast) var(--weft-ease-out);
 }
 .weft-btn:hover:not(:disabled) { background: var(--weft-blue-deep); }
-.weft-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+/* The dash shows wherever the boundary is visible (ghost buttons); on the
+ * filled button the border is transparent and dimming stays the signal. */
+.weft-btn:disabled { border-style: dashed; opacity: 0.55; cursor: not-allowed; }
 /* The ghost button carried the identical 1.30:1 hairline as the field and fails
  * heuristic 2 for the identical reason, so it takes the same border token.
  *
@@ -205,7 +207,16 @@ html,
   background-color: var(--weft-paper); color: var(--weft-ink);
   border-color: var(--weft-control-border);
 }
-.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-ink); }
+/* On hover a ghost IS the button — the filled hover's deep-blue fill with
+ * on-blue text (owner call, visual pass). Without the colour pair here the
+ * base .weft-btn:hover (0,3,0) outweighs .is-ghost (0,2,0), painting the
+ * deep-blue fill under the ghost's INK text: 2.48:1, unreadable — measured
+ * by the hover guard, which waits out the colour transition before reading. */
+.weft-btn.is-ghost:hover:not(:disabled) {
+  background-color: var(--weft-blue-deep);
+  color: var(--weft-on-blue);
+  border-color: var(--weft-blue-deep);
+}
 /* Link-style inline action — no border, no background, just a colored text
  * button. Use for trailing "View all" or "Retry" actions in dense rows.
  * margin-left: auto pushes it to the trailing edge in a flex row. */
@@ -338,11 +349,19 @@ html,
  * (0,2,0), exactly as much as `.weft-input[aria-invalid="true"]` above, and it
  * is declared later — so a border colour here would silently outrank the error
  * border on a disabled invalid field. Same cascade trap as the boundary work,
- * avoided by not entering the property. */
+ * avoided by not entering the property.
+ *
+ * border-STYLE is entered, deliberately: the owner's visual pass found that a
+ * dimmed fill separates by measurement but not by glance — at arm's length a
+ * disabled field still read as editable. The dashed stroke is the HUD design
+ * language for unavailable, and style is a longhand the invalid border-COLOR
+ * composes with: a disabled invalid field renders dashed AND red, both states
+ * true at once. */
 .weft-input:disabled,
 .weft-textarea:disabled,
 .weft-select:disabled {
   background-color: var(--weft-control-fill-static);
+  border-style: dashed;
   opacity: 0.55;                      /* matches .weft-btn:disabled and React's disabled:opacity-50 */
   cursor: not-allowed;
 }
@@ -926,8 +945,12 @@ html,
   background: transparent;
   cursor: pointer; flex-shrink: 0;
 }
+/* Document B's proposal geometry (owner's visual pass): the track fills the
+ * whole 40×24 box as a pill, and the thumb is a fat 18px circle inset 3px —
+ * the first shipped shape (an 18px inset band with a 12px thumb) read as a
+ * different, "stretched off" control beside B's rendering. */
 .weft-switch::before {
-  content: ""; position: absolute; inset: 3px 0;
+  content: ""; position: absolute; inset: 0;
   box-sizing: border-box;
   border-radius: var(--weft-radius-dot);
   border: 1.5px solid var(--weft-ink);
@@ -938,8 +961,8 @@ html,
 }
 .weft-switch::after {
   content: ""; position: absolute;
-  top: 50%; left: 4px; transform: translateY(-50%);
-  width: 12px; height: 12px;
+  top: 50%; left: 3px; transform: translateY(-50%);
+  width: 18px; height: 18px;
   border-radius: var(--weft-radius-dot);
   background-color: var(--weft-ink);
   transition:
@@ -955,10 +978,24 @@ html,
  * light (dark heritage-purple) corrects it at the token, not per control —
  * the same tier the checked radio dot reads. */
 .weft-switch:checked::after {
-  left: 24px;
+  left: 19px;                          /* 40 − 18 thumb − 3 inset */
   background-color: var(--weft-on-blue);
 }
+/* B's disabled card: "state is not carried by colour alone." The BARE
+ * control carries the dashed unavailable stroke on its track — conformance
+ * may not depend on the wrap — and the wrap below composes B's lock glyph
+ * beside the label. */
 .weft-switch:disabled { opacity: 0.55; cursor: not-allowed; }
+.weft-switch:disabled::before { border-style: dashed; }
+/* The lock is a mask so it paints from a token, never a hardcoded stroke —
+ * the data-URI-glyph lesson from the chevron and the checkbox tick. */
+.weft-switch-wrap:has(.weft-switch:disabled)::after {
+  content: "";
+  width: 12px; height: 12px; flex-shrink: 0;
+  background-color: var(--weft-muted);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>") center / contain no-repeat;
+}
 .weft-switch-wrap { /* a choice row like any other */
   display: inline-flex; align-items: center; gap: 10px;
   min-height: var(--weft-choice-row-h);
