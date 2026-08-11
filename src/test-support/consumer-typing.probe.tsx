@@ -19,6 +19,8 @@
  */
 import * as React from "react";
 import { useCommitBoundary, type CommitDetail } from "../ui/use-commit-boundary";
+import { Switch } from "../ui/switch";
+import { Slider } from "../ui/slider";
 
 // A consumer interface extending intrinsic input props — no index signature.
 // This is the exact shape the Record<string, unknown> constraint rejected.
@@ -52,6 +54,22 @@ export function CommitBoundaryConsumer() {
       >
         Save
       </button>
+    </>
+  );
+}
+
+// Read-only is unsupported on switch and slider in BOTH layers — decided, and
+// asserted here at the type level, where the claim actually lives: native
+// checkbox and range ignore the attribute and Radix does not implement it, so
+// the surface must never offer it. If either component grows a readOnly prop,
+// these expect-error markers become unused and test:types fails.
+export function ReadOnlyStaysUnsupported() {
+  return (
+    <>
+      {/* @ts-expect-error — readOnly is deliberately not part of Switch's surface */}
+      <Switch readOnly name="sw" />
+      {/* @ts-expect-error — readOnly is deliberately not part of Slider's surface */}
+      <Slider readOnly name="sl" defaultValue={[1]} />
     </>
   );
 }
