@@ -201,6 +201,7 @@ skipped rather than mistaken for a failure.
 | `build` | the ESM bundle, before anything that inspects build output |
 | `test:packed` | every contract file is in the tarball, by exact path |
 | `test:parity` | the input-layer parity record: every allowlisted gap carries an owner and an unexpired expiry, every divergence carries a rationale and no date, and referenced files exist. Fails the day an expiry passes. |
+| `test:reasons` | the visibility-reasons contract: the shared module's shape and conformance fixture, the gate's identity import (never a copy), every always-visible field on a shipped surface declared with sanctioned reasons, and the counter-guard that no reason prop reached `Input` or the plain-CSS layer. |
 | `test:types` | the consumer-typing probe: ordinary consumer prop patterns still compile against the public surface under `--strict`. vitest strips types without checking them, so a type-level API break is invisible to every runtime suite — this is the gate that saw the `Record<string, unknown>` regression. |
 | `check:exports` | every consumer specifier resolves from the packed tarball |
 

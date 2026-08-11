@@ -52,6 +52,8 @@ jobs:
         run: npm run test:packed
       - name: Input parity record (allowlist owners + unexpired expiries)
         run: npm run test:parity
+      - name: Visibility-reasons contract (shared list, conformance, declarations)
+        run: npm run test:reasons
       - name: Consumer-typing probe (public surface compiles under strict consumer TS)
         run: npm run test:types
       - name: Exports contract (packed tarball resolves all consumer specifiers)
