@@ -33,8 +33,76 @@ const record = JSON.parse(readFileSync(RECORD_PATH, 'utf8'));
 
 test('the record parses and carries the expected shape', () => {
   assert.equal(typeof record.version, 'number');
+  assert.ok(Array.isArray(record.cells), 'cells must be an array');
   assert.ok(Array.isArray(record.allowlist), 'allowlist must be an array');
   assert.ok(Array.isArray(record.divergences), 'divergences must be an array');
+});
+
+/**
+ * The input surface, enumerated HERE — in the gate, not in the data — so a
+ * capability added to the system without a matrix cell fails the build
+ * rather than sliding by unrecorded. Extend this list when the surface
+ * genuinely grows; that is the review moment the matrix exists to create.
+ */
+const REQUIRED_CAPABILITIES = [
+  'input',
+  'textarea',
+  'select',
+  'checkbox-row',
+  'radio-row',
+  'switch',
+  'slider-single',
+  'slider-range',
+  'search',
+  'search-clear-action',
+  'commit-boundary',
+  'labelling',
+  'description',
+  'required-marker',
+  'group-name',
+  'tier-underline',
+  'tier-low',
+];
+
+test('every enumerated capability has exactly one cell — the build fails on an unrecorded one', () => {
+  const byCapability = new Map(record.cells.map((c) => [c.capability, c]));
+  const missing = REQUIRED_CAPABILITIES.filter((cap) => !byCapability.has(cap));
+  assert.deepEqual(missing, [], `capabilities with no matrix cell: ${missing.join(', ')}`);
+  assert.equal(
+    record.cells.length,
+    new Set(record.cells.map((c) => c.capability)).size,
+    'duplicate capability cells',
+  );
+});
+
+test('every cell is parity, an allowlisted gap, or a documented divergence — nothing else exists', () => {
+  for (const cell of record.cells) {
+    assert.ok(cell.claim, `${cell.capability}: a cell states what it claims`);
+    if (cell.status === 'parity') {
+      assert.ok(cell.react && cell.plainCss, `${cell.capability}: parity names both sides`);
+    } else if (cell.status === 'gap') {
+      const entry = record.allowlist.find((e) => e.id === cell.ref);
+      assert.ok(entry, `${cell.capability}: a gap must reference a live allowlist entry (ref=${cell.ref})`);
+    } else if (cell.status === 'divergence') {
+      const entry = record.divergences.find((e) => e.id === cell.ref);
+      assert.ok(entry, `${cell.capability}: a divergence must reference its documented entry (ref=${cell.ref})`);
+    } else {
+      assert.fail(
+        `${cell.capability}: status ${JSON.stringify(cell.status)} is none of the three — ` +
+          'parity, gap, or divergence. "Or it goes in the log" is not a gate and was removed.',
+      );
+    }
+  }
+});
+
+test('no orphaned allowlist or divergence entries — every one is referenced by a cell', () => {
+  const refs = new Set(record.cells.map((c) => c.ref).filter(Boolean));
+  for (const entry of [...record.allowlist, ...record.divergences]) {
+    assert.ok(
+      refs.has(entry.id),
+      `${entry.id}: an entry no cell references is a record of nothing`,
+    );
+  }
 });
 
 test('ids are unique across the whole record', () => {
@@ -87,11 +155,17 @@ test('every documented divergence carries a rationale and no expiry', () => {
 });
 
 test('every referenced implementation file exists', () => {
-  for (const entry of [...record.allowlist, ...record.divergences]) {
+  // `react` values are repo paths; `plainCss` may be a selector or a recipe
+  // descriptor rather than a file, so only path-shaped values are checked.
+  const looksLikePath = (p) => /^[\w./-]+$/.test(p) && p.includes('/');
+  for (const entry of [...record.cells, ...record.allowlist, ...record.divergences]) {
     for (const key of ['react', 'plainCss']) {
       const p = entry[key];
-      if (typeof p === 'string' && p.length > 0) {
-        assert.ok(existsSync(join(ROOT, p)), `${entry.id}: ${key} path ${p} does not exist`);
+      if (typeof p === 'string' && looksLikePath(p)) {
+        assert.ok(
+          existsSync(join(ROOT, p)),
+          `${entry.id ?? entry.capability}: ${key} path ${p} does not exist`,
+        );
       }
     }
   }
