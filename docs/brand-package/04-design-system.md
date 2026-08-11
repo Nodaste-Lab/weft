@@ -66,7 +66,7 @@ Every visual decision on the site traces back to a token in `:root`. No hex code
 
 `--weft-stop` is the one semantic-status color Weft ships by default — used for form error borders, error-hint copy, and the "destructive" state where it's needed. Success/warn states aren't in the core token set; if you need them, add `--weft-ok` and `--weft-warn` following the `03-color-and-type.md` "tuned down, not saturated alerts" rule.
 
-**Mode-invariant brand fixed colors.** `--weft-brand-cream` and `--weft-fixed-white` look like duplicates of `--weft-cream` and `--weft-paper`, but they're a different contract: they **do not flip** in dark mode. Use them only inside brand assets and component glyphs that must hold their color when the theme inverts — the cream lockup placed on dark surfaces (still cream, not ink), the white check inside a checked checkbox (still white, not paper-dark), the white dot inside a selected radio. The blue ground stays blue across modes, so the glyph on it must too. Reach for `--weft-cream` or `--weft-paper` for everything else.
+**Mode-invariant brand fixed colors.** `--weft-brand-cream` and `--weft-fixed-white` look like duplicates of `--weft-cream` and `--weft-paper`, but they're a different contract: they **do not flip** in dark mode. Use them only inside brand assets and component glyphs that must hold their color when the theme inverts — the cream lockup placed on dark surfaces (still cream, not ink), the white check inside a checked checkbox (still white, not paper-dark), the white dot inside a selected radio. The blue ground stays blue across modes, so the glyph on it must too. **That reasoning is scoped to palettes whose primary stays dark**: dark `heritage-purple` lifts its primary to a light violet, so it overrides the whole `--weft-on-blue-*` tier to dark ink and flips the checkbox tick with a scoped rule — a white glyph on violet-300 measures 1.85:1. The guard is in `contrast-contract`: any palette that redefines `--weft-blue` is checked against its own `--weft-on-blue`. Reach for `--weft-cream` or `--weft-paper` for everything else.
 
 ### On-blue (light-on-dark alphas)
 
@@ -323,7 +323,7 @@ Dark mode is a token override, not a second design. Flipping `document.documentE
 }
 ```
 
-**What stays fixed:** `--weft-blue`, `--weft-blue-deep`, `--weft-blue-ink`, `--weft-yellow`, the full `--weft-on-blue-*` scale, plus `--weft-brand-cream` and `--weft-fixed-white`. Brand accents read true in both modes; the blue slab is the same blue slab. The mode-invariant fixed colors hold their value so brand assets and component glyphs that anchor against the blue ground don't break when the theme inverts.
+**What stays fixed** (in the Weft palette): `--weft-blue`, `--weft-blue-deep`, `--weft-blue-ink`, `--weft-yellow`, the full `--weft-on-blue-*` scale, plus `--weft-brand-cream` and `--weft-fixed-white`. A palette whose dark mode lifts the primary *light* — dark `heritage-purple` — must override the on-blue tier along with it, and does. Brand accents read true in both modes; the blue slab is the same blue slab. The mode-invariant fixed colors hold their value so brand assets and component glyphs that anchor against the blue ground don't break when the theme inverts.
 
 **Why these choices:**
 
@@ -631,7 +631,7 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 > shadow cannot delete, description wiring, the required marker, the naming
 > ladder, the 3:1 boundary, and focus not obscured.
 
-Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. All of them sit on a `--weft-control-fill` wash with a `--weft-control-border` boundary and a `--weft-radius-card` (4px) corner. States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
+Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. The three text controls sit on a `--weft-control-fill` wash with a `--weft-control-border` boundary and a `--weft-radius-card` (4px) corner; `.checkbox` and `.radio` carry their own 1.5px `--weft-ink` border instead, which already clears the same 3:1 floor (4.88:1 light, 3.54:1 dark). States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
 
 **Disabled and read-only are different promises, and they look different.** Disabled dims the whole control to 0.55 and takes `cursor: not-allowed` — it is not available. Read-only keeps full text contrast and changes only its fill to `--weft-control-fill-static` — the value is present and meant to be read, just not edited. Neither sets a border colour, deliberately: `.weft-input:disabled` weighs exactly as much as `.weft-input[aria-invalid="true"]` and is declared later, so a border colour there would silently outrank the error border on a disabled invalid field. `<select>` has no read-only in its content model, so that pairing does not exist for it.
 
@@ -760,7 +760,7 @@ The same trap applies to any glyph baked into a data-URI, because its colour can
 
 #### `.checkbox` and `.radio`
 
-Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 44px `.checkbox-wrap` (or `.radio-wrap`) for touch-target AA. Checked fills the tile with `--weft-blue` and draws a crisp white glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a 10px white dot for the radio. White, not `--weft-cream` or `--weft-paper`, because the blue fill is theme-invariant — the glyph must be too. Grouped radios wrap in a `<fieldset class="field-group">` with a `<legend>` mono-cap label.
+Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 44px `.checkbox-wrap` (or `.radio-wrap`) for touch-target AA. Checked fills the tile with `--weft-blue` and draws a crisp glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a dot for the radio reading `--weft-on-blue`. In the Weft palette the glyph is white, not `--weft-cream` or `--weft-paper`, because there the blue fill is theme-invariant — the glyph must be too. The tick is a data URI whose stroke cannot read a token, so a palette that lifts its primary light carries a scoped override (dark `heritage-purple` does), and `select-chrome.spec.ts` measures every palette × theme pairing. Grouped radios wrap in a `<fieldset class="field-group">` with a `<legend>` mono-cap label.
 
 ```html
 <label class="checkbox-wrap">
@@ -782,7 +782,7 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 ```
 
 - Always label. `<label for="id">` wrapping, or a `<label>` wrapping the input directly.
-- Always associate errors. `aria-invalid="true"` + `aria-describedby="<hint-id>"`. Never color-only error signaling.
+- Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5). Never color-only error signaling.
 - Always use `<fieldset>` + `<legend>` for radio groups. Don't fake a legend with a styled div — screen readers need the grouping semantics.
 - Don't restyle focus per-input. The global focus ring is the single source of truth.
 
