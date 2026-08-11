@@ -76,7 +76,13 @@ describe('read-only is unsupported in BOTH layers — the claim is that neither 
   });
 
   it('plain CSS: the stylesheet carries no [readonly] selector for switch or slider', () => {
-    const css = readFileSync(join(ROOT, 'css', 'weft-components.css'), 'utf8');
+    // Comments stripped first: the stylesheet EXPLAINS why read-only is
+    // unsupported, and a guard that reads prose as selectors fails on its own
+    // documentation (it did).
+    const css = readFileSync(join(ROOT, 'css', 'weft-components.css'), 'utf8').replace(
+      /\/\*[\s\S]*?\*\//g,
+      '',
+    );
     expect(/\.weft-switch[^{]*\[readonly\]|\.weft-slider[^{]*\[readonly\]/.test(css)).toBe(false);
   });
 });
