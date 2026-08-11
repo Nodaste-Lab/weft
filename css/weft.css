@@ -135,6 +135,12 @@
 
   /* ── Density (marketing default — see [data-density="compact"] for app) ── */
   --weft-control-h:         44px;
+  /* Choice rows (decision 1, clearance reading (b)): the row clears the 24px
+   * control floor on its own, and row + stack gap = 44px puts adjacent rows
+   * exactly one clearance band apart. Density-invariant by that decision —
+   * 32 + 12 = 44 at marketing, compact and dense alike. */
+  --weft-choice-row-h:      32px;
+  --weft-choice-gap:        12px;
   --weft-control-pad-x:     14px;
   --weft-control-pad-y:     11px;
   --weft-control-gap:       12px;

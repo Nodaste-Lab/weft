@@ -121,11 +121,11 @@
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Checkbox rows</span><span class="bg"><span class="b ok">REUSES</span></span></div>
-  <div class="cls">.weft-board-checks + .weft-checkbox</div>
-  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks"><label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label><label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label><label class="weft-board-check is-disabled"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive <span class="weft-board-check-note">unreachable</span></label></div></div></div>
+  <div class="cls">.weft-board-checks + .weft-checkbox-wrap</div>
+  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks"><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive <span class="weft-board-note">unreachable</span></label></div></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-checkbox</code> — already composed</span></div>
-    <div class="row"><span class="k">Action</span><span>Only the row layout is template-local. The control is the canonical <code>.weft-checkbox</code>.</span></div>
+    <div class="row"><span class="k">Action</span><span>The row itself is canonical too, since P7: <code>.weft-checkbox-wrap</code> at the 32px choice-row height with the clearance gap. The retired template-local <code>.weft-board-check</code> existed only because the canonical row once took the full 44px control height.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Preset picker</span><span class="bg"><span class="b ok">REUSES</span></span></div>

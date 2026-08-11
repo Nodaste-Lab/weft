@@ -18,21 +18,30 @@ const TOLERANCE = 1;
 /**
  * Controls that answer to `--weft-control-h`. The textarea is deliberately
  * absent: it is multi-line and has its own floor, checked separately below.
+ * The choice rows are absent too, since P7: they answer to
+ * `--weft-choice-row-h` — decision 1's clearance reading (b), where the row
+ * stays 32px clearing the 24px control floor and the stack gap makes adjacent
+ * rows sit exactly 44px apart. A choice row only matches the control tier
+ * where a flex row stretches it (the toolbar case, asserted separately).
  */
-const TIER_CONTROLS = ['input', 'select', 'button', 'checkbox-row', 'radio-row'] as const;
+const TIER_CONTROLS = ['input', 'select', 'button'] as const;
 
 interface Measured {
   tier: number;
+  choiceRowH: number;
+  choiceGap: number;
   heights: Record<string, number>;
   rowHeights: Record<string, number>;
+  stackTops: number[];
 }
 
 async function measureDensity(page: Page, density: Density): Promise<Measured> {
   await applyAxes(page, { density });
   return page.evaluate(() => {
-    const tier = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--weft-control-h'),
-    );
+    const rootStyle = getComputedStyle(document.documentElement);
+    const tier = parseFloat(rootStyle.getPropertyValue('--weft-control-h'));
+    const choiceRowH = parseFloat(rootStyle.getPropertyValue('--weft-choice-row-h'));
+    const choiceGap = parseFloat(rootStyle.getPropertyValue('--weft-choice-gap'));
     const read = (scope: ParentNode, spec: string) => {
       const out: Record<string, number> = {};
       for (const el of scope.querySelectorAll<HTMLElement>(`[data-spec="${spec}"]`)) {
@@ -41,7 +50,17 @@ async function measureDensity(page: Page, density: Density): Promise<Measured> {
       return out;
     };
     const row = document.querySelector('[data-spec="geometry-row"]')!;
-    return { tier, heights: read(document, 'geometry'), rowHeights: read(row, 'geometry') };
+    const stackTops = [
+      ...document.querySelectorAll<HTMLElement>('[data-spec="choice-stack"] .weft-checkbox-wrap'),
+    ].map((el) => Number(el.getBoundingClientRect().top.toFixed(2)));
+    return {
+      tier,
+      choiceRowH,
+      choiceGap,
+      heights: read(document, 'geometry'),
+      rowHeights: read(row, 'geometry'),
+      stackTops,
+    };
   });
 }
 
@@ -81,6 +100,42 @@ for (const density of DENSITIES) {
         shortfall: Math.max(0, spread - TOLERANCE),
         evidence: `spread ${spread.toFixed(2)}px across ${JSON.stringify(rowHeights)} at a ${tier}px tier`,
         failure: `Controls sharing one row differ in height by ${spread.toFixed(2)}px.`,
+      });
+    });
+
+    test('choice rows take the choice-row height, not the control tier', async ({ page }) => {
+      // The cause the board hand-rolled .weft-board-check: the wrap took the
+      // full control height — 44px at marketing — which no 258px rail can
+      // afford. Decision 1 settled the row model instead: the row is
+      // --weft-choice-row-h, clearing the 24px floor on its own.
+      const { choiceRowH, heights } = await measureDensity(page, density);
+      expect(choiceRowH, 'the --weft-choice-row-h token must exist').toBeGreaterThanOrEqual(24);
+      await measureAll(
+        (['checkbox-row', 'radio-row'] as const).map((control) => {
+          const actual = heights[control];
+          return {
+            key: `geometry/${density}/${control}`,
+            shortfall: within(actual, choiceRowH, TOLERANCE),
+            evidence: `${actual}px against a ${choiceRowH}px choice row`,
+            failure: `The ${control} misses the choice-row height by ${Math.abs(actual - choiceRowH).toFixed(2)}px.`,
+          };
+        }),
+      );
+    });
+
+    test('stacked choice rows sit exactly 44px apart — the clearance rule as geometry', async ({ page }) => {
+      // Clearance reading (b): an undisturbed 44px band measured outward where
+      // a neighbour exists. For equal-height stacked rows that is row height
+      // plus stack gap, and 32 + 12 = 44 by construction of the two tokens —
+      // measured here rather than trusted, at every density.
+      const { choiceRowH, choiceGap, stackTops } = await measureDensity(page, density);
+      expect(stackTops.length, 'the choice-stack specimen must hold at least two rows').toBeGreaterThanOrEqual(2);
+      const spacing = Number((stackTops[1] - stackTops[0]).toFixed(2));
+      await measure({
+        key: `geometry/${density}/choice-stack-clearance`,
+        shortfall: within(spacing, 44, TOLERANCE),
+        evidence: `row spacing ${spacing}px (row ${choiceRowH}px + gap ${choiceGap}px)`,
+        failure: `Adjacent choice rows sit ${spacing}px apart; the clearance rule wants 44px.`,
       });
     });
 

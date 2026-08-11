@@ -82,14 +82,14 @@ SECTIONS = [
   '<button type="button" class="weft-toggle-group-item" aria-pressed="false">Direct only</button>'
   '<button type="button" class="weft-toggle-group-item is-on" aria-pressed="true">Expanded</button>'
   '</div></div>'),
- ("Checkbox rows", ".weft-board-checks + .weft-checkbox", S,
+ ("Checkbox rows", ".weft-board-checks + .weft-checkbox-wrap", S,
   "<code>.weft-checkbox</code> — already composed",
-  "Only the row layout is template-local. The control is the canonical <code>.weft-checkbox</code>.",
+  "The row itself is canonical too, since P7: <code>.weft-checkbox-wrap</code> at the 32px choice-row height with the clearance gap. The retired template-local <code>.weft-board-check</code> existed only because the canonical row once took the full 44px control height.",
   '<div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks">'
-  '<label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label>'
-  '<label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label>'
-  '<label class="weft-board-check is-disabled"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive'
-  ' <span class="weft-board-check-note">unreachable</span></label></div></div>'),
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label>'
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label>'
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive'
+  ' <span class="weft-board-note">unreachable</span></label></div></div>'),
  ("Preset picker", ".weft-select (real &lt;select&gt;)", S,
   "<code>.weft-select</code> (<code>weft-components.css</code>); <code>Select</code> (React)",
   "Canonical real form control with accessible label.",

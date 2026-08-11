@@ -48,6 +48,12 @@ const weftTokens = collectDeclaredTokens(
 // These were board-local duplicates of canonical components; they must not
 // appear in the template CSS (or generated HTML specimens) post-cleanup.
 const DEPRECATED_BOARD_CLASSES = [
+  // Retired in P7: the canonical .weft-checkbox-wrap took the choice-row
+  // height, closing the reason this duplicate existed. The container
+  // (.weft-board-checks) survives — the trailing 's' keeps it clear of the
+  // word-boundary matcher — and the old -note suffix was renamed
+  // .weft-board-note so the retired stem cannot ride back in on a hyphen.
+  'weft-board-check',
   'weft-board-btn',
   'weft-board-status',
   'weft-board-type',

@@ -181,11 +181,32 @@ def geometry_section():
         + '</div>'
         for kind in CONTROLS)
     singles += (
+        # Standalone, so it measures the natural 32px row — the toolbar copy
+        # above shares its data-control but is read per-row only: in a flex
+        # row the wrap stretches to its neighbours, which is the intended
+        # behaviour, not the row's own height.
+        '<div class="cell"><span class="cap">checkbox row</span>'
+        '<label class="weft-checkbox-wrap" data-spec="geometry" data-control="checkbox-row" '
+        'data-state="default"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-checkbox-standalone" /> '
+        '<span>Only mine</span></label></div>'
         '<div class="cell"><span class="cap">radio row</span>'
         '<label class="weft-radio-wrap" data-spec="geometry" data-control="radio-row" '
         'data-state="default"><input type="radio" name="geo-radio" class="weft-radio" '
         'id="geo-radio-input" /> '
         '<span>Weekly</span></label></div>'
+        # Stacked rows measure the clearance rule: row height plus stack gap
+        # puts adjacent rows exactly 44px apart (decision 1, reading (b)).
+        '<div class="cell"><span class="cap">stacked choice rows</span>'
+        '<fieldset class="weft-field-group" data-spec="choice-stack">'
+        '<legend>Sources</legend>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-a" /> <span>Nodaste Studio</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-b" /> <span>ccore/heddle</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-c" disabled /> <span>ccore/archive</span></label>'
+        '</fieldset></div>'
     )
     return section(
         'geometry', 'Geometry — does a control hit its tier height?',
@@ -430,7 +451,10 @@ body { margin: 0; padding: 0 0 64px; }
        margin-bottom: 6px; }
 .expect { display: block; margin-top: 6px; font-family: var(--weft-font-sans);
           font-size: 11.5px; line-height: 1.45; color: var(--weft-muted); }
-.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
+.toolbar { display: flex; gap: 10px; align-items: stretch; flex-wrap: nowrap;
+  /* stretch, the flex default: a choice row is 32px on its own and takes the
+     row's height when a toolbar stretches it — which is how BDD-AC3-1's
+     "all four agree" and the 32px row model hold at the same time. */
            margin-bottom: 20px; }
 .toolbar .weft-input, .toolbar .weft-select { width: auto; flex: 1 1 0; min-width: 0; }
 /* ── Hostile on purpose ──

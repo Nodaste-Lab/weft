@@ -389,12 +389,32 @@ html,
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
 }
 
+/* The row answers to --weft-choice-row-h, NOT --weft-control-h (decision 1,
+ * clearance (b)). Taking the full control height — 44px at marketing — is why
+ * a 258px rail could not use this row and hand-rolled .weft-board-check; the
+ * 32px row clears the 24px target floor alone, and the field-group stack gap
+ * makes adjacent rows sit exactly 44px apart. A flex row with default
+ * stretch (a toolbar) still stretches it to its neighbours' height. */
 .weft-checkbox-wrap, .weft-radio-wrap {
   display: inline-flex; align-items: center; gap: 10px;
-  min-height: var(--weft-control-h);
+  min-height: var(--weft-choice-row-h);
   cursor: pointer;
   font-family: var(--weft-font-sans);
   font-size: 15px; color: var(--weft-ink);
+}
+/* Disabled reads on the whole row, not only the 18px box — the label is the
+ * larger half of the target and it must not look live. Keyed on the native
+ * attribute via :has() so a bare-markup iframe author gets it without knowing
+ * a modifier class exists (the same argument that made the switch's target
+ * floor independent of composition). */
+.weft-checkbox-wrap:has(.weft-checkbox:disabled),
+.weft-radio-wrap:has(.weft-radio:disabled) {
+  color: var(--weft-muted);
+  cursor: not-allowed;
+}
+.weft-checkbox:disabled, .weft-radio:disabled {
+  opacity: 0.55;                      /* matches the text controls' dimming */
+  cursor: not-allowed;
 }
 .weft-checkbox, .weft-radio {
   appearance: none; -webkit-appearance: none;
@@ -441,7 +461,10 @@ html,
 
 .weft-field-group {
   border: none; padding: 0; margin: 0 0 var(--weft-space-5);
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column;
+  /* 12px, so a stacked 32px choice row sits exactly 44px from its neighbour —
+   * the clearance rule as construction rather than as review. */
+  gap: var(--weft-choice-gap);
 }
 /* Same change, same reason: a legend names its group, and the uppercase
  * transform rewrote that name too — "Retention policy" exposed as
