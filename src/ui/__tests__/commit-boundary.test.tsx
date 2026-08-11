@@ -282,6 +282,44 @@ describe('the explicit-save transaction', () => {
     expect(h().commits).toEqual([{ reason: 'explicit-save', sources: ['explicit-save'] }]);
   });
 
+  it('a canceled pointer Save replays the suppressed blur — the boundary is never swallowed', () => {
+    const { control, h } = renderField();
+    fireEvent.focus(control);
+    h().registerExplicitSave();
+    fireEvent.blur(control); // suppressed for the save…
+    expect(h().onCommit).not.toHaveBeenCalled();
+    h().cancelExplicitSave(); // …which will not complete (drag-off, pointercancel)
+    expect(
+      h().commits,
+      'the user DID leave the field; only the save fell through',
+    ).toEqual([{ reason: 'blur', sources: ['blur'] }]);
+    // Nothing stale: a later save is its own clean transaction.
+    h().commit('explicit-save');
+    expect(h().commits[1]).toEqual({ reason: 'explicit-save', sources: ['explicit-save'] });
+  });
+
+  it('cancel with nothing suppressed only clears the registration', () => {
+    const { control, h } = renderField();
+    fireEvent.focus(control);
+    h().registerExplicitSave();
+    h().cancelExplicitSave();
+    expect(h().onCommit).not.toHaveBeenCalled();
+    fireEvent.blur(control);
+    expect(h().commits, 'the canceled registration must not suppress this blur').toEqual([
+      { reason: 'blur', sources: ['blur'] },
+    ]);
+  });
+
+  it('drag off Save and back: replayed blur then explicit save — two transactions, the keyboard-Save shape', () => {
+    const { control, h } = renderField();
+    fireEvent.focus(control);
+    h().registerExplicitSave();
+    fireEvent.blur(control);
+    h().cancelExplicitSave(); // pointerleave on the way off
+    h().commit('explicit-save'); // released back on the control after all
+    expect(h().commits.map((c) => c.reason)).toEqual(['blur', 'explicit-save']);
+  });
+
   it('an abandoned registration is cleared when focus returns — no stale suppression, no phantom sources', () => {
     const { control, h } = renderField();
     fireEvent.focus(control);

@@ -132,7 +132,59 @@ describe("InlineEditListRow", () => {
     });
   });
 
+  describe("an empty value stays re-editable", () => {
+    it("renders a placeholder body with a real hit target, and the editor opens on the actual empty value", () => {
+      const onUpdate = vi.fn();
+      render(<InlineEditListRow text="" onUpdate={onUpdate} onDelete={() => {}} />);
+      const body = document.querySelector('[data-slot="inline-edit-list-row-body"]') as HTMLElement;
+      expect(body.textContent, "an empty span is a zero-area click target").toBe("Empty");
+      expect(body.getAttribute("data-empty")).toBe("true");
+      fireEvent.click(body);
+      const textarea = screen.getByLabelText("Edit item") as HTMLTextAreaElement;
+      expect(textarea.value, "the placeholder is presentation, never the value").toBe("");
+    });
+
+    it("a non-empty value carries no placeholder styling", () => {
+      render(<InlineEditListRow text="Real note" onUpdate={() => {}} onDelete={() => {}} />);
+      const body = document.querySelector('[data-slot="inline-edit-list-row-body"]') as HTMLElement;
+      expect(body.textContent).toBe("Real note");
+      expect(body.getAttribute("data-empty")).toBeNull();
+    });
+  });
+
   describe("Escape offers a discard, never performs one silently", () => {
+    it("the open editor owns Escape — it never reaches a parent dismiss handler", () => {
+      const parentEscapes = vi.fn();
+      const parentKeys = vi.fn();
+      render(
+        <div
+          onKeyDown={(e) => {
+            parentKeys(e.key);
+            if (e.key === "Escape") parentEscapes();
+          }}
+        >
+          <InlineEditListRow text="Initial" onUpdate={() => {}} onDelete={() => {}} />
+        </div>,
+      );
+      const textarea = editInto("Initial");
+      fireEvent.change(textarea, { target: { value: "Updated text" } });
+      // Dirty first press (the offer), dirty second press (the discard), and
+      // an IME-owned press: none may bubble to a dialog above.
+      fireEvent.keyDown(textarea, { key: "Escape" });
+      fireEvent.compositionStart(textarea);
+      fireEvent.keyDown(textarea, { key: "Escape", isComposing: true });
+      fireEvent.compositionEnd(textarea);
+      fireEvent.keyDown(textarea, { key: "Escape" });
+      expect(
+        parentEscapes,
+        "a bubbled Escape closes the parent over the draft — losing exactly the work the offer protects",
+      ).not.toHaveBeenCalled();
+      // Ordinary keys still propagate; the editor owns Escape, not the keyboard.
+      const reopened = editInto("Initial");
+      fireEvent.keyDown(reopened, { key: "a" });
+      expect(parentKeys).toHaveBeenCalledWith("a");
+    });
+
     it("closes without ceremony when there is nothing to lose", () => {
       const onUpdate = vi.fn();
       render(<InlineEditListRow text="Initial" onUpdate={onUpdate} onDelete={() => {}} />);

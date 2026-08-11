@@ -143,6 +143,13 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
                   // Enter falls through: on a textarea it is a newline, and the
                   // boundary helper emits nothing for it.
                   if (e.key !== "Escape") return;
+                  // The open editor owns Escape outright. Without this, the
+                  // first dirty press shows the offer AND bubbles to a
+                  // dialog's dismiss handler, which closes the parent over the
+                  // draft — losing exactly the work the offer protects. Never
+                  // preventDefault: the IME's candidate dismissal is a default
+                  // action, not propagation.
+                  e.stopPropagation();
                   if (
                     imeComposingRef.current ||
                     e.nativeEvent.isComposing ||
@@ -230,13 +237,18 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
       >
         <span
           data-slot="inline-edit-list-row-body"
+          data-empty={text.trim() === "" || undefined}
           onClick={startEdit}
           className={cn(
-            "cursor-text text-[length:var(--text-xs)] leading-[1.55] text-[var(--hud-text-2)] [font-family:var(--weft-font-sans)]",
+            "block min-h-[1.55em] cursor-text text-[length:var(--text-xs)] leading-[1.55] text-[var(--hud-text-2)] [font-family:var(--weft-font-sans)]",
             italic && "italic",
+            // Empty is a valid value the editor can now produce, so the idle
+            // row must stay re-editable: an empty span is a zero-area click
+            // target. The placeholder is presentation, never the value.
+            text.trim() === "" && "italic text-[var(--hud-text-3)]",
           )}
         >
-          {text}
+          {text.trim() === "" ? "Empty" : text}
         </span>
       </HudListRow>
     );

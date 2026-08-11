@@ -858,9 +858,15 @@ const boundary = useCommitBoundary({
 // Pointer Save: register BEFORE focus moves, then commit. type="button" is
 // load-bearing — a native button inside a form defaults to type="submit", so
 // without it this example would submit the form on every Save click, which is
-// exactly the submission-state line the helper exists to stay behind.
+// exactly the submission-state line the helper exists to stay behind. The two
+// cancel handlers are load-bearing too: an activation that will not complete
+// (mouse dragged off, touch interrupted) must release the suppressed blur,
+// which cancelExplicitSave REPLAYS as an ordinary blur commit — a boundary
+// the user crossed is never swallowed by a save that never happened.
 <Button type="button"
         onPointerDown={boundary.registerExplicitSave}
+        onPointerLeave={boundary.cancelExplicitSave}
+        onPointerCancel={boundary.cancelExplicitSave}
         onClick={() => boundary.commit('explicit-save')}>Save</Button>
 ```
 

@@ -8,7 +8,10 @@ The commit boundary is standard, and nothing more is claimed (weft#16, P6).
 blur, Enter in a single-line control, or an explicit consumer save — as one
 deduplicated transaction: `{ reason, sources }`. A pointer Save registered on
 `pointerdown` suppresses the intervening blur and reports it in `sources`; a
-keyboard Save is deliberately two transactions. Enter in a textarea, Escape,
+keyboard Save is deliberately two transactions; `cancelExplicitSave` (wired to
+the Save control's `pointerleave` / `pointercancel`) releases a registration
+whose activation will not complete, replaying an already-suppressed blur so a
+boundary the user crossed is never swallowed. Enter in a textarea, Escape,
 input-method composition (including the confirming Enter), paste, programmatic
 updates and native `form.reset()` are not boundaries and emit nothing.
 

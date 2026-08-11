@@ -90,6 +90,19 @@ export type UseCommitBoundaryReturn = {
    * a button.
    */
   registerExplicitSave: () => void;
+  /**
+   * Cancel a registered save whose activation will not complete — wire it to
+   * the Save control's `pointerleave` (mouse dragged off) and `pointercancel`
+   * (touch/pen interrupted). A blur this registration already suppressed is
+   * REPLAYED as an ordinary `{ reason: "blur" }` commit, because a boundary
+   * the user crossed must never be swallowed by a save that never happened.
+   * With nothing suppressed it only clears the registration. Consequence of
+   * the replay: a pointer that drags off the Save control and back before
+   * releasing produces a blur commit and then an explicit-save commit — two
+   * transactions, the same shape as keyboard Save, and the same rule applies:
+   * a Save handler must be safe to run after a blur already committed.
+   */
+  cancelExplicitSave: () => void;
   /** The explicit save itself — exactly a consumer call, never inferred. */
   commit: (reason?: "explicit-save") => void;
 };
@@ -124,6 +137,16 @@ export function useCommitBoundary({
   const registerExplicitSave = React.useCallback(() => {
     saveRegisteredRef.current = true;
   }, []);
+
+  const cancelExplicitSave = React.useCallback(() => {
+    saveRegisteredRef.current = false;
+    if (suppressedBlurRef.current) {
+      // The user DID leave the field; only the save it was suppressed for
+      // fell through. Replay the boundary rather than swallow it.
+      suppressedBlurRef.current = false;
+      emit("blur", ["blur"]);
+    }
+  }, [emit]);
 
   const handleBlur = React.useCallback(() => {
     // A blur mid-composition ends the composition; the boundary is real.
@@ -214,5 +237,5 @@ export function useCommitBoundary({
     [handleBlur, handleFocus, handleKeyDown, handleCompositionStart, handleCompositionEnd],
   );
 
-  return { getFieldProps, registerExplicitSave, commit };
+  return { getFieldProps, registerExplicitSave, cancelExplicitSave, commit };
 }
