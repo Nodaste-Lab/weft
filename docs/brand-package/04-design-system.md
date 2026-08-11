@@ -767,7 +767,7 @@ A hint with an id that nothing points at is decoration. That is what shipped bef
 
 #### `.weft-textarea`
 
-Same styling as `.weft-input` plus `min-height: 96px` and `resize: vertical`. Use for descriptions, messages, anything that wants more than one line.
+Same styling as `.weft-input` plus a per-tier floor — `min-height: var(--weft-textarea-min-h)`, 96/80/72 at marketing/compact/dense — and `resize: vertical`. Use for descriptions, messages, anything that wants more than one line.
 
 ```html
 <textarea class="weft-textarea" id="note" placeholder="A few sentences is plenty."></textarea>

@@ -291,6 +291,32 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
     }
   }
 
+  // Visible PROSE can teach the retired vocabulary too — the spec-label
+  // headings did, after every class attribute and selector had been swept.
+  // Input-surface names only: the marketing classes are another document's
+  // scope. Lookbehind keeps `.weft-input` from matching its own suffix.
+  const RETIRED_INPUT_NAMES = ['input','textarea','select','checkbox','radio',
+    'field-label','field-hint','field-group','checkbox-wrap','radio-wrap','req','field'];
+  {
+    const rendered = views[0][1].replace(/<[^>]+>/g, ' ');
+    for (const n of RETIRED_INPUT_NAMES) {
+      if (new RegExp(`(?<![-\\w])\\.${n}(?![-\\w])`).test(rendered)) {
+        problems.push(`the page's visible text still names .${n} — the shipped class is .weft-${n}`);
+      }
+    }
+  }
+  // The embedded reference must carry the shipped models, not yesterday's
+  // fixed pixels: the textarea floor rides its token, and the choice stack
+  // gap is the 12px that puts row centres 44px apart.
+  const textareaRule = /\.weft-textarea\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/var\(--weft-textarea-min-h/.test(textareaRule)) {
+    problems.push('the embedded textarea rule does not ride --weft-textarea-min-h');
+  }
+  const groupRule = /fieldset\.weft-field-group\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/gap:\s*(?:var\(--weft-choice-gap[^)]*\)|12px)/.test(groupRule)) {
+    problems.push('the embedded field-group gap is not the 12px choice-stack gap');
+  }
+
   const wrapRule = /\.weft-checkbox-wrap,\s*\.weft-radio-wrap\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
   if (!/min-height:\s*32px/.test(wrapRule)) {
     problems.push('the embedded checkbox/radio wrap rule does not carry the 32px choice row');

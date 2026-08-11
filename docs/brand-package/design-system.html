@@ -319,7 +319,7 @@
     background-color: var(--weft-control-fill-static); cursor: default;
   }
 
-  .weft-textarea { height: auto; min-height: 96px; padding-block: 11px; resize: vertical; }
+  .weft-textarea { height: auto; min-height: var(--weft-textarea-min-h, 96px); /* 96/80/72 by density tier */ padding-block: 11px; resize: vertical; }
 
   .weft-select {
     appearance: none; -webkit-appearance: none;
@@ -386,7 +386,7 @@
 
   fieldset.weft-field-group {
     border: none; padding: 0; margin: 0 0 20px;
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: var(--weft-choice-gap, 12px); /* 32px row + 12px gap = centres 44px apart */
   }
   fieldset.weft-field-group > legend {
     font-family: var(--weft-font-mono);
@@ -1352,7 +1352,7 @@
             <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--weft-muted);">pulse &middot; 2s ease-in-out infinite</div>
           </div>
           <div class="motion-box" id="fade-demo">
-            <div class="fade-stack" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="fade-stack" style="display: flex; flex-direction: column; gap: var(--weft-choice-gap, 12px); /* 32px row + 12px gap = centres 44px apart */">
               <div style="font-family: var(--weft-font-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--weft-link);">&mdash; d1 &middot; 0.10s</div>
               <div style="font-family: var(--weft-font-serif); font-size: 28px; font-weight: 400; letter-spacing: -0.02em;">d2 &middot; 0.25s</div>
               <div style="font-size: 15px; color: var(--weft-muted);">d3 &middot; 0.40s &middot; lede tier</div>
@@ -1872,7 +1872,7 @@
 
       <!-- FORM INPUTS — TEXT -->
       <div class="spec-row">
-        <div class="spec-label">.input<span>Single-line text field. Sans 16px on a <code>--weft-control-fill</code> wash, 1px <code>--weft-control-border</code> boundary carrying the 3:1 non-text contrast floor, 4px radius, and the exact height its density tier declares. Label above in mono <em>sentence case</em> &mdash; the accessible name is computed from rendered text, so an uppercase transform rewrites it. Focus comes from the global <code>:focus-visible</code> rule, delivered as an outline <em>and</em> a box-shadow so neither an author shadow nor an author outline reset can delete it. Hover deepens the border to <code>--weft-ink</code>. Disabled dims to 0.55; read-only keeps full contrast and changes only its fill. Error sets <code>aria-invalid="true"</code>, swapping the border to <code>--weft-stop</code> and surfacing the hint via <code>aria-describedby</code>.</span></div>
+        <div class="spec-label">.weft-input<span>Single-line text field. Sans 16px on a <code>--weft-control-fill</code> wash, 1px <code>--weft-control-border</code> boundary carrying the 3:1 non-text contrast floor, 4px radius, and the exact height its density tier declares. Label above in mono <em>sentence case</em> &mdash; the accessible name is computed from rendered text, so an uppercase transform rewrites it. Focus comes from the global <code>:focus-visible</code> rule, delivered as an outline <em>and</em> a box-shadow so neither an author shadow nor an author outline reset can delete it. Hover deepens the border to <code>--weft-ink</code>. Disabled dims to 0.55; read-only keeps full contrast and changes only its fill. Error sets <code>aria-invalid="true"</code>, swapping the border to <code>--weft-stop</code> and surfacing the hint via <code>aria-describedby</code>.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
             <div class="weft-field">
@@ -1908,7 +1908,7 @@
 
       <!-- FORM INPUTS — TEXTAREA -->
       <div class="spec-row">
-        <div class="spec-label">.textarea<span>Multi-line input. Same surface + border + radius as <code>.input</code>, with <code>min-height: 96px</code> and <code>resize: vertical</code>. For descriptions, messages, longer copy. Same hover / focus / error rules.</span></div>
+        <div class="spec-label">.weft-textarea<span>Multi-line input. Same surface + border + radius as <code>.weft-input</code>, with a per-tier floor (<code>min-height: var(--weft-textarea-min-h)</code>, 96/80/72 by density) and <code>resize: vertical</code>. For descriptions, messages, longer copy. Same hover / focus / error rules.</span></div>
         <div class="spec-body">
           <div class="demo" style="max-width: 640px;">
             <div class="weft-field">
@@ -1923,7 +1923,7 @@
 
       <!-- FORM INPUTS — SELECT -->
       <div class="spec-row">
-        <div class="spec-label">.select<span>Native <code>&lt;select&gt;</code> with the platform caret stripped and a single-stroke chevron re-added via inline SVG. Sits on the same surface + border + radius as <code>.input</code>. Caret color flips automatically in dark mode.</span></div>
+        <div class="spec-label">.weft-select<span>Native <code>&lt;select&gt;</code> with the platform caret stripped and a single-stroke chevron re-added via inline SVG. Sits on the same surface + border + radius as <code>.weft-input</code>. Caret color flips automatically in dark mode.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
             <div class="weft-field">
@@ -1956,7 +1956,7 @@
 
       <!-- FORM INPUTS — CHECKBOX + RADIO -->
       <div class="spec-row">
-        <div class="spec-label">.weft-checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 32px choice row; adjacent rows stack with a 12px gap so their centres sit exactly 44px apart — the clearance band met by construction of the stack, not by inflating the row. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
+        <div class="spec-label">.weft-checkbox &middot; .weft-radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 32px choice row; adjacent rows stack with a 12px gap so their centres sit exactly 44px apart — the clearance band met by construction of the stack, not by inflating the row. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 640px;">
             <div>
