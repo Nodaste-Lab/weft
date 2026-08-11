@@ -36,7 +36,7 @@ describe('naming and affordance', () => {
 });
 
 describe('clearing', () => {
-  it('empties the field, keeps focus in it, and emits exactly one change and one commit', () => {
+  it('empties the field, keeps focus in it, and emits exactly one change and one commit', async () => {
     const commits: CommitDetail[] = [];
     const changes: string[] = [];
     render(
@@ -52,6 +52,7 @@ describe('clearing', () => {
     const clear = screen.getByRole('button', { name: 'Clear search' });
     fireEvent.pointerDown(clear);
     fireEvent.click(clear);
+    await Promise.resolve(); // the commit lands one microtask later, after React's flush
     expect(box.value).toBe('');
     expect(changes, 'exactly one change event for one clear').toEqual(['']);
     expect(commits, 'exactly one commit for one clear').toHaveLength(1);
@@ -86,6 +87,61 @@ describe('clearing', () => {
     fireEvent.pointerDown(clear);
     fireEvent.click(clear);
     expect(onSubmit, 'a clear that submits is the classic defect').not.toHaveBeenCalled();
+  });
+
+  it('keyboard clear is ONE commit: tabbing into the owned clear registers before the blur', async () => {
+    const commits: CommitDetail[] = [];
+    render(
+      <SearchField label="Search projects" defaultValue="weft" onCommit={(d) => commits.push(d)} />,
+    );
+    const box = screen.getByRole('searchbox') as HTMLInputElement;
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    box.focus();
+    // Tab: focus leaves the input FOR the clear button. Unlike a generic Save
+    // control, SearchField owns this button, so the blur is suppressed…
+    fireEvent.blur(box, { relatedTarget: clear });
+    expect(commits, 'the blur into our own clear must not commit yet').toHaveLength(0);
+    // …and the activation commits once, carrying the suppressed blur as evidence.
+    fireEvent.click(clear);
+    await Promise.resolve();
+    expect(commits).toEqual([{ reason: 'explicit-save', sources: ['blur', 'explicit-save'] }]);
+  });
+
+  it('tabbing through the clear without activating replays the blur — one commit, nothing swallowed', () => {
+    const commits: CommitDetail[] = [];
+    render(
+      <SearchField label="Search projects" defaultValue="weft" onCommit={(d) => commits.push(d)} />,
+    );
+    const box = screen.getByRole('searchbox') as HTMLInputElement;
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    box.focus();
+    fireEvent.blur(box, { relatedTarget: clear });
+    fireEvent.blur(clear); // tabbed onward — the activation never came
+    expect(commits).toEqual([{ reason: 'blur', sources: ['blur'] }]);
+  });
+
+  it('a controlled consumer observes the CLEARED value at commit time', async () => {
+    const seenAtCommit: string[] = [];
+    function Controlled() {
+      const [value, setValue] = React.useState('weft');
+      return (
+        <SearchField
+          label="Search projects"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onCommit={() => seenAtCommit.push(value)}
+        />
+      );
+    }
+    render(<Controlled />);
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    fireEvent.pointerDown(clear);
+    fireEvent.click(clear);
+    await Promise.resolve();
+    expect(
+      seenAtCommit,
+      'committed synchronously, onCommit would still see the pre-clear value and validate the wrong thing',
+    ).toEqual(['']);
   });
 
   it('takes a consumer clear label', () => {

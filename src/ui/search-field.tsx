@@ -46,6 +46,10 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
     const autoId = React.useId();
     const inputId = id ?? autoId;
     const innerRef = React.useRef<HTMLInputElement | null>(null);
+    const clearRef = React.useRef<HTMLButtonElement | null>(null);
+    // True while clearInput's own focus() bounce is in flight, so the clear
+    // button's blur is not mistaken for an abandoned activation.
+    const clearingRef = React.useRef(false);
     const setRef = (el: HTMLInputElement | null) => {
       innerRef.current = el;
       if (typeof ref === "function") ref(el);
@@ -69,6 +73,7 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
     const clearInput = () => {
       const el = innerRef.current;
       if (!el) return;
+      clearingRef.current = true;
       // Through the native setter + a real input event, so controlled and
       // uncontrolled consumers both see exactly ONE ordinary change — the
       // helper never writes a value, and this component writes it as the
@@ -80,7 +85,14 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
       setter.call(el, "");
       el.dispatchEvent(new Event("input", { bubbles: true }));
       el.focus();
-      boundary.commit("explicit-save");
+      // The commit waits one microtask, until AFTER React flushes the change:
+      // committed synchronously, a controlled consumer's onCommit would still
+      // observe the pre-clear value and validate the wrong thing. Not a timer,
+      // not a guess — event ordering.
+      queueMicrotask(() => {
+        boundary.commit("explicit-save");
+        clearingRef.current = false;
+      });
     };
 
     return (
@@ -100,6 +112,19 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
               setInnerValue(e.target.value);
               onChange?.(e);
             },
+            onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+              // SearchField OWNS its clear button, so unlike a generic Save
+              // control (where keyboard activation is inherently two
+              // transactions — document C §2), a Tab into our own clear can
+              // register the explicit save BEFORE the helper sees the blur:
+              // supplied handlers run first, so the blur is suppressed and the
+              // eventual commit reports { reason: "explicit-save",
+              // sources: ["blur", "explicit-save"] }. One commit, keyboard too.
+              if (e.relatedTarget === clearRef.current) {
+                boundary.registerExplicitSave();
+              }
+              props.onBlur?.(e);
+            },
           })}
           id={inputId}
           ref={setRef}
@@ -109,6 +134,7 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
         />
         {clearable ? (
           <button
+            ref={clearRef}
             type="button"
             aria-label={clearLabel}
             onPointerDown={(e) => {
@@ -119,6 +145,13 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
             }}
             onPointerLeave={boundary.cancelExplicitSave}
             onPointerCancel={boundary.cancelExplicitSave}
+            onBlur={() => {
+              // Tabbed in, tabbed on, never activated: the registration is
+              // abandoned and the suppressed blur replays as an ordinary blur
+              // commit. Skipped while clearInput's own focus() bounce is in
+              // flight — that blur is part of the clear, not an abandonment.
+              if (!clearingRef.current) boundary.cancelExplicitSave();
+            }}
             onClick={clearInput}
             className="absolute right-1 flex size-6 min-h-6 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent text-muted-foreground hover:text-foreground"
           >

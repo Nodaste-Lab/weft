@@ -246,6 +246,20 @@ test('T2-c: generated HTML contains only real accessible controls', () => {
   );
 });
 
+test('T2-e2: the shipped panel-templates markdown teaches no retired class', () => {
+  // The retirement's missed callsite (P7 review round 1): the DOM-contract doc
+  // still taught .weft-board-check after the CSS retired it. Docs ship in the
+  // package, so a stale copyable skeleton is a consumer-facing regression.
+  const md = readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8');
+  const pattern = new RegExp(`\\b(${DEPRECATED_BOARD_CLASSES.join('|')})\\b`, 'g');
+  const hits = [...md.matchAll(pattern)].map((m) => m[0]);
+  assert.deepEqual(
+    [...new Set(hits)],
+    [],
+    `11-panel-templates.md still teaches retired classes: ${[...new Set(hits)].join(', ')}`,
+  );
+});
+
 test('T2-d: generator source references no deprecated board-local class names in specimen strings', () => {
   const generatorSrc = readFileSync(
     join(ROOT, 'scripts', 'generate-panel-templates-page.py'),

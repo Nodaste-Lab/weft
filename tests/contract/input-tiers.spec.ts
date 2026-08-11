@@ -130,6 +130,26 @@ for (const theme of ['light', 'dark'] as Theme[]) {
   });
 }
 
+for (const theme of ['light', 'dark'] as Theme[]) {
+  test(`tier 2 under hover: the underline deepens and the box does NOT come back — ${theme}`, async ({ page }) => {
+    // The base hover rule is class + :hover + :not()s — (0,3,0) — and outweighs
+    // the (0,2,0) modifier, so without its own hover-scoped longhands the
+    // underline tier repainted all four sides with ink exactly while the user
+    // reached for it (P7 review round 1). Painted, under real hover.
+    await applyAxes(page, { theme });
+    const el = page.locator('#tier2-underline');
+    await el.scrollIntoViewIfNeeded();
+    await el.hover();
+    const top = await topEdgeContrast(page, 'tier2-underline');
+    expect(
+      top,
+      `hovered tier-2 top edge reads ${top.toFixed(2)}:1 — the box came back on hover`,
+    ).toBeLessThan(1.8);
+    const { ratio } = await bottomEdgeContrast(page, 'tier2-underline');
+    expect(ratio, 'the underline itself still clears the floor under hover').toBeGreaterThanOrEqual(BOUNDARY_FLOOR);
+  });
+}
+
 test('tier 2 is a real control: tab order, native overflow, inherited direction', async ({ page }) => {
   const el = page.locator('#tier2-overflow'); // carries a value longer than its box
   await el.scrollIntoViewIfNeeded();

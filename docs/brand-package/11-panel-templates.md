@@ -54,7 +54,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Filter rail | `.weft-board-rail`, `.weft-board-rail-section`, `.weft-board-rail-label` |
 | Search | `.weft-input` (real `<input type="search">`) / `<Input>` |
 | Segmented toggle | `.weft-toggle-group.is-joined` / `<ToggleGroup joined>` |
-| Checkbox rows | `.weft-board-checks`, `.weft-board-check` (`.is-disabled`), `.weft-board-check-note` + `.weft-checkbox` |
+| Checkbox rows | `.weft-board-checks` + the canonical `.weft-checkbox-wrap` row and `.weft-checkbox` (disabled styling keys on the native attribute — no modifier class); `.weft-board-note` for the caption |
 | Preset picker | `.weft-select` (real `<select>`) / `<Select>` |
 | List column | `.weft-board-detail` |
 | List header | `.weft-board-context`, `.weft-board-context-sub`, `.weft-board-context-note` |
@@ -107,12 +107,12 @@ with a compact variant for narrow slots and a drawer for one item's detail.
       <div class="weft-board-rail-section">
         <span class="weft-board-rail-label">Filter by spaces</span>
         <div class="weft-board-checks">
-          <label class="weft-board-check">
+          <label class="weft-checkbox-wrap">
             <input type="checkbox" class="weft-checkbox" name="sp-studio" checked> Nodaste Studio
           </label>
-          <label class="weft-board-check is-disabled">
+          <label class="weft-checkbox-wrap">
             <input type="checkbox" class="weft-checkbox" name="sp-archive" disabled> ccore/archive
-            <span class="weft-board-check-note">unreachable</span>
+            <span class="weft-board-note">unreachable</span>
           </label>
         </div>
       </div>
