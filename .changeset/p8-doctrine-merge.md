@@ -18,3 +18,12 @@ renders-distinctly instead). All of it is machine-checked from this release
 on: `npm run test:doctrine` fails on a named class or token that does not
 ship, superseded wording that returns, a lost source tag, a quietly-filled
 open question, or a doctrine reason list that drifts from the shipped module.
+
+Two parity corrections the doctrine gate's review surfaced ship with it:
+`Textarea`'s floor now resolves through `--weft-textarea-min-h` (old fixed
+4rem as the tokenless fallback), and `Switch` takes document B's designed
+40×24 control box — it was 32×18.4, under the 24px target floor its own
+parity record claimed. The choice-row cells are reclassified as documented
+divergences (the row is a plain-CSS recipe; React composes rows through its
+form primitives), and the parity matrix now says exactly that.
+

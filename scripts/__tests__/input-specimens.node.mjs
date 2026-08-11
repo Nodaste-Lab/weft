@@ -187,7 +187,7 @@ test('S9: a required marker is real text and its control carries the attribute',
   }
 });
 
-test('S12: a label wraps at most ONE interactive element — the control it labels', () => {
+test('S13: a label wraps at most ONE interactive element — the control it labels', () => {
   // A label wrapping its own control is the legal wrapping pattern (the
   // page's axis switchers do it). The defect class is a label holding a
   // SECOND interactive element beside the labelled one — the clearance
@@ -273,7 +273,25 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
   // model — a 44px min-height wrap — survived here for a release after the
   // code moved, because this guard checked markers and tokens but never the
   // row model. Now it does, in both the embedded CSS and the prose.
-  const wrapRule = /\.checkbox-wrap,\s*\.radio-wrap\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  // The prefix drift is settled for this page too: the P8 sweep corrected 91
+  // occurrences, and a reintroduced unprefixed class in markup, embedded CSS
+  // or a code sample re-teaches a vocabulary that ships nowhere.
+  const RETIRED = ['input','textarea','select','checkbox','radio','field','field-label',
+    'field-hint','field-group','req','checkbox-wrap','radio-wrap','sr-only','btn','search'];
+  for (const [where, view] of views) {
+    for (const n of RETIRED) {
+      if (new RegExp(`class="(?:[^"]* )?${n}(?: [^"]*)?"`).test(view)) {
+        problems.push(`in ${where}, class="${n}" teaches the retired unprefixed vocabulary`);
+      }
+    }
+  }
+  for (const n of RETIRED) {
+    if (new RegExp(`\\.${n}\\s*[,{]`).test(page)) {
+      problems.push(`the embedded stylesheet still styles .${n} — the shipped selector is .weft-${n}`);
+    }
+  }
+
+  const wrapRule = /\.weft-checkbox-wrap,\s*\.weft-radio-wrap\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
   if (!/min-height:\s*32px/.test(wrapRule)) {
     problems.push('the embedded checkbox/radio wrap rule does not carry the 32px choice row');
   }
@@ -290,7 +308,7 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
 
   // Field labels and legends are sentence case: an uppercase transform rewrites
   // the accessible name. Every OTHER uppercase on the page is legitimate.
-  for (const selector of ['.field-label', 'legend']) {
+  for (const selector of ['.weft-field-label', 'legend']) {
     const rule = new RegExp(`${selector.replace('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(page)?.[1] ?? '';
     if (/text-transform:\s*uppercase/.test(rule)) {
       problems.push(`${selector} still uppercases, which rewrites the accessible name`);
@@ -304,7 +322,7 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
 
   for (const [where, view] of views) {
     // The required marker is a word, never punctuation.
-    for (const [, marker] of view.matchAll(/class="req">([^<]*)</g)) {
+    for (const [, marker] of view.matchAll(/class="weft-req">([^<]*)</g)) {
       if (!/[a-z]/i.test(marker)) {
         problems.push(`in ${where}, a marker reads ${JSON.stringify(marker)} rather than a word`);
       }
@@ -315,7 +333,7 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
     // full of <option>s comfortably outruns — so it silently checked nothing for
     // exactly the specimen that was wrong.
     for (const [, forId, inner] of view.matchAll(/<label\b[^>]*\bfor="([^"]+)"[^>]*>([\s\S]*?)<\/label>/g)) {
-      if (!inner.includes('class="req"')) continue;
+      if (!inner.includes('class="weft-req"')) continue;
       const control = new RegExp(`<(?:input|select|textarea)\\b[^>]*\\bid="${forId}"[^>]*>`).exec(view);
       if (!control) {
         problems.push(`in ${where}, a label marked required points at #${forId}, which does not exist`);

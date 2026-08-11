@@ -933,7 +933,7 @@
       "category": "toggles",
       "summary": "Binary on or off switch with track and thumb.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "table",
@@ -965,7 +965,7 @@
       "category": "inputs",
       "summary": "Multi-line text field with tokenized focus styling.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "tier-group",

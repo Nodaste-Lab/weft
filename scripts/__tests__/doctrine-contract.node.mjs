@@ -110,10 +110,18 @@ test('D4b: every documented --input bridge mapping states the one that ships', (
   for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md']) {
     const text = read('docs', 'brand-package', doc);
     for (const [name, target] of Object.entries(shipped)) {
-      for (const m of text.matchAll(new RegExp(`\`${name}\`[^|\\n]*\\|\\s*\`var\\((--weft-[\\w-]+)\\)\`|\`${name}\`[^.\\n]{0,80}maps to \`(--weft-[\\w-]+)\``, 'g'))) {
+      // Any mapping-shaped statement: a table row, or prose with a mapping
+      // verb — "maps to", "resolve(s) to", "points at/to", "reads", an arrow.
+      // The first shape only knew tables and "maps to", so the LIVE sentence
+      // ("resolve to …") could regress to --weft-paper unseen.
+      for (const m of text.matchAll(new RegExp(`\`${name}\`[^|\\n]*\\|\\s*\`var\\((--weft-[\\w-]+)\\)\`|\`${name}\`[^.\\n]{0,80}?(?:maps? to|resolves? to|points? (?:at|to)|reads|→|->)[^.\\n]{0,60}?\`(--weft-[\\w-]+)\``, 'g'))) {
         const stated = m[1] ?? m[2];
-        if (stated && stated !== target) {
-          problems.push(`${doc} states ${name} → ${stated}; the shipped bridge is ${target}`);
+        // A joint sentence ("--input and --input-background resolve to A and
+        // B") captures the pair's first token for both names, so any member
+        // of the shipped pair is accepted; only a token OUTSIDE the pair —
+        // --weft-paper being the one that shipped wrong twice — fails.
+        if (stated && !Object.values(shipped).includes(stated)) {
+          problems.push(`${doc} states ${name} → ${stated}; the shipped bridge pair is ${Object.values(shipped).join(' / ')}`);
         }
       }
     }

@@ -267,27 +267,27 @@
   }
 
   /* === FORM INPUTS === */
-  .field {
+  .weft-field {
     display: flex; flex-direction: column; gap: 6px;
     margin-bottom: 20px;
     font-family: var(--weft-font-sans);
   }
-  .field-label {
+  .weft-field-label {
     font-family: var(--weft-font-mono);
     font-size: 12px; font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--weft-muted);
   }
-  .field-label .req {
+  .weft-field-label .weft-req {
     color: var(--weft-stop); margin-left: 3px;
     font-size: 10px; letter-spacing: 0.06em;
   }
-  .field-hint {
+  .weft-field-hint {
     font-size: 13px; color: var(--weft-muted); line-height: 1.4;
   }
-  .field-hint.is-error { color: var(--weft-stop); }
+  .weft-field-hint.is-error { color: var(--weft-stop); }
 
-  .input, .textarea, .select {
+  .weft-input, .weft-textarea, .weft-select {
     font-family: var(--weft-font-sans);
     font-size: 16px; line-height: 1.4;
     color: var(--weft-ink);
@@ -304,24 +304,24 @@
       border-color var(--weft-dur-fast) var(--weft-ease-out),
       background-color var(--weft-dur-fast) var(--weft-ease-out);
   }
-  .input::placeholder, .textarea::placeholder { color: var(--weft-muted); }
-  .input:hover:not(:disabled):not([readonly]),
-  .textarea:hover:not(:disabled):not([readonly]),
-  .select:hover:not(:disabled) { border-color: var(--weft-ink); }
-  .input[aria-invalid="true"],
-  .textarea[aria-invalid="true"],
-  .select[aria-invalid="true"] { border-color: var(--weft-stop); }
-  .input:disabled, .textarea:disabled, .select:disabled {
+  .weft-input::placeholder, .weft-textarea::placeholder { color: var(--weft-muted); }
+  .weft-input:hover:not(:disabled):not([readonly]),
+  .weft-textarea:hover:not(:disabled):not([readonly]),
+  .weft-select:hover:not(:disabled) { border-color: var(--weft-ink); }
+  .weft-input[aria-invalid="true"],
+  .weft-textarea[aria-invalid="true"],
+  .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }
+  .weft-input:disabled, .weft-textarea:disabled, .weft-select:disabled {
     background-color: var(--weft-control-fill-static);
     opacity: 0.55; cursor: not-allowed;
   }
-  .input[readonly], .textarea[readonly] {
+  .weft-input[readonly], .weft-textarea[readonly] {
     background-color: var(--weft-control-fill-static); cursor: default;
   }
 
-  .textarea { height: auto; min-height: 96px; padding-block: 11px; resize: vertical; }
+  .weft-textarea { height: auto; min-height: 96px; padding-block: 11px; resize: vertical; }
 
-  .select {
+  .weft-select {
     appearance: none; -webkit-appearance: none;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%230B1020' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
     background-repeat: no-repeat;
@@ -329,11 +329,11 @@
     padding-right: 40px;
     cursor: pointer;
   }
-  [data-theme="dark"] .select {
+  [data-theme="dark"] .weft-select {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
   }
 
-  .checkbox-wrap, .radio-wrap {
+  .weft-checkbox-wrap, .weft-radio-wrap {
     display: flex; align-items: center; gap: 10px;
     /* The choice row (P5/P7, decision 1 reading (b)): 32px clears the 24px
      * control floor on its own, and adjacent rows stack 12px apart so their
@@ -346,9 +346,9 @@
   }
   /* Adjacent rows stack 12px apart: 32 + 12 puts row centres exactly 44px
    * apart — the clearance band by construction. */
-  .checkbox-wrap + .checkbox-wrap,
-  .radio-wrap + .radio-wrap { margin-top: 12px; }
-  .checkbox, .radio {
+  .weft-checkbox-wrap + .weft-checkbox-wrap,
+  .weft-radio-wrap + .weft-radio-wrap { margin-top: 12px; }
+  .weft-checkbox, .weft-radio {
     appearance: none; -webkit-appearance: none;
     width: 18px; height: 18px;
     border: 1.5px solid var(--weft-ink);
@@ -360,35 +360,35 @@
       background-color var(--weft-dur-fast) var(--weft-ease-out),
       border-color var(--weft-dur-fast) var(--weft-ease-out);
   }
-  .checkbox { border-radius: var(--weft-radius-chip); }
-  .radio    { border-radius: var(--weft-radius-dot); }
-  .checkbox:hover:not(:disabled),
-  .radio:hover:not(:disabled)    { border-color: var(--weft-blue); }
-  .checkbox:checked, .radio:checked {
+  .weft-checkbox { border-radius: var(--weft-radius-chip); }
+  .weft-radio    { border-radius: var(--weft-radius-dot); }
+  .weft-checkbox:hover:not(:disabled),
+  .weft-radio:hover:not(:disabled)    { border-color: var(--weft-blue); }
+  .weft-checkbox:checked, .weft-radio:checked {
     background-color: var(--weft-blue); border-color: var(--weft-blue);
   }
   /* Check glyph: inline SVG centered on the blue fill. White stays crisp in both themes
      because the fill is always --weft-blue (theme-invariant). */
-  .checkbox:checked {
+  .weft-checkbox:checked {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 12px 12px;
   }
-  .radio:checked::after {
+  .weft-radio:checked::after {
     content: ""; position: absolute;
     inset: 4px;
     border-radius: var(--weft-radius-dot);
     background: #ffffff;
   }
-  .checkbox[aria-invalid="true"],
-  .radio[aria-invalid="true"] { border-color: var(--weft-stop); }
+  .weft-checkbox[aria-invalid="true"],
+  .weft-radio[aria-invalid="true"] { border-color: var(--weft-stop); }
 
-  fieldset.field-group {
+  fieldset.weft-field-group {
     border: none; padding: 0; margin: 0 0 20px;
     display: flex; flex-direction: column; gap: 10px;
   }
-  fieldset.field-group > legend {
+  fieldset.weft-field-group > legend {
     font-family: var(--weft-font-mono);
     font-size: 12px; font-weight: 500;
     letter-spacing: 0.01em;
@@ -1875,33 +1875,33 @@
         <div class="spec-label">.input<span>Single-line text field. Sans 16px on a <code>--weft-control-fill</code> wash, 1px <code>--weft-control-border</code> boundary carrying the 3:1 non-text contrast floor, 4px radius, and the exact height its density tier declares. Label above in mono <em>sentence case</em> &mdash; the accessible name is computed from rendered text, so an uppercase transform rewrites it. Focus comes from the global <code>:focus-visible</code> rule, delivered as an outline <em>and</em> a box-shadow so neither an author shadow nor an author outline reset can delete it. Hover deepens the border to <code>--weft-ink</code>. Disabled dims to 0.55; read-only keeps full contrast and changes only its fill. Error sets <code>aria-invalid="true"</code>, swapping the border to <code>--weft-stop</code> and surfacing the hint via <code>aria-describedby</code>.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
-            <div class="field">
-              <label class="field-label" for="demo-input-default">Full name</label>
-              <input class="input" id="demo-input-default" type="text" placeholder="Ana Chen" />
-              <span class="field-hint">Default &middot; empty</span>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-input-default">Full name</label>
+              <input class="weft-input" id="demo-input-default" type="text" placeholder="Ana Chen" />
+              <span class="weft-field-hint">Default &middot; empty</span>
             </div>
-            <div class="field">
-              <label class="field-label" for="demo-input-filled">Workspace</label>
-              <input class="input" id="demo-input-filled" type="text" value="nodaste-core" />
-              <span class="field-hint">Filled</span>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-input-filled">Workspace</label>
+              <input class="weft-input" id="demo-input-filled" type="text" value="nodaste-core" />
+              <span class="weft-field-hint">Filled</span>
             </div>
-            <div class="field">
-              <label class="field-label" for="demo-input-error">Email <span class="req">required</span></label>
-              <input class="input" id="demo-input-error" type="email" value="ana@" required aria-invalid="true" aria-describedby="demo-input-error-error" />
-              <span class="field-hint is-error" id="demo-input-error-error">Needs a full address &middot; ana@nodaste.com</span>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-input-error">Email <span class="weft-req">required</span></label>
+              <input class="weft-input" id="demo-input-error" type="email" value="ana@" required aria-invalid="true" aria-describedby="demo-input-error-error" />
+              <span class="weft-field-hint is-error" id="demo-input-error-error">Needs a full address &middot; ana@nodaste.com</span>
             </div>
-            <div class="field">
-              <label class="field-label" for="demo-input-hover">Team size</label>
-              <input class="input" id="demo-input-hover" type="text" placeholder="12" style="border-color: var(--weft-rule-strong);" />
-              <span class="field-hint">Hover (border emphasized)</span>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-input-hover">Team size</label>
+              <input class="weft-input" id="demo-input-hover" type="text" placeholder="12" style="border-color: var(--weft-rule-strong);" />
+              <span class="weft-field-hint">Hover (border emphasized)</span>
             </div>
           </div>
-<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"field"</span><span class="c-tag">&gt;</span>
-  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"field-label"</span> <span class="c-key">for</span>=<span class="c-str">"email"</span><span class="c-tag">&gt;</span>Email <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"req"</span><span class="c-tag">&gt;</span>required<span class="c-tag">&lt;/span&gt;&lt;/label&gt;</span>
-  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"input"</span> <span class="c-key">id</span>=<span class="c-str">"email"</span> <span class="c-key">type</span>=<span class="c-str">"email"</span> <span class="c-key">required</span>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"weft-field"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-label"</span> <span class="c-key">for</span>=<span class="c-str">"email"</span><span class="c-tag">&gt;</span>Email <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-req"</span><span class="c-tag">&gt;</span>required<span class="c-tag">&lt;/span&gt;&lt;/label&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"weft-input"</span> <span class="c-key">id</span>=<span class="c-str">"email"</span> <span class="c-key">type</span>=<span class="c-str">"email"</span> <span class="c-key">required</span>
          <span class="c-key">aria-invalid</span>=<span class="c-str">"true"</span> <span class="c-key">aria-describedby</span>=<span class="c-str">"email-error email-hint"</span> <span class="c-tag">/&gt;</span>
-  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"field-hint is-error"</span> <span class="c-key">id</span>=<span class="c-str">"email-error"</span><span class="c-tag">&gt;</span>Needs a full address.<span class="c-tag">&lt;/span&gt;</span>
-  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"field-hint"</span> <span class="c-key">id</span>=<span class="c-str">"email-hint"</span><span class="c-tag">&gt;</span>Work addresses only.<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint is-error"</span> <span class="c-key">id</span>=<span class="c-str">"email-error"</span><span class="c-tag">&gt;</span>Needs a full address.<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint"</span> <span class="c-key">id</span>=<span class="c-str">"email-hint"</span><span class="c-tag">&gt;</span>Work addresses only.<span class="c-tag">&lt;/span&gt;</span>
 <span class="c-tag">&lt;/div&gt;</span></pre>
         </div>
       </div>
@@ -1911,13 +1911,13 @@
         <div class="spec-label">.textarea<span>Multi-line input. Same surface + border + radius as <code>.input</code>, with <code>min-height: 96px</code> and <code>resize: vertical</code>. For descriptions, messages, longer copy. Same hover / focus / error rules.</span></div>
         <div class="spec-body">
           <div class="demo" style="max-width: 640px;">
-            <div class="field">
-              <label class="field-label" for="demo-textarea">What are you weaving together?</label>
-              <textarea class="textarea" id="demo-textarea" placeholder="A few sentences is plenty. We'll follow up."></textarea>
-              <span class="field-hint">500 characters max.</span>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-textarea">What are you weaving together?</label>
+              <textarea class="weft-textarea" id="demo-textarea" placeholder="A few sentences is plenty. We'll follow up."></textarea>
+              <span class="weft-field-hint">500 characters max.</span>
             </div>
           </div>
-<pre class="code"><span class="c-tag">&lt;textarea</span> <span class="c-key">class</span>=<span class="c-str">"textarea"</span> <span class="c-key">id</span>=<span class="c-str">"note"</span> <span class="c-tag">&gt;&lt;/textarea&gt;</span></pre>
+<pre class="code"><span class="c-tag">&lt;textarea</span> <span class="c-key">class</span>=<span class="c-str">"weft-textarea"</span> <span class="c-key">id</span>=<span class="c-str">"note"</span> <span class="c-tag">&gt;&lt;/textarea&gt;</span></pre>
         </div>
       </div>
 
@@ -1926,28 +1926,28 @@
         <div class="spec-label">.select<span>Native <code>&lt;select&gt;</code> with the platform caret stripped and a single-stroke chevron re-added via inline SVG. Sits on the same surface + border + radius as <code>.input</code>. Caret color flips automatically in dark mode.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
-            <div class="field">
-              <label class="field-label" for="demo-select-default">Team size</label>
-              <select class="select" id="demo-select-default">
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-select-default">Team size</label>
+              <select class="weft-select" id="demo-select-default">
                 <option>Just me</option>
                 <option>2&ndash;5</option>
                 <option>6&ndash;15</option>
                 <option>16+</option>
               </select>
-              <span class="field-hint">Default</span>
+              <span class="weft-field-hint">Default</span>
             </div>
-            <div class="field">
-              <label class="field-label" for="demo-select-error">Primary tool <span class="req">required</span></label>
-              <select class="select" id="demo-select-error" required aria-invalid="true" aria-describedby="demo-select-error-error">
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-select-error">Primary tool <span class="weft-req">required</span></label>
+              <select class="weft-select" id="demo-select-error" required aria-invalid="true" aria-describedby="demo-select-error-error">
                 <option value="">Pick one&hellip;</option>
                 <option>Claude</option>
                 <option>ChatGPT</option>
                 <option>Gemini</option>
               </select>
-              <span class="field-hint is-error" id="demo-select-error-error">Required.</span>
+              <span class="weft-field-hint is-error" id="demo-select-error-error">Required.</span>
             </div>
           </div>
-<pre class="code"><span class="c-tag">&lt;select</span> <span class="c-key">class</span>=<span class="c-str">"select"</span> <span class="c-key">id</span>=<span class="c-str">"team-size"</span><span class="c-tag">&gt;</span>
+<pre class="code"><span class="c-tag">&lt;select</span> <span class="c-key">class</span>=<span class="c-str">"weft-select"</span> <span class="c-key">id</span>=<span class="c-str">"team-size"</span><span class="c-tag">&gt;</span>
   <span class="c-tag">&lt;option&gt;</span>Just me<span class="c-tag">&lt;/option&gt;</span>
   <span class="c-tag">&lt;option&gt;</span>2&ndash;5<span class="c-tag">&lt;/option&gt;</span>
 <span class="c-tag">&lt;/select&gt;</span></pre>
@@ -1956,58 +1956,58 @@
 
       <!-- FORM INPUTS — CHECKBOX + RADIO -->
       <div class="spec-row">
-        <div class="spec-label">.checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 32px choice row; adjacent rows stack with a 12px gap so their centres sit exactly 44px apart — the clearance band met by construction of the stack, not by inflating the row. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
+        <div class="spec-label">.weft-checkbox &middot; .radio<span>Custom-painted on top of native inputs (via <code>appearance: none</code>) so keyboard, screen-reader, and form-submit semantics stay native. 18px control inside a 32px choice row; adjacent rows stack with a 12px gap so their centres sit exactly 44px apart — the clearance band met by construction of the stack, not by inflating the row. Checked state fills the tile blue with a yellow check (checkbox) or yellow dot (radio). Hover deepens the border to <code>--weft-blue</code>. Radios wrap in <code>&lt;fieldset&gt;</code> with <code>&lt;legend&gt;</code> for grouped choices.</span></div>
         <div class="spec-body">
           <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 640px;">
             <div>
-              <div class="field-label" style="margin-bottom: 10px;">Checkboxes</div>
+              <div class="weft-field-label" style="margin-bottom: 10px;">Checkboxes</div>
               <div>
-                <label class="checkbox-wrap">
-                  <input class="checkbox" type="checkbox" checked />
+                <label class="weft-checkbox-wrap">
+                  <input class="weft-checkbox" type="checkbox" checked />
                   Send me the weekly roundup
                 </label>
               </div>
               <div>
-                <label class="checkbox-wrap">
-                  <input class="checkbox" type="checkbox" />
+                <label class="weft-checkbox-wrap">
+                  <input class="weft-checkbox" type="checkbox" />
                   Invite my team too
                 </label>
               </div>
               <div>
-                <label class="checkbox-wrap">
-                  <input class="checkbox" type="checkbox" aria-invalid="true" aria-describedby="demo-cb-err-error" />
+                <label class="weft-checkbox-wrap">
+                  <input class="weft-checkbox" type="checkbox" aria-invalid="true" aria-describedby="demo-cb-err-error" />
                   Accept the terms
                 </label>
-                <span class="field-hint is-error" id="demo-cb-err-error" style="margin-left: 28px;">Required to continue.</span>
+                <span class="weft-field-hint is-error" id="demo-cb-err-error" style="margin-left: 28px;">Required to continue.</span>
               </div>
             </div>
             <div>
-              <fieldset class="field-group">
+              <fieldset class="weft-field-group">
                 <legend>Preferred contact</legend>
-                <label class="radio-wrap">
-                  <input class="radio" type="radio" name="demo-contact" checked />
+                <label class="weft-radio-wrap">
+                  <input class="weft-radio" type="radio" name="demo-contact" checked />
                   Email
                 </label>
-                <label class="radio-wrap">
-                  <input class="radio" type="radio" name="demo-contact" />
+                <label class="weft-radio-wrap">
+                  <input class="weft-radio" type="radio" name="demo-contact" />
                   Slack
                 </label>
-                <label class="radio-wrap">
-                  <input class="radio" type="radio" name="demo-contact" />
+                <label class="weft-radio-wrap">
+                  <input class="weft-radio" type="radio" name="demo-contact" />
                   Neither &mdash; I&rsquo;ll reach out
                 </label>
               </fieldset>
             </div>
           </div>
-<pre class="code"><span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"checkbox-wrap"</span><span class="c-tag">&gt;</span>
-  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"checkbox"</span> <span class="c-key">type</span>=<span class="c-str">"checkbox"</span> <span class="c-tag">/&gt;</span>
+<pre class="code"><span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"weft-checkbox-wrap"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"weft-checkbox"</span> <span class="c-key">type</span>=<span class="c-str">"checkbox"</span> <span class="c-tag">/&gt;</span>
   Invite my team too
 <span class="c-tag">&lt;/label&gt;</span>
 
-<span class="c-tag">&lt;fieldset</span> <span class="c-key">class</span>=<span class="c-str">"field-group"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;fieldset</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-group"</span><span class="c-tag">&gt;</span>
   <span class="c-tag">&lt;legend&gt;</span>Preferred contact<span class="c-tag">&lt;/legend&gt;</span>
-  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"radio-wrap"</span><span class="c-tag">&gt;</span>
-    <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"radio"</span> <span class="c-key">type</span>=<span class="c-str">"radio"</span> <span class="c-key">name</span>=<span class="c-str">"contact"</span> <span class="c-tag">/&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"weft-radio-wrap"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"weft-radio"</span> <span class="c-key">type</span>=<span class="c-str">"radio"</span> <span class="c-key">name</span>=<span class="c-str">"contact"</span> <span class="c-tag">/&gt;</span>
     Email
   <span class="c-tag">&lt;/label&gt;</span>
 <span class="c-tag">&lt;/fieldset&gt;</span></pre>

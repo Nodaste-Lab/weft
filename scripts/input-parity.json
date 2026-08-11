@@ -2,23 +2,130 @@
   "$comment": "Input-layer parity matrix (decision 8, AC5). Every capability cell is at parity, an allowlisted gap with an owner and an expiry, or a documented divergence carrying a rationale and no date. The gate (scripts/__tests__/input-parity.node.mjs) enumerates the input surface itself and FAILS on a capability with no cell, a cell with no valid status, a gap with no live allowlist entry, or a divergence with no rationale. An expired allowlist entry fails the gate — that is what makes an expiry real.",
   "version": 2,
   "cells": [
-    { "capability": "input", "claim": "single-line text field: states, boundary, height tier, focus", "react": "src/ui/input.tsx", "plainCss": ".weft-input", "status": "parity" },
-    { "capability": "textarea", "claim": "multi-line field: states, boundary, own floor", "react": "src/ui/textarea.tsx", "plainCss": ".weft-textarea", "status": "parity" },
-    { "capability": "select", "claim": "native select with token chevron; read-only exists in neither content model", "react": "src/ui/select.tsx", "plainCss": ".weft-select", "status": "parity" },
-    { "capability": "checkbox-row", "claim": "choice row at the 32px row height with the 44px clearance stack", "react": "src/ui/checkbox.tsx", "plainCss": ".weft-checkbox-wrap", "status": "parity" },
-    { "capability": "radio-row", "claim": "choice row; grouped rows carry a group name", "react": "src/ui/radio-group.tsx", "plainCss": ".weft-radio-wrap", "status": "parity" },
-    { "capability": "switch", "claim": "on/off control: 24px floor bare, checked serializes, unchecked ABSENT, read-only unsupported in both layers", "react": "src/ui/switch.tsx", "plainCss": ".weft-switch", "status": "parity" },
-    { "capability": "slider-single", "claim": "one-thumb range: keyboard, drag, min/max/step, RTL, serialization", "react": "src/ui/slider.tsx", "plainCss": ".weft-slider", "status": "parity" },
-    { "capability": "slider-range", "claim": "bounded range (two values)", "react": "src/ui/slider.tsx", "plainCss": "RangeBounds recipe — two named .weft-slider in a named fieldset", "status": "divergence", "ref": "range-bounds" },
-    { "capability": "search", "claim": "search pattern: hidden label, leading glyph, named clear appearing only with content", "react": "src/ui/search-field.tsx", "plainCss": ".weft-search recipe", "status": "parity" },
-    { "capability": "search-clear-action", "claim": "the clear's behaviour: empty the value, keep focus, one change + one commit", "react": "src/ui/search-field.tsx", "plainCss": null, "status": "gap", "ref": "search-clear-action" },
-    { "capability": "commit-boundary", "claim": "one deduplicated commit signal per transaction", "react": "src/ui/use-commit-boundary.ts", "plainCss": null, "status": "gap", "ref": "commit-boundary" },
-    { "capability": "labelling", "claim": "the naming ladder: visible label, hidden label, icon-only aria-label", "react": "src/ui/label.tsx", "plainCss": ".weft-field-label / .weft-sr-only", "status": "parity" },
-    { "capability": "description", "claim": "help and error compose to one ordered describedby list, error first", "react": "src/ui/form.tsx", "plainCss": "documented id recipe, gated page-wide", "status": "parity" },
-    { "capability": "required-marker", "claim": "real text plus the native attribute; the name never carries a glyph", "react": "src/ui/form.tsx", "plainCss": ".weft-req", "status": "parity" },
-    { "capability": "group-name", "claim": "a choice group exposes an accessible group name", "react": "src/ui/radio-group.tsx", "plainCss": ".weft-field-group > legend", "status": "parity" },
-    { "capability": "tier-underline", "claim": "resting tier 2: underline-only boundary at 3:1, behaviour unchanged", "react": "src/ui/input.tsx", "plainCss": ".weft-input.is-underline", "status": "parity" },
-    { "capability": "tier-low", "claim": "resting tier 3: bordered field, quieter colour", "react": "src/ui/input.tsx", "plainCss": ".weft-input.is-low", "status": "parity" }
+    {
+      "capability": "input",
+      "claim": "single-line text field: states, boundary, height tier, focus",
+      "react": "src/ui/input.tsx",
+      "plainCss": ".weft-input",
+      "status": "parity"
+    },
+    {
+      "capability": "textarea",
+      "claim": "multi-line field: states, boundary, own floor",
+      "react": "src/ui/textarea.tsx",
+      "plainCss": ".weft-textarea",
+      "status": "parity"
+    },
+    {
+      "capability": "select",
+      "claim": "native select with token chevron; read-only exists in neither content model",
+      "react": "src/ui/select.tsx",
+      "plainCss": ".weft-select",
+      "status": "parity"
+    },
+    {
+      "capability": "switch",
+      "claim": "on/off control: 24px floor bare, checked serializes, unchecked ABSENT, read-only unsupported in both layers",
+      "react": "src/ui/switch.tsx",
+      "plainCss": ".weft-switch",
+      "status": "parity"
+    },
+    {
+      "capability": "slider-single",
+      "claim": "one-thumb range: keyboard, drag, min/max/step, RTL, serialization",
+      "react": "src/ui/slider.tsx",
+      "plainCss": ".weft-slider",
+      "status": "parity"
+    },
+    {
+      "capability": "slider-range",
+      "claim": "bounded range (two values)",
+      "react": "src/ui/slider.tsx",
+      "plainCss": "RangeBounds recipe — two named .weft-slider in a named fieldset",
+      "status": "divergence",
+      "ref": "range-bounds"
+    },
+    {
+      "capability": "search",
+      "claim": "search pattern: hidden label, leading glyph, named clear appearing only with content",
+      "react": "src/ui/search-field.tsx",
+      "plainCss": ".weft-search recipe",
+      "status": "parity"
+    },
+    {
+      "capability": "search-clear-action",
+      "claim": "the clear's behaviour: empty the value, keep focus, one change + one commit",
+      "react": "src/ui/search-field.tsx",
+      "plainCss": null,
+      "status": "gap",
+      "ref": "search-clear-action"
+    },
+    {
+      "capability": "commit-boundary",
+      "claim": "one deduplicated commit signal per transaction",
+      "react": "src/ui/use-commit-boundary.ts",
+      "plainCss": null,
+      "status": "gap",
+      "ref": "commit-boundary"
+    },
+    {
+      "capability": "labelling",
+      "claim": "the naming ladder: visible label, hidden label, icon-only aria-label",
+      "react": "src/ui/label.tsx",
+      "plainCss": ".weft-field-label / .weft-sr-only",
+      "status": "parity"
+    },
+    {
+      "capability": "description",
+      "claim": "help and error compose to one ordered describedby list, error first",
+      "react": "src/ui/form.tsx",
+      "plainCss": "documented id recipe, gated page-wide",
+      "status": "parity"
+    },
+    {
+      "capability": "required-marker",
+      "claim": "real text plus the native attribute; the name never carries a glyph",
+      "react": "src/ui/form.tsx",
+      "plainCss": ".weft-req",
+      "status": "parity"
+    },
+    {
+      "capability": "group-name",
+      "claim": "a choice group exposes an accessible group name",
+      "react": "src/ui/radio-group.tsx",
+      "plainCss": ".weft-field-group > legend",
+      "status": "parity"
+    },
+    {
+      "capability": "tier-underline",
+      "claim": "resting tier 2: underline-only boundary at 3:1, behaviour unchanged",
+      "react": "src/ui/input.tsx",
+      "plainCss": ".weft-input.is-underline",
+      "status": "parity"
+    },
+    {
+      "capability": "tier-low",
+      "claim": "resting tier 3: bordered field, quieter colour",
+      "react": "src/ui/input.tsx",
+      "plainCss": ".weft-input.is-low",
+      "status": "parity"
+    },
+    {
+      "capability": "checkbox-row",
+      "claim": "choice row at the 32px row height with the 44px clearance stack",
+      "react": "src/ui/checkbox.tsx",
+      "plainCss": ".weft-checkbox-wrap",
+      "status": "divergence",
+      "ref": "checkbox-row"
+    },
+    {
+      "capability": "radio-row",
+      "claim": "choice row; grouped rows carry a group name",
+      "react": "src/ui/radio-group.tsx",
+      "plainCss": ".weft-radio-wrap",
+      "status": "divergence",
+      "ref": "radio-row"
+    }
   ],
   "allowlist": [
     {
@@ -47,6 +154,20 @@
       "react": "src/ui/slider.tsx",
       "plainCss": "RangeBounds recipe: two named .weft-slider inputs in a named fieldset",
       "rationale": "React's Radix Slider is array-valued and multi-thumb by default; a native input type=range has exactly one thumb and never two without scripting, which the plain-CSS layer exists to avoid. An expiry would imply parity is coming; it is not, deliberately. The recipe is first-class: group name, serialization, keyboard and RTL are all tested, and From-at-or-below-To stays consumer-owned validation under decision 7."
+    },
+    {
+      "id": "checkbox-row",
+      "capability": "checkbox-row — the 32px row with the 44px clearance stack",
+      "react": "src/ui/checkbox.tsx",
+      "plainCss": ".weft-checkbox-wrap",
+      "rationale": "The ROW is a plain-CSS recipe: .weft-checkbox-wrap/.weft-radio-wrap carry the 32px row height and the 12px stack gap that puts adjacent rows exactly 44px apart. React ships the bare control and composes rows through Label/FormItem, where the surface owns spacing — a React Row primitive would duplicate a layout the form composition already answers. Deliberate and permanent, like RangeBounds: an expiry would imply a Row component is coming, and it is not. The clearance contract itself is measured on the recipe by input-geometry and input-clearance, and React surfaces inherit it by adopting the stack pattern, which the gallery demonstrates."
+    },
+    {
+      "id": "radio-row",
+      "capability": "radio-row — the 32px row with the 44px clearance stack",
+      "react": "src/ui/radio-group.tsx",
+      "plainCss": ".weft-radio-wrap",
+      "rationale": "The ROW is a plain-CSS recipe: .weft-checkbox-wrap/.weft-radio-wrap carry the 32px row height and the 12px stack gap that puts adjacent rows exactly 44px apart. React ships the bare control and composes rows through Label/FormItem, where the surface owns spacing — a React Row primitive would duplicate a layout the form composition already answers. Deliberate and permanent, like RangeBounds: an expiry would imply a Row component is coming, and it is not. The clearance contract itself is measured on the recipe by input-geometry and input-clearance, and React surfaces inherit it by adopting the stack pattern, which the gallery demonstrates."
     }
   ]
 }
