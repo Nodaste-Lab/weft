@@ -241,8 +241,8 @@ Apply this binding once at the top level (no per-palette duplication needed):
 | `--destructive` | `var(--weft-stop)` | |
 | `--destructive-foreground` | `var(--weft-on-blue)` | White on stop-red |
 | `--border` | `var(--weft-rule)` | |
-| `--input` | `var(--weft-paper)` | Filled-input background |
-| `--input-background` | `var(--weft-paper)` | |
+| `--input` | `var(--weft-control-border)` | The form-control boundary — the 3:1 pair the plain-CSS layer reads (weft#16 P5 closed the paper-hairline gap) |
+| `--input-background` | `var(--weft-control-fill)` | The decorative control wash; answers both themes itself |
 | `--ring` | `var(--weft-focus-ring-color)` | Mode-aware via the indirection |
 | `--radius` | `var(--weft-radius-card)` | 4px |
 | `--radius-sm` | `var(--weft-radius-chip)` | 2px |

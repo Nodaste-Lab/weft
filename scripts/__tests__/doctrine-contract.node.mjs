@@ -94,6 +94,33 @@ test('D4: no claim survives that later phases falsified', () => {
   assert.deepEqual(problems, [], problems.join('\n'));
 });
 
+test('D4b: every documented --input bridge mapping states the one that ships', () => {
+  // DERIVED, not phrased: the first shape of D4 caught one stale sentence by
+  // its exact wording and let "still maps to --weft-paper" survive two docs
+  // over. The shipped mapping is read from css/weft.css, and any document
+  // that states a mapping for the bridge pair must state that one — so the
+  // guard follows the code wherever the bridge goes next, instead of chasing
+  // yesterday's phrasing.
+  const shipped = {};
+  for (const name of ['--input', '--input-background']) {
+    shipped[name] = new RegExp(`${name}:\\s*var\\((--weft-[\\w-]+)\\)`).exec(tokensCss)?.[1];
+    assert.ok(shipped[name], `css/weft.css declares no ${name} bridge`);
+  }
+  const problems = [];
+  for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md']) {
+    const text = read('docs', 'brand-package', doc);
+    for (const [name, target] of Object.entries(shipped)) {
+      for (const m of text.matchAll(new RegExp(`\`${name}\`[^|\\n]*\\|\\s*\`var\\((--weft-[\\w-]+)\\)\`|\`${name}\`[^.\\n]{0,80}maps to \`(--weft-[\\w-]+)\``, 'g'))) {
+        const stated = m[1] ?? m[2];
+        if (stated && stated !== target) {
+          problems.push(`${doc} states ${name} → ${stated}; the shipped bridge is ${target}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
+});
+
 test('D5: no rule survives in a form an amendment superseded', () => {
   const problems = [];
   // Heuristic 4's final sentence is held for the asynchronous follow-up; the
