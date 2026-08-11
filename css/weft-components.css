@@ -1018,7 +1018,7 @@ html,
   position: relative;
   width: 40px; height: 24px;
   margin: 0; padding: 0;
-  border: 0; border-radius: var(--weft-radius-dot);
+  border: 0; border-radius: var(--weft-radius-pill);  /* PILL, not dot: 50% on a 40×24 oblong renders quarter-ellipse corners that taper to points; 999px clamps to true semicircular caps. Dot stays for the square thumbs below. */
   background: transparent;
   cursor: pointer; flex-shrink: 0;
 }
@@ -1029,7 +1029,7 @@ html,
 .weft-switch::before {
   content: ""; position: absolute; inset: 0;
   box-sizing: border-box;
-  border-radius: var(--weft-radius-dot);
+  border-radius: var(--weft-radius-pill);
   border: 1.5px solid var(--weft-ink);
   background-color: var(--weft-control-fill-static);
   transition:
@@ -1105,7 +1105,7 @@ html,
 }
 .weft-slider::-webkit-slider-runnable-track {
   height: 4px;
-  border-radius: var(--weft-radius-dot);
+  border-radius: var(--weft-radius-pill);
   background-color: var(--weft-rule-strong);
 }
 .weft-slider::-webkit-slider-thumb {
@@ -1119,7 +1119,7 @@ html,
 }
 .weft-slider::-moz-range-track {
   height: 4px;
-  border-radius: var(--weft-radius-dot);
+  border-radius: var(--weft-radius-pill);
   background-color: var(--weft-rule-strong);
 }
 .weft-slider::-moz-range-thumb {

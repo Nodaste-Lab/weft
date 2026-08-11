@@ -251,14 +251,41 @@ test('the switch carries document B\'s proposal geometry — full pill, large in
     const track = getComputedStyle(el, '::before');
     const thumb = getComputedStyle(el, '::after');
     const checked = getComputedStyle(document.querySelector('#sw-checked')!, '::after');
+    // Vendor pseudo-elements are invisible to getComputedStyle (it returns
+    // the element's own style — this suite's select-chrome cousin learned
+    // that the hard way), so the slider track's radius is read from the
+    // CSSOM rule that authored it.
+    let sliderTrackRadius = 'rule not found';
+    for (const sheet of document.styleSheets) {
+      for (const rule of sheet.cssRules) {
+        const r = rule as CSSStyleRule;
+        if (r.selectorText?.includes('::-webkit-slider-runnable-track')) {
+          sliderTrackRadius = r.style.borderRadius;
+        }
+      }
+    }
     return {
       trackTop: track.top, trackBottom: track.bottom,
       thumbW: thumb.width, thumbH: thumb.height, thumbLeft: thumb.left,
       checkedLeft: checked.left,
+      trackRadius: track.borderTopLeftRadius,
+      rootRadius: getComputedStyle(el).borderTopLeftRadius,
+      sliderTrackRadius,
     };
   });
   expect(g.trackTop, 'the track fills the box — no skinny inset band').toBe('0px');
   expect(g.trackBottom).toBe('0px');
+  // Pill caps, not ellipse taper (owner's visual pass): border-radius: 50% is
+  // the DOT token, correct only on squares — on the 40×24 oblong it renders
+  // quarter-ellipse corners that taper to points. The pill token (999px,
+  // clamped by the browser to half the short side) gives true semicircular
+  // caps. Percentage radii on non-square shapes are the defect class.
+  expect(g.trackRadius, 'an oblong takes the pill token — 50% tapers it').toBe('999px');
+  expect(g.rootRadius).toBe('999px');
+  expect(
+    g.sliderTrackRadius,
+    'the slider track is the same oblong class — authored radius, via CSSOM',
+  ).toBe('var(--weft-radius-pill)');
   expect(g.thumbW, 'an 18px thumb, per the proposal').toBe('18px');
   expect(g.thumbH, 'circular: width equals height').toBe(g.thumbW);
   expect(g.thumbLeft).toBe('3px');

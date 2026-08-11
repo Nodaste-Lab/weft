@@ -28,3 +28,8 @@ border carry its non-colour cue — asserted, not omitted.
 takes `line-through` + muted in the plain layer, `SelectItem` the matching
 `data-[disabled]:line-through` in React, and every select specimen ships an
 unavailable option so the treatment stays measured.
+(6) **Pill caps, not ellipse taper**: the switch root/track and slider track
+borrowed `--weft-radius-dot: 50%` — correct on squares, but on an oblong it
+renders quarter-ellipse corners that taper to points. Every non-square pill
+now takes `--weft-radius-pill` (999px clamps to true semicircular caps);
+the dot token stays on the genuinely square thumbs and dots.
