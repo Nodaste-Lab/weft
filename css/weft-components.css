@@ -403,6 +403,73 @@ html,
 .weft-select.is-sm {
   padding-left: var(--weft-control-pad-x-sm);
 }
+/* ── Error is never colour alone (owner call; WCAG 1.4.1) ──────────────────
+ * The invalid field carries an alert glyph at its trailing edge and the
+ * message leads with the same glyph, so the state survives colour-blindness
+ * and monochrome. The SELECT is the stated field-level exception: its right
+ * edge belongs to the chevron (document B's slot arbitration), so its
+ * non-colour cue is the message icon plus the border — asserted, not
+ * omitted. The [data-slot] selectors carry the same rule to the React
+ * primitives from this one stylesheet, so the two layers cannot drift.
+ *
+ * DECLARED AFTER .is-sm on purpose: the sm modifier's padding-inline ties
+ * this rule's padding-right at (0,2,0), and source order must resolve the
+ * tie toward the glyph clearance — the cascade-trap class, handled by
+ * position this time instead of by luck. The stroke is a data-URI that
+ * cannot read --weft-stop; the theme and palette overrides below repaint it
+ * wherever the token changes, and error-icon.spec.ts compares the parsed
+ * stroke against the resolved token for every palette × theme. */
+.weft-input[aria-invalid="true"],
+[data-slot="input"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8382B' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  padding-right: 34px;
+}
+.weft-textarea[aria-invalid="true"],
+[data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8382B' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px top 10px;
+  background-size: 16px 16px;
+  padding-right: 34px;
+}
+/* Inside search the clear owns the right edge; the glyph steps left of it. */
+.weft-search .weft-input[aria-invalid="true"] {
+  background-position: right calc(var(--weft-search-pad-end, 36px) + 2px) center;
+  padding-right: calc(var(--weft-search-pad-end, 36px) + 26px);
+}
+/* The same palette-or-absent pair weft.css keys its dark tokens on — an
+ * override keyed on :not([data-palette]) alone missed every surface that
+ * names the default palette explicitly, which the harness always does. */
+:root[data-theme^="dark"][data-palette="weft"] .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] [data-slot="textarea"][aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
+:root[data-palette="hud-glass"] .weft-input[aria-invalid="true"],
+:root[data-palette="hud-glass"] [data-slot="input"][aria-invalid="true"],
+:root[data-palette="hud-glass"] .weft-textarea[aria-invalid="true"],
+:root[data-palette="hud-glass"] [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EF4444' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
+/* The message glyph masks over currentColor, so it is palette-proof for
+ * free — the hint is already painted --weft-stop. */
+.weft-field-hint.is-error::before {
+  content: ""; display: inline-block;
+  width: 12px; height: 12px;
+  margin-right: 4px; vertical-align: -1px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>") center / contain no-repeat;
+}
+
 .weft-btn.is-sm {
   min-height: var(--weft-control-h-sm);
   padding-inline: var(--weft-control-pad-x-sm);

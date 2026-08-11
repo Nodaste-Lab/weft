@@ -365,6 +365,9 @@ def geometry_section():
         'data-control="select" data-state="default"><option>All</option></select>'
         '<button type="button" class="weft-btn is-sm" data-spec="geometry-sm" '
         'data-control="button" data-state="default">Apply</button>'
+        '<label class="weft-sr-only" for="geo-sm-invalid">Small invalid filter</label>'
+        '<input class="weft-input is-sm" id="geo-sm-invalid" data-spec="error-icon" '
+        'data-control="input-sm-invalid" data-state="invalid" aria-invalid="true" />'
         '</div>'
     )
     singles = ''.join(

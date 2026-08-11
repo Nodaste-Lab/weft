@@ -16,3 +16,11 @@ on-blue text — the base hover's (0,3,0) background was landing under the
 ghost's ink text at 2.48:1, and the guard that now holds it waits out the
 colour transition before reading, because its first run passed the broken
 cascade by racing it.
+(4) **Error is never colour alone** (WCAG 1.4.1): invalid input and textarea
+carry a trailing alert glyph — stroke matched to the resolved `--weft-stop`
+per theme and palette, guarded by a tone-invariant test — and the error
+message leads with the same glyph in both layers (masked over currentColor
+in plain CSS; an `aria-hidden` svg in `FormMessage`, so the accessible
+description stays the copy). The select is the stated field-level
+exception: its right edge belongs to the chevron, so the message glyph and
+border carry its non-colour cue — asserted, not omitted.

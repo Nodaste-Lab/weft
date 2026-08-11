@@ -98,6 +98,15 @@ describe('A5 — the description list is ordered, error first', () => {
     expect(text[1]).toContain('Whole days, 1 or more.');
   });
 
+  it('the message leads with an aria-hidden glyph — colour is never the only signal', () => {
+    render(<Field withError />);
+    const message = document.querySelector('[data-slot="form-message"]')!;
+    const glyph = message.querySelector('svg');
+    expect(glyph, 'WCAG 1.4.1: the red needs a shape beside it').toBeTruthy();
+    expect(glyph!.getAttribute('aria-hidden'), 'the glyph must stay out of the description').toBe('true');
+    expect(message.textContent).toContain('Zero is not a window.');
+  });
+
   it('marks the control invalid when an error is present', () => {
     render(<Field withError />);
     expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
