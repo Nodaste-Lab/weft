@@ -33,3 +33,8 @@ borrowed `--weft-radius-dot: 50%` — correct on squares, but on an oblong it
 renders quarter-ellipse corners that taper to points. Every non-square pill
 now takes `--weft-radius-pill` (999px clamps to true semicircular caps);
 the dot token stays on the genuinely square thumbs and dots.
+(7) **The React search field's invalid glyph steps clear of the clear** —
+the offset rule keyed on `.weft-search` alone, which the React composition
+never wears; its wrapper now carries `data-slot="search-field"` and the one
+stylesheet rule names both arms, CSSOM-asserted so neither can quietly
+drop.

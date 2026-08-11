@@ -275,6 +275,20 @@ describe('the commit boundary rides along', () => {
     });
   });
 
+  describe('the invalid search field keeps its glyph clear of the clear', () => {
+    it('the wrapper carries the slot the shared offset rule keys on', () => {
+      render(
+        <SearchField label="Search projects" defaultValue="weft" aria-invalid="true" />,
+      );
+      const box = screen.getByRole('searchbox');
+      expect(box.getAttribute('aria-invalid'), 'aria-invalid must reach the input').toBe('true');
+      expect(
+        box.closest('[data-slot="search-field"]'),
+        'without the slot, the glyph sits at the default trailing position — under the clear',
+      ).toBeTruthy();
+    });
+  });
+
   describe('DOM writes React never hears about', () => {
     it('a bfcache/session restore that refills the field brings the clear with it', () => {
       render(<SearchField label="Search projects" />);

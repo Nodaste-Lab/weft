@@ -105,6 +105,36 @@ test('the glyph paints the palette\'s own stop tone — every palette × theme',
   expect(problems, problems.join('\n')).toEqual([]);
 });
 
+test('the search offset rule reaches BOTH compositions — the class and the slot', async ({ page }) => {
+  // The board's soft finding, sharpened by verification: SearchField renders
+  // Input, so the base glyph rule DOES match it — but the search-specific
+  // offset (glyph steps left of the clear) was keyed on .weft-search alone,
+  // which the React composition does not wear. Its wrapper now carries
+  // data-slot="search-field", and this asserts the offset rule names both
+  // routes — via CSSOM, because the React composition never renders on this
+  // fixture and a selector that quietly loses one arm would strand one
+  // layer's glyph under its clear button.
+  const selectors = await page.evaluate(() => {
+    for (const sheet of document.styleSheets) {
+      for (const rule of sheet.cssRules) {
+        const r = rule as CSSStyleRule;
+        if (
+          r.selectorText?.includes('.weft-search .weft-input[aria-invalid="true"]') &&
+          r.style.backgroundPosition
+        ) {
+          return r.selectorText;
+        }
+      }
+    }
+    return 'rule not found';
+  });
+  expect(selectors).toContain('.weft-search .weft-input[aria-invalid="true"]');
+  expect(
+    selectors,
+    'the React search composition takes the same offset through its slot',
+  ).toContain('[data-slot="search-field"] [data-slot="input"][aria-invalid="true"]');
+});
+
 test('an unavailable option is struck through, not merely greyed', async ({ page }) => {
   // The owner's fifth finding, the same rule one level deeper: a disabled
   // <option> signalled only by the UA's grey is colour-alone inside the

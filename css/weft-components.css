@@ -445,8 +445,12 @@ html,
   background-size: 16px 16px;
   padding-right: 34px;
 }
-/* Inside search the clear owns the right edge; the glyph steps left of it. */
-.weft-search .weft-input[aria-invalid="true"] {
+/* Inside search the clear owns the right edge; the glyph steps left of it.
+ * Both compositions, one rule: the plain layer wears .weft-search, the React
+ * SearchField wrapper carries data-slot="search-field" — verified by the
+ * board's smoke after its round found the offset stranded on the class arm. */
+.weft-search .weft-input[aria-invalid="true"],
+[data-slot="search-field"] [data-slot="input"][aria-invalid="true"] {
   background-position: right calc(var(--weft-search-pad-end, 36px) + 2px) center;
   padding-right: calc(var(--weft-search-pad-end, 36px) + 26px);
 }

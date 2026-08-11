@@ -144,8 +144,11 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
       });
     };
 
+    // data-slot lets the shared stylesheet reach this composition the way
+    // .weft-search reaches the plain one — the invalid glyph's step-left-of-
+    // the-clear offset keys on either marker, one rule, both layers.
     return (
-      <div className={cn("relative inline-flex w-full items-center", className)}>
+      <div data-slot="search-field" className={cn("relative inline-flex w-full items-center", className)}>
         <label className="sr-only" htmlFor={inputId}>
           {label}
         </label>
