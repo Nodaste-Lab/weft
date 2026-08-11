@@ -58,6 +58,7 @@
     "test:contract": "WEFT_RATCHET_FULL=1 playwright test --project=contract",
     "test:specimens": "node --test scripts/__tests__/input-specimens.node.mjs",
     "test:packed": "node --test scripts/__tests__/packed-artifact.node.mjs",
+    "test:parity": "node --test scripts/__tests__/input-parity.node.mjs",
     "tokens": "node scripts/design-system-tokens.mjs",
     "tokens:write": "node scripts/design-system-tokens.mjs --write",
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",

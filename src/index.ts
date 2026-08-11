@@ -101,6 +101,7 @@ export * from './ui/toggle';
 export * from './ui/toolbar';
 export * from './ui/tooltip';
 export * from './ui/transcript-list-item-frame';
+export * from './ui/use-commit-boundary';
 export * from './ui/use-mobile';
 export * from './ui/utils';
 export * from './ui/hud-issue-contract';

@@ -200,6 +200,7 @@ skipped rather than mistaken for a failure.
 | `test:contract` | **the measured input contract** — accessible names and descriptions, control geometry per density, painted boundary contrast, focus survival, the select chevron, and the sandboxed-iframe consumer condition. Needs a Chromium install (`npx playwright install chromium`). |
 | `build` | the ESM bundle, before anything that inspects build output |
 | `test:packed` | every contract file is in the tarball, by exact path |
+| `test:parity` | the input-layer parity record: every allowlisted gap carries an owner and an unexpired expiry, every divergence carries a rationale and no date, and referenced files exist. Fails the day an expiry passes. |
 | `check:exports` | every consumer specifier resolves from the packed tarball |
 
 Plus `node scripts/check-raw-colors.mjs` and `node scripts/check-pure-token-file.mjs`.

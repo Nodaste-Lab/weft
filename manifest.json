@@ -1025,6 +1025,11 @@
   ],
   "uiUtilities": [
     {
+      "id": "use-commit-boundary",
+      "path": "src/ui/use-commit-boundary.ts",
+      "summary": "Opt-in commit-boundary hook: one commit signal per transaction (blur, Enter, explicit save), deduplicated by registration. Emits { reason, sources }; never evaluates validity, writes values, or touches submission state."
+    },
+    {
       "id": "use-mobile",
       "path": "src/ui/use-mobile.ts",
       "summary": "Viewport helper hook for mobile breakpoints."

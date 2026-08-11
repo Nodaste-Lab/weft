@@ -48,6 +48,8 @@ jobs:
         run: npm run check:exports
       - name: Packed artifact (every contract file by exact path)
         run: npm run test:packed
+      - name: Input parity record (allowlist owners + unexpired expiries)
+        run: npm run test:parity
 
   visual-regression:
     runs-on: ubuntu-latest

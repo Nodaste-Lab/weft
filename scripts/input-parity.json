@@ -1,0 +1,16 @@
+{
+  "$comment": "Input-layer parity record (decision 8, AC5). Every control-by-state-by-capability cell is at parity, an allowlisted gap with an owner and an expiry, or a documented divergence carrying its rationale. P6 seeds the file with the first honest entry; P7 commits the full matrix and fails the build on a cell that is none of the three. An expired allowlist entry fails the gate — that is what makes an expiry real.",
+  "version": 1,
+  "allowlist": [
+    {
+      "id": "commit-boundary",
+      "capability": "commit signal — blur, Enter, explicit save — emitted as one deduplicated transaction",
+      "react": "src/ui/use-commit-boundary.ts",
+      "plainCss": null,
+      "reason": "A commit boundary is a JavaScript behaviour, and the plain-CSS layer ships no script — a sandboxed panel iframe gets no commit signal from Weft today. Parity would be a dependency-free DOM helper on the raw-color-pattern.js precedent, not a CSS rule; the sequence contract it would implement is already documented in 04-design-system.md.",
+      "owner": "weft input design system — Nodaste-Lab/weft#16",
+      "expiry": "2027-02-28"
+    }
+  ],
+  "divergences": []
+}

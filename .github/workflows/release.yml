@@ -50,6 +50,8 @@ jobs:
       - run: npm run build
       - name: Packed artifact (every contract file by exact path)
         run: npm run test:packed
+      - name: Input parity record (allowlist owners + unexpired expiries)
+        run: npm run test:parity
       - name: Exports contract (packed tarball resolves all consumer specifiers)
         run: npm run check:exports
       - name: Create release PR or publish to GitHub Packages

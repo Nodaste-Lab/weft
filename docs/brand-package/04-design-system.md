@@ -786,6 +786,106 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 - Always use `<fieldset>` + `<legend>` for radio groups. Don't fake a legend with a styled div — screen readers need the grouping semantics.
 - Don't restyle focus per-input. The global focus ring is the single source of truth.
 
+#### When a field commits
+
+Weft standardises **when** a field commits — and nothing else. `useCommitBoundary`
+is an opt-in hook (nothing wires it into `Form`, and `Form` gained no behaviour)
+that emits one signal per commit transaction. The line it never crosses is
+decision 7's, and a consumer must be able to tell which side anything is on
+without reading the source:
+
+| Weft owns | The consumer owns |
+|---|---|
+| **When** a field has committed — blur, Enter, explicit save, emitted as one signal | Whether the value is **valid** — the rule, and when to run it |
+| — | Re-evaluating an error that already exists — heuristic 4 wants it on keystroke, and Weft emits no commit for that |
+| — | Whether an error is **shown** at all |
+| **How** a supplied error is exposed — `aria-invalid`, the ordered description list above | — |
+| — | The **value** — Weft never writes it |
+| — | Submission, navigation, progression — Weft never blocks any of them |
+
+The last row matters most: a helper that decides when you may submit is a form
+library, and it will fight react-hook-form. The ownership line is spy-asserted
+in `src/ui/__tests__/commit-boundary.test.tsx`, not described — the suite fails
+if the helper ever calls validation, writes a value, or touches submission state.
+
+**The unit is a transaction, not an event.** Clicking Save from a focused field
+fires blur and then the click; a per-event rule would emit two commits and a
+consumer would validate twice. So the consumer registers the explicit save on
+the Save control's `pointerdown` — before focus moves — the helper suppresses
+the blur that follows, and one commit reports the strongest semantic action
+with the evidence in order: `{ reason: "explicit-save", sources: ["blur",
+"explicit-save"] }`. With no registration, blur emits immediately as
+`{ reason: "blur", sources: ["blur"] }` — nothing is held back on a timer.
+Keyboard Save is deliberately different: focus leaves on Tab, the blur commits,
+and the save is a genuine second transaction — a Save handler must be safe to
+run after a blur already committed. Enter emits its commit and the helper
+neither hooks nor prevents the native submit; calling `commit()` from
+`onSubmit` after an Enter produces a visible second commit, which is the
+documented misuse rather than something the helper absorbs.
+
+**Not boundaries, asserted:** Enter in a textarea (it inserts a newline);
+Escape (no commit, and Weft never writes or reverts a value in response — a
+revert on an invalid value is a silent revert by another name); any keydown
+inside input-method composition, including the Enter that confirms a candidate;
+paste; programmatic value updates; native `form.reset()`, which also leaves no
+helper state behind.
+
+**Heuristics 4, 5 and 6 are doctrine the consumer implements** with the
+helper's signal — Weft asserts only the signal itself:
+
+```tsx
+const form = useForm<{ retention: string }>({ defaultValues: { retention: '' } });
+const boundary = useCommitBoundary({
+  // Heuristic 4 — punish at the boundary, not per keystroke. The CONSUMER
+  // calls its own validation when the commit arrives:
+  onCommit: () => void form.trigger('retention'),
+});
+
+<FormControl>
+  <Input
+    {...boundary.getFieldProps({
+      ...field,
+      onChange: (e) => {
+        field.onChange(e);
+        // Heuristic 4's reward — an existing error clears on correction.
+        // Also the consumer's call; Weft emits nothing for a keystroke.
+        if (form.formState.errors.retention) void form.trigger('retention');
+      },
+    })}
+  />
+</FormControl>
+
+// Pointer Save: register BEFORE focus moves, then commit.
+<Button onPointerDown={boundary.registerExplicitSave}
+        onClick={() => boundary.commit('explicit-save')}>Save</Button>
+```
+
+- **Heuristic 5 — empty is a valid state.** An optional field cleared returns
+  silently to rest; absence is an answer. A **required** field cleared does not
+  error while the user is typing and becomes invalid at the next commit
+  boundary — not at submission, which would invent a second, later boundary
+  nothing else uses; not on keystroke, which is the premature validation
+  heuristic 4 forbids.
+- **Heuristic 6 — invalid never collapses.** A field dismissed while invalid
+  holds open with its message attached; silent revert eats work without telling
+  anyone, and a collapsed representation with no error is the same thing with
+  better manners. The consumer owns dismissal focus: user-initiated dismissal
+  returns focus to the trigger, and nothing auto-collapses on commit.
+
+**Parity, honestly:** the commit boundary is a JavaScript behaviour with no
+plain-CSS counterpart — a sandboxed panel iframe gets no commit signal from
+Weft today. That is the first entry in the input parity record
+(`scripts/input-parity.json`, gated by `npm run test:parity`), with an owner
+and an expiry; a panel that needs the behaviour wires its own listeners to the
+sequence contract above, which the stylesheet contributes nothing to.
+
+**One shipped primitive predates this contract and contradicts it**:
+`InlineEditListRow` commits Enter on a textarea, reverts on Escape, and
+restores the previous text over an emptied value — the last one is silent data
+loss with a tidy appearance. Its migration onto the helper is decided
+(proposals document C) and scheduled as its own change with a version bump; its
+current behaviour is not blessed by appearing in the same package as this rule.
+
 ---
 
 ## Patterns
