@@ -709,9 +709,13 @@ There is an order, and it is not a menu. Take the first rung that fits.
 **`.sr-only` uses `clip-path`, never `display: none` or `visibility: hidden`.** Both of those take the element out of the accessibility tree along with the layout, which is the opposite of the point. `.sr-only-focusable` reveals on focus, for skip-link-style content.
 
 ```html
-<label class="sr-only" for="rail-search">Search projects</label>
-<input class="input" id="rail-search" type="search" placeholder="e.g. weft-board" />
+<label class="sr-only" for="rail-owner">Filter by owner</label>
+<input class="input" id="rail-owner" type="text" placeholder="e.g. katie" />
 ```
+
+(The rail *search* specifically is not a bare input — search is a stated
+pattern with its own recipe, hidden label included; see **Search** below.
+This rung is for any control the surface cannot visibly label.)
 
 **Labels are sentence case, and that is an accessibility rule wearing a typographic hat.** The accessible name is computed from *rendered* text, so `text-transform: uppercase` did not restyle the label — it rewrote the name. Markup reading "Project name" was exposed as "PROJECT NAME". The scope is the input surface only: `.eyebrow`, `.pill` and the React primitives keep their uppercase, and §03 keeps its rule everywhere outside a field.
 

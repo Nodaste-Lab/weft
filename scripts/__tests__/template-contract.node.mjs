@@ -20,7 +20,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync, writeFileSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -357,16 +357,24 @@ test('T2-f: every search input on the shipped template page uses the stated patt
   assert.deepEqual(problems, [], problems.join('\n'));
 });
 
-test('T2-f2: the markdown skeleton teaches no bare search either', () => {
-  // T2-f covers the generated HTML; this covers the hand-written markdown,
-  // whose copyable skeleton is the other paste source. Same containment scan.
-  // Single-line inline-code spans are stripped first: a prose row saying
-  // "real `<input type="search">`" is a mention, not markup — while the
-  // fenced skeleton keeps its lines intact (they carry no backticks) and
-  // stays fully scanned.
-  const md = readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8');
-  const prose = md.replace(/`[^`\n]*`/g, '');
-  const problems = searchPatternProblems(prose, '11-panel-templates.md');
+test('T2-f2: no shipped markdown teaches a bare search — every brand-package doc, from disk', () => {
+  // T2-f covers the generated HTML; this covers every hand-written markdown
+  // file that ships (docs/ is in `files`), enumerated from disk so a new doc
+  // is scanned the day it lands — the same lesson the visibility audit and
+  // this guard each learned once: a fixed filename list is coverage that
+  // quietly stops covering. Same containment scan. Single-line inline-code
+  // spans are stripped first: a prose row saying "real `<input
+  // type="search">`" is a mention, not markup — while fenced skeletons keep
+  // their lines intact (they carry no backticks) and stay fully scanned.
+  const dir = join(ROOT, 'docs', 'brand-package');
+  const docs = readdirSync(dir).filter((f) => f.endsWith('.md')).sort();
+  assert.ok(docs.length >= 5, `expected the shipped brand-package docs, found ${docs.length}`);
+  const problems = [];
+  for (const doc of docs) {
+    const md = readFileSync(join(dir, doc), 'utf8');
+    const prose = md.replace(/`[^`\n]*`/g, '');
+    problems.push(...searchPatternProblems(prose, doc));
+  }
   assert.deepEqual(problems, [], problems.join('\n'));
 });
 
