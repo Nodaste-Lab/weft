@@ -19,6 +19,7 @@
  */
 import * as React from "react";
 import { useCommitBoundary, type CommitDetail } from "../ui/use-commit-boundary";
+import { SearchField, type SearchFieldProps } from "../ui/search-field";
 import { Switch } from "../ui/switch";
 import { Slider } from "../ui/slider";
 
@@ -72,4 +73,25 @@ export function ReadOnlyStaysUnsupported() {
       <Slider readOnly name="sl" defaultValue={[1]} />
     </>
   );
+}
+
+// SearchField's accessible name is the required `label` prop, full stop. An
+// aria-label would silently override the hidden label it renders — two names,
+// one control — and the ladder sanctions aria-label for icon-only controls
+// only.
+//
+// The assertions below use OBJECT-LITERAL form deliberately: TypeScript does
+// not excess-check hyphenated JSX attributes on components, so
+// `<SearchField aria-label="…" />` compiles no matter what the props type
+// says — measured while writing this probe, and the reason the component
+// ALSO strips both props at runtime (the strip is the enforcement; this type
+// records the contract for every typed object-building path).
+export function SearchFieldNameIsTheLabelProp() {
+  // @ts-expect-error — aria-label is deliberately not part of SearchField's surface
+  const sneakyLabel: SearchFieldProps = { label: "Search projects", "aria-label": "Sneaky" };
+  // @ts-expect-error — aria-labelledby is deliberately not part of SearchField's surface
+  const sneakyRef: SearchFieldProps = { label: "Search projects", "aria-labelledby": "el" };
+  void sneakyLabel;
+  void sneakyRef;
+  return <SearchField label="Search projects" />;
 }

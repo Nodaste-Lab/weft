@@ -212,6 +212,19 @@ describe('the commit boundary rides along', () => {
     expect(commits).toHaveLength(0);
   });
 
+  describe('the accessible name is the label prop, and nothing overrides it', () => {
+    it('a spread-in aria-label from untyped code is stripped — one name, one control', () => {
+      const sneaky = { 'aria-label': 'Sneaky override', 'aria-labelledby': 'elsewhere' } as Record<
+        string,
+        string
+      >;
+      render(<SearchField label="Search projects" {...(sneaky as object)} />);
+      const box = screen.getByRole('searchbox', { name: 'Search projects' });
+      expect(box.getAttribute('aria-label')).toBeNull();
+      expect(box.getAttribute('aria-labelledby')).toBeNull();
+    });
+  });
+
   describe('native form.reset() and the uncontrolled mirror', () => {
     // reset() restores the DOM value without firing input/change, so the
     // mirror that drives clear visibility would go stale in both directions.

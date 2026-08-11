@@ -91,9 +91,19 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 
   <div class="weft-board-body">
     <aside class="weft-board-rail">
-      <!-- Real form controls with accessible labels -->
+      <!-- Real form controls with accessible labels. Search is the stated
+           pattern (.weft-search): leading icon, named clear (type="button" —
+           anything else submits the form), clear visible only with content. -->
       <label class="weft-field-label" for="board-search">Search projects</label>
-      <input id="board-search" class="weft-input" type="search" name="q" placeholder="Search…">
+      <div class="weft-search">
+        <span class="weft-search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input id="board-search" class="weft-input" type="search" name="q" placeholder="Search…">
+        <button type="button" class="weft-search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
 
       <div class="weft-board-rail-section">
         <span class="weft-board-rail-label">Relatedness</span>

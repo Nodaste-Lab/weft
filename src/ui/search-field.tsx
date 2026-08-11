@@ -29,7 +29,15 @@ import { cn } from "./utils";
  * input's trailing geometry, and P5's enumerated measurements finalize it.
  */
 
-export type SearchFieldProps = Omit<React.ComponentProps<"input">, "type"> & {
+// aria-label and aria-labelledby are OMITTED, deliberately: the required
+// `label` prop is the accessible name (rendered as a hidden <label>), and a
+// forwarded aria-label would silently override it — the exact
+// two-names-one-control defect the P1–P4 review caught twice on the template
+// pages, and the ladder sanctions aria-label for icon-only controls alone.
+export type SearchFieldProps = Omit<
+  React.ComponentProps<"input">,
+  "type" | "aria-label" | "aria-labelledby"
+> & {
   /** The accessible name, rendered as a visually hidden label. Required. */
   label: string;
   /** Accessible name for the clear control. */
@@ -45,6 +53,12 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
   ) => {
     const autoId = React.useId();
     const inputId = id ?? autoId;
+    // Runtime belt for the type-level omission: an untyped caller can still
+    // spread an aria-label in, and it would silently override the required
+    // hidden label — two names, one control, the defect the naming ladder
+    // exists to prevent. The type rejects it; this makes JS agree.
+    delete (props as Record<string, unknown>)["aria-label"];
+    delete (props as Record<string, unknown>)["aria-labelledby"];
     const innerRef = React.useRef<HTMLInputElement | null>(null);
     const clearRef = React.useRef<HTMLButtonElement | null>(null);
     // True while clearInput's own focus() bounce is in flight, so the clear

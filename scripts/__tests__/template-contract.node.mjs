@@ -301,26 +301,72 @@ test('T2-e: no text-entry control in the template specimens is named by aria-lab
   );
 });
 
+/**
+ * Search-pattern containment scan, shared by T2-f (generated HTML) and T2-f2
+ * (markdown skeleton). A real tag-walk with a div stack, NOT a proximity
+ * window: the first shape of this guard looked backwards N chars/lines for
+ * "weft-search", and its own probe proved that decorative — a bare input
+ * pasted right AFTER a compliant recipe block sat inside the window and
+ * passed. Containment is the actual rule, so containment is what's checked:
+ * a type="search" input passes only if an ENCLOSING, still-open
+ * .weft-search div holds it, and that div's subtree must also hold the
+ * named clear button.
+ */
+function searchPatternProblems(text, where) {
+  const problems = [];
+  const tagRe = /<div\b[^>]*>|<\/div>|<input\b[^>]*>|<button\b[^>]*>/gi;
+  // Each frame: { isSearch, sawSearchInput, sawNamedClear }
+  const stack = [];
+  const inSearch = () => stack.some((f) => f.isSearch);
+  let m;
+  while ((m = tagRe.exec(text)) !== null) {
+    const tag = m[0];
+    if (/^<div\b/i.test(tag)) {
+      stack.push({
+        isSearch: /class="[^"]*\bweft-search\b[^"]*"/.test(tag),
+        sawSearchInput: false,
+        sawNamedClear: false,
+      });
+    } else if (/^<\/div>/i.test(tag)) {
+      const frame = stack.pop();
+      if (frame?.isSearch && frame.sawSearchInput && !frame.sawNamedClear) {
+        problems.push(`${where}: a .weft-search block carries a search input but no named .weft-search-clear button`);
+      }
+    } else if (/^<input\b/i.test(tag) && /type="search"/i.test(tag)) {
+      if (!inSearch()) {
+        problems.push(`${where}: bare type="search" outside .weft-search: ${tag.slice(0, 80)}`);
+      } else {
+        for (const f of stack) if (f.isSearch) f.sawSearchInput = true;
+      }
+    } else if (/^<button\b/i.test(tag) && /weft-search-clear/.test(tag)) {
+      if (/aria-label="[^"]+"/.test(tag) && /type="button"/.test(tag)) {
+        for (const f of stack) if (f.isSearch) f.sawNamedClear = true;
+      }
+    }
+  }
+  return problems;
+}
+
 test('T2-f: every search input on the shipped template page uses the stated pattern, not a bare type attribute', () => {
   // Search is a stated pattern (P7, document B §3). A bare
   // <input type="search"> on the page consumers copy from teaches the
   // superseded form — no named clear, no affordance — which is exactly how
   // the pattern decays back out of the product one paste at a time.
   const html = readFileSync(join(ROOT, 'docs', 'brand-package', 'panel-templates.html'), 'utf8');
-  const problems = [];
-  const searchRe = /<input\b[^>]*type="search"[^>]*>/gi;
-  let m;
-  while ((m = searchRe.exec(html)) !== null) {
-    // The recipe wraps the input in .weft-search with a named clear button.
-    // Look backwards for the nearest wrapper open and forwards for the clear.
-    const before = html.slice(Math.max(0, m.index - 600), m.index);
-    const after = html.slice(m.index, m.index + 900);
-    if (!/class="weft-search"/.test(before)) {
-      problems.push(`bare type="search" outside .weft-search: ${m[0].slice(0, 80)}`);
-    } else if (!/weft-search-clear/.test(after) || !/aria-label="[^"]+"/.test(/<button\b[^>]*weft-search-clear[^>]*>/.exec(after)?.[0] ?? '')) {
-      problems.push(`search input without a named .weft-search-clear button: ${m[0].slice(0, 80)}`);
-    }
-  }
+  const problems = searchPatternProblems(html, 'panel-templates.html');
+  assert.deepEqual(problems, [], problems.join('\n'));
+});
+
+test('T2-f2: the markdown skeleton teaches no bare search either', () => {
+  // T2-f covers the generated HTML; this covers the hand-written markdown,
+  // whose copyable skeleton is the other paste source. Same containment scan.
+  // Single-line inline-code spans are stripped first: a prose row saying
+  // "real `<input type="search">`" is a mention, not markup — while the
+  // fenced skeleton keeps its lines intact (they carry no backticks) and
+  // stays fully scanned.
+  const md = readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8');
+  const prose = md.replace(/`[^`\n]*`/g, '');
+  const problems = searchPatternProblems(prose, '11-panel-templates.md');
   assert.deepEqual(problems, [], problems.join('\n'));
 });
 

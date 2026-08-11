@@ -119,6 +119,10 @@ export function useCommitBoundary({
   onCommitRef.current = onCommit;
 
   const emit = React.useCallback((reason: CommitReason, sources: CommitReason[]) => {
+    // A commit ENDS its transaction, whatever kind it was. A registration
+    // belongs to the transaction it was made in — leaving it armed across an
+    // Enter commit would suppress the NEXT transaction's blur and swallow it.
+    saveRegisteredRef.current = false;
     onCommitRef.current({ reason, sources });
   }, []);
 

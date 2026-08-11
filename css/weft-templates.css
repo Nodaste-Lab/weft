@@ -87,7 +87,8 @@
  * an application-level preference, not board-scoped: weft.css may only carry
  * :root selectors because it is injected verbatim into panel iframes.
  * The board-local search and picker classes are deleted.
- * Markup: <input class="weft-input" name="…" placeholder="Search…"> */
+ * Rail search uses the stated .weft-search recipe (leading icon + named clear;
+ * weft-components.css carries it) — never a bare .weft-input type="search". */
 
 /* Filter checkbox rows: the canonical .weft-checkbox-wrap from the components
  * layer, since P7. The template-local .weft-board-check is RETIRED — it

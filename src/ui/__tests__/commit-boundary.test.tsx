@@ -282,6 +282,19 @@ describe('the explicit-save transaction', () => {
     expect(h().commits).toEqual([{ reason: 'explicit-save', sources: ['explicit-save'] }]);
   });
 
+  it('an Enter commit ends the transaction: a pre-registered save does not survive to suppress the next blur', () => {
+    const { control, h } = renderField();
+    fireEvent.focus(control);
+    h().registerExplicitSave(); // a save shortcut armed while focus stayed put…
+    fireEvent.keyDown(control, { key: 'Enter' }); // …but Enter commits first
+    expect(h().commits).toEqual([{ reason: 'enter', sources: ['enter'] }]);
+    fireEvent.blur(control);
+    expect(
+      h().commits[1],
+      'the stale registration must not suppress a boundary in the NEXT transaction',
+    ).toEqual({ reason: 'blur', sources: ['blur'] });
+  });
+
   it('a canceled pointer Save replays the suppressed blur — the boundary is never swallowed', () => {
     const { control, h } = renderField();
     fireEvent.focus(control);
