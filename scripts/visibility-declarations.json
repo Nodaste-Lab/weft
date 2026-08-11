@@ -1,24 +1,40 @@
 {
-  "$comment": "Always-visible declarations for Weft's own shipped surfaces (decisions 2, 8, 11 — AC9). Quiet is the default; a surface shipping an always-visible field names why, from the four sanctioned reasons in tooling/visibility-reasons.js. The gate validates DECLARATION — whether a reason is honest is a design-review judgement no test can make, recorded in doctrine. Heddle declares its own panel surfaces in its own repository; the shared list is the only cross-repository artifact.",
+  "$comment": "Always-visible declarations for Weft's own shipped surfaces (decisions 2, 8, 11 — AC9). Quiet is the default; a surface shipping an always-visible field names why, from the five sanctioned reasons in tooling/visibility-reasons.js. The gate validates DECLARATION — whether a reason is honest is a design-review judgement no test can make, recorded in doctrine. Heddle declares its own panel surfaces in its own repository; the shared list is the only cross-repository artifact.",
   "version": 1,
   "surfaces": [
     {
       "surface": "docs/brand-package/panel-templates.html",
       "scope": "surface",
-      "reasons": ["frequent", "comparative", "live"],
+      "reasons": [
+        "frequent",
+        "comparative",
+        "live"
+      ],
       "note": "The weft-board rail — the argument on the record from decision 2: its filters are touched more than once per visit (frequent), only useful read together (comparative), and typing changes the board already on screen (live)."
     },
     {
       "surface": "docs/brand-package/input-specimens.html",
       "scope": "surface",
-      "reasons": ["primary"],
+      "reasons": [
+        "primary"
+      ],
       "note": "The measured reference page: displaying the input surface is the page's whole job."
     },
     {
       "surface": "src/gallery/DesignSystemUiGallery.tsx",
       "scope": "surface",
-      "reasons": ["primary"],
+      "reasons": [
+        "primary"
+      ],
       "note": "The component gallery: displaying the primitives is the page's whole job."
+    },
+    {
+      "surface": "docs/brand-package/design-system.html",
+      "scope": "surface",
+      "reasons": [
+        "primary"
+      ],
+      "note": "The self-contained rendered reference: displaying the documented system, inputs included, is the page's whole job."
     }
   ]
 }

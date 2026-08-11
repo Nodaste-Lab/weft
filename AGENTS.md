@@ -90,6 +90,12 @@ CI runs all of these plus a pack smoke that asserts the tarball ships
    (patch = fixes; minor = additive tokens/props/components; major = breaking
    contract change — mirror the component-level bump in `manifest.json` and
    bump `designSystemVersion` to match the package version).
+   **While the package is 0.x**, a breaking change scoped to individual
+   components ships as a package **minor**: the component's own major bump in
+   `manifest.json` carries the breaking signal, the changeset text spells out
+   the break, and exact-pin adoption is the consumer safety. The package
+   major is reserved for the deliberate 1.0.0 stability declaration, which
+   is an owner call, never a side effect (owner call, 2026-08-11).
 2. PR → CI green → merge to `main`.
 3. The release workflow opens/updates a **Version Packages** PR; merging it
    publishes to GitHub Packages and tags.

@@ -31,13 +31,16 @@ import {
   loadDeclarations,
   validateDeclarations,
   auditSurfaceFields,
+  auditJsxFields,
+  auditDeclarationTargets,
+  shippedHtmlSurfaces,
 } from '../lib/visibility-reason-gate.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 test('the module ships the frozen list, the predicate and an integer version', () => {
   assert.ok(Object.isFrozen(VISIBILITY_REASONS), 'the list must be frozen');
-  assert.deepEqual([...VISIBILITY_REASONS], ['frequent', 'comparative', 'primary', 'live']);
+  assert.deepEqual([...VISIBILITY_REASONS], ['frequent', 'comparative', 'primary', 'live', 'sequence']);
   assert.ok(Number.isInteger(VISIBILITY_REASONS_VERSION));
   assert.equal(typeof isVisibilityReason, 'function');
 });
@@ -93,10 +96,52 @@ test('GUARD — a declaration with no reasons at all fails', () => {
   assert.equal(problems.length, 1);
 });
 
-test('every always-visible field on the shipped template page is declared', () => {
-  const html = readFileSync(join(ROOT, 'docs', 'brand-package', 'panel-templates.html'), 'utf8');
-  const problems = auditSurfaceFields(html, 'docs/brand-package/panel-templates.html', loadDeclarations());
-  assert.deepEqual(problems, [], `undeclared always-visible fields:\n${problems.join('\n')}`);
+test('every always-visible field on EVERY shipped page is declared — the surface list comes from disk, not from this test', () => {
+  const decls = loadDeclarations();
+  const pages = shippedHtmlSurfaces();
+  assert.ok(pages.length >= 3, `expected the shipped brand-package pages, found ${pages.length}`);
+  for (const page of pages) {
+    const html = readFileSync(join(ROOT, page), 'utf8');
+    const problems = auditSurfaceFields(html, page, decls);
+    assert.deepEqual(problems, [], `undeclared always-visible fields:\n${problems.join('\n')}`);
+  }
+});
+
+test('the gallery source is audited, not just declared', () => {
+  const source = readFileSync(join(ROOT, 'src', 'gallery', 'DesignSystemUiGallery.tsx'), 'utf8');
+  const problems = auditJsxFields(source, 'src/gallery/DesignSystemUiGallery.tsx', loadDeclarations());
+  assert.deepEqual(problems, [], `undeclared always-visible components:\n${problems.join('\n')}`);
+});
+
+test('GUARD — deleting a declaration fails the audit of that surface, for every declared surface', () => {
+  // The original gate audited one named page; the other declarations were
+  // decoration whose deletion nothing would have noticed. Prove each one is
+  // now load-bearing by removing it and watching its surface fail.
+  const decls = loadDeclarations();
+  for (const entry of decls.surfaces) {
+    const without = { surfaces: decls.surfaces.filter((e) => e !== entry) };
+    const file = entry.surface.split('#')[0];
+    const content = readFileSync(join(ROOT, file), 'utf8');
+    const problems = file.endsWith('.html')
+      ? auditSurfaceFields(content, entry.surface, without)
+      : auditJsxFields(content, entry.surface, without);
+    assert.ok(
+      problems.length > 0,
+      `${entry.surface}: removing its declaration still passes — the declaration is decoration, not coverage`,
+    );
+  }
+});
+
+test('GUARD — a declaration whose surface no longer exists fails', () => {
+  const problems = auditDeclarationTargets({
+    surfaces: [{ surface: 'docs/brand-package/deleted-page.html', scope: 'surface', reasons: ['primary'], note: 'n' }],
+  });
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /deleted-page/);
+});
+
+test('every committed declaration points at a file that exists', () => {
+  assert.deepEqual(auditDeclarationTargets(loadDeclarations()), []);
 });
 
 test('GUARD — an undeclared field on a surface fails the audit and is named', () => {

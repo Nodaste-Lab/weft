@@ -20,7 +20,7 @@ asserted unsupported in both layers); resting tiers as modifiers
 construction; `.weft-board-check` is retired for the canonical row and its
 stem joins the deprecated-class gate.
 
-**Quiet-by-default is enforced:** the four sanctioned visibility reasons ship
+**Quiet-by-default is enforced:** the five sanctioned visibility reasons (`sequence` added at version 2 by owner call) ship
 as `@nodaste-lab/weft/tooling/visibility-reasons` (frozen list, predicate,
 version, 16-case conformance fixture — one list, two repositories, no shared
 CI job), Weft's own surfaces declare their reasons in

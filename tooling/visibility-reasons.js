@@ -10,8 +10,10 @@
  * is the default on every surface, and a surface that ships an always-visible
  * field must declare WHY, from this enum. The list is the whole rule: an enum
  * is what makes "quiet by default" testable, where a judgement would not be.
- * Whether these four are the RIGHT four is an open question the heuristics
- * carry — argue it there, not by adding a string here.
+ * The list was challenged as the heuristics invite and AMENDED by the owner
+ * (Katie, 2026-08-11): `sequence` joined the original four. Future changes go
+ * the same route — an owner call on the record, never a string quietly added
+ * here.
  *
  * The reason lives with the SURFACE (gallery card, template, specimen
  * configuration — where a reviewer can see the surface), never on the
@@ -24,10 +26,10 @@
  * Bump when the list's MEANING changes (a reason added, removed, or renamed) —
  * consumers may assert the version they built against.
  */
-export const VISIBILITY_REASONS_VERSION = 1;
+export const VISIBILITY_REASONS_VERSION = 2;
 
 /**
- * The four sanctioned reasons:
+ * The five sanctioned reasons:
  *  - `frequent`    — touched more than once per visit to the surface.
  *  - `comparative` — the value is only useful read alongside its siblings,
  *                    so hiding one hides the set.
@@ -35,12 +37,16 @@ export const VISIBILITY_REASONS_VERSION = 1;
  *                    a command bar).
  *  - `live`        — typing changes what is already on screen, so hiding
  *                    the field hides the mechanism.
+ *  - `sequence`    — the field is a step in a visible workflow, so hiding
+ *                    the field hides where the user is in the flow
+ *                    (added at version 2, owner call 2026-08-11).
  */
 export const VISIBILITY_REASONS = Object.freeze([
   'frequent',
   'comparative',
   'primary',
   'live',
+  'sequence',
 ]);
 
 /** True when `value` is a sanctioned visibility reason. */
@@ -59,6 +65,11 @@ export const VISIBILITY_REASON_CONFORMANCE = Object.freeze([
   Object.freeze({ value: 'comparative', valid: true }),
   Object.freeze({ value: 'primary', valid: true }),
   Object.freeze({ value: 'live', valid: true }),
+  Object.freeze({ value: 'sequence', valid: true }),
+  // The version-2 addition brings its own near-misses.
+  Object.freeze({ value: 'Sequence', valid: false }),
+  Object.freeze({ value: 'sequential', valid: false }),
+  Object.freeze({ value: 'step', valid: false }),
   // Case matters: the enum is lowercase and a validator must not "helpfully"
   // normalize its way past the list.
   Object.freeze({ value: 'Frequent', valid: false }),

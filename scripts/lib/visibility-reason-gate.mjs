@@ -12,7 +12,7 @@
  * against the same module and the same conformance fixture. No claim is made
  * that one CI job gates both repositories; none does.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,6 +65,63 @@ export function validateDeclarations(decls) {
  * declaration — a surface-scope entry for the whole page, or a field-scope
  * entry named `<surfacePath>#<control-id>`. Returns problems; empty is a pass.
  */
+/**
+ * Every shipped HTML surface, enumerated from disk rather than from a list —
+ * `docs/` is in `files`, so every page here reaches consumers. A new page
+ * with an always-visible field is audited the day it lands, not the day
+ * somebody remembers to extend a list. (The original gate audited exactly one
+ * named page; the other declared surfaces were decoration a deleted
+ * declaration would never have missed.)
+ */
+export function shippedHtmlSurfaces() {
+  const dir = join(ROOT, 'docs', 'brand-package');
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.html'))
+    .sort()
+    .map((f) => `docs/brand-package/${f}`);
+}
+
+/**
+ * Every declared surface must exist on disk. A declaration for a file that is
+ * gone is a stale record wearing the shape of coverage.
+ */
+export function auditDeclarationTargets(decls) {
+  const surfaces = Array.isArray(decls?.surfaces) ? decls.surfaces : [];
+  const problems = [];
+  for (const entry of surfaces) {
+    const file = String(entry.surface ?? '').split('#')[0];
+    if (file && !existsSync(join(ROOT, file))) {
+      problems.push(`${entry.surface}: declared surface does not exist on disk — remove the stale declaration or restore the file`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * Audit a React source surface: rendered Weft field components must be
+ * covered the same way rendered HTML controls are. A source-level scan, not a
+ * render — the gallery's job is showing every primitive, so the audit's job
+ * is only proving that fact is DECLARED, not re-deriving it.
+ */
+export function auditJsxFields(source, surfacePath, decls) {
+  const surfaces = Array.isArray(decls?.surfaces) ? decls.surfaces : [];
+  const surfaceCovered = surfaces.some(
+    (e) => e.scope === 'surface' && e.surface === surfacePath,
+  );
+  if (surfaceCovered) return [];
+  const problems = [];
+  const fieldRe = /<(Input|Textarea|SearchField|Select|Checkbox|RadioGroup|Switch|Slider)\b/g;
+  const seen = new Set();
+  let m;
+  while ((m = fieldRe.exec(source)) !== null) seen.add(m[1]);
+  for (const component of [...seen].sort()) {
+    problems.push(
+      `${surfacePath}: renders <${component}> with no always-visible declaration — quiet is the default; declare one of ${VISIBILITY_REASONS.join(', ')} for the surface, with the argument in its note`,
+    );
+  }
+  return problems;
+}
+
 export function auditSurfaceFields(html, surfacePath, decls) {
   const surfaces = Array.isArray(decls?.surfaces) ? decls.surfaces : [];
   const surfaceCovered = surfaces.some(
