@@ -102,6 +102,11 @@ describe('clearing', () => {
     fireEvent.blur(box, { relatedTarget: clear });
     expect(commits, 'the blur into our own clear must not commit yet').toHaveLength(0);
     // …and the activation commits once, carrying the suppressed blur as evidence.
+    // REAL focus on the button first: clearInput's el.focus() then fires a
+    // genuine blur on the button mid-clear, which is the sequence the
+    // clearingRef guard exists for — without real focus, jsdom never fires it
+    // and a broken guard passes (this test's first shape did exactly that).
+    (clear as HTMLButtonElement).focus();
     fireEvent.click(clear);
     await Promise.resolve();
     expect(commits).toEqual([{ reason: 'explicit-save', sources: ['blur', 'explicit-save'] }]);
