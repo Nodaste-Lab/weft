@@ -3,6 +3,9 @@ import * as React from "react";
 import { cn } from "./utils";
 
 type InputState = "default" | "error" | "disabled" | "readonly";
+// The compose size axis (P5): density sets the tier, `sm` steps one down,
+// both resolving through the same tokens the plain-CSS `.is-sm` reads.
+type InputSize = "default" | "sm";
 // `default` is the standard form field; `inline` is a chromeless in-place editor
 // (tab/row rename, etc.) that inherits the surrounding typography and shows only a
 // focus ring — no height floor, border, fill, or padding. `underline` and `low`
@@ -13,13 +16,18 @@ type InputVariant = "default" | "inline" | "underline" | "low";
 
 // Named (not inline in the forwardRef generic) so the prop-contract extractor's
 // *Props-alias scan captures the surface — keeps Input's contract gate-guarded.
-export type InputProps = React.ComponentProps<"input"> & {
+// Native `size` (a legacy width-in-characters attribute) is omitted so the
+// compose axis can carry the name D4 already gave it: `size="sm"`. A consumer
+// needing the character width sets a width; the attribute was never part of
+// Weft's sizing story and keeping both would make one prop mean two things.
+export type InputProps = Omit<React.ComponentProps<"input">, "size"> & {
   state?: InputState;
   variant?: InputVariant;
+  size?: InputSize;
 };
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, state, variant = "default", ...props }, ref) => {
+  ({ className, type, state, variant = "default", size = "default", ...props }, ref) => {
     return (
       <input
         ref={ref}
@@ -27,8 +35,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         data-slot="input"
         data-state={state}
         data-variant={variant}
+        data-size={size}
         className={cn(
-          "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input text-foreground flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input text-foreground flex h-[var(--weft-control-h,36px)] w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          // The sm step of the current tier — the same token .is-sm reads.
+          size === "sm" && "h-[var(--weft-control-h-sm,32px)] px-2",
           "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
           "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
           // inline: strip the form chrome (twMerge drops h-9/border/px-3/bg/etc.)

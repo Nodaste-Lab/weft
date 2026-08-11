@@ -102,36 +102,27 @@ test('token pairs hold their documented contrast floors', () => {
 });
 
 /**
- * RECORDED PARITY GAP: the React input boundary is still the old hairline.
- *
- * The plain-CSS layer's boundary now clears WCAG 1.4.11 at ~3.5:1 through
- * --weft-control-border. The React primitives do not paint from that token —
- * `Input` renders `border-input` and `bg-input-background`, which resolve
- * through the flat shadcn bridge below, and both still point at --weft-paper.
- * So a React field keeps the 1.30:1 border the plain-CSS field has left behind.
- *
- * Closing it is a two-token change here, but it repaints every React form
- * control in the gallery's committed pixel baselines and interacts with
- * `dark:bg-input/30` in input.tsx, so it belongs with the layer-parity phase
- * rather than with the boundary work.
- *
- * This test asserts the gap STILL EXISTS, which is deliberate and is the same
- * idiom as tests/contract/known-defects.ts: an unmeasured gap is a gap nobody
- * is watching, and a note in a changelog is not a gate. Whoever closes it
- * deletes this test in the same change, and moves the baselines with it.
+ * The React input bridge carries the boundary — the parity gap this test used
+ * to RECORD is closed (P5), and the record inverted into a guard the same day,
+ * as its own failure message demanded: `--input` and `--input-background` are
+ * how every React form control paints its boundary, and pointing either back
+ * at a surface token would silently reopen the 1.30:1 hairline on exactly the
+ * layer a sandboxed panel cannot inspect. The `dark:bg-input/30` re-dims in
+ * the primitives went in the same change — the fill token is a translucent
+ * ink wash that already answers both themes, and a 30% re-dim on top of it
+ * was the two-sources-of-truth shape this bridge exists to prevent.
  */
-test('the React input bridge is recorded as not yet carrying the new boundary', () => {
+test('the React input bridge carries the control boundary pair', () => {
   const bridge = /--input:\s*var\((--weft-[\w-]+)\)/.exec(weft)?.[1];
   const bridgeBg = /--input-background:\s*var\((--weft-[\w-]+)\)/.exec(weft)?.[1];
   assert.equal(
     bridge,
-    '--weft-paper',
-    'The React input border token has moved. If it now reads --weft-control-border the parity ' +
-      'gap is closed — delete this test, and review the moved visual baselines in all four themes.',
+    '--weft-control-border',
+    'The React input border must read the same Option C token the plain-CSS boundary reads.',
   );
   assert.equal(
     bridgeBg,
-    '--weft-paper',
-    'The React input fill token has moved. Same as above: close the record with the gap.',
+    '--weft-control-fill',
+    'The React input fill must read the same Option C token the plain-CSS boundary reads.',
   );
 });

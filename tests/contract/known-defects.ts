@@ -42,16 +42,12 @@ export interface KnownDefect {
 
 export const KNOWN_DEFECTS: Readonly<Record<string, KnownDefect>> = Object.freeze({
 
-  // ── Geometry (P5) ─────────────────────────────────────────────────────────
-  // P2 closed the control-height defects at their cause; what is left here is
-  // the textarea, whose floor was never a tier in the first place.
-  'geometry/textarea/tracks-density': {
-    why:
-      'P5 — .weft-textarea min-height is a hardcoded 96px and tracks no token at any tier, so ' +
-      'all three densities share one floor. Shortfall counts the tiers that fail to differ, so ' +
-      'a fix that moves one density and leaves another cannot close this entry.',
-    shortfall: 2,
-  },
+  // ── Empty since P5 ────────────────────────────────────────────────────────
+  // All 46 defects the P1 harness recorded are closed: P2 took 17, P3 took 4,
+  // P4 took 23, and P5 took the last — the textarea floor, now a token
+  // tracking all three tiers (96/80/72). Every assertion that lived here is a
+  // permanent guard in its suite. The ratchet machinery stays: a defect
+  // recorded tomorrow gets the same one-way door these 46 walked through.
 
 });
 

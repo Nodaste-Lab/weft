@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border bg-background text-foreground hover:bg-accent hover:text-accent-foreground dark:border-input",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -30,11 +30,19 @@ const buttonVariants = cva(
         loading: "cursor-wait opacity-90",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        // The compose axis (P5): density sets the tier, size steps within it.
+        // default and sm resolve through the SAME tokens the plain-CSS layer
+        // reads — one map, two layers — with the old fixed pixels as var()
+        // fallbacks so a consumer rendering without weft.css sees exactly the
+        // pre-P5 heights.
+        default: "h-[var(--weft-control-h,36px)] px-4 py-2 has-[>svg]:px-3",
+        sm: "h-[var(--weft-control-h-sm,32px)] rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        // Outside the compose axis, deliberately: lg and icon are React-only
+        // conveniences with no plain-CSS counterpart or decided tier map, and
+        // dense is the legacy escape hatch for emulating the dense tier inside
+        // a non-dense app — density itself is the supported route.
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9 rounded-md",
-        // 34px — matches data-density="dense" operator-board height.
         dense: "h-[34px] rounded-md px-3 text-xs gap-1.5 has-[>svg]:px-2.5 font-semibold",
       },
     },

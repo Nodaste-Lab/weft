@@ -260,7 +260,7 @@
       }
     },
     "button": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "surface": {
         "variants": {
           "size": [
@@ -1532,10 +1532,17 @@
       }
     },
     "input": {
-      "version": "1.2.0",
+      "version": "2.0.0",
       "surface": {
         "variants": {},
         "props": {
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "sm"
+            ]
+          },
           "state": {
             "optional": true,
             "union": [
@@ -2112,7 +2119,7 @@
       }
     },
     "search-field": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {
@@ -2127,6 +2134,13 @@
           "onCommit": {
             "optional": true,
             "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "sm"
+            ]
           }
         },
         "native": [
@@ -2189,7 +2203,7 @@
       }
     },
     "select": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {

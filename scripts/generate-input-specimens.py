@@ -346,6 +346,22 @@ def geometry_section():
           '<span>Only mine</span></label>'
         + '</div>'
     )
+    # The size step (P5, compose model): density sets the tier, size steps
+    # within it. `sm` is one step down — the pixel map lives in the tokens
+    # (--weft-control-h-sm per density block), and the suite pins the decided
+    # values so the map cannot drift by token edit alone.
+    sm_row = (
+        '<div class="toolbar" data-spec="geometry-sm-row">'
+        '<label class="weft-sr-only" for="geo-sm-input">Small filter</label>'
+        '<input class="weft-input is-sm" id="geo-sm-input" data-spec="geometry-sm" '
+        'data-control="input" data-state="default" />'
+        '<label class="weft-sr-only" for="geo-sm-select">Small range</label>'
+        '<select class="weft-select is-sm" id="geo-sm-select" data-spec="geometry-sm" '
+        'data-control="select" data-state="default"><option>All</option></select>'
+        '<button type="button" class="weft-btn is-sm" data-spec="geometry-sm" '
+        'data-control="button" data-state="default">Apply</button>'
+        '</div>'
+    )
     singles = ''.join(
         f'<div class="cell"><span class="cap">{E(kind)}</span>'
         + control_html(kind, 'geometry', f'geo-{kind}', label_text=f'Standalone {kind}')
@@ -381,8 +397,10 @@ def geometry_section():
     )
     return section(
         'geometry', 'Geometry — does a control hit its tier height?',
-        'Measured against the tier\'s own --weft-control-h at marketing, compact and dense.',
-        row + f'<div class="grid">{singles}</div>')
+        'Measured against the tier\'s own --weft-control-h at marketing, compact and dense. '
+        'The is-sm row measures the size step: density sets the tier, size steps within it '
+        '(compose model, decision 1 reconciliation of D4 and T2).',
+        row + sm_row + f'<div class="grid">{singles}</div>')
 
 
 # ── 3. Naming ────────────────────────────────────────────────────────────────

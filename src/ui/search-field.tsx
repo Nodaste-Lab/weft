@@ -36,10 +36,15 @@ import { cn } from "./utils";
 // pages, and the ladder sanctions aria-label for icon-only controls alone.
 export type SearchFieldProps = Omit<
   React.ComponentProps<"input">,
-  "type" | "aria-label" | "aria-labelledby"
+  // Native `size` (width-in-characters) is omitted for the same reason Input
+  // omits it: the compose axis owns that name. SearchField forwards the
+  // compose value straight through, so a rail can ask for a small search.
+  "type" | "aria-label" | "aria-labelledby" | "size"
 > & {
   /** The accessible name, rendered as a visually hidden label. Required. */
   label: string;
+  /** The compose size step, forwarded to the underlying Input. */
+  size?: "default" | "sm";
   /** Accessible name for the clear control. */
   clearLabel?: string;
   /** Opt-in commit signal (blur, Enter, clear) via useCommitBoundary. */

@@ -356,12 +356,37 @@ html,
 
 .weft-textarea {
   /* Genuinely multi-line, so it keeps padding and a floor rather than a fixed
-   * height. The floor is still a hardcoded 96px tracking no tier — P5 owns that,
-   * and geometry/textarea/tracks-density records it. */
+   * height. The floor tracks its tier through --weft-textarea-min-h (P5:
+   * 96/80/72) — the fix is the TOKEN, because a hand-tuned per-tier pixel
+   * here would be exactly the class of fix P2 refused. */
   height: auto;
-  min-height: 96px;
+  min-height: var(--weft-textarea-min-h, 96px);
   padding-block: var(--weft-control-pad-y, 11px);
   resize: vertical;
+}
+
+/* ── Size step (P5, compose model) ─────────────────────────────────────────
+ * Density sets the tier; `is-sm` steps one down within it, reading the same
+ * tokens the React size axis resolves — one map, two layers. Height and
+ * inline padding only: state styling (invalid, disabled, read-only) is
+ * untouched, so no specificity contest with the state selectors exists —
+ * these rules share no property with them. */
+.weft-input.is-sm, .weft-select.is-sm {
+  height: var(--weft-control-h-sm);
+  min-height: var(--weft-control-h-sm);
+}
+.weft-input.is-sm {
+  padding-inline: var(--weft-control-pad-x-sm);
+}
+/* The select keeps its right side: (0,2,0) padding-inline here would beat the
+ * (0,1,0) 40px chevron reserve below it — the same later-rule-unsets trap the
+ * log records twice — so only the left edge tightens. */
+.weft-select.is-sm {
+  padding-left: var(--weft-control-pad-x-sm);
+}
+.weft-btn.is-sm {
+  min-height: var(--weft-control-h-sm);
+  padding-inline: var(--weft-control-pad-x-sm);
 }
 
 .weft-select {
@@ -847,7 +872,11 @@ html,
  * The trailing padding is provisional until document B settles the search
  * input's trailing geometry; P5's enumerated measurements finalize it. */
 .weft-search { position: relative; display: inline-flex; align-items: center; width: 100%; }
-.weft-search .weft-input { padding-left: 32px; padding-right: 36px; }
+/* Trailing reserve settled by document B's owner call (2026-08-10): 4px inset
+ * + 24px clear + a density-scaled text gap, carried by the token — 36/32/30
+ * at marketing/compact/dense. Longhand inside the existing rule, per the P4
+ * cascade guard. */
+.weft-search .weft-input { padding-left: 32px; padding-right: var(--weft-search-pad-end, 36px); }
 .weft-search-icon {
   position: absolute; left: 10px;
   display: inline-flex; pointer-events: none;
