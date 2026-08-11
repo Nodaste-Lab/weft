@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--
+  The consumer condition, as a fixture.
+
+  Heddle injects css/weft.css and css/weft-components.css VERBATIM into a
+  sandboxed code-backed panel iframe, alongside whatever CSS the panel package
+  itself ships. Nothing in this repository tested that until now: every suite
+  measured the gallery, which is a page Weft controls end to end. A release can
+  keep the gallery green and break the frame, and no gate would notice.
+
+  The adversarial CSS is spelled out here rather than assembled in a helper, so
+  a reviewer can see exactly what the panel is being asked to survive. Each rule
+  is a real thing a panel author writes, and each one is aimed at something the
+  component layer depends on.
+
+  The page holds three things:
+    - host markup carrying weft-* class names, OUTSIDE any frame, to prove the
+      injected CSS is frame-scoped and never reaches the embedding document;
+    - #panel, the frame under test: Weft's two files in Heddle's production
+      load order, then the panel's own CSS after them;
+    - #control, the same panel markup and the same panel CSS with NO Weft
+      injected. Every computed-style difference between the two frames is
+      attributable to Weft, which is what makes "no selector escapes the
+      namespace" a measurement rather than an opinion.
+
+  The test fills both frames; see tests/contract/consumer-iframe.spec.ts.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Weft consumer-iframe fixture</title>
+<style>
+  /* The embedding document's own styling. Deliberately plain: this page exists
+   * to be a host, not to be measured. */
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .frames { display: flex; gap: 24px; padding: 24px; align-items: flex-start; }
+  iframe { width: 460px; height: 620px; border: 1px solid #999; background: #fff; }
+  .host-markup { padding: 24px; }
+</style>
+</head>
+<body>
+
+<!-- Outside every frame. If injection leaks out of the iframe, these pick it up. -->
+<div class="host-markup" id="host-markup">
+  <label class="weft-field-label" for="host-input">Host field</label>
+  <input class="weft-input" id="host-input" />
+  <button class="weft-btn" type="button">Host button</button>
+</div>
+
+<div class="frames">
+  <iframe id="panel" title="panel with Weft injected"></iframe>
+  <iframe id="control" title="panel without Weft"></iframe>
+</div>
+
+<!--
+  What a panel package ships alongside Weft, in two parts.
+
+  BASE is ordinary panel styling and is present in both comparison passes.
+  HOSTILE is the adversarial half, and every rule in it is aimed at something
+  the component layer relies on:
+
+    *              content-box would push every control past its --weft-control-h
+                   tier. weft-components.css sets box-sizing explicitly for this
+                   exact reason; the comment there is now a tested claim.
+    .shadow        a box-shadow utility at class specificity. The global focus
+                   rule is :where(...):focus-visible, which also weighs (0,1,0),
+                   and this sheet loads later — so this is the rule that deletes
+                   the focus ring.
+    input          a bare element rule stripping the border and repainting the
+                   fill. Loses to .weft-input on specificity, and has to.
+    body           a conflicting font. The control classes set font-family
+                   explicitly rather than inheriting, and that has to hold.
+    .weft-widget   a panel's own class that collides on the weft- prefix.
+                   Namespacing by prefix is not ownership of the prefix.
+
+  The hostile half is removed for the second namespace-escape pass, because it
+  can MASK an escape: a bad Weft `input { … }` rule is overwritten by the
+  panel's own later `input { … }`, so both frames agree and the diff comes back
+  empty while Weft has in fact escaped. Splitting the sheet is what lets the
+  second pass drop the masking rules without also dropping the typography that
+  keeps the unowned markup comparable.
+-->
+<template id="panel-css-base">
+  /* The panel's own non-hostile styling. Present in BOTH comparison passes, so
+   * the unowned markup is font-stable and a line-box difference cannot be
+   * mistaken for a selector escape. A panel that cares about its typography
+   * sets it at class or id specificity, which beats Weft's documented
+   * `:root[data-palette="weft"] body` rule — and that difference is exactly what
+   * the font test below measures. */
+  .panel-note, .weft-widget, #p-bare, #p-bare-button {
+    font-family: "Comic Sans MS", cursive; font-size: 13px; line-height: 1.4;
+  }
+  .panel-note { font-size: 12px; }
+  /* Wide gutters so a neighbour's shadow cannot bleed into the strip the
+   * boundary sampler reads. Fixture hygiene, not a design claim. */
+  .panel-row { display: flex; gap: 24px; align-items: center; margin-bottom: 16px; }
+  .panel-own { padding-top: 16px; }
+  /* A panel that scrolls its own body under its own sticky header — the shape
+   * SC 2.4.11 actually bites in, and the one `scroll-padding-top: html` cannot
+   * reach. The surface declares its chrome height, exactly as a real panel does. */
+  :root { --weft-sticky-chrome-h: 48px; }
+  .panel-scroll { height: 240px; overflow-y: auto; position: relative; border: 1px solid #999; }
+  .panel-sticky {
+    position: sticky; top: 0; height: 44px; z-index: 2;
+    display: flex; align-items: center; padding: 0 12px;
+    background: #dcdcdc; font-size: 13px;
+  }
+  .panel-filler { height: 400px; }
+</template>
+
+<template id="panel-css-hostile">
+  *, *::before, *::after { box-sizing: content-box; margin: 0; padding: 0; }
+  .shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+  input { border: 0; background: #eeeeee; font: inherit; padding: 2px; }
+  body { font-family: "Comic Sans MS", cursive; padding: 16px; }
+  .weft-widget { color: rebeccapurple; border: 2px dashed rebeccapurple; padding: 8px; }
+</template>
+
+<!--
+  The panel's markup. Half of it uses canonical weft-* classes and must be
+  styled; half is the panel's own markup and must be left alone.
+-->
+<template id="panel-body">
+  <div class="weft-card">
+    <div class="weft-field">
+      <label class="weft-field-label" for="p-default">Project name</label>
+      <input class="weft-input" id="p-default" />
+      <span class="weft-field-hint" id="p-default-hint">Shown on the panel header.</span>
+    </div>
+
+    <div class="panel-row">
+      <input class="weft-input" id="p-invalid" aria-invalid="true" aria-label="Invalid field" />
+      <input class="weft-input" id="p-disabled" disabled aria-label="Disabled field" />
+    </div>
+    <div class="panel-row">
+      <input class="weft-input" id="p-readonly" readonly value="Ninety days" aria-label="Read-only field" />
+    </div>
+    <div class="panel-row">
+      <input class="weft-input shadow" id="p-shadowed" aria-label="Field under the host shadow utility" />
+    </div>
+    <div class="panel-row">
+      <select class="weft-select" id="p-select" aria-label="Retention">
+        <option>Thirty days</option>
+        <option>Ninety days</option>
+      </select>
+      <button class="weft-btn" type="button" id="p-button">Apply</button>
+      <button class="weft-btn is-ghost" type="button" id="p-ghost">Cancel</button>
+    </div>
+    <div class="panel-row">
+      <textarea class="weft-textarea" id="p-textarea" aria-label="Notes"></textarea>
+    </div>
+    <label class="weft-checkbox-wrap" id="p-checkwrap">
+      <input type="checkbox" class="weft-checkbox" id="p-checkbox" /> <span>Only mine</span>
+    </label>
+  </div>
+
+  <!-- A scrolling panel body under sticky chrome. The control is deep enough
+       that reaching it has to scroll, and the scrollport is the div rather than
+       the document — which is what makes scroll-padding on `html` useless here. -->
+  <div class="panel-scroll" data-weft-scrollport id="p-scrollport">
+    <div class="panel-sticky" id="p-scroll-chrome">Panel header</div>
+    <div class="panel-filler"></div>
+    <label class="weft-sr-only" for="p-deep">Deep field</label>
+    <input class="weft-input" id="p-deep" />
+    <div class="panel-filler"></div>
+  </div>
+
+  <!-- The panel's own markup. Weft must not touch any of it.
+       Outside .weft-card deliberately: a Weft-styled ancestor legitimately
+       changes a child's available width, and a diff that counted that as
+       leakage would be measuring the container, not the selector. -->
+  <div class="panel-own">
+    <div class="weft-widget" id="p-collides">A panel class that starts with weft-</div>
+    <p class="panel-note" id="p-note">Panel copy the design system does not own.</p>
+    <input id="p-bare" aria-label="A panel input with no Weft class" />
+    <button id="p-bare-button" type="button">A panel button with no Weft class</button>
+  </div>
+</template>
+
+</body>
+</html>

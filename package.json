@@ -15,6 +15,7 @@
     "tooling",
     "manifest.json",
     "props-snapshot.json",
+    "tokens-snapshot.json",
     "docs"
   ],
   "exports": {
@@ -31,6 +32,7 @@
     "./tooling/raw-colors": "./tooling/raw-color-pattern.js",
     "./manifest.json": "./manifest.json",
     "./props-snapshot.json": "./props-snapshot.json",
+    "./tokens-snapshot.json": "./tokens-snapshot.json",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
@@ -50,8 +52,12 @@
     "site:dev": "vite --config site/vite.config.ts",
     "site:build": "vite build --config site/vite.config.ts",
     "site:preview": "vite preview --config site/vite.config.ts",
-    "test:visual": "npm run site:build && playwright test",
-    "test:visual:update": "npm run site:build && playwright test --update-snapshots",
+    "test:visual": "npm run site:build && WEFT_VISUAL=1 playwright test --project=visual",
+    "test:visual:update": "npm run site:build && WEFT_VISUAL=1 playwright test --project=visual --update-snapshots",
+    "specimens": "python3 scripts/generate-input-specimens.py . .specimens-scratch",
+    "test:contract": "WEFT_RATCHET_FULL=1 playwright test --project=contract",
+    "test:specimens": "node --test scripts/__tests__/input-specimens.node.mjs",
+    "test:packed": "node --test scripts/__tests__/packed-artifact.node.mjs",
     "tokens": "node scripts/design-system-tokens.mjs",
     "tokens:write": "node scripts/design-system-tokens.mjs --write",
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",

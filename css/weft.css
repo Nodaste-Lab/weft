@@ -55,6 +55,34 @@
   --weft-shadow:       0 4px 12px rgba(11, 16, 32, 0.08);  /* resting card elevation */
   --weft-fill-soft:    rgba(11, 16, 32, 0.025);            /* subtle section wash */
   --weft-stop-soft:    rgba(248, 113, 113, 0.22);          /* danger surface tint */
+  /* Fill for a control that is present but not editable — disabled and
+   * read-only. Deliberately its own token rather than --weft-fill-soft: at
+   * 0.025 that wash lands 8/255 from paper, exactly on the threshold where two
+   * renderings stop being distinguishable, and a state that separates itself by
+   * the smallest visible amount is not separating itself. 0.055 reads as a
+   * distinctly static field and still leaves value text well clear of AA.
+   *
+   * Raised from 0.055 when the resting fill stopped being opaque paper: the two
+   * washes then differed by only 2% of ink, about 5/255, and a read-only field
+   * stopped being distinguishable from an editable one. Caught by
+   * states/readonly-renders-distinctly rather than by looking at it — which is
+   * the point of measuring a state against its neighbour rather than against a
+   * fixed colour. */
+  --weft-control-fill-static: rgba(11, 16, 32, 0.075);
+  /* THE BOUNDARY THAT CARRIES WCAG 1.4.11, and the quiet fill that does not.
+   *
+   * A field had no boundary reaching the 3:1 non-text contrast floor in either
+   * theme — border 1.30:1, and a fill identical to the surface behind it at
+   * 1.00:1. Neither cue identified the control.
+   *
+   * Option C, from rendering all four: the BORDER carries the floor and the fill
+   * is decorative. Fill-alone was ruled out by measurement, not preference —
+   * reaching 3:1 as a fill needs 45% ink over white, and at that fill the muted
+   * placeholder drops to 1.90:1 and fails text contrast. One border value covers
+   * both light surfaces: 0.48 ink measures 3.35:1 on paper and 3.15:1 on cream,
+   * so this is one token per theme rather than one per surface. */
+  --weft-control-border:      rgba(11, 16, 32, 0.48);
+  --weft-control-fill:        rgba(11, 16, 32, 0.035);
 
   /* ── On-blue tier (WCAG calibrated) ──────────────────────────────────── */
   /* 0.95 = AA NORMAL (4.55:1). 0.88 / 0.78 = AA LARGE ONLY — only at ≥18pt or ≥14pt bold. */
@@ -195,6 +223,10 @@
   --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
   --weft-fill-soft:    rgba(244, 241, 232, 0.03);
   --weft-stop-soft:    rgba(248, 113, 113, 0.20);
+  --weft-control-fill-static: rgba(244, 241, 232, 0.10);
+  /* 0.38 cream measures 3.28:1 on dark paper and 3.60:1 on dark cream. */
+  --weft-control-border:      rgba(244, 241, 232, 0.38);
+  --weft-control-fill:        rgba(244, 241, 232, 0.05);
 
   --weft-blue:         #c4b5fd;  /* violet-300 — lifted primary */
   --weft-blue-deep:    #a78bfa;  /* violet-400 — deep */
@@ -211,6 +243,24 @@
    * dark ink, not white. #1a0f33 (deep violet-ink) on #c4b5fd = 9.9:1 (AA).
    * White would be 1.85:1 (fail) — the value inherited from the light block. */
   --primary-foreground:            #1a0f33;
+
+  /* THE SAME CORRECTION FOR THE OTHER LAYER. The line above fixes the flat
+   * shadcn token the React primitives read; the whole --weft-on-blue tier is
+   * what the plain-CSS component layer reads, and it was still inheriting white
+   * from the light block. So this palette shipped a React button at 9.9:1 and a
+   * `.weft-btn` at 1.85:1 — with the plain-CSS layer, the one a sandboxed panel
+   * iframe gets, being the broken half. Same for the checked radio dot.
+   *
+   * Alphas mirror the base tier's ratios so every consumer keeps its intended
+   * emphasis, just inverted in tone. */
+  --weft-on-blue:            rgba( 26,  15,  51, 0.95);
+  --weft-on-blue-muted:      rgba( 26,  15,  51, 0.88);
+  --weft-on-blue-soft:       rgba( 26,  15,  51, 0.78);
+  --weft-on-blue-rule:       rgba( 26,  15,  51, 0.18);
+  --weft-on-blue-rule-soft:  rgba( 26,  15,  51, 0.15);
+  --weft-on-blue-dot:        rgba( 26,  15,  51, 0.12);
+  --weft-on-blue-bg:         rgba( 26,  15,  51, 0.03);
+  --weft-on-blue-bg-hover:   rgba( 26,  15,  51, 0.08);
   --accent:                        var(--weft-blue);
   --accent-foreground:             #1a0f33;
   --hud-border-accent:             var(--weft-blue);
@@ -246,6 +296,10 @@
   --weft-shadow:       0 4px 14px rgba(0, 0, 0, 0.45);
   --weft-fill-soft:    rgba(244, 241, 232, 0.03);
   --weft-stop-soft:    rgba(248, 113, 113, 0.20);
+  --weft-control-fill-static: rgba(244, 241, 232, 0.10);
+  /* 0.38 cream measures 3.28:1 on dark paper and 3.60:1 on dark cream. */
+  --weft-control-border:      rgba(244, 241, 232, 0.38);
+  --weft-control-fill:        rgba(244, 241, 232, 0.05);
 
   --weft-thread-blue:    rgba( 37,  99, 255, 0.18);
   --weft-thread-wash:    rgba( 37,  99, 255, 0.10);
@@ -332,6 +386,26 @@
   --weft-touch-target:      24px;
 }
 
+/* ── Consumer-supplied: sticky chrome height ────────────────────────────────
+ * Height of any sticky chrome the surface puts over its own scroll region. A
+ * control scrolled to by an in-page navigation top-aligns, which on a surface
+ * with a sticky header lands it underneath — measured at 99% covered before the
+ * component layer turned this into scroll-padding-top. Weft cannot know the
+ * height, so the surface declares it.
+ *
+ * DECLARED IN ITS OWN BARE `:root` BLOCK, and that is the whole point of the
+ * block existing. Every other token here lives under
+ * `:root, :root[data-palette="weft"]`, which weighs (0,2,0) — so a consumer
+ * writing the obvious `:root { --weft-sticky-chrome-h: 68px }` in its own
+ * stylesheet LOSES, silently, and the padding never applies. Found exactly that
+ * way. At (0,1,0) a consumer's declaration ties and, loading later, wins.
+ *
+ * Defaults to 0: a panel iframe with no chrome must not inherit scroll padding
+ * it never asked for. */
+:root {
+  --weft-sticky-chrome-h: 0px;
+}
+
 /* ── Palette alternative: heritage purple ──
  * Built around violet-600 (#7c3aed) as the primary — softer, more editorial
  * than the original Weave-purple. The hue was deepened from violet-400 to clear
@@ -388,6 +462,9 @@
   --weft-muted:               #a0a8c0;
   --weft-rule:                rgba(255, 255, 255, 0.07);
   --weft-rule-strong:         rgba(255, 255, 255, 0.18);
+  --weft-control-fill-static: rgba(255, 255, 255, 0.10);
+  --weft-control-border:      rgba(255, 255, 255, 0.38);
+  --weft-control-fill:        rgba(255, 255, 255, 0.05);
   --weft-blue:                #2563ff;
   --weft-stop:                #ef4444;
   --weft-ok:                  #34d399;

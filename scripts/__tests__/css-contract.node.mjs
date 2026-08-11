@@ -100,3 +100,38 @@ test('token pairs hold their documented contrast floors', () => {
     'contrast floors broken:\n' + failures.map((f) => `  ${f.name}: ${f.r.toFixed(2)} < ${f.floor}`).join('\n'),
   );
 });
+
+/**
+ * RECORDED PARITY GAP: the React input boundary is still the old hairline.
+ *
+ * The plain-CSS layer's boundary now clears WCAG 1.4.11 at ~3.5:1 through
+ * --weft-control-border. The React primitives do not paint from that token —
+ * `Input` renders `border-input` and `bg-input-background`, which resolve
+ * through the flat shadcn bridge below, and both still point at --weft-paper.
+ * So a React field keeps the 1.30:1 border the plain-CSS field has left behind.
+ *
+ * Closing it is a two-token change here, but it repaints every React form
+ * control in the gallery's committed pixel baselines and interacts with
+ * `dark:bg-input/30` in input.tsx, so it belongs with the layer-parity phase
+ * rather than with the boundary work.
+ *
+ * This test asserts the gap STILL EXISTS, which is deliberate and is the same
+ * idiom as tests/contract/known-defects.ts: an unmeasured gap is a gap nobody
+ * is watching, and a note in a changelog is not a gate. Whoever closes it
+ * deletes this test in the same change, and moves the baselines with it.
+ */
+test('the React input bridge is recorded as not yet carrying the new boundary', () => {
+  const bridge = /--input:\s*var\((--weft-[\w-]+)\)/.exec(weft)?.[1];
+  const bridgeBg = /--input-background:\s*var\((--weft-[\w-]+)\)/.exec(weft)?.[1];
+  assert.equal(
+    bridge,
+    '--weft-paper',
+    'The React input border token has moved. If it now reads --weft-control-border the parity ' +
+      'gap is closed — delete this test, and review the moved visual baselines in all four themes.',
+  );
+  assert.equal(
+    bridgeBg,
+    '--weft-paper',
+    'The React input fill token has moved. Same as above: close the record with the gap.',
+  );
+});

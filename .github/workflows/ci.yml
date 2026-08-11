@@ -34,6 +34,8 @@ jobs:
         run: npm run test:contrast
       - name: Template contract (weft-board template layer)
         run: npm run test:template-contract
+      - name: Input-specimen contract (generator determinism + page freshness)
+        run: npm run test:specimens
       - name: Review-gate harness (constraint discovery, refusals, preflight)
         run: npm run test:review-gate
       - name: Raw-color audit (tokens only outside css/)
@@ -44,16 +46,8 @@ jobs:
         run: npm run build
       - name: Exports-map contract (resolve every consumer specifier from the packed tarball)
         run: npm run check:exports
-      - name: Pack smoke (tarball contains css/src/tooling/manifest)
-        run: |
-          npm pack --dry-run --json > /tmp/pack.json
-          node -e "
-            const files = require('/tmp/pack.json')[0].files.map(f => f.path);
-            for (const need of ['css/weft.css','css/weft-components.css','tooling/raw-color-pattern.js','manifest.json','props-snapshot.json','src/ui/button.tsx','dist/index.js']) {
-              if (!files.some(f => f === need)) { console.error('missing from tarball:', need); process.exit(1); }
-            }
-            console.log('tarball contents OK (' + files.length + ' files)');
-          "
+      - name: Packed artifact (every contract file by exact path)
+        run: npm run test:packed
 
   visual-regression:
     runs-on: ubuntu-latest
@@ -68,6 +62,10 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # The measured contract suites run here rather than in `verify` because
+      # this job's image already carries Chromium. They are the gate; the pixel
+      # baselines below are a regression alarm that runs after them.
+      - run: npm run test:contract
       - run: npm run test:visual
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

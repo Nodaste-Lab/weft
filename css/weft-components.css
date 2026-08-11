@@ -16,10 +16,61 @@
  */
 
 /* ── Accessibility base: focus ring + reduced motion ──────────────────────── */
+/* TWO CARRIERS, ONE APPEARANCE.
+ *
+ * The ring used to be a box-shadow alone. `:where()` contributes nothing to
+ * specificity, so this whole selector weighs (0,1,0) — the same as any page's
+ * `.shadow { box-shadow: … }` — and an author rule declared later replaced the
+ * ring outright, with no error and no gate. Measured: 0 of 40 ring pixels
+ * painted, on the page and inside an injected panel iframe alike.
+ *
+ * Delivering the same ring through `outline` as well closes the class rather
+ * than the instance. A shadow utility cannot touch `outline`; an author
+ * `outline: none` cannot touch `box-shadow`. Deleting the indicator now takes
+ * deleting both, which is a deliberate act rather than an accident.
+ *
+ * The geometry is deliberately identical, so nothing moves: --weft-focus-ring
+ * paints 2px of cream then 2px of ring colour, and `outline: 2px` at
+ * `outline-offset: 2px` lands in that same 2–4px band. Both follow the element's
+ * border-radius.
+ *
+ * `:where()` stays, so a component can still override the ring deliberately.
+ * tests/contract/input-focus.spec.ts measures painted pixels rather than either
+ * property, so this can be reshaped again without rewriting the test. */
 :where(a, button, [tabindex], input, select, textarea):focus-visible {
-  outline: none;
+  outline: 2px solid var(--weft-focus-ring-color);
+  outline-offset: 2px;
   box-shadow: var(--weft-focus-ring);
   border-radius: 3px;
+}
+/* SC 2.4.11 Focus Not Obscured (Minimum), Level AA — heuristic 9.
+ *
+ * Focusing a control below the fold scrolls it flush to the viewport top, which
+ * on any surface with a sticky header puts it entirely underneath. Measured on
+ * the specimen page before this rule: 100% of the focused control covered.
+ *
+ * Weft cannot know the chrome's height, so the surface declares it in
+ * --weft-sticky-chrome-h and this turns it into scroll padding. The default is
+ * 0, so a panel iframe with no chrome is unaffected — a rule that imposed
+ * padding on every injected panel would be the cure being worse.
+ *
+ * AND IT CANNOT KNOW WHICH ELEMENT SCROLLS EITHER. scroll-padding applies to the
+ * scrollport, so `html` alone covers only surfaces where the document scrolls.
+ * Inside a HUD panel the panel BODY usually scrolls, and padding on `html` does
+ * exactly nothing there — which is the shape of consumer this whole plan is
+ * built around. Weft ships no scroll container of its own, so the surface marks
+ * its scrollport:
+ *
+ *   <div class="weft-scrollport"> … </div>
+ *   <div data-weft-scrollport> … </div>
+ *
+ * Either marker works; the attribute exists for surfaces that generate markup
+ * and would rather not fight a className. Proved on a panel-body scrollport
+ * inside the injected iframe, not only on the specimen document. */
+html,
+.weft-scrollport,
+[data-weft-scrollport] {
+  scroll-padding-top: var(--weft-sticky-chrome-h, 0px);
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -27,6 +78,40 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ── Visually hidden — a name without a visible label ─────────────────────── */
+/* Weft had no such utility, and that absence is what produced the ticket this
+ * work came from: every control needs an accessible name, the only route Weft
+ * offered was a visible label, so an accessibility requirement silently changed
+ * the board rail's visual design and nobody made a decision.
+ *
+ * clip-path, NOT display:none or visibility:hidden. Both of those remove the
+ * element from the accessibility tree along with the layout, which is the exact
+ * opposite of what this is for. Asserted:
+ * tests/contract/input-semantics.spec.ts checks the name is still computed AND
+ * that neither property is in play.
+ *
+ * `.weft-sr-only-focusable` reveals on focus, for the skip-link case where the
+ * content is hidden until a keyboard user reaches it. (0,2,0) against the base
+ * class's (0,1,0), so it wins wherever both are present. */
+.weft-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.weft-sr-only-focusable:focus-visible,
+.weft-sr-only-focusable:active {
+  position: static;
+  width: auto; height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
 }
 
 /* ── Card — paper surface, hairline rule, card radius ─────────────────────── */
@@ -106,11 +191,21 @@
 }
 .weft-btn:hover:not(:disabled) { background: var(--weft-blue-deep); }
 .weft-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+/* The ghost button carried the identical 1.30:1 hairline as the field and fails
+ * heuristic 2 for the identical reason, so it takes the same border token.
+ *
+ * It does NOT take the field's translucent fill. Option C's wash is decorative
+ * and the border is what carries the floor, so the fill buys nothing here — and
+ * a ghost button is placed on coloured slabs where going translucent would let
+ * the slab show through. Narrower change, same compliance.
+ *
+ * Longhand rather than the `background` shorthand, which would reset the image
+ * slot on any ghost button a consumer has given an icon. */
 .weft-btn.is-ghost {
-  background: var(--weft-paper); color: var(--weft-ink);
-  border-color: var(--weft-rule);
+  background-color: var(--weft-paper); color: var(--weft-ink);
+  border-color: var(--weft-control-border);
 }
-.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-rule-strong); background: var(--weft-paper); }
+.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-ink); }
 /* Link-style inline action — no border, no background, just a colored text
  * button. Use for trailing "View all" or "Retry" actions in dense rows.
  * margin-left: auto pushes it to the trailing edge in a flex row. */
@@ -126,13 +221,46 @@
   margin-bottom: var(--weft-space-5);
   font-family: var(--weft-font-sans);
 }
+/* SENTENCE CASE, and the reason is not typographic.
+ *
+ * The accessible name is computed from RENDERED text, so `text-transform:
+ * uppercase` did not merely restyle the label — it rewrote the name. Markup
+ * reading "Project name" was exposed as "PROJECT NAME". Decision 6 scoped the
+ * change to the input surface only: `.weft-eyebrow`, `.weft-pill` and the ten
+ * React primitives keep their uppercase, and brand-package section 03 keeps its
+ * rule for everything outside a field.
+ *
+ * The mono voice survives, because this class sets the family explicitly rather
+ * than inheriting it from the uppercase rule — verified inside the injected
+ * panel frame, not just here. Tracking drops from 0.12em to 0.01em because
+ * caps-tracking applied to lowercase reads as a mistake, and the size goes 11px
+ * to 12px because sentence case at 11px reads smaller than caps at 11px. */
 .weft-field-label {
   font-family: var(--weft-font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--weft-muted);
 }
-.weft-field-label .weft-req { color: var(--weft-stop); margin-left: 2px; }
+/* Heuristic 7 marks the minority, and decision 4 fixed what the marker IS: real
+ * text plus the `required` attribute, never a bare glyph. A `*` alone landed
+ * inside the accessible name as punctuation while `required` stayed false —
+ * observed name "RETENTION*", required false. The word carries meaning wherever
+ * the name is read, and the attribute carries the state.
+ *
+ *   <label class="weft-field-label" for="x">Retention <span class="weft-req">required</span></label>
+ *   <input class="weft-input" id="x" required />
+ *
+ * The literal space before the span is load-bearing. Accessible-name
+ * computation concatenates the label's text nodes, and without it the name
+ * comes out "Retentionrequired" — one word, which is not what decision 4
+ * settled and not what anyone would want read out.
+ */
+.weft-field-label .weft-req {
+  color: var(--weft-stop);
+  margin-left: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
 .weft-field-hint { font-size: 13px; color: var(--weft-muted); line-height: 1.4; }
 .weft-field-hint.is-error { color: var(--weft-stop); }
 
@@ -145,24 +273,96 @@
   font-family: var(--weft-font-sans);
   font-size: var(--weft-control-text); line-height: 1.4;
   color: var(--weft-ink);
-  background: var(--weft-paper);
-  border: 1px solid var(--weft-rule);
+  /* THE BOUNDARY, changed INSIDE this rule and with longhands. Both of those are
+   * structural guards, and each exists because the alternative already shipped a
+   * bug once:
+   *
+   * 1. A NEW SELECTOR would tie on specificity with `.weft-input[aria-invalid]`
+   *    below and, being later, win — so every error field would render with the
+   *    ordinary border while the diff looked correct. Found by rendering, not by
+   *    reading. `states/invalid-renders-distinctly` is the permanent guard.
+   * 2. The `background` SHORTHAND resets background-image, -repeat, -position and
+   *    -size. On `.weft-select` that deleted the chevron in light and, because
+   *    the dark theme's chevron rule restores the image and not the repeat, tiled
+   *    a 12px glyph across the whole control in dark. `select-chrome.spec.ts` is
+   *    the permanent guard, and it asserts painted pixels rather than trusting
+   *    the declaration.
+   *
+   * The border carries WCAG 1.4.11 at 3:1; the fill is decorative and is not
+   * asked to. See --weft-control-border in weft.css for why fill-alone is not
+   * available in this palette. */
+  background-color: var(--weft-control-fill);
+  border: 1px solid var(--weft-control-border);
   border-radius: var(--weft-radius-card);
-  padding: var(--weft-control-pad-y, 11px) var(--weft-control-pad-x);
+  /* HEIGHT, NOT MIN-HEIGHT, and no vertical padding.
+   *
+   * The control used to reach its tier through `min-height` while padding plus
+   * line-height pushed straight past it, so the declared tier never governed:
+   * 46.39px against a 44px token at marketing, 43.59px against 36px at compact.
+   * Only the dense tier fitted, and only because its pad-y had been hand-tuned
+   * to 6px — which is exactly how this stayed invisible at two tiers out of
+   * three, and why the fix is at the cause rather than a third hand-tune.
+   *
+   * A single-line control centres its own text in the content box, so vertical
+   * padding has no work to do here. min-height is kept alongside height so a
+   * consumer setting `height: auto` still cannot collapse the control.
+   * .weft-textarea overrides both below: it is genuinely multi-line. */
+  height: var(--weft-control-h);
   min-height: var(--weft-control-h);
+  padding-block: 0;
+  padding-inline: var(--weft-control-pad-x);
   transition:
     border-color var(--weft-dur-fast) var(--weft-ease-out),
     background-color var(--weft-dur-fast) var(--weft-ease-out);
 }
 .weft-input::placeholder, .weft-textarea::placeholder { color: var(--weft-muted); }
-.weft-input:hover:not(:disabled),
-.weft-textarea:hover:not(:disabled),
-.weft-select:hover:not(:disabled) { border-color: var(--weft-rule-strong); }
+/* Hover deepens from a boundary that already clears the floor. It used to go to
+ * --weft-rule-strong, which at 1.90:1 is now WEAKER than rest — hover would have
+ * been removing a boundary rather than reinforcing one. Read-only is excluded:
+ * it is not editable, so advertising interactivity on hover is a lie. */
+.weft-input:hover:not(:disabled):not([readonly]),
+.weft-textarea:hover:not(:disabled):not([readonly]),
+.weft-select:hover:not(:disabled) { border-color: var(--weft-ink); }
 .weft-input[aria-invalid="true"],
 .weft-textarea[aria-invalid="true"],
 .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }
 
-.weft-textarea { min-height: 96px; resize: vertical; }
+/* Disabled and read-only are different promises, and until now the plain-CSS
+ * layer made neither: a disabled field rendered at opacity 1 with an unchanged
+ * background, pixel-identical to an editable one, while the React `Input`
+ * styled both. Disabled DIMS — the control is not available. Read-only keeps
+ * full contrast and changes its fill — the value is present and meant to be
+ * read, just not edited.
+ *
+ * NEITHER SETS border-color, deliberately. `.weft-input:disabled` weighs
+ * (0,2,0), exactly as much as `.weft-input[aria-invalid="true"]` above, and it
+ * is declared later — so a border colour here would silently outrank the error
+ * border on a disabled invalid field. Same cascade trap as the boundary work,
+ * avoided by not entering the property. */
+.weft-input:disabled,
+.weft-textarea:disabled,
+.weft-select:disabled {
+  background-color: var(--weft-control-fill-static);
+  opacity: 0.55;                      /* matches .weft-btn:disabled and React's disabled:opacity-50 */
+  cursor: not-allowed;
+}
+/* <select> has no read-only in its content model — the attribute is ignored —
+ * so the pair genuinely does not exist for it. Absent, not overlooked. */
+.weft-input[readonly],
+.weft-textarea[readonly] {
+  background-color: var(--weft-control-fill-static);
+  cursor: default;
+}
+
+.weft-textarea {
+  /* Genuinely multi-line, so it keeps padding and a floor rather than a fixed
+   * height. The floor is still a hardcoded 96px tracking no tier — P5 owns that,
+   * and geometry/textarea/tracks-density records it. */
+  height: auto;
+  min-height: 96px;
+  padding-block: var(--weft-control-pad-y, 11px);
+  resize: vertical;
+}
 
 .weft-select {
   appearance: none; -webkit-appearance: none;
@@ -172,7 +372,20 @@
   padding-right: 40px;
   cursor: pointer;
 }
-:root[data-theme^="dark"] .weft-select {
+/* THE CHEVRON FOLLOWS THE FOREGROUND, NOT THE THEME ATTRIBUTE.
+ *
+ * Palette and theme are independent axes, and `hud-glass` is a dark palette in
+ * its own right — it overrides --weft-paper to a dark translucent and --weft-ink
+ * to #f5f8ff whatever data-theme says. Keying the cream chevron on the theme
+ * alone therefore painted a near-black glyph on a dark control for anyone using
+ * hud-glass without dark mode: measured stroke #0B1020 against ink #f5f8ff.
+ *
+ * Any future dark palette has to be added here too, so the guard in
+ * select-chrome.spec.ts asserts the invariant rather than the list: the
+ * chevron's stroke must be the same tone as --weft-ink, in every palette and
+ * theme combination. */
+:root[data-theme^="dark"] .weft-select,
+:root[data-palette="hud-glass"] .weft-select {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
 }
 
@@ -200,9 +413,24 @@
 .weft-checkbox:checked, .weft-radio:checked {
   background-color: var(--weft-blue); border-color: var(--weft-blue);
 }
+/* The tick is a data URI, so its stroke cannot read a token — the same problem
+ * the select chevron has, and the same fix: a palette-scoped override wherever
+ * the primary is light enough that a white glyph disappears into it. Dark
+ * heritage-purple lifts --weft-blue to violet-300 (#c4b5fd), where a white tick
+ * measures 1.85:1.
+ *
+ * The general alternative — masking a pseudo-element so the glyph reads
+ * --weft-on-blue like every other on-primary mark — is the better shape and is
+ * deliberately not taken here: it changes how a shipped control paints, for a
+ * defect that is one palette wide. Recorded so the next person weighing it has
+ * the argument rather than just the workaround. The invariant guard in
+ * contrast-contract catches any future palette either way. */
 .weft-checkbox:checked {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
   background-repeat: no-repeat; background-position: center; background-size: 12px 12px;
+}
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-checkbox:checked {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%231a0f33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 6.3 L5 8.8 L9.5 3.8'/></svg>");
 }
 .weft-radio:checked::after {
   content: ""; position: absolute; inset: 4px;
@@ -215,10 +443,13 @@
   border: none; padding: 0; margin: 0 0 var(--weft-space-5);
   display: flex; flex-direction: column; gap: 10px;
 }
+/* Same change, same reason: a legend names its group, and the uppercase
+ * transform rewrote that name too — "Retention policy" exposed as
+ * "RETENTION POLICY". */
 .weft-field-group > legend {
   font-family: var(--weft-font-mono);
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--weft-muted);
   margin-bottom: 4px; padding: 0;
 }
