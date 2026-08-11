@@ -29,6 +29,7 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',
+  '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
@@ -68,6 +69,13 @@ try {
   const tooling = await import(pathToFileURL(probeRequire.resolve('@nodaste-lab/weft/tooling/raw-colors')).href);
   if (!(tooling.RAW_COLOR_PATTERN instanceof RegExp)) {
     failures.push('tooling/raw-colors did not export RAW_COLOR_PATTERN as a RegExp');
+  }
+
+  // The built root entry must carry the hook — specifier resolution alone
+  // cannot see a name silently dropped from the barrel.
+  const rootEntry = await import(pathToFileURL(probeRequire.resolve('@nodaste-lab/weft')).href);
+  if (typeof rootEntry.useCommitBoundary !== 'function') {
+    failures.push('the root entry did not export useCommitBoundary as a function');
   }
 
   if (failures.length) {

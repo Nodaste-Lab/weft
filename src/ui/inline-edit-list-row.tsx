@@ -85,10 +85,18 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
     // The helper says WHEN the field committed; applying the draft is this
     // component's (the consumer's) side of the line. Empty is a value —
     // whitespace trims to "" and "" commits like anything else.
+    // Escape during IME composition cancels the candidate UI, not the edit —
+    // the same keydown-inside-composition rule the commit helper applies to
+    // Enter, tracked here because the offer logic is this component's own.
+    const imeComposingRef = React.useRef(false);
+
     const boundary = useCommitBoundary({
       onCommit: () => {
-        const trimmed = draft.trim();
-        if (trimmed !== text) onUpdate(trimmed);
+        // The draft commits as typed — Enter is real input now, so a trailing
+        // newline or deliberate whitespace is the user's. The one normalized
+        // case is all-whitespace, which commits as the empty value.
+        const value = draft.trim() === "" ? "" : draft;
+        if (value !== text) onUpdate(value);
         setDiscardOffered(false);
         setEditing(false);
       },
@@ -135,6 +143,13 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
                   // Enter falls through: on a textarea it is a newline, and the
                   // boundary helper emits nothing for it.
                   if (e.key !== "Escape") return;
+                  if (
+                    imeComposingRef.current ||
+                    e.nativeEvent.isComposing ||
+                    e.keyCode === 229
+                  ) {
+                    return;
+                  }
                   if (draft === text) {
                     // Nothing to lose — close without ceremony.
                     setDiscardOffered(false);
@@ -149,6 +164,12 @@ const InlineEditListRow = React.forwardRef<HTMLDivElement | HTMLLIElement, Inlin
                   setDraft(text);
                   setDiscardOffered(false);
                   setEditing(false);
+                },
+                onCompositionStart: () => {
+                  imeComposingRef.current = true;
+                },
+                onCompositionEnd: () => {
+                  imeComposingRef.current = false;
                 },
                 "aria-label": editAriaLabel,
                 "aria-describedby": discardOffered ? discardHintId : undefined,

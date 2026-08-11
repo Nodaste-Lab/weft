@@ -110,13 +110,25 @@ describe("InlineEditListRow", () => {
       ).toHaveBeenCalledWith("");
     });
 
-    it("whitespace-only trims to the empty string, and it still counts", () => {
+    it("whitespace-only normalizes to the empty string, and it still counts", () => {
       const onUpdate = vi.fn();
       render(<InlineEditListRow text="Initial" onUpdate={onUpdate} onDelete={() => {}} />);
       const textarea = editInto("Initial");
       fireEvent.change(textarea, { target: { value: "   " } });
       fireEvent.blur(textarea);
       expect(onUpdate).toHaveBeenCalledWith("");
+    });
+
+    it("everything else commits as typed — Enter is real input, so its newline is the user's", () => {
+      const onUpdate = vi.fn();
+      render(<InlineEditListRow text="Initial" onUpdate={onUpdate} onDelete={() => {}} />);
+      const textarea = editInto("Initial");
+      fireEvent.change(textarea, { target: { value: "Two lines\nof note  " } });
+      fireEvent.blur(textarea);
+      expect(
+        onUpdate,
+        "normalizing whitespace away would silently rewrite input the contract just made real",
+      ).toHaveBeenCalledWith("Two lines\nof note  ");
     });
   });
 
@@ -174,6 +186,38 @@ describe("InlineEditListRow", () => {
       fireEvent.keyDown(textarea, { key: "Escape" });
       expect(state()).toBe("editing");
       expect(textarea.value).toBe("Updated text more");
+    });
+
+    it("Escape inside IME composition is candidate-dismissal, not an edit action", () => {
+      const onUpdate = vi.fn();
+      render(<InlineEditListRow text="Initial" onUpdate={onUpdate} onDelete={() => {}} />);
+      const textarea = editInto("Initial");
+      fireEvent.change(textarea, { target: { value: "かん" } });
+      fireEvent.compositionStart(textarea);
+      fireEvent.keyDown(textarea, { key: "Escape", isComposing: true });
+      expect(state(), "the editor must not close under the IME").toBe("editing");
+      expect(
+        document.querySelector('[data-slot="inline-edit-list-row-discard-hint"]'),
+        "no offer either — the user was talking to the IME, not to the editor",
+      ).toBeNull();
+      expect(textarea.value).toBe("かん");
+      fireEvent.compositionEnd(textarea);
+      // Composition over: Escape is the editor's again, and offers.
+      fireEvent.keyDown(textarea, { key: "Escape" });
+      expect(state()).toBe("editing");
+      expect(
+        document.querySelector('[data-slot="inline-edit-list-row-discard-hint"]'),
+      ).toBeTruthy();
+    });
+
+    it("keyCode 229 alone marks the Escape as composition", () => {
+      const onUpdate = vi.fn();
+      render(<InlineEditListRow text="Initial" onUpdate={onUpdate} onDelete={() => {}} />);
+      const textarea = editInto("Initial");
+      fireEvent.change(textarea, { target: { value: "draft" } });
+      fireEvent.keyDown(textarea, { key: "Escape", keyCode: 229 });
+      expect(state()).toBe("editing");
+      expect(document.querySelector('[data-slot="inline-edit-list-row-discard-hint"]')).toBeNull();
     });
 
     it("blur while the offer is showing commits normally — an offer is not a hold", () => {
