@@ -26,4 +26,3 @@ Two parity corrections the doctrine gate's review surfaced ship with it:
 parity record claimed. The choice-row cells are reclassified as documented
 divergences (the row is a plain-CSS recipe; React composes rows through its
 form primitives), and the parity matrix now says exactly that.
-
