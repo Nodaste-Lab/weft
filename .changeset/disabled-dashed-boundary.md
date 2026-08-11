@@ -24,3 +24,7 @@ in plain CSS; an `aria-hidden` svg in `FormMessage`, so the accessible
 description stays the copy). The select is the stated field-level
 exception: its right edge belongs to the chevron, so the message glyph and
 border carry its non-colour cue — asserted, not omitted.
+(5) **An unavailable dropdown option is struck through** — `option:disabled`
+takes `line-through` + muted in the plain layer, `SelectItem` the matching
+`data-[disabled]:line-through` in React, and every select specimen ships an
+unavailable option so the treatment stays measured.

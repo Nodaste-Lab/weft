@@ -105,6 +105,30 @@ test('the glyph paints the palette\'s own stop tone — every palette × theme',
   expect(problems, problems.join('\n')).toEqual([]);
 });
 
+test('an unavailable option is struck through, not merely greyed', async ({ page }) => {
+  // The owner's fifth finding, the same rule one level deeper: a disabled
+  // <option> signalled only by the UA's grey is colour-alone inside the
+  // popup. Dashes cannot reach option text, so the unavailable heuristic
+  // there is line-through plus the muted colour — computed on the option,
+  // because the popup itself is UA chrome no screenshot can reach.
+  await applyAxes(page, { density: 'marketing' });
+  const r = await page.evaluate(() => {
+    const sel = document.querySelector<HTMLSelectElement>(
+      '[data-spec="boundary"][data-control="select"][data-state="default"]',
+    )!;
+    const disabled = sel.querySelector('option:disabled');
+    const enabled = sel.querySelector('option:not(:disabled)')!;
+    return {
+      hasDisabledSpecimen: !!disabled,
+      disabledDecoration: disabled ? getComputedStyle(disabled).textDecorationLine : 'missing',
+      enabledDecoration: getComputedStyle(enabled).textDecorationLine,
+    };
+  });
+  expect(r.hasDisabledSpecimen, 'the specimen select must ship an unavailable option').toBe(true);
+  expect(r.disabledDecoration, 'unavailable reads as struck through').toBe('line-through');
+  expect(r.enabledDecoration, 'available options carry no strike').toBe('none');
+});
+
 test('the error message leads with the glyph; a plain hint does not', async ({ page }) => {
   await applyAxes(page, { density: 'marketing' });
   const r = await page.evaluate(() => {

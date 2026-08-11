@@ -777,6 +777,8 @@ Same styling as `.weft-input` plus a per-tier floor — `min-height: var(--weft-
 
 Native `<select>` with the platform caret stripped (`appearance: none`) and a single-stroke chevron re-added via inline SVG data-URL in the `background-image`. Ship two variants of the SVG, an ink one and a cream one, and select between them **by the palette's foreground rather than by `data-theme` alone**.
 
+**An unavailable option is struck through, never merely greyed.** The colour-is-never-the-only-signal rule reaches inside the popup: `option:disabled` takes `line-through` plus the muted colour in the plain layer, and `SelectItem` carries `data-[disabled]:line-through` beside its dimming in React. The popup is UA chrome no screenshot reaches, so the contract asserts it computed on the option.
+
 That distinction is load-bearing. Palette and theme are independent axes: `data-palette="hud-glass"` is a dark palette in its own right — dark paper, near-white ink — whatever `data-theme` says. Keying the cream chevron on `[data-theme="dark"]` alone painted a near-black glyph into a dark control for anyone on that palette without dark mode, measured at a luminance gap of 0.932. The override therefore lists every dark palette, and `tests/contract/select-chrome.spec.ts` asserts the invariant rather than the list: the chevron's stroke must be the same tone as `--weft-ink`, in every palette × theme combination.
 
 The same trap applies to any glyph baked into a data-URI, because its colour cannot read a token — the checked-checkbox tick is the other one. Keeps the rest of the styling identical to `.weft-input`.

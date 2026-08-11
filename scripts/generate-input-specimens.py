@@ -89,7 +89,11 @@ CONTROLS = ['input', 'textarea', 'select']
 # here rather than silently skipped.
 NO_READONLY = {'select'}
 
-SELECT_OPTIONS = '<option>Thirty days</option><option>Ninety days</option>'
+SELECT_OPTIONS = ('<option>Thirty days</option><option>Ninety days</option>'
+                  # The unavailable option ships on every select specimen: its
+                  # strike-through treatment is the non-colour signal the popup
+                  # gets (owner call, visual pass round 3).
+                  '<option disabled>Forever (plan limit)</option>')
 
 
 def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='',

@@ -334,6 +334,16 @@ html,
 .weft-input:hover:not(:disabled):not([readonly]),
 .weft-textarea:hover:not(:disabled):not([readonly]),
 .weft-select:hover:not(:disabled) { border-color: var(--weft-ink); }
+
+/* An unavailable option is struck through, never merely greyed — the same
+ * colour-is-never-the-only-signal rule one level deeper (owner call). Dashes
+ * cannot reach option text; line-through can, and the muted colour keeps the
+ * UA grey from being the whole message. The popup is UA chrome no screenshot
+ * reaches, so error-icon.spec.ts asserts this computed on the option. */
+.weft-select option:disabled {
+  color: var(--weft-muted);
+  text-decoration: line-through;
+}
 .weft-input[aria-invalid="true"],
 .weft-textarea[aria-invalid="true"],
 .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }

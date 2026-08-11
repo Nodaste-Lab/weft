@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { Textarea } from '../textarea';
 import { Switch } from '../switch';
 
@@ -35,5 +35,46 @@ describe('the React layer rides the shared contract', () => {
     expect(root.className).toMatch(/\bh-6\b/);
     expect(root.className).toMatch(/\bw-10\b/);
     expect(root.className, 'the under-floor height must not return').not.toContain('h-[1.15rem]');
+  });
+});
+
+describe('an unavailable SelectItem is struck through, not merely dimmed', () => {
+  // Radix Select needs three DOM APIs jsdom lacks; shimmed here, narrowly.
+  beforeAll(() => {
+    globalThis.ResizeObserver = class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver;
+    Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => {});
+    Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture ?? (() => false);
+  });
+
+  it('carries the line-through variant alongside the dimming', async () => {
+    const { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } = await import(
+      '../select'
+    );
+    render(
+      <Select open>
+        <SelectTrigger>
+          <SelectValue placeholder="Retention" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="30">Thirty days</SelectItem>
+          <SelectItem value="forever" disabled>
+            Forever (plan limit)
+          </SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    const items = document.querySelectorAll('[data-slot="select-item"]');
+    expect(items.length).toBe(2);
+    const disabled = [...items].find((i) => i.getAttribute('data-disabled') !== null)!;
+    expect(disabled, 'the disabled item must exist').toBeTruthy();
+    expect(disabled.className).toContain('data-[disabled]:line-through');
+    const enabled = [...items].find((i) => i.getAttribute('data-disabled') === null)!;
+    expect(enabled.className, 'the variant is disabled-gated, so it is fine here too').toContain(
+      'data-[disabled]:line-through',
+    );
   });
 });
