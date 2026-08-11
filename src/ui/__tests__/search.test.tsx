@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { SearchField } from '../search-field';
 import type { CommitDetail } from '../use-commit-boundary';
 
@@ -210,5 +210,51 @@ describe('the commit boundary rides along', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'w' } });
     expect(changes).toEqual(['w']);
     expect(commits).toHaveLength(0);
+  });
+
+  describe('native form.reset() and the uncontrolled mirror', () => {
+    // reset() restores the DOM value without firing input/change, so the
+    // mirror that drives clear visibility would go stale in both directions.
+    // Either direction leaves a WRONG accessible affordance on screen.
+
+    it('a restored non-empty default brings the clear back', async () => {
+      const commits: CommitDetail[] = [];
+      render(
+        <form>
+          <SearchField label="Search projects" defaultValue="weft" onCommit={(d) => commits.push(d)} />
+        </form>,
+      );
+      const box = screen.getByRole('searchbox') as HTMLInputElement;
+      fireEvent.change(box, { target: { value: '' } });
+      expect(screen.queryByRole('button', { name: 'Clear search' })).toBeNull();
+      await act(async () => {
+        (document.querySelector('form') as HTMLFormElement).reset();
+      });
+      expect(box.value, 'jsdom restores the default on reset').toBe('weft');
+      expect(
+        screen.getByRole('button', { name: 'Clear search' }),
+        'content is back; the clear must be back with it',
+      ).toBeTruthy();
+      expect(commits, 'reset is not a boundary').toHaveLength(0);
+    });
+
+    it('a restored empty default takes the stale clear with it', async () => {
+      render(
+        <form>
+          <SearchField label="Search projects" />
+        </form>,
+      );
+      const box = screen.getByRole('searchbox') as HTMLInputElement;
+      fireEvent.change(box, { target: { value: 'weft' } });
+      expect(screen.getByRole('button', { name: 'Clear search' })).toBeTruthy();
+      await act(async () => {
+        (document.querySelector('form') as HTMLFormElement).reset();
+      });
+      expect(box.value).toBe('');
+      expect(
+        screen.queryByRole('button', { name: 'Clear search' }),
+        'an empty field offering a clear is a stale accessible button',
+      ).toBeNull();
+    });
   });
 });

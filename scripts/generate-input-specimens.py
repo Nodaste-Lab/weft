@@ -35,7 +35,7 @@ WHAT THE TESTS DRIVE FROM THE OUTSIDE
   Every measurable element carries data-spec (what it is for), plus the axis
   attributes the suite enumerates. Nothing is located by CSS class.
 """
-import pathlib, sys, html as html_mod
+import pathlib, re, sys, html as html_mod
 
 args = sys.argv[1:]
 output_override = None
@@ -46,6 +46,22 @@ if '--output' in args:
 
 W = pathlib.Path(args[0])
 SP = pathlib.Path(args[1])
+
+
+def sanctioned_reasons():
+    """The reason list, read from the shared module rather than restated —
+    prose that carries its own copy of the count is prose that goes stale
+    (it did: this page said "four" for a release after the owner added a
+    fifth). The regex is anchored to the frozen-array declaration."""
+    src = (W / 'tooling' / 'visibility-reasons.js').read_text()
+    block = re.search(r'VISIBILITY_REASONS = Object\.freeze\(\[(.*?)\]\)', src, re.S)
+    reasons = re.findall(r"'([a-z-]+)'", block.group(1))
+    assert reasons, 'could not parse VISIBILITY_REASONS from the shared module'
+    return reasons
+
+
+REASONS = sanctioned_reasons()
+REASON_COUNT_WORD = {4: 'four', 5: 'five', 6: 'six', 7: 'seven'}.get(len(REASONS), str(len(REASONS)))
 
 # The two files Heddle injects verbatim, in its production order.
 CSS_FILES = ['css/weft.css', 'css/weft-components.css']
@@ -241,7 +257,8 @@ def tiers_section():
         '<span class="expect">Trigger-then-field is the DEFAULT on every surface. The reveal '
         'contract (focus into the field on reveal, back to the trigger on user-initiated '
         'dismissal) travels with the deferred QuietField; a surface that instead ships an '
-        'always-visible field declares one of the four sanctioned reasons.</span></div>'
+        f'always-visible field declares one of the {REASON_COUNT_WORD} sanctioned reasons '
+        f'({", ".join(REASONS)}).</span></div>'
 
         '<div class="cell"><span class="cap">tier 2 · underline</span>'
         '<label class="weft-sr-only" for="tier2-underline">Owner</label>'

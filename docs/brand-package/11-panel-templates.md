@@ -52,7 +52,7 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
 | Body grid | `.weft-board-body` (258px rail + fluid detail) |
 | Filter rail | `.weft-board-rail`, `.weft-board-rail-section`, `.weft-board-rail-label` |
-| Search | `.weft-input` (real `<input type="search">`) / `<Input>` |
+| Search | the `.weft-search` recipe (leading icon + real `<input type="search">` + named clear `type="button"`) / `<SearchField>` |
 | Segmented toggle | `.weft-toggle-group.is-joined` / `<ToggleGroup joined>` |
 | Checkbox rows | `.weft-board-checks` + the canonical `.weft-checkbox-wrap` row and `.weft-checkbox` (disabled styling keys on the native attribute — no modifier class); `.weft-board-note` for the caption |
 | Preset picker | `.weft-select` (real `<select>`) / `<Select>` |

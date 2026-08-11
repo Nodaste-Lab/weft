@@ -301,6 +301,29 @@ test('T2-e: no text-entry control in the template specimens is named by aria-lab
   );
 });
 
+test('T2-f: every search input on the shipped template page uses the stated pattern, not a bare type attribute', () => {
+  // Search is a stated pattern (P7, document B §3). A bare
+  // <input type="search"> on the page consumers copy from teaches the
+  // superseded form — no named clear, no affordance — which is exactly how
+  // the pattern decays back out of the product one paste at a time.
+  const html = readFileSync(join(ROOT, 'docs', 'brand-package', 'panel-templates.html'), 'utf8');
+  const problems = [];
+  const searchRe = /<input\b[^>]*type="search"[^>]*>/gi;
+  let m;
+  while ((m = searchRe.exec(html)) !== null) {
+    // The recipe wraps the input in .weft-search with a named clear button.
+    // Look backwards for the nearest wrapper open and forwards for the clear.
+    const before = html.slice(Math.max(0, m.index - 600), m.index);
+    const after = html.slice(m.index, m.index + 900);
+    if (!/class="weft-search"/.test(before)) {
+      problems.push(`bare type="search" outside .weft-search: ${m[0].slice(0, 80)}`);
+    } else if (!/weft-search-clear/.test(after) || !/aria-label="[^"]+"/.test(/<button\b[^>]*weft-search-clear[^>]*>/.exec(after)?.[0] ?? '')) {
+      problems.push(`search input without a named .weft-search-clear button: ${m[0].slice(0, 80)}`);
+    }
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
+});
+
 test('T3: docs/brand-package/11-panel-templates.md exists and is non-empty', () => {
   const mdPath = join(ROOT, 'docs', 'brand-package', '11-panel-templates.md');
   assert.ok(existsSync(mdPath), '11-panel-templates.md must exist');

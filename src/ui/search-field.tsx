@@ -60,6 +60,27 @@ const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
     // clear. Controlled fields answer from the value prop; uncontrolled ones
     // from state seeded by defaultValue and fed by change events.
     const [innerValue, setInnerValue] = React.useState(String(props.defaultValue ?? ""));
+
+    // Native form.reset() restores the DOM value WITHOUT firing input/change,
+    // so the uncontrolled mirror above would go stale — a clear button shown
+    // for an empty field, or missing for a restored default, either way a
+    // wrong accessible affordance. Resync from the DOM after the reset's
+    // default action lands (the event fires first; the restoration follows in
+    // the same task, so a microtask reads the settled value). No commit is
+    // emitted — reset is not a boundary, and the helper already proves that.
+    React.useEffect(() => {
+      const el = innerRef.current;
+      const form = el?.form;
+      if (!form) return;
+      const onReset = () => {
+        queueMicrotask(() => {
+          if (innerRef.current) setInnerValue(innerRef.current.value);
+        });
+      };
+      form.addEventListener("reset", onReset);
+      return () => form.removeEventListener("reset", onReset);
+    }, []);
+
     const value = props.value !== undefined ? String(props.value) : innerValue;
     const hasContent = value.length > 0;
     const clearable = hasContent && !props.disabled && !props.readOnly;
