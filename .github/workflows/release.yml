@@ -32,6 +32,7 @@ jobs:
           npm run tokens
           npm run test:props
           npm run test:css-contract
+          npm run test:doctrine
           npm run test:contrast
           npm run test:template-contract
           npm run test:specimens

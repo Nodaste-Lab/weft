@@ -193,6 +193,7 @@ skipped rather than mistaken for a failure.
 | `props` / `test:props` | the committed prop-surface contract, and the gate's own tests |
 | `tokens` | token values change only with a version bump |
 | `test:css-contract` | selector semantics and the contrast floors |
+| `test:doctrine` | every class/token the doctrine names ships; no superseded wording survives; tags and open questions intact |
 | `test:contrast` | AA on paper, both themes |
 | `test:template-contract` | the weft-board template layer |
 | `test:specimens` | the input specimen page is fresh and its generator deterministic |

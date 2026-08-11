@@ -68,6 +68,26 @@ All ratios below are computed against actual rendered colors, including alpha co
 | `--weft-on-blue-soft` (white/78) on `--weft-blue` | Tertiary on blue (large only) | 3.58 | AA large ✓ |
 | `--weft-yellow-soft` (#2a241a) on `--weft-cream` | Ghost numerals (intentional whisper) | 1.23 | Acceptable — decorative (1.4.11 exempt) |
 
+### Form-control boundaries (non-text contrast, WCAG 1.4.11 — weft#16)
+
+The input work replaced the 1.29:1 hairline with a boundary pair measured on
+**composited pixels** rather than token arithmetic, across paper, cream and
+card, both themes, three densities, and every state but disabled:
+
+| Boundary | Where | Light | Dark | Verdict |
+|---|---|---|---|---|
+| `--weft-control-border` against paper | Text inputs, textareas, selects, ghost buttons | 3.50 | 3.60 | ≥3:1 ✓ |
+| `--weft-control-border` against cream | Same controls on the page ground | 3.48 | 3.61 | ≥3:1 ✓ |
+| `.weft-checkbox` / `.weft-radio` own 1.5px `--weft-ink` border | Choice controls | 4.88 | 3.54 | ≥3:1 ✓ |
+
+The same pair now feeds the React primitives through the `--input` /
+`--input-background` bridge, so both layers paint one boundary. **Disabled is
+exempt** — 1.4.11 excludes inactive components — and is held to a different
+rule instead: it must render distinctly from an editable control and from
+read-only, which `tests/contract/` asserts as painted deltas. The full matrix
+lives in `tests/contract/input-rendered-contract.spec.ts` and re-measures on
+every run; the numbers here are the shipped values, not a promise.
+
 ### What this means
 
 Three concrete problems:

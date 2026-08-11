@@ -30,6 +30,8 @@ jobs:
         run: npm run tokens
       - name: CSS semantics + contrast contract
         run: npm run test:css-contract
+      - name: Doctrine agrees with the code
+        run: npm run test:doctrine
       - name: Contrast contract (AA on paper, both themes)
         run: npm run test:contrast
       - name: Template contract (weft-board template layer)

@@ -65,6 +65,7 @@
     "tokens": "node scripts/design-system-tokens.mjs",
     "tokens:write": "node scripts/design-system-tokens.mjs --write",
     "test:css-contract": "node --test scripts/__tests__/css-contract.node.mjs",
+    "test:doctrine": "node --test scripts/__tests__/doctrine-contract.node.mjs",
     "check:exports": "node scripts/check-exports-contract.mjs",
     "test:contrast": "node --test scripts/__tests__/contrast-contract.node.mjs",
     "test:template-contract": "node --test scripts/__tests__/template-contract.node.mjs",
