@@ -812,3 +812,62 @@ html,
 .weft-callout.is-band.is-warn { border-left-color: var(--weft-warn); }
 .weft-callout.is-band.is-stop { border-left-color: var(--weft-stop); }
 .weft-callout.is-band.is-ok { border-left-color: var(--weft-ok); }
+
+/* ── Search (P7, proposals document B §3) ─────────────────────────────────────
+ * Search as a stated pattern, not a type attribute. The recipe:
+ *
+ *   <div class="weft-search">
+ *     <label class="weft-sr-only" for="q">Search projects</label>
+ *     <span class="weft-search-icon" aria-hidden="true">
+ *       <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+ *            stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/>
+ *            <path d="m21 21-4.3-4.3"/></svg>
+ *     </span>
+ *     <input class="weft-input" id="q" type="search" name="q"
+ *            placeholder="e.g. weft-board" />
+ *     <button type="button" class="weft-search-clear" aria-label="Clear search">
+ *       <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+ *            stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+ *     </button>
+ *   </div>
+ *
+ * The glyphs are INLINE SVG reading currentColor, never data-URI backgrounds —
+ * a data URI cannot read a token, which is the select-chevron trap, and an
+ * inline glyph follows every palette and theme for free.
+ *
+ * The clear is a real button type="button" (anything else submits the
+ * containing form — the classic defect), named, 24px in both dimensions, and
+ * it appears only when there is something to clear. CSS's one live emptiness
+ * signal is :placeholder-shown, so the recipe carries a placeholder — a
+ * format hint, never the name; the hidden label is the name. Clearing itself
+ * is three lines of consumer JS (set '', dispatch input, refocus) documented
+ * in the design-system doc: a stylesheet cannot write a value, and the parity
+ * record carries that honestly rather than pretending.
+ *
+ * The trailing padding is provisional until document B settles the search
+ * input's trailing geometry; P5's enumerated measurements finalize it. */
+.weft-search { position: relative; display: inline-flex; align-items: center; width: 100%; }
+.weft-search .weft-input { padding-left: 32px; padding-right: 36px; }
+.weft-search-icon {
+  position: absolute; left: 10px;
+  display: inline-flex; pointer-events: none;
+  color: var(--weft-muted);
+}
+.weft-search-clear {
+  position: absolute; right: 4px;
+  min-width: 24px; min-height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: transparent;
+  color: var(--weft-muted); cursor: pointer;
+  border-radius: var(--weft-radius-chip);
+}
+.weft-search-clear:hover { color: var(--weft-ink); }
+/* Only when there is something to clear — and never on a field that cannot be
+ * edited. Keyed on native state, so a bare-markup author gets the behaviour
+ * without a modifier class. */
+.weft-search:has(.weft-input:placeholder-shown) .weft-search-clear,
+.weft-search:has(.weft-input:disabled) .weft-search-clear,
+.weft-search:has(.weft-input[readonly]) .weft-search-clear { display: none; }
+/* The UA's own cancel affordance is unnamed and unstylable; the recipe ships
+ * a named one instead. */
+.weft-search .weft-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }

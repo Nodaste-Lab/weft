@@ -104,6 +104,7 @@ import {
   HoverCardTrigger,
 } from '../ui/hover-card';
 import { Input } from '../ui/input';
+import { SearchField } from '../ui/search-field';
 import { Label } from '../ui/label';
 import {
   Menubar,
@@ -1579,6 +1580,17 @@ export function DesignSystemUiGallery({
             <span aria-hidden="true">#</span>
             <Input variant="inline" aria-label="Rename board" defaultValue="Launch board" />
           </div>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="search-field"
+        title="Search Field"
+        summary="Search as a stated pattern: hidden label carries the name, leading icon, and a named clear control that appears only with content, keeps focus in the field, and can never submit a form."
+      >
+        <div style={fieldStackStyle}>
+          <SearchField label="Search projects" defaultValue="weft-board" />
+          <SearchField label="Search projects, empty" placeholder="e.g. weft-board" />
         </div>
       </PrimitiveCard>
 

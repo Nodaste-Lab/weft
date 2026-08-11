@@ -734,6 +734,14 @@
       "version": "1.0.0"
     },
     {
+      "id": "search-field",
+      "path": "src/ui/search-field.tsx",
+      "category": "inputs",
+      "summary": "Search as a stated pattern: hidden required label, leading currentColor icon, named clear control that appears only with content, preserves focus, emits one change and one commit, and never submits a form. Opt-in commit boundary.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "section-block",
       "path": "src/ui/section-block.tsx",
       "category": "disclosure",

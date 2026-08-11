@@ -2109,6 +2109,29 @@
         "native": []
       }
     },
+    "search-field": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "clearLabel": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onCommit": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "input"
+        ]
+      }
+    },
     "section-block": {
       "version": "1.0.0",
       "surface": {

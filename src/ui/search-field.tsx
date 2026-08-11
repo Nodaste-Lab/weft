@@ -1,0 +1,135 @@
+"use client";
+
+import * as React from "react";
+import { Search, X } from "lucide-react";
+import { Input } from "./input";
+import { useCommitBoundary, type CommitDetail } from "./use-commit-boundary";
+import { cn } from "./utils";
+
+/*
+ * SearchField — search as a stated pattern, not a type attribute (P7,
+ * proposals document B §3).
+ *
+ * Hidden label (the naming ladder's rung for a surface that cannot carry a
+ * visible one — the label prop is REQUIRED, so a nameless searchbox cannot be
+ * expressed), leading icon as an inline glyph reading currentColor (a data-URI
+ * cannot read a token — the select-chevron lesson), and a clear control that
+ * appears only when there is something to clear.
+ *
+ * The clear is specified behaviourally: a real `button type="button"` (inside
+ * a form anything else submits — the classic defect), named "Clear search",
+ * hidden under disabled and read-only (a value that cannot be edited cannot
+ * be cleared), and clearing keeps focus in the field while emitting exactly
+ * one change and one commit. Its `pointerdown` prevents default so focus
+ * never leaves the input on a pointer clear, registers an explicit save for
+ * the blur that fires when it does leave (keyboard activation), and cancels
+ * the registration if the activation dies on the way (drag-off, cancel).
+ *
+ * The trailing padding is provisional: document B has not settled the search
+ * input's trailing geometry, and P5's enumerated measurements finalize it.
+ */
+
+export type SearchFieldProps = Omit<React.ComponentProps<"input">, "type"> & {
+  /** The accessible name, rendered as a visually hidden label. Required. */
+  label: string;
+  /** Accessible name for the clear control. */
+  clearLabel?: string;
+  /** Opt-in commit signal (blur, Enter, clear) via useCommitBoundary. */
+  onCommit?: (detail: CommitDetail) => void;
+};
+
+const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
+  (
+    { label, clearLabel = "Clear search", onCommit, className, id, onChange, ...props },
+    ref,
+  ) => {
+    const autoId = React.useId();
+    const inputId = id ?? autoId;
+    const innerRef = React.useRef<HTMLInputElement | null>(null);
+    const setRef = (el: HTMLInputElement | null) => {
+      innerRef.current = el;
+      if (typeof ref === "function") ref(el);
+      else if (ref) ref.current = el;
+    };
+
+    // Content tracking so the clear appears only when there is something to
+    // clear. Controlled fields answer from the value prop; uncontrolled ones
+    // from state seeded by defaultValue and fed by change events.
+    const [innerValue, setInnerValue] = React.useState(String(props.defaultValue ?? ""));
+    const value = props.value !== undefined ? String(props.value) : innerValue;
+    const hasContent = value.length > 0;
+    const clearable = hasContent && !props.disabled && !props.readOnly;
+
+    const onCommitRef = React.useRef(onCommit);
+    onCommitRef.current = onCommit;
+    const boundary = useCommitBoundary({
+      onCommit: (detail) => onCommitRef.current?.(detail),
+    });
+
+    const clearInput = () => {
+      const el = innerRef.current;
+      if (!el) return;
+      // Through the native setter + a real input event, so controlled and
+      // uncontrolled consumers both see exactly ONE ordinary change — the
+      // helper never writes a value, and this component writes it as the
+      // user's own action, not as a state mutation behind React's back.
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        "value",
+      )!.set!;
+      setter.call(el, "");
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.focus();
+      boundary.commit("explicit-save");
+    };
+
+    return (
+      <div className={cn("relative inline-flex w-full items-center", className)}>
+        <label className="sr-only" htmlFor={inputId}>
+          {label}
+        </label>
+        <Search
+          aria-hidden="true"
+          size={14}
+          className="pointer-events-none absolute left-2.5 text-muted-foreground"
+        />
+        <Input
+          {...boundary.getFieldProps({
+            ...props,
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              setInnerValue(e.target.value);
+              onChange?.(e);
+            },
+          })}
+          id={inputId}
+          ref={setRef}
+          type="search"
+          // Provisional trailing padding — P5 finalizes against document B.
+          className={cn("pl-8", clearable && "pr-8", "[&::-webkit-search-cancel-button]:appearance-none")}
+        />
+        {clearable ? (
+          <button
+            type="button"
+            aria-label={clearLabel}
+            onPointerDown={(e) => {
+              // Keep focus in the field on a pointer clear; register for the
+              // keyboard path, where focus genuinely moves and blurs first.
+              e.preventDefault();
+              boundary.registerExplicitSave();
+            }}
+            onPointerLeave={boundary.cancelExplicitSave}
+            onPointerCancel={boundary.cancelExplicitSave}
+            onClick={clearInput}
+            className="absolute right-1 flex size-6 min-h-6 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent text-muted-foreground hover:text-foreground"
+          >
+            <X aria-hidden="true" size={14} />
+          </button>
+        ) : null}
+      </div>
+    );
+  },
+);
+
+SearchField.displayName = "SearchField";
+
+export { SearchField };

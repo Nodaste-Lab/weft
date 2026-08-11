@@ -72,6 +72,7 @@ export * from './ui/recap-section-shell';
 export * from './ui/repeat-list-field-column';
 export * from './ui/resizable';
 export * from './ui/scroll-area';
+export * from './ui/search-field';
 export * from './ui/section-block';
 export * from './ui/section-item';
 export * from './ui/select';
