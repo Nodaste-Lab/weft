@@ -987,3 +987,30 @@ html,
   box-sizing: border-box;
 }
 .weft-slider:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Resting tiers (P7, heuristic 1 as amended by A3/A6) ─────────────────────
+ * Quiet — trigger-then-field — is the DEFAULT and is a surface rule enforced
+ * where surfaces are declared (the visibility-reasons gate), not a class.
+ * The two field-shaped tiers are modifiers on the real controls:
+ *
+ *   .is-underline  Tier 2. A real control whose underline is appearance only —
+ *                  the underline IS the boundary and keeps the 3:1 border
+ *                  token. Longhands only: the three transparent sides must
+ *                  never touch the bottom, which still deepens for invalid
+ *                  and hover through the base rules.
+ *   .is-low        Tier 3. A bordered field with quieter colour. NEVER the
+ *                  borderless filled form the original heuristic drew — A2/A3
+ *                  rule it out, because a fill reaching 3:1 costs the muted
+ *                  placeholder its text contrast (1.90:1 at 45% ink).
+ */
+.weft-input.is-underline, .weft-textarea.is-underline {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  background-color: transparent;
+  border-radius: 0;
+}
+.weft-input.is-low, .weft-textarea.is-low, .weft-select.is-low {
+  background-color: transparent;
+  color: var(--weft-muted);
+}

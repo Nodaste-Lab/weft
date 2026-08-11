@@ -5,8 +5,11 @@ import { cn } from "./utils";
 type InputState = "default" | "error" | "disabled" | "readonly";
 // `default` is the standard form field; `inline` is a chromeless in-place editor
 // (tab/row rename, etc.) that inherits the surrounding typography and shows only a
-// focus ring — no height floor, border, fill, or padding.
-type InputVariant = "default" | "inline";
+// focus ring — no height floor, border, fill, or padding. `underline` and `low`
+// are the resting tiers (P7, heuristic 1 as amended): underline is a real field
+// whose bottom border alone carries the 3:1 boundary; low is a bordered field
+// with quieter colour — the borderless filled tier is ruled out by A2/A3.
+type InputVariant = "default" | "inline" | "underline" | "low";
 
 // Named (not inline in the forwardRef generic) so the prop-contract extractor's
 // *Props-alias scan captures the surface — keeps Input's contract gate-guarded.
@@ -32,6 +35,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           // and inherit the host's font; keep a Weft focus ring for affordance.
           variant === "inline" &&
             "h-auto rounded border-0 bg-transparent px-1 py-px text-[length:inherit] font-[inherit] text-inherit shadow-none focus-visible:border-transparent focus-visible:ring-0 focus-visible:[box-shadow:var(--weft-focus-ring)]",
+          // Tier 2: the underline is appearance only — same height, same
+          // behaviour, the bottom border alone carries the boundary.
+          variant === "underline" && "rounded-none border-x-0 border-t-0 bg-transparent px-0.5",
+          // Tier 3: quieter colour, never a quieter boundary.
+          variant === "low" && "bg-transparent text-muted-foreground",
           // readonly reads as filled-but-static, distinct from disabled's dimming.
           state === "readonly" && "cursor-default bg-muted/40",
           className,
