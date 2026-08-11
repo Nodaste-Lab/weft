@@ -403,6 +403,91 @@ def geometry_section():
         row + sm_row + f'<div class="grid">{singles}</div>')
 
 
+# ── Clearance under adversarial geometry (P5) ────────────────────────────────
+def clearance_section():
+    """Fixtures the equal-height stacked-row case cannot stand in for — the
+    plan's words: wrapped rows, long labels, trailing actions, narrow rails,
+    RTL, diagonal neighbours, container edges, hidden controls. The suite
+    asserts non-overlap and target spacing computationally; a screenshot
+    proves none of it."""
+    fixtures = (
+        # Many sm buttons forced to wrap in a narrow container: the wrap
+        # brings rows close vertically while flex gaps govern horizontally.
+        '<div class="cell"><span class="cap">wrapped sm buttons, 220px</span>'
+        '<div data-clearance="wrapped-row" style="width:220px;display:flex;flex-wrap:wrap;'
+        'gap:var(--weft-choice-gap)">'
+        + ''.join(f'<button type="button" class="weft-btn is-sm">B{i}</button>' for i in range(6))
+        + '</div></div>'
+        # A choice row whose label wraps to three lines, with a trailing
+        # icon-button action — the trailing target must clear the row's own
+        # checkbox despite the wrap changing the row's height.
+        '<div class="cell"><span class="cap">long label + trailing action</span>'
+        '<div data-clearance="long-label" style="width:240px">'
+        '<label class="weft-checkbox-wrap" style="align-items:flex-start">'
+        '<input type="checkbox" class="weft-checkbox" id="cl-long" /> '
+        '<span>Retention notes and every archived thread from the studio workspace, '
+        'including drafts nobody has opened since the spring migration</span>'
+        '<button type="button" class="weft-btn is-ghost is-sm" aria-label="Retention help" '
+        'style="margin-inline-start:auto">?</button>'
+        '</label></div></div>'
+        # The 258px rail with mixed stacked controls — the surface the board
+        # actually ships, in miniature.
+        '<div class="cell"><span class="cap">narrow rail, mixed stack</span>'
+        '<div data-clearance="narrow-rail" style="width:258px;display:flex;flex-direction:column;'
+        'gap:var(--weft-choice-gap)">'
+        '<label class="weft-sr-only" for="cl-rail-search">Search projects</label>'
+        '<input class="weft-input is-sm" id="cl-rail-search" />'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rail-a" /> <span>Only mine</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rail-b" /> <span>Archived too</span></label>'
+        '<button type="button" class="weft-btn is-sm">Apply</button>'
+        '</div></div>'
+        # The same rail mirrored: clearance is direction-blind or it is not
+        # clearance.
+        '<div class="cell"><span class="cap">the same rail, RTL</span>'
+        '<div data-clearance="narrow-rail-rtl" dir="rtl" style="width:258px;display:flex;'
+        'flex-direction:column;gap:var(--weft-choice-gap)">'
+        '<label class="weft-sr-only" for="cl-rtl-search">Search projects</label>'
+        '<input class="weft-input is-sm" id="cl-rtl-search" />'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rtl-a" /> <span>Only mine</span></label>'
+        '<button type="button" class="weft-btn is-sm">Apply</button>'
+        '</div></div>'
+        # Diagonal neighbours: a two-column grid offset so targets approach
+        # corner-to-corner — the geometry centre-to-centre reads miss.
+        '<div class="cell"><span class="cap">diagonal neighbours</span>'
+        '<div data-clearance="diagonal" style="width:280px;display:grid;'
+        'grid-template-columns:1fr 1fr;gap:var(--weft-choice-gap)">'
+        '<button type="button" class="weft-btn is-sm">One</button>'
+        '<div></div><div></div>'
+        '<button type="button" class="weft-btn is-sm">Two</button>'
+        '</div></div>'
+        # A control flush against its container edge, inside overflow:hidden —
+        # the visible target must still be the whole target.
+        '<div class="cell"><span class="cap">container edge</span>'
+        '<div data-clearance="edge" style="width:200px;overflow:hidden;'
+        'border:1px dashed var(--weft-rule)">'
+        '<button type="button" class="weft-btn is-sm" style="margin:0">Flush</button>'
+        '</div></div>'
+        # A hidden control in the set: zero-size targets are not targets, and
+        # the scanner must skip them rather than divide by them.
+        '<div class="cell"><span class="cap">hidden control among visible</span>'
+        '<div data-clearance="hidden" style="width:240px;display:flex;'
+        'gap:var(--weft-choice-gap)">'
+        '<button type="button" class="weft-btn is-sm">Shown</button>'
+        '<button type="button" class="weft-btn is-sm" style="display:none">Ghost</button>'
+        '<button type="button" class="weft-btn is-sm">Also shown</button>'
+        '</div></div>'
+    )
+    return section(
+        'clearance', 'Clearance — adversarial geometry',
+        'Decision 1, reading (b): a 44px undisturbed band where a neighbour exists, and the '
+        '24px target floor with SC 2.5.8 spacing everywhere. The stacked equal-height case is '
+        'proved in Geometry; these are the shapes that break naive centre-to-centre reads.',
+        f'<div class="grid">{fixtures}</div>')
+
+
 # ── 3. Naming ────────────────────────────────────────────────────────────────
 def naming_section():
     rows = []
@@ -686,6 +771,7 @@ def build(css_block):
         select_chrome_section(),
         search_section(),
         switch_slider_section(),
+        clearance_section(),
         tiers_section(),
     ])
     return f"""<!DOCTYPE html>

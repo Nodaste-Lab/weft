@@ -652,6 +652,20 @@ Every input sits inside a `.field` that stacks label + control + hint vertically
 Note the space before the `.req` span: the accessible name concatenates the label's text nodes, so without it the name is "Emailrequired".
 
 - `.input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
+
+#### The sizing model: density sets the tier, size steps within it
+
+One model, both layers — the **compose model** (P5, closing D4 against T2). Density is an application-level preference on `:root` and names the tier; a *size* is a deliberate hierarchy step **within** the current tier, never a way to emulate another density. `size="sm"` therefore no longer names a fixed pixel value: it names the small step of whatever tier the surface is in, and the map is decided per tier rather than derived —
+
+| tier | default | `sm` |
+|---|---|---|
+| marketing | 44px | 36px |
+| compact | 36px | 32px |
+| dense | 34px | 32px |
+
+The dense row is the D4 reconciliation: the board's `size="sm"` buttons render exactly the 32px D4 chose, while T2's 34px stays the dense tier — the two calls stop being separately citable. Both layers read the same tokens: plain CSS via `.is-sm` (`.weft-input.is-sm`, `.weft-select.is-sm` — left edge only, the chevron keeps its reserve — and `.weft-btn.is-sm`), React via the `size` axis on `Input`, `Button` and `SelectTrigger`, whose default/sm heights resolve through `--weft-control-h` / `--weft-control-h-sm` with the old fixed pixels as fallbacks. React's `lg`, `icon` and `dense` sizes sit **outside** the compose axis, deliberately: fixed-pixel conveniences with no plain-CSS counterpart, recorded in the parity matrix rather than half-mapped. The textarea has no step — it sizes by its own per-tier floor, `--weft-textarea-min-h` (96/80/72), in both layers.
+
+**Heuristic 11's scope, and why its numbers exist.** The rule's 44px figure is Level AAA target size (SC 2.5.5) and its 16px figure is the iOS viewport-zoom threshold — neither is the Level AA target-size criterion (SC 2.5.8, 24px) the rule cites. Decision 1 scoped them: **24px is the floor for the control itself; 44px is a clearance rule about what may sit beside it** — an undisturbed band measured outward only where a neighbour exists (reading (b)). Marketing surfaces carry the 44px tier and 16px type by default and are the surfaces the AAA figures bind; compact and dense surfaces are exempt from the 44/16 floors *as control dimensions* and are held instead to the 24px floor, the clearance band (the 32px choice row + 12px gap = 44px stack is that rule met by construction), and SC 2.5.8 spacing under adversarial geometry — wrapped rows, long labels, narrow rails, RTL, diagonal neighbours — measured computationally in `tests/contract/input-clearance.spec.ts`.
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.
 - Border transitions at `--weft-dur-fast`. No hover scale, no color bleed, no ring.
 - Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input. **It is delivered twice, as an `outline` and as a `box-shadow` with identical geometry.** One carrier alone was deletable: `:where()` contributes nothing to specificity, so any page's `.shadow { box-shadow: … }` declared later replaced the ring outright, with no error and no gate. A shadow utility cannot touch `outline`; an author `outline: none` cannot touch `box-shadow`.
