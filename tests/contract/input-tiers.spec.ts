@@ -66,12 +66,17 @@ async function topEdgeContrast(page: import('@playwright/test').Page, id: string
   const midX = box.x + box.width / 2;
   // Edge against the control's own interior, not the page above it — the
   // specimen's caption sits there and contaminates a ground sample. The
-  // interior at y+10 is padding: above the value text, below the border.
-  const [edge, interior] = await samplePoints(page, [
-    [midX, box.y + 1],
+  // interior at y+10 is padding: above the value text, below the border. The
+  // border itself is 1px on a fractional box origin, so a single rounded row
+  // can miss it entirely (observed: edge === interior, ratio exactly 1) —
+  // scan the top three rows and let the border be whichever differs most.
+  const [interior, ...rows] = await samplePoints(page, [
     [midX, box.y + 10],
+    [midX, box.y],
+    [midX, box.y + 1],
+    [midX, box.y + 2],
   ]);
-  return contrastRatio(edge, interior);
+  return Math.max(...rows.map((row) => contrastRatio(row, interior)));
 }
 
 for (const theme of ['light', 'dark'] as Theme[]) {
