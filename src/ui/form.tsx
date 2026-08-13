@@ -61,6 +61,7 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
+    formStatusId: `${id}-form-item-status`,
     ...fieldState,
   };
 };
@@ -73,16 +74,38 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue,
 );
 
+/**
+ * The async-pending registry (weft#16 follow-up, amendment A4 in force). A
+ * mounted FormStatus registers itself so FormControl can include the status id
+ * in the ONE ordered describedby list only while a status actually renders,
+ * and carry aria-busy on the control only while the supplied state is
+ * pending. The state itself is entirely consumer-supplied — Weft evaluates
+ * nothing (decision 7) and this registry carries presentation facts only.
+ */
+type FormStatusRegistryValue = {
+  status: { present: boolean; pending: boolean };
+  setStatus: React.Dispatch<React.SetStateAction<{ present: boolean; pending: boolean }>>;
+};
+
+const FormStatusRegistryContext = React.createContext<FormStatusRegistryValue>({
+  status: { present: false, pending: false },
+  setStatus: () => {},
+});
+
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   const id = React.useId();
+  const [status, setStatus] = React.useState({ present: false, pending: false });
+  const registry = React.useMemo(() => ({ status, setStatus }), [status]);
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div
-        data-slot="form-item"
-        className={cn("grid gap-2", className)}
-        {...props}
-      />
+      <FormStatusRegistryContext.Provider value={registry}>
+        <div
+          data-slot="form-item"
+          className={cn("grid gap-2", className)}
+          {...props}
+        />
+      </FormStatusRegistryContext.Provider>
     </FormItemContext.Provider>
   );
 }
@@ -105,26 +128,40 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { error, formItemId, formDescriptionId, formMessageId } =
+  const { error, formItemId, formDescriptionId, formMessageId, formStatusId } =
     useFormField();
+  const { status } = React.useContext(FormStatusRegistryContext);
+
+  // A5: ONE ordered list, ERROR FIRST. A field in error has one urgent
+  // thing to say and one background thing; leading with the format hint
+  // buries the reason the value was rejected behind text the user has
+  // already read. Order is the whole rule, which is why
+  // __tests__/form-describedby-order.test.tsx asserts position rather than
+  // presence — both ids in the wrong order satisfy every existence and
+  // resolution check ever written against this, and did.
+  //
+  // The status id joins the list only while a FormStatus renders, BETWEEN
+  // error and help: the error keeps first position (A5's rationale — urgent
+  // first), and the status precedes durable help because it is the newest
+  // fact about the field. No shipped pair changes relative order.
+  const describedby = [
+    error ? formMessageId : null,
+    status.present ? formStatusId : null,
+    formDescriptionId,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <Slot
       data-slot="form-control"
       id={formItemId}
-      // A5: ONE ordered list, ERROR FIRST. A field in error has one urgent
-      // thing to say and one background thing; leading with the format hint
-      // buries the reason the value was rejected behind text the user has
-      // already read. Order is the whole rule, which is why
-      // __tests__/form-describedby-order.test.tsx asserts position rather than
-      // presence — both ids in the wrong order satisfy every existence and
-      // resolution check ever written against this, and did.
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formMessageId} ${formDescriptionId}`
-      }
+      aria-describedby={describedby}
       aria-invalid={!!error}
+      // Pending exposure only: the control is marked busy while the consumer
+      // says its check is in flight. Exposure, never announcement — and never
+      // a claim about validity, which stays the consumer's (decision 7).
+      aria-busy={status.pending || undefined}
       {...props}
     />
   );
@@ -140,6 +177,73 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
+  );
+}
+
+type FormStatusTone = "ok" | "info" | "warn" | "stop";
+
+const STATUS_TONE_CLASS: Record<FormStatusTone, string> = {
+  // The same four axes as the tone tokens; the consumer's TEXT carries the
+  // meaning and the colour reinforces it — never the only signal. A stop
+  // tone is presentation only: whether the field is invalid stays the
+  // consumer's call, through its own error machinery.
+  ok: "text-[var(--weft-ok)]",
+  info: "text-[var(--weft-info)]",
+  warn: "text-[var(--weft-warn)]",
+  stop: "text-[var(--weft-stop)]",
+};
+
+/**
+ * Asynchronous pending/result presentation (amendment A4, in force): the
+ * consumer supplies `pending` or a settled `tone` plus its own words; Weft
+ * renders them in the hint slot and nothing more. Pending is text with a
+ * pulsing dot — `weft-pulse`'s final keyframe is opacity 1, so under the
+ * reduced-motion freeze the dot measures static-visible instead of reading
+ * as a hung field. The dot is also the non-colour shape signal for pending.
+ * Replacement, not stacking: one element, one stable id; staleness and
+ * cancellation belong to the consumer, who decides what state to supply.
+ */
+function FormStatus({
+  className,
+  pending,
+  tone,
+  children,
+  ...props
+}: React.ComponentProps<"p"> & { pending?: boolean; tone?: FormStatusTone }) {
+  const { formStatusId } = useFormField();
+  const { setStatus } = React.useContext(FormStatusRegistryContext);
+
+  React.useEffect(() => {
+    setStatus({ present: true, pending: !!pending });
+    return () => setStatus({ present: false, pending: false });
+  }, [setStatus, pending]);
+
+  return (
+    <p
+      data-slot="form-status"
+      id={formStatusId}
+      data-pending={pending ? "true" : undefined}
+      data-tone={pending ? undefined : tone}
+      className={cn(
+        "text-sm",
+        pending || !tone ? "text-muted-foreground" : STATUS_TONE_CLASS[tone],
+        className,
+      )}
+      {...props}
+    >
+      {pending ? (
+        <span
+          data-status-dot
+          aria-hidden="true"
+          className="mr-1.5 inline-block size-1.5 rounded-[var(--weft-radius-dot)] bg-[var(--weft-blue)] align-[1px]"
+          style={{
+            animation:
+              "weft-pulse var(--weft-dur-pulse, 2s) var(--weft-ease-in-out, ease-in-out) infinite",
+          }}
+        />
+      ) : null}
+      {children}
+    </p>
   );
 }
 
@@ -187,5 +291,7 @@ export {
   FormControl,
   FormDescription,
   FormMessage,
+  FormStatus,
   FormField,
 };
+export type { FormStatusTone };
