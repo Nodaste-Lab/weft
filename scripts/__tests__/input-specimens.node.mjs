@@ -186,6 +186,37 @@ test('S14: aria-busy and the pending hint travel together, both directions', () 
   assert.deepEqual(problems, [], `The pending convention shipped by halves:\n  ${problems.join('\n  ')}`);
 });
 
+test('S16: a grid holds only elements — no stray direct text (the tuple-repr class)', () => {
+  // Round-1 reviewer finding on the async follow-up: the pending section's
+  // cells were built as a Python TUPLE and interpolated, so the committed
+  // page carried visible "(' … ', ' … ')" text nodes — while every
+  // selector-based gate stayed green, because browsers still parsed the
+  // inner elements. The class is stray direct text inside a layout
+  // container, so the gate walks tags with a stack and refuses any
+  // non-whitespace text node sitting DIRECTLY inside a .grid, page-wide.
+  // Text deeper down (captions, hints, expects) lives inside cells and is
+  // untouched.
+  const VOID = new Set(['input', 'br', 'img', 'hr', 'meta', 'link', 'source', 'wbr']);
+  const problems = [];
+  const stack = [];
+  for (const tok of html.split(/(<[^>]+>)/)) {
+    if (!tok) continue;
+    if (tok.startsWith('<')) {
+      if (tok.startsWith('</')) {
+        stack.pop();
+      } else if (!tok.startsWith('<!')) {
+        const name = tok.match(/^<([a-zA-Z0-9-]+)/)?.[1]?.toLowerCase();
+        if (!name) continue;
+        if (tok.endsWith('/>') || VOID.has(name)) continue;
+        stack.push({ name, isGrid: /class="[^"]*\bgrid\b[^"]*"/.test(tok) });
+      }
+    } else if (stack[stack.length - 1]?.isGrid && tok.trim()) {
+      problems.push(`stray text directly inside a grid: ${JSON.stringify(tok.trim().slice(0, 60))}`);
+    }
+  }
+  assert.deepEqual(problems, [], `A grid renders cells, not text:\n  ${problems.join('\n  ')}`);
+});
+
 test('S15: no two status specimens present different tones with identical text', () => {
   // The consumer's TEXT carries the meaning; tone colour reinforces it. Two
   // statuses distinguished by colour alone would be the 1.4.1 class the owner

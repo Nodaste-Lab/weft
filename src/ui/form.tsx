@@ -92,6 +92,18 @@ const FormStatusRegistryContext = React.createContext<FormStatusRegistryValue>({
   setStatus: () => {},
 });
 
+// Registration must land in a LAYOUT effect: a passive effect commits the
+// DOM a paint early, so a pending field could paint one frame without its
+// aria-busy and describedby reference, and a settled field could paint one
+// frame still busy — found by review round 1, asserted with flushSync in
+// form-status.test.tsx (layout effects flush inside the synchronous commit;
+// passive effects do not). On the server there is no paint and no layout
+// effect: the status ELEMENT renders in the markup, and the control's
+// reference attaches at hydration — a stated boundary, pinned by the SSR
+// test, not a discovered one.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   const id = React.useId();
   const [status, setStatus] = React.useState({ present: false, pending: false });
@@ -213,7 +225,7 @@ function FormStatus({
   const { formStatusId } = useFormField();
   const { setStatus } = React.useContext(FormStatusRegistryContext);
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setStatus({ present: true, pending: !!pending });
     return () => setStatus({ present: false, pending: false });
   }, [setStatus, pending]);

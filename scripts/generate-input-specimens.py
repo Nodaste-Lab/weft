@@ -264,7 +264,7 @@ def pending_section():
                 f'<span class="cap">{E(cap)}</span>{markup}'
                 f'<span class="expect">expects: {E(expect)}</span></div>')
 
-    cells = (
+    cells = ''.join([
         cell('pending', 'Pending — the check is in flight',
              '<div class="weft-field">'
              '<label class="weft-field-label" for="pd-pending">Source path</label>'
@@ -326,7 +326,7 @@ def pending_section():
                '<span class="weft-field-hint" id="pd-order-hint">Must be reachable over HTTPS.</span></div>',
              'A5 extended, not reordered: error id first (urgent first), status id '
              'second (the newest fact), help id third. Exposure, never announcement.'),
-    )
+    ])
     return section(
         'pending', 'Asynchronous pending — presentation of a supplied state',
         'Amendment A4 in force: commit starts evaluation; the consumer may prevent progression '

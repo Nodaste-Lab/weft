@@ -2,6 +2,9 @@
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { flushSync } from 'react-dom';
+import * as ReactDOMClient from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -206,6 +209,98 @@ describe('FormStatus — replacement, not stacking', () => {
     expect(statuses[0].id, 'the id is stable across the transition').toBe(before);
     expect(statuses[0].textContent).toContain('Source is reachable.');
     expect(statuses[0].textContent).not.toContain('Checking source…');
+  });
+});
+
+describe('exposure commits before paint — layout effects, not passive (review round 1)', () => {
+  /**
+   * A passive-effect registration commits the DOM one paint early: a pending
+   * field paints a frame without aria-busy or the describedby reference, and
+   * a settled field paints a frame still busy. flushSync is the instrument
+   * that can tell the two apart — layout effects (and the re-renders they
+   * schedule) flush inside the synchronous commit; passive effects run after
+   * it. These assertions read the DOM the instant flushSync returns, so they
+   * FAIL if the registration rides useEffect. Rendered outside RTL's act on
+   * purpose — act would flush passive effects and hide the difference.
+   */
+  function renderSync(ui: React.ReactElement) {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = ReactDOMClient.createRoot(container);
+    flushSync(() => root.render(ui));
+    return {
+      container,
+      update: (next: React.ReactElement) => flushSync(() => root.render(next)),
+      cleanup: () => {
+        root.unmount();
+        container.remove();
+      },
+    };
+  }
+
+  function withoutActEnvironment(run: () => void) {
+    const g = globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean };
+    const prev = g.IS_REACT_ACT_ENVIRONMENT;
+    g.IS_REACT_ACT_ENVIRONMENT = false;
+    try {
+      run();
+    } finally {
+      g.IS_REACT_ACT_ENVIRONMENT = prev;
+    }
+  }
+
+  it('the first synchronous commit already references the status and reads busy', () => {
+    withoutActEnvironment(() => {
+      const r = renderSync(<StatusField pending statusText="Checking source…" />);
+      const control = r.container.querySelector('input')!;
+      expect(
+        control.getAttribute('aria-busy'),
+        'a pending field must never paint a frame that is not busy',
+      ).toBe('true');
+      expect(control.getAttribute('aria-describedby') ?? '').toMatch(/-form-item-status/);
+      r.cleanup();
+    });
+  });
+
+  it('pending → settled clears busy inside the same synchronous commit', () => {
+    withoutActEnvironment(() => {
+      const r = renderSync(<StatusField pending statusText="Checking source…" />);
+      r.update(<StatusField tone="ok" statusText="Source is reachable." />);
+      const control = r.container.querySelector('input')!;
+      expect(
+        control.getAttribute('aria-busy'),
+        'a settled field must never paint a frame still busy',
+      ).toBeNull();
+      r.cleanup();
+    });
+  });
+
+  it('status removal takes its id out of the list inside the same synchronous commit', () => {
+    withoutActEnvironment(() => {
+      const r = renderSync(<StatusField pending statusText="Checking source…" />);
+      r.update(<StatusField />);
+      const control = r.container.querySelector('input')!;
+      expect(control.getAttribute('aria-describedby') ?? '').not.toMatch(/-form-item-status/);
+      expect(control.getAttribute('aria-busy')).toBeNull();
+      r.cleanup();
+    });
+  });
+});
+
+describe('the server boundary is stated, not discovered', () => {
+  it('SSR markup renders the status element; the reference attaches at hydration', () => {
+    // There is no paint and no layout effect on the server. The honest
+    // contract: the status ELEMENT ships in the markup with its id, and the
+    // control's describedby/aria-busy attach at hydration. This test PINS
+    // that boundary so a change to it is a decision, not a drift.
+    const markup = renderToString(<StatusField pending statusText="Checking source…" />);
+    expect(markup).toContain('data-slot="form-status"');
+    expect(markup).toMatch(/id="[^"]*-form-item-status"/);
+    const describedby = markup.match(/aria-describedby="([^"]*)"/)?.[1] ?? '';
+    expect(describedby, 'the hydration boundary: no status reference in server markup').not.toMatch(
+      /-form-item-status/,
+    );
+    expect(markup).not.toContain('aria-busy="true"');
   });
 });
 
