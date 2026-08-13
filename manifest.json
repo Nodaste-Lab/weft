@@ -112,7 +112,7 @@
       "category": "actions",
       "summary": "Primary action component with variant, size (default/sm/lg/icon/dense), disabled, blocked, and loading state options.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "id": "calendar",
@@ -412,7 +412,7 @@
       "id": "hud-toggle-switch",
       "path": "src/ui/hud-toggle-switch.tsx",
       "category": "toggles",
-      "summary": "HUD-density binary toggle (34\u00d718). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
+      "summary": "HUD-density binary toggle (34×18). Use in HUD chrome where Switch is too tall; default in Session Context, App Settings, and agent plugin sections.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -467,17 +467,17 @@
       "id": "inline-edit-list-row",
       "path": "src/ui/inline-edit-list-row.tsx",
       "category": "data-display",
-      "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Used in recap beats + mysteries.",
+      "summary": "Inline-editable text row with optional index badge / leading icon and hover edit + delete affordances. Editing rides the commit boundary: blur commits, Enter is a newline, an emptied value survives, Escape offers a two-step discard. Used in recap beats + mysteries.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "2.0.0"
     },
     {
       "id": "input",
       "path": "src/ui/input.tsx",
       "category": "inputs",
-      "summary": "Single-line text input with tokenized focus and error states, plus a chromeless inline variant.",
+      "summary": "Single-line text input with tokenized focus and error states, plus a chromeless inline variant. Variants: default, inline, underline (tier 2), low (tier 3). Compose size axis: density sets the tier, size=\"sm\" steps within it (native size attribute removed).",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "2.0.0"
     },
     {
       "id": "knowledge-search-result-row.figma",
@@ -568,7 +568,7 @@
       "id": "mode-only-toggle",
       "path": "src/ui/mode-only-toggle.tsx",
       "category": "toggles",
-      "summary": "Compact \u201cuse only in this mode\u201d switch + label for vault paths, API keys, and transcription scope.",
+      "summary": "Compact “use only in this mode” switch + label for vault paths, API keys, and transcription scope.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -599,7 +599,7 @@
       "id": "panel-block-shell",
       "path": "src/ui/panel-block-shell.tsx",
       "category": "layout",
-      "summary": "Outer chrome for custom panel runtime blocks \u2014 title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
+      "summary": "Outer chrome for custom panel runtime blocks — title strip, optional collapse, selection ring, body padding (with seamless variant for full-bleed lists).",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -644,7 +644,7 @@
       "id": "pill-toggle-group",
       "path": "src/ui/pill-toggle-group.tsx",
       "category": "toggles",
-      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup \u2014 used for period and mode selectors.",
+      "summary": "Gap-separated pill segmented control. Distinct from joined ToggleGroup — used for period and mode selectors.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -734,6 +734,14 @@
       "version": "1.0.0"
     },
     {
+      "id": "search-field",
+      "path": "src/ui/search-field.tsx",
+      "category": "inputs",
+      "summary": "Search as a stated pattern: hidden required label, leading currentColor icon, named clear control that appears only with content, preserves focus, emits one change and one commit, and never submits a form. Opt-in commit boundary.",
+      "showcase": true,
+      "version": "1.1.0"
+    },
+    {
       "id": "section-block",
       "path": "src/ui/section-block.tsx",
       "category": "disclosure",
@@ -755,7 +763,7 @@
       "category": "inputs",
       "summary": "Composable select menu with trigger, content, and items.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "separator",
@@ -776,7 +784,7 @@
       "id": "settings-module-shell",
       "path": "src/ui/settings-module-shell.tsx",
       "category": "layout",
-      "summary": "Bordered settings card \u2014 eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
+      "summary": "Bordered settings card — eyebrow + title + actions header, padded body, optional footer. Used by Session Context, App Settings, My Account, and Mode Manager.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -925,7 +933,7 @@
       "category": "toggles",
       "summary": "Binary on or off switch with track and thumb.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "table",
@@ -957,7 +965,7 @@
       "category": "inputs",
       "summary": "Multi-line text field with tokenized focus styling.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "id": "tier-group",
@@ -1010,7 +1018,7 @@
       "id": "transcript-list-item-frame",
       "path": "src/ui/transcript-list-item-frame.tsx",
       "category": "layout",
-      "summary": "Transcript / highlight / pinned line shell \u2014 header meta row, body text, optional footer (tags + speaker select).",
+      "summary": "Transcript / highlight / pinned line shell — header meta row, body text, optional footer (tags + speaker select).",
       "showcase": true,
       "version": "1.0.0"
     }
@@ -1024,6 +1032,11 @@
     }
   ],
   "uiUtilities": [
+    {
+      "id": "use-commit-boundary",
+      "path": "src/ui/use-commit-boundary.ts",
+      "summary": "Opt-in commit-boundary hook: one commit signal per transaction (blur, Enter, explicit save), deduplicated by registration. Emits { reason, sources }; never evaluates validity, writes values, or touches submission state."
+    },
     {
       "id": "use-mobile",
       "path": "src/ui/use-mobile.ts",
@@ -1041,7 +1054,7 @@
       "path": "css/weft-templates.css",
       "classPrefix": "weft-board",
       "version": "2.0.0",
-      "summary": "Operator action board \u2014 filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
+      "summary": "Operator action board — filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
       "docs": "docs/brand-package/11-panel-templates.md"
     }
   ]

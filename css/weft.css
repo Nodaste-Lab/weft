@@ -135,10 +135,30 @@
 
   /* ── Density (marketing default — see [data-density="compact"] for app) ── */
   --weft-control-h:         44px;
+  /* Choice rows (decision 1, clearance reading (b)): the row clears the 24px
+   * control floor on its own, and row + stack gap = 44px puts adjacent rows
+   * exactly one clearance band apart. Density-invariant by that decision —
+   * 32 + 12 = 44 at marketing, compact and dense alike. */
+  --weft-choice-row-h:      32px;
+  --weft-choice-gap:        12px;
   --weft-control-pad-x:     14px;
   --weft-control-pad-y:     11px;
   --weft-control-gap:       12px;
   --weft-control-text:      16px;
+  /* ── Size step (P5, compose model — owner call 2026-08-11) ──
+   * Density sets the tier; size steps within it. sm is one step down, and the
+   * map is decided per tier rather than one fixed pixel value: 44→36, 36→32,
+   * 34→32 — chosen so D4's 32px board buttons render unchanged at dense.
+   * input-geometry.spec.ts pins the decided values; this block only carries
+   * them. */
+  --weft-control-h-sm:      36px;
+  --weft-control-pad-x-sm:  10px;
+  /* The textarea floor finally tracks its tier (P5): ~2 rows + chrome per
+   * tier, on the 4px grid — 96/80/72. */
+  --weft-textarea-min-h:    96px;
+  /* Search trailing reserve: 4px inset + 24px clear + a density-scaled text
+   * gap (8/4/2) — owner call 2026-08-10. */
+  --weft-search-pad-end:    36px;
   --weft-stack-gap:         16px;
   --weft-row-h:             48px;
   --weft-section-pad-y:     110px;
@@ -354,6 +374,10 @@
   --weft-control-h:         36px;
   --weft-control-pad-x:     10px;
   --weft-control-pad-y:     11px;   /* unchanged from base: compact rendering must not move */
+  --weft-control-h-sm:      32px;
+  --weft-control-pad-x-sm:  9px;
+  --weft-textarea-min-h:    80px;
+  --weft-search-pad-end:    32px;
   --weft-control-gap:       8px;
   --weft-control-text:      14px;
   --weft-stack-gap:         12px;
@@ -377,6 +401,10 @@
   --weft-control-h:         34px;
   --weft-control-pad-x:     9px;
   --weft-control-pad-y:     6px;    /* so min-height, not padding, governs at 34px */
+  --weft-control-h-sm:      32px;   /* D4's board buttons stay exactly 32px */
+  --weft-control-pad-x-sm:  9px;
+  --weft-textarea-min-h:    72px;
+  --weft-search-pad-end:    30px;
   --weft-control-gap:       6px;
   --weft-control-text:      13px;
   --weft-stack-gap:         10px;
@@ -502,8 +530,12 @@
   --destructive:                 var(--weft-stop);
   --destructive-foreground:      var(--weft-on-blue);
   --border:                      var(--weft-rule);
-  --input:                       var(--weft-paper);
-  --input-background:            var(--weft-paper);
+  /* P5 closes the recorded layer-parity gap: the React primitives paint their
+   * boundary from these two, and both pointed at --weft-paper — a 1.30:1
+   * hairline on the layer the plain-CSS field left behind at P4. They now
+   * read the same Option C pair the plain-CSS boundary reads. */
+  --input:                       var(--weft-control-border);
+  --input-background:            var(--weft-control-fill);
   --ring:                        var(--weft-focus-ring-color);
   --success:                     var(--weft-ok);
   --success-foreground:          var(--weft-fixed-white);

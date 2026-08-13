@@ -35,7 +35,7 @@ WHAT THE TESTS DRIVE FROM THE OUTSIDE
   Every measurable element carries data-spec (what it is for), plus the axis
   attributes the suite enumerates. Nothing is located by CSS class.
 """
-import pathlib, sys, html as html_mod
+import pathlib, re, sys, html as html_mod
 
 args = sys.argv[1:]
 output_override = None
@@ -46,6 +46,22 @@ if '--output' in args:
 
 W = pathlib.Path(args[0])
 SP = pathlib.Path(args[1])
+
+
+def sanctioned_reasons():
+    """The reason list, read from the shared module rather than restated —
+    prose that carries its own copy of the count is prose that goes stale
+    (it did: this page said "four" for a release after the owner added a
+    fifth). The regex is anchored to the frozen-array declaration."""
+    src = (W / 'tooling' / 'visibility-reasons.js').read_text()
+    block = re.search(r'VISIBILITY_REASONS = Object\.freeze\(\[(.*?)\]\)', src, re.S)
+    reasons = re.findall(r"'([a-z-]+)'", block.group(1))
+    assert reasons, 'could not parse VISIBILITY_REASONS from the shared module'
+    return reasons
+
+
+REASONS = sanctioned_reasons()
+REASON_COUNT_WORD = {4: 'four', 5: 'five', 6: 'six', 7: 'seven'}.get(len(REASONS), str(len(REASONS)))
 
 # The two files Heddle injects verbatim, in its production order.
 CSS_FILES = ['css/weft.css', 'css/weft-components.css']
@@ -73,7 +89,11 @@ CONTROLS = ['input', 'textarea', 'select']
 # here rather than silently skipped.
 NO_READONLY = {'select'}
 
-SELECT_OPTIONS = '<option>Thirty days</option><option>Ninety days</option>'
+SELECT_OPTIONS = ('<option>Thirty days</option><option>Ninety days</option>'
+                  # The unavailable option ships on every select specimen: its
+                  # strike-through treatment is the non-colour signal the popup
+                  # gets (owner call, visual pass round 3).
+                  '<option disabled>Forever (plan limit)</option>')
 
 
 def control_html(kind, spec, ident, state='default', extra_attrs='', cls_extra='',
@@ -121,6 +141,166 @@ def section(sid, title, note, body):
             f'<p class="note">{note}</p>'
             f'<div class="sec-body">{body}</div>'
             f'</section>')
+
+
+
+
+# ── 7. Search (P7, document B §3) ────────────────────────────────────────────
+SEARCH_ICON = ('<span class="weft-search-icon" aria-hidden="true">'
+               '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" '
+               'stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/>'
+               '<path d="m21 21-4.3-4.3"/></svg></span>')
+SEARCH_CLEAR = ('<button type="button" class="weft-search-clear" aria-label="Clear search">'
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" '
+                'stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+                '</button>')
+
+
+def search_section():
+    def case(cid, cap, attrs='', value=None):
+        v = f' value="{E(value)}"' if value else ''
+        return (f'<div class="cell" data-search-case="{cid}"><span class="cap">{E(cap)}</span>'
+                f'<div class="weft-search">'
+                f'<label class="weft-sr-only" for="{cid}-input">Search projects</label>'
+                f'{SEARCH_ICON}'
+                f'<input class="weft-input" id="{cid}-input" type="search" name="{cid}" '
+                f'placeholder="e.g. weft-board"{v} {attrs}/>'
+                f'{SEARCH_CLEAR}'
+                f'</div></div>')
+    cells = (
+        case('search-empty', 'empty — clear hidden')
+        + case('search-filled', 'filled — clear visible', value='weft-board')
+        + case('search-disabled', 'disabled — clear hidden', attrs='disabled ', value='weft-board')
+        + case('search-readonly', 'read-only — clear hidden', attrs='readonly ', value='weft-board')
+    )
+    return section(
+        'search', 'Search — a stated pattern, not a type attribute',
+        'Hidden label carries the name; the placeholder is a format hint. The clear is a real '
+        'button type="button", named, 24px in both dimensions, and it appears only when there is '
+        'something to clear — keyed on native state, so a bare-markup author gets the behaviour '
+        'without a modifier class. Glyphs are inline SVG reading currentColor, never data-URI '
+        'backgrounds, so they follow every palette and theme.',
+        f'<div class="grid">{cells}</div>')
+
+# ── 8. Switch and slider (P7) ────────────────────────────────────────────────
+def switch_slider_section():
+    cells = (
+        '<div class="cell"><span class="cap">switch · off</span>'
+        '<label class="weft-sr-only" for="sw-default">Notifications</label>'
+        '<input type="checkbox" class="weft-switch" id="sw-default" name="sw-demo" /></div>'
+
+        '<div class="cell"><span class="cap">switch · on</span>'
+        '<label class="weft-sr-only" for="sw-checked">Notifications, on</label>'
+        '<input type="checkbox" class="weft-switch" id="sw-checked" checked /></div>'
+
+        '<div class="cell"><span class="cap">switch · disabled</span>'
+        '<label class="weft-sr-only" for="sw-disabled">Locked setting</label>'
+        '<input type="checkbox" class="weft-switch" id="sw-disabled" checked disabled /></div>'
+
+        '<div class="cell"><span class="cap">switch · in a row</span>'
+        '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
+        'id="sw-row" /> <span>Email me a digest</span></label></div>'
+        # B's disabled card: lock glyph beside the label, dashed muted track —
+        # state never carried by colour alone.
+        '<div class="cell"><span class="cap">switch · disabled, in a row</span>'
+        '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
+        'id="sw-row-disabled" checked disabled /> <span>Locked on</span></label></div>'
+
+        '<div class="cell"><span class="cap">slider</span>'
+        '<label class="weft-sr-only" for="sl-default">Volume</label>'
+        '<input type="range" class="weft-slider" id="sl-default" '
+        'min="0" max="10" step="2" value="4" /></div>'
+
+        '<div class="cell"><span class="cap">slider · disabled</span>'
+        '<label class="weft-sr-only" for="sl-disabled">Locked volume</label>'
+        '<input type="range" class="weft-slider" id="sl-disabled" '
+        'min="0" max="10" step="2" value="4" disabled /></div>'
+
+        '<div class="cell" dir="rtl"><span class="cap">slider · rtl</span>'
+        '<label class="weft-sr-only" for="sl-rtl">Volume, right to left</label>'
+        '<input type="range" class="weft-slider" id="sl-rtl" '
+        'min="0" max="10" step="2" value="4" /></div>'
+
+        '<div class="cell"><span class="cap">serialization form</span>'
+        '<form id="switch-slider-form">'
+        '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
+        'name="sw-on" id="ssf-sw-on" checked /> <span>On, serializes</span></label>'
+        '<label class="weft-switch-wrap"><input type="checkbox" class="weft-switch" '
+        'name="sw-off" id="ssf-sw-off" /> <span>Off, absent</span></label>'
+        '<label class="weft-sr-only" for="ssf-volume">Volume</label>'
+        '<input type="range" class="weft-slider" id="ssf-volume" name="volume" '
+        'min="0" max="10" step="2" value="4" />'
+        '</form></div>'
+
+        '<div class="cell"><span class="cap">RangeBounds — the documented divergence</span>'
+        '<form id="range-bounds-form">'
+        '<fieldset class="weft-field-group"><legend>Retention window (days)</legend>'
+        '<label class="weft-field-label" for="rb-from">From</label>'
+        '<input type="range" class="weft-slider" id="rb-from" name="retention-from" '
+        'min="0" max="10" value="2" />'
+        '<label class="weft-field-label" for="rb-to">To</label>'
+        '<input type="range" class="weft-slider" id="rb-to" name="retention-to" '
+        'min="0" max="10" value="8" />'
+        '</fieldset></form>'
+        '<span class="expect">Two named sliders in a named group. A native range has one thumb '
+        'and never two without scripting — which the plain-CSS layer exists to avoid — so this '
+        'diverges from the React multi-thumb Slider deliberately, with a rationale and no '
+        'expiry. From-at-or-below-To is consumer-owned validation.</span></div>'
+    )
+    return section(
+        'switch-slider', 'Switch and slider — native behaviour, not appearance',
+        'Both are styled NATIVE inputs: keyboard, drag, min/max/step, RTL, disabled, focus and '
+        'form serialization are the browser\'s own. The bare switch is 40×24 — the target floor '
+        'with no wrapper doing the work. An unchecked switch serializes as ABSENT, never as a '
+        'falsy value. Read-only is unsupported in both layers, deliberately: the native controls '
+        'ignore the attribute, and a claim a test cannot catch is worse than an honest absence.',
+        f'<div class="grid">{cells}</div>')
+
+
+# ── 9. Resting tiers (P7, heuristic 1 as amended) ────────────────────────────
+def tiers_section():
+    long_value = 'A value considerably longer than the box it lives in, which must scroll natively rather than truncate'
+    cells = (
+        '<div class="cell"><span class="cap">tier 1 · quiet (the default)</span>'
+        '<button type="button" class="weft-btn is-ghost">Add a retention note</button>'
+        '<span class="expect">Trigger-then-field is the DEFAULT on every surface. The reveal '
+        'contract (focus into the field on reveal, back to the trigger on user-initiated '
+        'dismissal) travels with the deferred QuietField; a surface that instead ships an '
+        f'always-visible field declares one of the {REASON_COUNT_WORD} sanctioned reasons '
+        f'({", ".join(REASONS)}).</span></div>'
+
+        '<div class="cell"><span class="cap">tier 2 · underline</span>'
+        '<label class="weft-sr-only" for="tier2-underline">Owner</label>'
+        '<input class="weft-input is-underline" type="text" id="tier2-underline" '
+        'value="katie@nodaste.com" /></div>'
+
+        '<div class="cell"><span class="cap">tier 2 · invalid</span>'
+        '<label class="weft-sr-only" for="tier2-invalid">Owner, invalid</label>'
+        '<input class="weft-input is-underline" type="text" id="tier2-invalid" value="not-an-address" '
+        'aria-invalid="true" aria-describedby="tier2-invalid-error" />'
+        '<span class="weft-field-hint is-error" id="tier2-invalid-error">Needs a full address.</span></div>'
+
+        f'<div class="cell"><span class="cap">tier 2 · overflow</span>'
+        f'<label class="weft-sr-only" for="tier2-overflow">Overflowing note</label>'
+        f'<input class="weft-input is-underline" type="text" id="tier2-overflow" '
+        f'value="{long_value}" /></div>'
+
+        '<div class="cell" dir="rtl"><span class="cap">tier 2 · rtl</span>'
+        '<label class="weft-sr-only" for="tier2-rtl">Right-to-left owner</label>'
+        '<input class="weft-input is-underline" type="text" id="tier2-rtl" value="قيمة" /></div>'
+
+        '<div class="cell"><span class="cap">tier 3 · low</span>'
+        '<label class="weft-sr-only" for="tier3-low">Secondary detail</label>'
+        '<input class="weft-input is-low" type="text" id="tier3-low" value="Rarely touched" /></div>'
+    )
+    return section(
+        'tiers', 'Resting tiers — weight by frequency, boundary always',
+        'Quiet is the default and is enforced where surfaces are declared. The underline tier is '
+        'a REAL control whose underline is appearance only and carries the full 3:1 boundary; the '
+        'low tier is a bordered field with quieter colour — the borderless filled tier is ruled '
+        'out because a 3:1 fill costs the placeholder its text contrast. Hover reinforces, never '
+        'carries: everything here passes at rest.',
+        f'<div class="grid">{cells}</div>')
 
 
 # ── 1. Boundary — the painted-contrast matrix ────────────────────────────────
@@ -175,22 +355,156 @@ def geometry_section():
           '<span>Only mine</span></label>'
         + '</div>'
     )
+    # The size step (P5, compose model): density sets the tier, size steps
+    # within it. `sm` is one step down — the pixel map lives in the tokens
+    # (--weft-control-h-sm per density block), and the suite pins the decided
+    # values so the map cannot drift by token edit alone.
+    sm_row = (
+        '<div class="toolbar" data-spec="geometry-sm-row">'
+        '<label class="weft-sr-only" for="geo-sm-input">Small filter</label>'
+        '<input class="weft-input is-sm" id="geo-sm-input" data-spec="geometry-sm" '
+        'data-control="input" data-state="default" />'
+        '<label class="weft-sr-only" for="geo-sm-select">Small range</label>'
+        '<select class="weft-select is-sm" id="geo-sm-select" data-spec="geometry-sm" '
+        'data-control="select" data-state="default"><option>All</option></select>'
+        '<button type="button" class="weft-btn is-sm" data-spec="geometry-sm" '
+        'data-control="button" data-state="default">Apply</button>'
+        '<label class="weft-sr-only" for="geo-sm-invalid">Small invalid filter</label>'
+        '<input class="weft-input is-sm" id="geo-sm-invalid" data-spec="error-icon" '
+        'data-control="input-sm-invalid" data-state="invalid" aria-invalid="true" />'
+        '</div>'
+    )
     singles = ''.join(
         f'<div class="cell"><span class="cap">{E(kind)}</span>'
         + control_html(kind, 'geometry', f'geo-{kind}', label_text=f'Standalone {kind}')
         + '</div>'
         for kind in CONTROLS)
     singles += (
+        # Standalone, so it measures the natural 32px row — the toolbar copy
+        # above shares its data-control but is read per-row only: in a flex
+        # row the wrap stretches to its neighbours, which is the intended
+        # behaviour, not the row's own height.
+        '<div class="cell"><span class="cap">checkbox row</span>'
+        '<label class="weft-checkbox-wrap" data-spec="geometry" data-control="checkbox-row" '
+        'data-state="default"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-checkbox-standalone" /> '
+        '<span>Only mine</span></label></div>'
         '<div class="cell"><span class="cap">radio row</span>'
         '<label class="weft-radio-wrap" data-spec="geometry" data-control="radio-row" '
         'data-state="default"><input type="radio" name="geo-radio" class="weft-radio" '
         'id="geo-radio-input" /> '
         '<span>Weekly</span></label></div>'
+        # Stacked rows measure the clearance rule: row height plus stack gap
+        # puts adjacent rows exactly 44px apart (decision 1, reading (b)).
+        '<div class="cell"><span class="cap">stacked choice rows</span>'
+        '<fieldset class="weft-field-group" data-spec="choice-stack">'
+        '<legend>Sources</legend>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-a" /> <span>Nodaste Studio</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-b" /> <span>ccore/heddle</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="geo-stack-c" disabled /> <span>ccore/archive</span></label>'
+        '</fieldset></div>'
     )
     return section(
         'geometry', 'Geometry — does a control hit its tier height?',
-        'Measured against the tier\'s own --weft-control-h at marketing, compact and dense.',
-        row + f'<div class="grid">{singles}</div>')
+        'Measured against the tier\'s own --weft-control-h at marketing, compact and dense. '
+        'The is-sm row measures the size step: density sets the tier, size steps within it '
+        '(compose model, decision 1 reconciliation of D4 and T2).',
+        row + sm_row + f'<div class="grid">{singles}</div>')
+
+
+# ── Clearance under adversarial geometry (P5) ────────────────────────────────
+def clearance_section():
+    """Fixtures the equal-height stacked-row case cannot stand in for — the
+    plan's words: wrapped rows, long labels, trailing actions, narrow rails,
+    RTL, diagonal neighbours, container edges, hidden controls. The suite
+    asserts non-overlap and target spacing computationally; a screenshot
+    proves none of it."""
+    fixtures = (
+        # Many sm buttons forced to wrap in a narrow container: the wrap
+        # brings rows close vertically while flex gaps govern horizontally.
+        '<div class="cell"><span class="cap">wrapped sm buttons, 220px</span>'
+        '<div data-clearance="wrapped-row" style="width:220px;display:flex;flex-wrap:wrap;'
+        'gap:var(--weft-choice-gap)">'
+        + ''.join(f'<button type="button" class="weft-btn is-sm">B{i}</button>' for i in range(6))
+        + '</div></div>'
+        # A choice row whose label wraps to three lines, with a trailing
+        # icon-button action — the trailing target must clear the row's own
+        # checkbox despite the wrap changing the row's height.
+        # The action sits BESIDE the label, never inside it: a real button
+        # nested in a label is invalid interactive-in-label markup, and a
+        # click on it ambiguously toggles the checkbox — the label association
+        # runs through for/id instead, and the flex row keeps the trailing
+        # geometry this fixture exists to measure.
+        '<div class="cell"><span class="cap">long label + trailing action</span>'
+        '<div data-clearance="long-label" style="width:240px;display:flex;'
+        'align-items:flex-start;gap:8px">'
+        '<label class="weft-checkbox-wrap" for="cl-long" style="align-items:flex-start">'
+        '<input type="checkbox" class="weft-checkbox" id="cl-long" /> '
+        '<span>Retention notes and every archived thread from the studio workspace, '
+        'including drafts nobody has opened since the spring migration</span>'
+        '</label>'
+        '<button type="button" class="weft-btn is-ghost is-sm" aria-label="Retention help" '
+        'style="margin-inline-start:auto">?</button>'
+        '</div></div>'
+        # The 258px rail with mixed stacked controls — the surface the board
+        # actually ships, in miniature.
+        '<div class="cell"><span class="cap">narrow rail, mixed stack</span>'
+        '<div data-clearance="narrow-rail" style="width:258px;display:flex;flex-direction:column;'
+        'gap:var(--weft-choice-gap)">'
+        '<label class="weft-sr-only" for="cl-rail-search">Search projects</label>'
+        '<input class="weft-input is-sm" id="cl-rail-search" />'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rail-a" /> <span>Only mine</span></label>'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rail-b" /> <span>Archived too</span></label>'
+        '<button type="button" class="weft-btn is-sm">Apply</button>'
+        '</div></div>'
+        # The same rail mirrored: clearance is direction-blind or it is not
+        # clearance.
+        '<div class="cell"><span class="cap">the same rail, RTL</span>'
+        '<div data-clearance="narrow-rail-rtl" dir="rtl" style="width:258px;display:flex;'
+        'flex-direction:column;gap:var(--weft-choice-gap)">'
+        '<label class="weft-sr-only" for="cl-rtl-search">Search projects</label>'
+        '<input class="weft-input is-sm" id="cl-rtl-search" />'
+        '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" '
+        'id="cl-rtl-a" /> <span>Only mine</span></label>'
+        '<button type="button" class="weft-btn is-sm">Apply</button>'
+        '</div></div>'
+        # Diagonal neighbours: a two-column grid offset so targets approach
+        # corner-to-corner — the geometry centre-to-centre reads miss.
+        '<div class="cell"><span class="cap">diagonal neighbours</span>'
+        '<div data-clearance="diagonal" style="width:280px;display:grid;'
+        'grid-template-columns:1fr 1fr;gap:var(--weft-choice-gap)">'
+        '<button type="button" class="weft-btn is-sm">One</button>'
+        '<div></div><div></div>'
+        '<button type="button" class="weft-btn is-sm">Two</button>'
+        '</div></div>'
+        # A control flush against its container edge, inside overflow:hidden —
+        # the visible target must still be the whole target.
+        '<div class="cell"><span class="cap">container edge</span>'
+        '<div data-clearance="edge" style="width:200px;overflow:hidden;'
+        'border:1px dashed var(--weft-rule)">'
+        '<button type="button" class="weft-btn is-sm" style="margin:0">Flush</button>'
+        '</div></div>'
+        # A hidden control in the set: zero-size targets are not targets, and
+        # the scanner must skip them rather than divide by them.
+        '<div class="cell"><span class="cap">hidden control among visible</span>'
+        '<div data-clearance="hidden" style="width:240px;display:flex;'
+        'gap:var(--weft-choice-gap)">'
+        '<button type="button" class="weft-btn is-sm">Shown</button>'
+        '<button type="button" class="weft-btn is-sm" style="display:none">Ghost</button>'
+        '<button type="button" class="weft-btn is-sm">Also shown</button>'
+        '</div></div>'
+    )
+    return section(
+        'clearance', 'Clearance — adversarial geometry',
+        'Decision 1, reading (b): a 44px undisturbed band where a neighbour exists, and the '
+        '24px target floor with SC 2.5.8 spacing everywhere. The stacked equal-height case is '
+        'proved in Geometry; these are the shapes that break naive centre-to-centre reads.',
+        f'<div class="grid">{fixtures}</div>')
 
 
 # ── 3. Naming ────────────────────────────────────────────────────────────────
@@ -430,7 +744,10 @@ body { margin: 0; padding: 0 0 64px; }
        margin-bottom: 6px; }
 .expect { display: block; margin-top: 6px; font-family: var(--weft-font-sans);
           font-size: 11.5px; line-height: 1.45; color: var(--weft-muted); }
-.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap;
+.toolbar { display: flex; gap: 10px; align-items: stretch; flex-wrap: nowrap;
+  /* stretch, the flex default: a choice row is 32px on its own and takes the
+     row's height when a toolbar stretches it — which is how BDD-AC3-1's
+     "all four agree" and the 32px row model hold at the same time. */
            margin-bottom: 20px; }
 .toolbar .weft-input, .toolbar .weft-select { width: auto; flex: 1 1 0; min-width: 0; }
 /* ── Hostile on purpose ──
@@ -471,6 +788,10 @@ def build(css_block):
         states_section(),
         focus_section(),
         select_chrome_section(),
+        search_section(),
+        switch_slider_section(),
+        clearance_section(),
+        tiers_section(),
     ])
     return f"""<!DOCTYPE html>
 <!-- GENERATED by scripts/generate-input-specimens.py — do not hand-edit.

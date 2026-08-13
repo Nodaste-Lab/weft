@@ -97,11 +97,11 @@
   </div>
 </div></div><h2 class="sec">Filter rail</h2><div class="grid"><div class="spec">
   <div class="spec-h"><span class="nm">Search field</span><span class="bg"><span class="b ok">REUSES</span></span></div>
-  <div class="cls">.weft-input (real &lt;input type=search&gt;)</div>
-  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-search">Search projects</label><input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…"></div></div>
+  <div class="cls">.weft-search (the stated pattern)</div>
+  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><label class="weft-field-label" for="demo-search">Search projects</label><div class="weft-search"><span class="weft-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…"><button type="button" class="weft-search-clear" aria-label="Clear search"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div></div>
   <div class="meta">
-    <div class="row"><span class="k">Weft has</span><span><code>.weft-input</code> (<code>weft-components.css</code>); <code>Input</code> (React)</span></div>
-    <div class="row"><span class="k">Action</span><span>Canonical real form control. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on <code>:root</code> — an app-level preference, not board-scoped.</span></div>
+    <div class="row"><span class="k">Weft has</span><span><code>.weft-search</code> recipe (<code>weft-components.css</code>); <code>SearchField</code> (React)</span></div>
+    <div class="row"><span class="k">Action</span><span>Search is a stated pattern, not a type attribute: leading icon, named clear (a real <code>type=&quot;button&quot;</code> — anything else submits the form), clear visible only with content. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on <code>:root</code> — an app-level preference, not board-scoped.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Rail label</span><span class="bg"><span class="b part">PARTIAL</span></span></div>
@@ -121,11 +121,11 @@
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Checkbox rows</span><span class="bg"><span class="b ok">REUSES</span></span></div>
-  <div class="cls">.weft-board-checks + .weft-checkbox</div>
-  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks"><label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label><label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label><label class="weft-board-check is-disabled"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive <span class="weft-board-check-note">unreachable</span></label></div></div></div>
+  <div class="cls">.weft-board-checks + .weft-checkbox-wrap</div>
+  <div class="demo"><div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks"><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label><label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive <span class="weft-board-note">unreachable</span></label></div></div></div>
   <div class="meta">
     <div class="row"><span class="k">Weft has</span><span><code>.weft-checkbox</code> — already composed</span></div>
-    <div class="row"><span class="k">Action</span><span>Only the row layout is template-local. The control is the canonical <code>.weft-checkbox</code>.</span></div>
+    <div class="row"><span class="k">Action</span><span>The row itself is canonical too, since P7: <code>.weft-checkbox-wrap</code> at the 32px choice-row height with the clearance gap. The retired template-local <code>.weft-board-check</code> existed only because the canonical row once took the full 44px control height.</span></div>
   </div>
 </div><div class="spec">
   <div class="spec-h"><span class="nm">Preset picker</span><span class="bg"><span class="b ok">REUSES</span></span></div>

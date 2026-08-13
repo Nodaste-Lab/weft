@@ -30,6 +30,8 @@ jobs:
         run: npm run tokens
       - name: CSS semantics + contrast contract
         run: npm run test:css-contract
+      - name: Doctrine agrees with the code
+        run: npm run test:doctrine
       - name: Contrast contract (AA on paper, both themes)
         run: npm run test:contrast
       - name: Template contract (weft-board template layer)
@@ -48,6 +50,12 @@ jobs:
         run: npm run check:exports
       - name: Packed artifact (every contract file by exact path)
         run: npm run test:packed
+      - name: Input parity record (allowlist owners + unexpired expiries)
+        run: npm run test:parity
+      - name: Visibility-reasons contract (shared list, conformance, declarations)
+        run: npm run test:reasons
+      - name: Consumer-typing probe (public surface compiles under strict consumer TS)
+        run: npm run test:types
 
   visual-regression:
     runs-on: ubuntu-latest

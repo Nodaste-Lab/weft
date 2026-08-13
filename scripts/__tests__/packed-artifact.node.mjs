@@ -49,6 +49,9 @@ const CONTRACT_FILES = [
   // The shared rule Heddle's gates and its panel validator both import, so the
   // raw-colour pattern cannot fork between the two repositories.
   'tooling/raw-color-pattern.js',
+  // The sanctioned always-visible reasons, same shape and same reason: one
+  // list both repositories validate against, so it cannot decay into copies.
+  'tooling/visibility-reasons.js',
   // Contract artifacts that move in lockstep with any surface change.
   'manifest.json',
   'props-snapshot.json',

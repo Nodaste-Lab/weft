@@ -260,7 +260,7 @@
       }
     },
     "button": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "surface": {
         "variants": {
           "size": [
@@ -1473,7 +1473,7 @@
       }
     },
     "inline-edit-list-row": {
-      "version": "1.1.0",
+      "version": "2.0.0",
       "surface": {
         "variants": {},
         "props": {
@@ -1532,10 +1532,17 @@
       }
     },
     "input": {
-      "version": "1.1.0",
+      "version": "2.0.0",
       "surface": {
         "variants": {},
         "props": {
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "sm"
+            ]
+          },
           "state": {
             "optional": true,
             "union": [
@@ -1549,7 +1556,9 @@
             "optional": true,
             "union": [
               "default",
-              "inline"
+              "inline",
+              "low",
+              "underline"
             ]
           }
         },
@@ -2109,6 +2118,36 @@
         "native": []
       }
     },
+    "search-field": {
+      "version": "1.1.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "clearLabel": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onCommit": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "default",
+              "sm"
+            ]
+          }
+        },
+        "native": [
+          "input"
+        ]
+      }
+    },
     "section-block": {
       "version": "1.0.0",
       "surface": {
@@ -2164,7 +2203,7 @@
       }
     },
     "select": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {
@@ -2754,7 +2793,7 @@
       }
     },
     "switch": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {},
@@ -2845,7 +2884,7 @@
       }
     },
     "textarea": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {

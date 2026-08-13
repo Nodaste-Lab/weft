@@ -187,6 +187,35 @@ test('S9: a required marker is real text and its control carries the attribute',
   }
 });
 
+test('S13: a label wraps at most ONE interactive element — the control it labels', () => {
+  // A label wrapping its own control is the legal wrapping pattern (the
+  // page's axis switchers do it). The defect class is a label holding a
+  // SECOND interactive element beside the labelled one — the clearance
+  // fixtures shipped a button inside a checkbox's label once, and clicking
+  // that button ambiguously forwards to the checkbox. Links are flagged
+  // outright: an <a> is not a labelable element and never belongs inside.
+  // The first shape of this guard flagged every wrapped select on the page —
+  // a guard that fails legal markup teaches people to delete the guard.
+  const page = readFileSync(join(ROOT, 'docs', 'brand-package', 'input-specimens.html'), 'utf8');
+  const problems = [];
+  const labelRe = /<label\b[^>]*>([\s\S]*?)<\/label>/gi;
+  let m;
+  while ((m = labelRe.exec(page)) !== null) {
+    const inner = m[1];
+    const interactive = inner.match(/<(button|input|select|textarea)\b/gi) ?? [];
+    if (interactive.length > 1) {
+      problems.push(
+        `a label holds ${interactive.length} interactive elements (${interactive.join(', ')}): ` +
+          `${m[0].slice(0, 90)}…`,
+      );
+    }
+    if (/<a\b/i.test(inner)) {
+      problems.push(`a link nests inside a label: ${m[0].slice(0, 90)}…`);
+    }
+  }
+  assert.deepEqual(problems, [], `ambiguous label activation shipped:\n  ${problems.join('\n  ')}`);
+});
+
 test('S10: no text-entry control is named by aria-label', () => {
   // The ladder sanctions aria-label for icon-only controls and nothing else. A
   // rule stated in doctrine and broken by the page that demonstrates it teaches
@@ -238,12 +267,74 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
   // The focus ring has two carriers. One alone is deletable.
   const focusRule = /:focus-visible\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
   if (!/outline:\s*\d/.test(focusRule)) problems.push('the focus rule paints no outline');
+
+  // The choice-row model (P5/P7, decision 1 reading (b)): the ROW is 32px and
+  // the STACK carries the 44px clearance, 12px gap between rows. The retired
+  // model — a 44px min-height wrap — survived here for a release after the
+  // code moved, because this guard checked markers and tokens but never the
+  // row model. Now it does, in both the embedded CSS and the prose.
+  // The prefix drift is settled for this page too: the P8 sweep corrected 91
+  // occurrences, and a reintroduced unprefixed class in markup, embedded CSS
+  // or a code sample re-teaches a vocabulary that ships nowhere.
+  const RETIRED = ['input','textarea','select','checkbox','radio','field','field-label',
+    'field-hint','field-group','req','checkbox-wrap','radio-wrap','sr-only','btn','search'];
+  for (const [where, view] of views) {
+    for (const n of RETIRED) {
+      if (new RegExp(`class="(?:[^"]* )?${n}(?: [^"]*)?"`).test(view)) {
+        problems.push(`in ${where}, class="${n}" teaches the retired unprefixed vocabulary`);
+      }
+    }
+  }
+  for (const n of RETIRED) {
+    if (new RegExp(`\\.${n}\\s*[,{]`).test(page)) {
+      problems.push(`the embedded stylesheet still styles .${n} — the shipped selector is .weft-${n}`);
+    }
+  }
+
+  // Visible PROSE can teach the retired vocabulary too — the spec-label
+  // headings did, after every class attribute and selector had been swept.
+  // Input-surface names only: the marketing classes are another document's
+  // scope. Lookbehind keeps `.weft-input` from matching its own suffix.
+  const RETIRED_INPUT_NAMES = ['input','textarea','select','checkbox','radio',
+    'field-label','field-hint','field-group','checkbox-wrap','radio-wrap','req','field'];
+  {
+    const rendered = views[0][1].replace(/<[^>]+>/g, ' ');
+    for (const n of RETIRED_INPUT_NAMES) {
+      if (new RegExp(`(?<![-\\w])\\.${n}(?![-\\w])`).test(rendered)) {
+        problems.push(`the page's visible text still names .${n} — the shipped class is .weft-${n}`);
+      }
+    }
+  }
+  // The embedded reference must carry the shipped models, not yesterday's
+  // fixed pixels: the textarea floor rides its token, and the choice stack
+  // gap is the 12px that puts row centres 44px apart.
+  const textareaRule = /\.weft-textarea\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/var\(--weft-textarea-min-h/.test(textareaRule)) {
+    problems.push('the embedded textarea rule does not ride --weft-textarea-min-h');
+  }
+  const groupRule = /fieldset\.weft-field-group\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/gap:\s*(?:var\(--weft-choice-gap[^)]*\)|12px)/.test(groupRule)) {
+    problems.push('the embedded field-group gap is not the 12px choice-stack gap');
+  }
+
+  const wrapRule = /\.weft-checkbox-wrap,\s*\.weft-radio-wrap\s*\{([^}]*)\}/.exec(page)?.[1] ?? '';
+  if (!/min-height:\s*32px/.test(wrapRule)) {
+    problems.push('the embedded checkbox/radio wrap rule does not carry the 32px choice row');
+  }
+  if (/min-height:\s*44px/.test(wrapRule)) {
+    problems.push('the embedded checkbox/radio wrap rule teaches the retired 44px row');
+  }
+  for (const [where, view] of views) {
+    if (/44px[^.]{0,80}(?:min-height[^.]{0,40})?wrap/i.test(view)) {
+      problems.push(`in ${where}, the prose still describes a 44px wrap — the row is 32px and the stack carries the clearance`);
+    }
+  }
   if (!/box-shadow:/.test(focusRule)) problems.push('the focus rule paints no box-shadow');
   if (/outline:\s*none/.test(focusRule)) problems.push('the focus rule still resets the outline');
 
   // Field labels and legends are sentence case: an uppercase transform rewrites
   // the accessible name. Every OTHER uppercase on the page is legitimate.
-  for (const selector of ['.field-label', 'legend']) {
+  for (const selector of ['.weft-field-label', 'legend']) {
     const rule = new RegExp(`${selector.replace('.', '\\.')}\\s*\\{([^}]*)\\}`).exec(page)?.[1] ?? '';
     if (/text-transform:\s*uppercase/.test(rule)) {
       problems.push(`${selector} still uppercases, which rewrites the accessible name`);
@@ -257,7 +348,7 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
 
   for (const [where, view] of views) {
     // The required marker is a word, never punctuation.
-    for (const [, marker] of view.matchAll(/class="req">([^<]*)</g)) {
+    for (const [, marker] of view.matchAll(/class="weft-req">([^<]*)</g)) {
       if (!/[a-z]/i.test(marker)) {
         problems.push(`in ${where}, a marker reads ${JSON.stringify(marker)} rather than a word`);
       }
@@ -268,7 +359,7 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
     // full of <option>s comfortably outruns — so it silently checked nothing for
     // exactly the specimen that was wrong.
     for (const [, forId, inner] of view.matchAll(/<label\b[^>]*\bfor="([^"]+)"[^>]*>([\s\S]*?)<\/label>/g)) {
-      if (!inner.includes('class="req"')) continue;
+      if (!inner.includes('class="weft-req"')) continue;
       const control = new RegExp(`<(?:input|select|textarea)\\b[^>]*\\bid="${forId}"[^>]*>`).exec(view);
       if (!control) {
         problems.push(`in ${where}, a label marked required points at #${forId}, which does not exist`);

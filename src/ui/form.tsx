@@ -158,6 +158,22 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
       className={cn("text-destructive text-sm", className)}
       {...props}
     >
+      {/* Error is never colour alone (WCAG 1.4.1): the message leads with an
+          alert glyph. aria-hidden, so the accessible description stays the
+          copy itself — the glyph is for eyes the red doesn't reach. */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="mr-1 inline-block size-3 align-[-1px]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
       {body}
     </p>
   );

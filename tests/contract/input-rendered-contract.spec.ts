@@ -257,6 +257,35 @@ function separation(a: StateReading, b: StateReading): number {
   return Math.max(maxChannelDelta(a.fill, b.fill), maxChannelDelta(a.border, b.border));
 }
 
+test('disabled carries the dashed boundary; every other state stays solid', async ({ page }) => {
+  // The owner's visual pass caught what the Δ guards above cannot say out
+  // loud: disabled separated from default by measurement, but not by GLANCE —
+  // a dimmed fill at arm's length still reads as an editable field. The HUD's
+  // design language marks unavailable with a DASHED stroke, so the boundary
+  // itself now says it: border-style dashed on :disabled, in both layers,
+  // structure preserved (heuristic 2 — reduce contrast, not structure) with
+  // availability signalled. Style is a longhand, so the invalid border-COLOR
+  // still wins on a disabled invalid field: dashed and red, both states true.
+  await applyAxes(page, { density: 'marketing' });
+  const styles = await page.evaluate(() => {
+    const out: Record<string, string> = {};
+    for (const el of document.querySelectorAll<HTMLElement>('[data-spec="boundary"]')) {
+      const { control, state } = el.dataset;
+      if (['input', 'textarea', 'select'].includes(control!)) {
+        out[`${control}/${state}`] = getComputedStyle(el).borderTopStyle;
+      }
+    }
+    return out;
+  });
+  const problems: string[] = [];
+  for (const [key, style] of Object.entries(styles)) {
+    const wantDashed = key.endsWith('/disabled');
+    if (wantDashed && style !== 'dashed') problems.push(`${key}: ${style}, expected dashed`);
+    if (!wantDashed && style !== 'solid') problems.push(`${key}: ${style}, expected solid`);
+  }
+  expect(problems, problems.join('\n')).toEqual([]);
+});
+
 for (const [key, left, right, why] of [
   [
     'states/invalid-renders-distinctly',

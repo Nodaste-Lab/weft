@@ -32,6 +32,7 @@ jobs:
           npm run tokens
           npm run test:props
           npm run test:css-contract
+          npm run test:doctrine
           npm run test:contrast
           npm run test:template-contract
           npm run test:specimens
@@ -50,6 +51,12 @@ jobs:
       - run: npm run build
       - name: Packed artifact (every contract file by exact path)
         run: npm run test:packed
+      - name: Input parity record (allowlist owners + unexpired expiries)
+        run: npm run test:parity
+      - name: Visibility-reasons contract (shared list, conformance, declarations)
+        run: npm run test:reasons
+      - name: Consumer-typing probe (public surface compiles under strict consumer TS)
+        run: npm run test:types
       - name: Exports contract (packed tarball resolves all consumer specifiers)
         run: npm run check:exports
       - name: Create release PR or publish to GitHub Packages

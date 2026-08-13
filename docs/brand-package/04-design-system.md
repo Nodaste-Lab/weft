@@ -615,50 +615,77 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 > the same surface a sandboxed panel iframe receives. `npm run test:contract`
 > measures it.
 >
-> **One recorded gap remains:** the textarea floor is a hardcoded 96px and
-> tracks no tier, owned by the sizing phase.
+> **No recorded gaps remain.** The 46 defects the P1 harness recorded are all
+> closed; the ratchet (`tests/contract/known-defects.ts`) is empty and stays
+> armed for whatever gets recorded next.
 >
-> **Every class name in this section is unprefixed and the shipped CSS is
-> `weft-` prefixed throughout** — `.input` is really `.weft-input`, `.field` is
-> `.weft-field`, and so on for all twelve. This drift predates the input work and
-> runs through the whole section; settling it is the doctrine merge's job,
-> because the code cannot change without breaking consumers and the document
-> cannot change piecemeal without being half-right. Read every selector below
-> with a `weft-` in front of it.
+> **Class names in this section are the shipped, `weft-`-prefixed names.**
+> The section spent years documenting unprefixed names with a
+> read-it-with-a-prefix disclaimer; the doctrine merge settled the drift in
+> the only possible direction — the document corrected, because the code
+> cannot change without breaking consumers. `scripts/__tests__/`
+> `doctrine-contract.node.mjs` asserts every class and token named here
+> exists in the shipped CSS, and that the unprefixed vocabulary stays gone.
+>
+> **The rules here merge [12-input-heuristics.md](12-input-heuristics.md)** —
+> eleven rules, each tagged with its provenance (normative WCAG criterion,
+> published research, or house convention) and eight recorded amendments.
+> This section carries the operative contract as shipped and tested; the
+> heuristics file stays canonical for the tags, the original wording and the
+> argument, so neither document restates the other. One rule is deliberately
+> partial: heuristic 4 merges *without* its final sentence ("nothing invalid
+> persists past the boundary"), which is unenforceable for a check that
+> answers asynchronously — its replacement is settled but travels with the
+> deferred asynchronous follow-up (amendment A4), and publishing an
+> acknowledged gap beats publishing a rule known to be wrong.
 >
 > Everything else this section describes is measured:
-> control height at every tier, disabled and read-only, a focus ring an author
-> shadow cannot delete, description wiring, the required marker, the naming
-> ladder, the 3:1 boundary, and focus not obscured.
+> control height at every tier and size step, disabled and read-only, a focus
+> ring an author shadow cannot delete, description wiring, the required
+> marker, the naming ladder, the 3:1 boundary, and focus not obscured.
 
-Five controls ship in Weft v1: `.input` (single-line text), `.textarea`, `.select`, `.checkbox`, and `.radio`. The three text controls sit on a `--weft-control-fill` wash with a `--weft-control-border` boundary and a `--weft-radius-card` (4px) corner; `.checkbox` and `.radio` carry their own 1.5px `--weft-ink` border instead, which already clears the same 3:1 floor (4.88:1 light, 3.54:1 dark). States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border + red hint via `aria-describedby`), disabled, and read-only.
+Five controls ship in Weft v1: `.weft-input` (single-line text), `.weft-textarea`, `.weft-select`, `.weft-checkbox`, and `.weft-radio`. The three text controls sit on a `--weft-control-fill` wash with a `--weft-control-border` boundary and a `--weft-radius-card` (4px) corner; `.weft-checkbox` and `.weft-radio` carry their own 1.5px `--weft-ink` border instead, which already clears the same 3:1 floor (4.88:1 light, 3.54:1 dark). States: default, hover (deepened border), focus (global focus ring), filled, error (`aria-invalid="true"` → `--weft-stop` border, a trailing **alert glyph** on input and textarea, and the hint via `aria-describedby` — its copy led by the same glyph, because colour is never the only signal (WCAG 1.4.1); the select is the stated field-level exception, its right edge belonging to the chevron, so the message glyph and border carry its non-colour cue), disabled, and read-only.
 
-**Disabled and read-only are different promises, and they look different.** Disabled dims the whole control to 0.55 and takes `cursor: not-allowed` — it is not available. Read-only keeps full text contrast and changes only its fill to `--weft-control-fill-static` — the value is present and meant to be read, just not edited. Neither sets a border colour, deliberately: `.weft-input:disabled` weighs exactly as much as `.weft-input[aria-invalid="true"]` and is declared later, so a border colour there would silently outrank the error border on a disabled invalid field. `<select>` has no read-only in its content model, so that pairing does not exist for it.
+**Disabled and read-only are different promises, and they look different.** Disabled dims the whole control to 0.55, swaps the boundary to a **dashed stroke** — the HUD design language for unavailable, legible at a glance where dimming alone was not — and takes `cursor: not-allowed`. Border-*style* is a longhand, so on a disabled invalid field the error border-colour still wins: dashed and red, both states true at once. Read-only keeps full text contrast and changes only its fill to `--weft-control-fill-static` — the value is present and meant to be read, just not edited. Neither sets a border colour, deliberately: `.weft-input:disabled` weighs exactly as much as `.weft-input[aria-invalid="true"]` and is declared later, so a border colour there would silently outrank the error border on a disabled invalid field. `<select>` has no read-only in its content model, so that pairing does not exist for it.
 
 #### Field wrapper
 
-Every input sits inside a `.field` that stacks label + control + hint vertically. Labels are mono **sentence case** (`--weft-font-mono` at 12px, 0.01em, muted) — see *How a control gets its name* below for why the case is a naming rule rather than a typographic one. A required field carries the word `required` in a `.req` span coloured `--weft-stop` **and the `required` attribute**; a bare asterisk lands in the accessible name as punctuation while leaving `required` false. Error hints reuse `.field-hint` with `.is-error`, and are associated by id.
+Every input sits inside a `.weft-field` that stacks label + control + hint vertically. Labels are mono **sentence case** (`--weft-font-mono` at 12px, 0.01em, muted) — see *How a control gets its name* below for why the case is a naming rule rather than a typographic one. A required field carries the word `required` in a `.weft-req` span coloured `--weft-stop` **and the `required` attribute**; a bare asterisk lands in the accessible name as punctuation while leaving `required` false. Error hints reuse `.weft-field-hint` with `.is-error`, and are associated by id.
 
 ```html
-<div class="field">
-  <label class="field-label" for="email">Email <span class="req">required</span></label>
-  <input class="input" id="email" type="email" required
+<div class="weft-field">
+  <label class="weft-field-label" for="email">Email <span class="weft-req">required</span></label>
+  <input class="weft-input" id="email" type="email" required
          aria-invalid="true" aria-describedby="email-error email-hint" />
-  <span class="field-hint is-error" id="email-error">Needs a full address.</span>
-  <span class="field-hint" id="email-hint">Work addresses only.</span>
+  <span class="weft-field-hint is-error" id="email-error">Needs a full address.</span>
+  <span class="weft-field-hint" id="email-hint">Work addresses only.</span>
 </div>
 ```
 
-Note the space before the `.req` span: the accessible name concatenates the label's text nodes, so without it the name is "Emailrequired".
+Note the space before the `.weft-req` span: the accessible name concatenates the label's text nodes, so without it the name is "Emailrequired".
 
-- `.input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
+- `.weft-input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
+
+#### The sizing model: density sets the tier, size steps within it
+
+One model, both layers — the **compose model** (P5, closing D4 against T2). Density is an application-level preference on `:root` and names the tier; a *size* is a deliberate hierarchy step **within** the current tier, never a way to emulate another density. `size="sm"` therefore no longer names a fixed pixel value: it names the small step of whatever tier the surface is in, and the map is decided per tier rather than derived —
+
+| tier | default | `sm` |
+|---|---|---|
+| marketing | 44px | 36px |
+| compact | 36px | 32px |
+| dense | 34px | 32px |
+
+The dense row is the D4 reconciliation: the board's `size="sm"` buttons render exactly the 32px D4 chose, while T2's 34px stays the dense tier — the two calls stop being separately citable. Both layers read the same tokens: plain CSS via `.is-sm` (`.weft-input.is-sm`, `.weft-select.is-sm` — left edge only, the chevron keeps its reserve — and `.weft-btn.is-sm`), React via the `size` axis on `Input`, `Button` and `SelectTrigger`, whose default/sm heights resolve through `--weft-control-h` / `--weft-control-h-sm` with the old fixed pixels as fallbacks. React's `lg`, `icon` and `dense` sizes sit **outside** the compose axis, deliberately: fixed-pixel conveniences with no plain-CSS counterpart, recorded in the parity matrix rather than half-mapped. The textarea has no step — it sizes by its own per-tier floor, `--weft-textarea-min-h` (96/80/72), in both layers.
+
+**Heuristic 11's scope, and why its numbers exist.** The rule's 44px figure is Level AAA target size (SC 2.5.5) and its 16px figure is the iOS viewport-zoom threshold — neither is the Level AA target-size criterion (SC 2.5.8, 24px) the rule cites. Decision 1 scoped them: **24px is the floor for the control itself; 44px is a clearance rule about what may sit beside it** — an undisturbed band measured outward only where a neighbour exists (reading (b)). Marketing surfaces carry the 44px tier and 16px type by default and are the surfaces the AAA figures bind; compact and dense surfaces are exempt from the 44/16 floors *as control dimensions* and are held instead to the 24px floor, the clearance band (the 32px choice row + 12px gap = 44px stack is that rule met by construction), and SC 2.5.8 spacing under adversarial geometry — wrapped rows, long labels, narrow rails, RTL, diagonal neighbours — measured computationally in `tests/contract/input-clearance.spec.ts`.
 - Font size is 16px — iOS will zoom the viewport on focus for anything smaller.
 - Border transitions at `--weft-dur-fast`. No hover scale, no color bleed, no ring.
 - Focus state comes from the global `:where(...input...):focus-visible` rule — don't override per-input. **It is delivered twice, as an `outline` and as a `box-shadow` with identical geometry.** One carrier alone was deletable: `:where()` contributes nothing to specificity, so any page's `.shadow { box-shadow: … }` declared later replaced the ring outright, with no error and no gate. A shadow utility cannot touch `outline`; an author `outline: none` cannot touch `box-shadow`.
 
 #### The boundary: a field has to look like a control
 
-**At least one of border-against-surface or fill-against-surface reaches 3:1** (WCAG 1.4.11 non-text contrast), on every surface, in both themes, at every density, in every state except disabled — which the criterion exempts as an inactive component. **This holds for the `weft-` component classes.** The React primitives paint from the flat shadcn bridge, where `--input` still maps to `--weft-paper`, so they keep the old hairline; that is a recorded parity gap owned by the layer-parity phase, not a claim being made here. Before this rule the field had neither: the border measured 1.30:1 light and 1.38:1 dark, and the fill was the same token as the card behind it, at 1.00:1.
+**At least one of border-against-surface or fill-against-surface reaches 3:1** (WCAG 1.4.11 non-text contrast), on every surface, in both themes, at every density, in every state except disabled — which the criterion exempts as an inactive component. **This holds in both layers.** The React primitives paint from the flat shadcn bridge, and since the sizing phase closed the recorded parity gap, `--input` and `--input-background` resolve to `--weft-control-border` and `--weft-control-fill` — the same pair the `weft-` classes read, asserted by `css-contract` so the bridge cannot silently point back at a surface token. Before this rule the field had neither: the border measured 1.30:1 light and 1.38:1 dark, and the fill was the same token as the card behind it, at 1.00:1.
 
 **The border carries it; the fill is decorative.** That is a measured conclusion rather than a preference. Reaching 3:1 as a *fill alone* needs 45% ink over white, and at that fill the muted placeholder drops to 1.90:1 and fails text contrast — so fill-without-border, which heuristic 2 offers as an option, is not available in this palette. One border value covers both light surfaces: `--weft-control-border` measures 3.35:1 on paper and 3.15:1 on cream by calculation, 3.50:1 and 3.48:1 as painted.
 
@@ -698,20 +725,24 @@ There is an order, and it is not a menu. Take the first rung that fits.
 
 | Rung | Use when | How |
 |---|---|---|
-| **Visible label** | The default. Nearly always. | `.field-label` with `for`, or wrap the control |
-| **Hidden label** | The surface genuinely cannot carry a visible label — a rail 258px wide, a toolbar of icons and one field | `.sr-only` on a real `<label for>` |
+| **Visible label** | The default. Nearly always. | `.weft-field-label` with `for`, or wrap the control |
+| **Hidden label** | The surface genuinely cannot carry a visible label — a rail 258px wide, a toolbar of icons and one field | `.weft-sr-only` on a real `<label for>` |
 | **`aria-label`** | Icon-only controls, and nothing else | on the control |
 
 **A placeholder is never a name.** It is a format hint. A control named only by its placeholder loses its name the moment the user types, and this is the case a tool-based check will not catch: axe reports it under *passes*, because a placeholder satisfies the accessible-name computation. `tests/contract/input-semantics.spec.ts` checks every control on the specimen page that carries a placeholder, not just the one demonstrating the rule.
 
-**`aria-label` is sanctioned only for icon-only controls.** An invisible name on a text input cannot be verified by the person using the surface and drifts from its visible context as the copy around it changes — and now that `.sr-only` exists there is no cost to using a real label instead. The argument for it was that a hidden label plus a visible placeholder is more markup for the same outcome; that is true and it is worth the markup.
+**`aria-label` is sanctioned only for icon-only controls.** An invisible name on a text input cannot be verified by the person using the surface and drifts from its visible context as the copy around it changes — and now that `.weft-sr-only` exists there is no cost to using a real label instead. The argument for it was that a hidden label plus a visible placeholder is more markup for the same outcome; that is true and it is worth the markup.
 
-**`.sr-only` uses `clip-path`, never `display: none` or `visibility: hidden`.** Both of those take the element out of the accessibility tree along with the layout, which is the opposite of the point. `.sr-only-focusable` reveals on focus, for skip-link-style content.
+**`.weft-sr-only` uses `clip-path`, never `display: none` or `visibility: hidden`.** Both of those take the element out of the accessibility tree along with the layout, which is the opposite of the point. `.weft-sr-only-focusable` reveals on focus, for skip-link-style content.
 
 ```html
-<label class="sr-only" for="rail-search">Search projects</label>
-<input class="input" id="rail-search" type="search" placeholder="e.g. weft-board" />
+<label class="weft-sr-only" for="rail-owner">Filter by owner</label>
+<input class="weft-input" id="rail-owner" type="text" placeholder="e.g. katie" />
 ```
+
+(The rail *search* specifically is not a bare input — search is a stated
+pattern with its own recipe, hidden label included; see **Search** below.
+This rung is for any control the surface cannot visibly label.)
 
 **Labels are sentence case, and that is an accessibility rule wearing a typographic hat.** The accessible name is computed from *rendered* text, so `text-transform: uppercase` did not restyle the label — it rewrote the name. Markup reading "Project name" was exposed as "PROJECT NAME". The scope is the input surface only: `.eyebrow`, `.pill` and the React primitives keep their uppercase, and §03 keeps its rule everywhere outside a field.
 
@@ -734,48 +765,50 @@ A hint with an id that nothing points at is decoration. That is what shipped bef
 <input class="weft-input" id="retention" required />
 ```
 
-#### `.textarea`
+#### `.weft-textarea`
 
-Same styling as `.input` plus `min-height: 96px` and `resize: vertical`. Use for descriptions, messages, anything that wants more than one line.
+Same styling as `.weft-input` plus a per-tier floor — `min-height: var(--weft-textarea-min-h)`, 96/80/72 at marketing/compact/dense — and `resize: vertical`. Use for descriptions, messages, anything that wants more than one line.
 
 ```html
-<textarea class="textarea" id="note" placeholder="A few sentences is plenty."></textarea>
+<textarea class="weft-textarea" id="note" placeholder="A few sentences is plenty."></textarea>
 ```
 
-#### `.select`
+#### `.weft-select`
 
 Native `<select>` with the platform caret stripped (`appearance: none`) and a single-stroke chevron re-added via inline SVG data-URL in the `background-image`. Ship two variants of the SVG, an ink one and a cream one, and select between them **by the palette's foreground rather than by `data-theme` alone**.
 
+**An unavailable option is struck through, never merely greyed.** The colour-is-never-the-only-signal rule reaches inside the popup: `option:disabled` takes `line-through` plus the muted colour in the plain layer, and `SelectItem` carries `data-[disabled]:line-through` beside its dimming in React. The popup is UA chrome no screenshot reaches, so the contract asserts it computed on the option.
+
 That distinction is load-bearing. Palette and theme are independent axes: `data-palette="hud-glass"` is a dark palette in its own right — dark paper, near-white ink — whatever `data-theme` says. Keying the cream chevron on `[data-theme="dark"]` alone painted a near-black glyph into a dark control for anyone on that palette without dark mode, measured at a luminance gap of 0.932. The override therefore lists every dark palette, and `tests/contract/select-chrome.spec.ts` asserts the invariant rather than the list: the chevron's stroke must be the same tone as `--weft-ink`, in every palette × theme combination.
 
-The same trap applies to any glyph baked into a data-URI, because its colour cannot read a token — the checked-checkbox tick is the other one. Keeps the rest of the styling identical to `.input`.
+The same trap applies to any glyph baked into a data-URI, because its colour cannot read a token — the checked-checkbox tick is the other one. Keeps the rest of the styling identical to `.weft-input`.
 
 ```html
-<select class="select" id="team-size">
+<select class="weft-select" id="team-size">
   <option>Just me</option>
   <option>2–5</option>
   <option>6–15</option>
 </select>
 ```
 
-#### `.checkbox` and `.radio`
+#### `.weft-checkbox` and `.weft-radio`
 
-Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 44px `.checkbox-wrap` (or `.radio-wrap`) for touch-target AA. Checked fills the tile with `--weft-blue` and draws a crisp glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a dot for the radio reading `--weft-on-blue`. In the Weft palette the glyph is white, not `--weft-cream` or `--weft-paper`, because there the blue fill is theme-invariant — the glyph must be too. The tick is a data URI whose stroke cannot read a token, so a palette that lifts its primary light carries a scoped override (dark `heritage-purple` does), and `select-chrome.spec.ts` measures every palette × theme pairing. Grouped radios wrap in a `<fieldset class="field-group">` with a `<legend>` mono-cap label.
+Painted on top of the native input with `appearance: none`. An 18×18 control sits inside a 32px `.weft-checkbox-wrap` (or `.weft-radio-wrap`) choice row — clearing the 24px control floor — and adjacent rows stack with a 12px gap so their centres sit exactly 44px apart: the clearance rule is met **by construction of the stack**, not by inflating the row (decision 1, clearance reading (b)). Checked fills the tile with `--weft-blue` and draws a crisp glyph on top — an inline SVG check for the checkbox (centered via `background-position: center`), and a dot for the radio reading `--weft-on-blue`. In the Weft palette the glyph is white, not `--weft-cream` or `--weft-paper`, because there the blue fill is theme-invariant — the glyph must be too. The tick is a data URI whose stroke cannot read a token, so a palette that lifts its primary light carries a scoped override (dark `heritage-purple` does), and `select-chrome.spec.ts` measures every palette × theme pairing. Grouped radios wrap in a `<fieldset class="weft-field-group">` with a `<legend>` mono-cap label.
 
 ```html
-<label class="checkbox-wrap">
-  <input class="checkbox" type="checkbox" />
+<label class="weft-checkbox-wrap">
+  <input class="weft-checkbox" type="checkbox" />
   Invite my team too
 </label>
 
-<fieldset class="field-group">
+<fieldset class="weft-field-group">
   <legend>Preferred contact</legend>
-  <label class="radio-wrap">
-    <input class="radio" type="radio" name="contact" />
+  <label class="weft-radio-wrap">
+    <input class="weft-radio" type="radio" name="contact" />
     Email
   </label>
-  <label class="radio-wrap">
-    <input class="radio" type="radio" name="contact" />
+  <label class="weft-radio-wrap">
+    <input class="weft-radio" type="radio" name="contact" />
     Slack
   </label>
 </fieldset>
@@ -785,6 +818,126 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 - Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5). Never color-only error signaling.
 - Always use `<fieldset>` + `<legend>` for radio groups. Don't fake a legend with a styled div — screen readers need the grouping semantics.
 - Don't restyle focus per-input. The global focus ring is the single source of truth.
+
+#### When a field commits
+
+Weft standardises **when** a field commits — and nothing else. `useCommitBoundary`
+is an opt-in hook (nothing wires it into `Form`, and `Form` gained no behaviour)
+that emits one signal per commit transaction. The line it never crosses is
+decision 7's, and a consumer must be able to tell which side anything is on
+without reading the source:
+
+| Weft owns | The consumer owns |
+|---|---|
+| **When** a field has committed — blur, Enter, explicit save, emitted as one signal | Whether the value is **valid** — the rule, and when to run it |
+| — | Re-evaluating an error that already exists — heuristic 4 wants it on keystroke, and Weft emits no commit for that |
+| — | Whether an error is **shown** at all |
+| **How** a supplied error is exposed — `aria-invalid`, the ordered description list above | — |
+| — | The **value** — Weft never writes it |
+| — | Submission, navigation, progression — Weft never blocks any of them |
+
+The last row matters most: a helper that decides when you may submit is a form
+library, and it will fight react-hook-form. The ownership line is spy-asserted
+in `src/ui/__tests__/commit-boundary.test.tsx`, not described — the suite fails
+if the helper ever calls validation, writes a value, or touches submission state.
+
+**The unit is a transaction, not an event.** Clicking Save from a focused field
+fires blur and then the click; a per-event rule would emit two commits and a
+consumer would validate twice. So the consumer registers the explicit save on
+the Save control's `pointerdown` — before focus moves — the helper suppresses
+the blur that follows, and one commit reports the strongest semantic action
+with the evidence in order: `{ reason: "explicit-save", sources: ["blur",
+"explicit-save"] }`. With no registration, blur emits immediately as
+`{ reason: "blur", sources: ["blur"] }` — nothing is held back on a timer.
+Keyboard Save is deliberately different: focus leaves on Tab, the blur commits,
+and the save is a genuine second transaction — a Save handler must be safe to
+run after a blur already committed. Enter emits its commit and the helper
+neither hooks nor prevents the native submit; calling `commit()` from
+`onSubmit` after an Enter produces a visible second commit, which is the
+documented misuse rather than something the helper absorbs.
+
+**Not boundaries, asserted:** Enter in a textarea (it inserts a newline);
+Escape (no commit, and Weft never writes or reverts a value in response — a
+revert on an invalid value is a silent revert by another name); any keydown
+inside input-method composition, including the Enter that confirms a candidate;
+paste; programmatic value updates; native `form.reset()`, which also leaves no
+helper state behind.
+
+**Heuristics 4, 5 and 6 are doctrine the consumer implements** with the
+helper's signal — Weft asserts only the signal itself:
+
+```tsx
+const form = useForm<{ retention: string }>({ defaultValues: { retention: '' } });
+const boundary = useCommitBoundary({
+  // Heuristic 4 — punish at the boundary, not per keystroke. The CONSUMER
+  // calls its own validation when the commit arrives:
+  onCommit: () => void form.trigger('retention'),
+});
+
+<FormControl>
+  <Input
+    {...boundary.getFieldProps({
+      ...field,
+      onChange: (e) => {
+        field.onChange(e);
+        // Heuristic 4's reward — an existing error clears on correction.
+        // Also the consumer's call; Weft emits nothing for a keystroke.
+        if (form.formState.errors.retention) void form.trigger('retention');
+      },
+    })}
+  />
+</FormControl>
+
+// Pointer Save: register BEFORE focus moves, then commit. type="button" is
+// load-bearing — a native button inside a form defaults to type="submit", so
+// without it this example would submit the form on every Save click, which is
+// exactly the submission-state line the helper exists to stay behind. The two
+// cancel handlers are load-bearing too: an activation that will not complete
+// (mouse dragged off, touch interrupted) must release the suppressed blur,
+// which cancelExplicitSave REPLAYS as an ordinary blur commit — a boundary
+// the user crossed is never swallowed by a save that never happened.
+<Button type="button"
+        onPointerDown={(e) => {
+          // Primary activation only: a right-click, a secondary touch, or a
+          // macOS Ctrl-click (button 0 + ctrlKey!) fires pointerdown with no
+          // click coming, and an armed registration with no activation would
+          // suppress and swallow the next blur.
+          if (e.button === 0 && e.isPrimary && !e.ctrlKey) boundary.registerExplicitSave();
+        }}
+        onPointerLeave={boundary.cancelExplicitSave}
+        onPointerCancel={boundary.cancelExplicitSave}
+        onContextMenu={boundary.cancelExplicitSave}
+        onClick={() => boundary.commit('explicit-save')}>Save</Button>
+```
+
+- **Heuristic 5 — empty is a valid state.** An optional field cleared returns
+  silently to rest; absence is an answer. A **required** field cleared does not
+  error while the user is typing and becomes invalid at the next commit
+  boundary — not at submission, which would invent a second, later boundary
+  nothing else uses; not on keystroke, which is the premature validation
+  heuristic 4 forbids.
+- **Heuristic 6 — invalid never collapses.** A field dismissed while invalid
+  holds open with its message attached; silent revert eats work without telling
+  anyone, and a collapsed representation with no error is the same thing with
+  better manners. The consumer owns dismissal focus: user-initiated dismissal
+  returns focus to the trigger, and nothing auto-collapses on commit.
+
+**Parity, honestly:** the commit boundary is a JavaScript behaviour with no
+plain-CSS counterpart — a sandboxed panel iframe gets no commit signal from
+Weft today. That is the first entry in the input parity record
+(`scripts/input-parity.json`, gated by `npm run test:parity`), with an owner
+and an expiry; a panel that needs the behaviour wires its own listeners to the
+sequence contract above, which the stylesheet contributes nothing to.
+
+**`InlineEditListRow` is the first migrated consumer** (v2.0.0 — a behaviour
+change, decided in proposals document C). It used to do three things this
+contract forbids: commit Enter on a textarea, silently revert on Escape, and
+restore the previous text over an emptied value — the last one silent data
+loss with a tidy appearance. Now its editing state rides the helper: blur
+commits, Enter inserts a newline, an emptied value commits as `""`, and Escape
+*offers* a discard — the first press shows the offer and touches nothing, a
+second press performs it, typing withdraws it. The offer is exposed through
+`aria-describedby` while it stands.
 
 ---
 

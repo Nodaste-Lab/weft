@@ -23,12 +23,14 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/index.css',
   '@nodaste-lab/weft/tailwind.css',
   '@nodaste-lab/weft/tooling/raw-colors',
+  '@nodaste-lab/weft/tooling/visibility-reasons',
   '@nodaste-lab/weft/manifest.json',
   '@nodaste-lab/weft/props-snapshot.json',
   '@nodaste-lab/weft/tokens-snapshot.json',
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',
+  '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
@@ -68,6 +70,31 @@ try {
   const tooling = await import(pathToFileURL(probeRequire.resolve('@nodaste-lab/weft/tooling/raw-colors')).href);
   if (!(tooling.RAW_COLOR_PATTERN instanceof RegExp)) {
     failures.push('tooling/raw-colors did not export RAW_COLOR_PATTERN as a RegExp');
+  }
+
+  // The reasons module must export the frozen list, the predicate, the
+  // version and the conformance fixture — the cross-repository shape.
+  const reasons = await import(
+    pathToFileURL(probeRequire.resolve('@nodaste-lab/weft/tooling/visibility-reasons')).href
+  );
+  if (!Array.isArray(reasons.VISIBILITY_REASONS) || !Object.isFrozen(reasons.VISIBILITY_REASONS)) {
+    failures.push('tooling/visibility-reasons did not export VISIBILITY_REASONS as a frozen array');
+  }
+  if (typeof reasons.isVisibilityReason !== 'function') {
+    failures.push('tooling/visibility-reasons did not export isVisibilityReason as a function');
+  }
+  if (!Number.isInteger(reasons.VISIBILITY_REASONS_VERSION)) {
+    failures.push('tooling/visibility-reasons did not export an integer VISIBILITY_REASONS_VERSION');
+  }
+  if (!Array.isArray(reasons.VISIBILITY_REASON_CONFORMANCE)) {
+    failures.push('tooling/visibility-reasons did not export the VISIBILITY_REASON_CONFORMANCE fixture');
+  }
+
+  // The built root entry must carry the hook — specifier resolution alone
+  // cannot see a name silently dropped from the barrel.
+  const rootEntry = await import(pathToFileURL(probeRequire.resolve('@nodaste-lab/weft')).href);
+  if (typeof rootEntry.useCommitBoundary !== 'function') {
+    failures.push('the root entry did not export useCommitBoundary as a function');
   }
 
   if (failures.length) {

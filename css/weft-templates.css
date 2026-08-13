@@ -87,20 +87,22 @@
  * an application-level preference, not board-scoped: weft.css may only carry
  * :root selectors because it is injected verbatim into panel iframes.
  * The board-local search and picker classes are deleted.
- * Markup: <input class="weft-input" name="…" placeholder="Search…"> */
+ * Rail search uses the stated .weft-search recipe (leading icon + named clear;
+ * weft-components.css carries it) — never a bare .weft-input type="search". */
 
-/* Filter checkbox rows. The control itself is the canonical .weft-checkbox
- * from the components layer — the template only lays it out. */
-.weft-board-checks { display: flex; flex-direction: column; gap: 3px; }
-.weft-board-check {
-  display: flex; align-items: center; gap: 9px;
-  min-height: 24px;                        /* AA touch target */
-  font-size: 13px; color: var(--weft-ink);
-  padding: 3px 0; cursor: pointer;
+/* Filter checkbox rows: the canonical .weft-checkbox-wrap from the components
+ * layer, since P7. The template-local .weft-board-check is RETIRED — it
+ * existed only because the canonical row once took the full control height
+ * (44px at marketing), which no 258px rail could afford; the canonical row is
+ * now --weft-choice-row-h with the clearance gap, so the duplicate closes the
+ * same way D4, D6, D11 and D15 closed theirs. Disabled styling now keys on
+ * the native attribute in the components layer (no is-disabled class, no
+ * dashed border — one canonical treatment). */
+.weft-board-checks {
+  display: flex; flex-direction: column;
+  gap: var(--weft-choice-gap);
 }
-.weft-board-check.is-disabled { color: var(--weft-muted); cursor: default; }
-.weft-board-check.is-disabled .weft-checkbox { border-style: dashed; }
-.weft-board-check-note { color: var(--weft-muted); font-size: 11.5px; }
+.weft-board-note { color: var(--weft-muted); font-size: 11.5px; }
 
 /* D7: use .weft-toggle-group / .weft-toggle-group-item (weft-components.css)
  * or <ToggleGroup joined> / <ToggleGroupItem> (React) for segmented controls.

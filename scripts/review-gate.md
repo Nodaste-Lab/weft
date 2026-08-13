@@ -193,6 +193,7 @@ skipped rather than mistaken for a failure.
 | `props` / `test:props` | the committed prop-surface contract, and the gate's own tests |
 | `tokens` | token values change only with a version bump |
 | `test:css-contract` | selector semantics and the contrast floors |
+| `test:doctrine` | every class/token the doctrine names ships; no superseded wording survives; tags and open questions intact |
 | `test:contrast` | AA on paper, both themes |
 | `test:template-contract` | the weft-board template layer |
 | `test:specimens` | the input specimen page is fresh and its generator deterministic |
@@ -200,6 +201,9 @@ skipped rather than mistaken for a failure.
 | `test:contract` | **the measured input contract** — accessible names and descriptions, control geometry per density, painted boundary contrast, focus survival, the select chevron, and the sandboxed-iframe consumer condition. Needs a Chromium install (`npx playwright install chromium`). |
 | `build` | the ESM bundle, before anything that inspects build output |
 | `test:packed` | every contract file is in the tarball, by exact path |
+| `test:parity` | the input-layer parity record: every allowlisted gap carries an owner and an unexpired expiry, every divergence carries a rationale and no date, and referenced files exist. Fails the day an expiry passes. |
+| `test:reasons` | the visibility-reasons contract: the shared module's shape and conformance fixture, the gate's identity import (never a copy), every always-visible field on a shipped surface declared with sanctioned reasons, and the counter-guard that no reason prop reached `Input` or the plain-CSS layer. |
+| `test:types` | the consumer-typing probe: ordinary consumer prop patterns still compile against the public surface under `--strict`. vitest strips types without checking them, so a type-level API break is invisible to every runtime suite — this is the gate that saw the `Record<string, unknown>` regression. |
 | `check:exports` | every consumer specifier resolves from the packed tarball |
 
 Plus `node scripts/check-raw-colors.mjs` and `node scripts/check-pure-token-file.mjs`.

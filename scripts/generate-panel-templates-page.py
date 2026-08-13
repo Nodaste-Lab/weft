@@ -63,13 +63,23 @@ SECTIONS = [
   '</div></div>'),
 ]),
 ("Filter rail", [
- ("Search field", ".weft-input (real &lt;input type=search&gt;)", S,
-  "<code>.weft-input</code> (<code>weft-components.css</code>); <code>Input</code> (React)",
-  "Canonical real form control. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on <code>:root</code> — an app-level preference, not board-scoped.",
+ ("Search field", ".weft-search (the stated pattern)", S,
+  "<code>.weft-search</code> recipe (<code>weft-components.css</code>); <code>SearchField</code> (React)",
+  "Search is a stated pattern, not a type attribute: leading icon, named clear "
+  "(a real <code>type=&quot;button&quot;</code> — anything else submits the form), clear visible "
+  "only with content. The 34px tier comes from <code>data-density=&quot;dense&quot;</code> on "
+  "<code>:root</code> — an app-level preference, not board-scoped.",
   '<div class="weft-board" style="padding:12px;width:258px">'
   '<label class="weft-field-label" for="demo-search">Search projects</label>'
+  '<div class="weft-search">'
+  '<span class="weft-search-icon" aria-hidden="true">'
+  '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">'
+  '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>'
   '<input id="demo-search" class="weft-input" type="search" name="q" placeholder="Search projects…">'
-  '</div>'),
+  '<button type="button" class="weft-search-clear" aria-label="Clear search">'
+  '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">'
+  '<path d="M18 6 6 18M6 6l12 12"/></svg></button>'
+  '</div></div>'),
  ("Rail label", ".weft-board-rail-label", P,
   "<code>.weft-field-label</code>; <code>hud-meta-caption</code>",
   "<code>eyebrow-label</code> is wrong here — it is uppercase mono.",
@@ -82,14 +92,14 @@ SECTIONS = [
   '<button type="button" class="weft-toggle-group-item" aria-pressed="false">Direct only</button>'
   '<button type="button" class="weft-toggle-group-item is-on" aria-pressed="true">Expanded</button>'
   '</div></div>'),
- ("Checkbox rows", ".weft-board-checks + .weft-checkbox", S,
+ ("Checkbox rows", ".weft-board-checks + .weft-checkbox-wrap", S,
   "<code>.weft-checkbox</code> — already composed",
-  "Only the row layout is template-local. The control is the canonical <code>.weft-checkbox</code>.",
+  "The row itself is canonical too, since P7: <code>.weft-checkbox-wrap</code> at the 32px choice-row height with the clearance gap. The retired template-local <code>.weft-board-check</code> existed only because the canonical row once took the full 44px control height.",
   '<div class="weft-board" style="padding:12px;width:258px"><div class="weft-board-checks">'
-  '<label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label>'
-  '<label class="weft-board-check"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label>'
-  '<label class="weft-board-check is-disabled"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive'
-  ' <span class="weft-board-check-note">unreachable</span></label></div></div>'),
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-studio"> Nodaste Studio</label>'
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" checked name="sp-heddle"> ccore/heddle</label>'
+  '<label class="weft-checkbox-wrap"><input type="checkbox" class="weft-checkbox" disabled name="sp-archive"> ccore/archive'
+  ' <span class="weft-board-note">unreachable</span></label></div></div>'),
  ("Preset picker", ".weft-select (real &lt;select&gt;)", S,
   "<code>.weft-select</code> (<code>weft-components.css</code>); <code>Select</code> (React)",
   "Canonical real form control with accessible label.",

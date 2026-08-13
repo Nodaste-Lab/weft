@@ -190,7 +190,9 @@ html,
   transition: background-color var(--weft-dur-fast) var(--weft-ease-out);
 }
 .weft-btn:hover:not(:disabled) { background: var(--weft-blue-deep); }
-.weft-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+/* The dash shows wherever the boundary is visible (ghost buttons); on the
+ * filled button the border is transparent and dimming stays the signal. */
+.weft-btn:disabled { border-style: dashed; opacity: 0.55; cursor: not-allowed; }
 /* The ghost button carried the identical 1.30:1 hairline as the field and fails
  * heuristic 2 for the identical reason, so it takes the same border token.
  *
@@ -205,7 +207,16 @@ html,
   background-color: var(--weft-paper); color: var(--weft-ink);
   border-color: var(--weft-control-border);
 }
-.weft-btn.is-ghost:hover:not(:disabled) { border-color: var(--weft-ink); }
+/* On hover a ghost IS the button — the filled hover's deep-blue fill with
+ * on-blue text (owner call, visual pass). Without the colour pair here the
+ * base .weft-btn:hover (0,3,0) outweighs .is-ghost (0,2,0), painting the
+ * deep-blue fill under the ghost's INK text: 2.48:1, unreadable — measured
+ * by the hover guard, which waits out the colour transition before reading. */
+.weft-btn.is-ghost:hover:not(:disabled) {
+  background-color: var(--weft-blue-deep);
+  color: var(--weft-on-blue);
+  border-color: var(--weft-blue-deep);
+}
 /* Link-style inline action — no border, no background, just a colored text
  * button. Use for trailing "View all" or "Retry" actions in dense rows.
  * margin-left: auto pushes it to the trailing edge in a flex row. */
@@ -323,6 +334,16 @@ html,
 .weft-input:hover:not(:disabled):not([readonly]),
 .weft-textarea:hover:not(:disabled):not([readonly]),
 .weft-select:hover:not(:disabled) { border-color: var(--weft-ink); }
+
+/* An unavailable option is struck through, never merely greyed — the same
+ * colour-is-never-the-only-signal rule one level deeper (owner call). Dashes
+ * cannot reach option text; line-through can, and the muted colour keeps the
+ * UA grey from being the whole message. The popup is UA chrome no screenshot
+ * reaches, so error-icon.spec.ts asserts this computed on the option. */
+.weft-select option:disabled {
+  color: var(--weft-muted);
+  text-decoration: line-through;
+}
 .weft-input[aria-invalid="true"],
 .weft-textarea[aria-invalid="true"],
 .weft-select[aria-invalid="true"] { border-color: var(--weft-stop); }
@@ -338,11 +359,19 @@ html,
  * (0,2,0), exactly as much as `.weft-input[aria-invalid="true"]` above, and it
  * is declared later — so a border colour here would silently outrank the error
  * border on a disabled invalid field. Same cascade trap as the boundary work,
- * avoided by not entering the property. */
+ * avoided by not entering the property.
+ *
+ * border-STYLE is entered, deliberately: the owner's visual pass found that a
+ * dimmed fill separates by measurement but not by glance — at arm's length a
+ * disabled field still read as editable. The dashed stroke is the HUD design
+ * language for unavailable, and style is a longhand the invalid border-COLOR
+ * composes with: a disabled invalid field renders dashed AND red, both states
+ * true at once. */
 .weft-input:disabled,
 .weft-textarea:disabled,
 .weft-select:disabled {
   background-color: var(--weft-control-fill-static);
+  border-style: dashed;
   opacity: 0.55;                      /* matches .weft-btn:disabled and React's disabled:opacity-50 */
   cursor: not-allowed;
 }
@@ -356,12 +385,108 @@ html,
 
 .weft-textarea {
   /* Genuinely multi-line, so it keeps padding and a floor rather than a fixed
-   * height. The floor is still a hardcoded 96px tracking no tier — P5 owns that,
-   * and geometry/textarea/tracks-density records it. */
+   * height. The floor tracks its tier through --weft-textarea-min-h (P5:
+   * 96/80/72) — the fix is the TOKEN, because a hand-tuned per-tier pixel
+   * here would be exactly the class of fix P2 refused. */
   height: auto;
-  min-height: 96px;
+  min-height: var(--weft-textarea-min-h, 96px);
   padding-block: var(--weft-control-pad-y, 11px);
   resize: vertical;
+}
+
+/* ── Size step (P5, compose model) ─────────────────────────────────────────
+ * Density sets the tier; `is-sm` steps one down within it, reading the same
+ * tokens the React size axis resolves — one map, two layers. Height and
+ * inline padding only: state styling (invalid, disabled, read-only) is
+ * untouched, so no specificity contest with the state selectors exists —
+ * these rules share no property with them. */
+.weft-input.is-sm, .weft-select.is-sm {
+  height: var(--weft-control-h-sm);
+  min-height: var(--weft-control-h-sm);
+}
+.weft-input.is-sm {
+  padding-inline: var(--weft-control-pad-x-sm);
+}
+/* The select keeps its right side: (0,2,0) padding-inline here would beat the
+ * (0,1,0) 40px chevron reserve below it — the same later-rule-unsets trap the
+ * log records twice — so only the left edge tightens. */
+.weft-select.is-sm {
+  padding-left: var(--weft-control-pad-x-sm);
+}
+/* ── Error is never colour alone (owner call; WCAG 1.4.1) ──────────────────
+ * The invalid field carries an alert glyph at its trailing edge and the
+ * message leads with the same glyph, so the state survives colour-blindness
+ * and monochrome. The SELECT is the stated field-level exception: its right
+ * edge belongs to the chevron (document B's slot arbitration), so its
+ * non-colour cue is the message icon plus the border — asserted, not
+ * omitted. The [data-slot] selectors carry the same rule to the React
+ * primitives from this one stylesheet, so the two layers cannot drift.
+ *
+ * DECLARED AFTER .is-sm on purpose: the sm modifier's padding-inline ties
+ * this rule's padding-right at (0,2,0), and source order must resolve the
+ * tie toward the glyph clearance — the cascade-trap class, handled by
+ * position this time instead of by luck. The stroke is a data-URI that
+ * cannot read --weft-stop; the theme and palette overrides below repaint it
+ * wherever the token changes, and error-icon.spec.ts compares the parsed
+ * stroke against the resolved token for every palette × theme. */
+.weft-input[aria-invalid="true"],
+[data-slot="input"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8382B' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  padding-right: 34px;
+}
+.weft-textarea[aria-invalid="true"],
+[data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A8382B' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px top 10px;
+  background-size: 16px 16px;
+  padding-right: 34px;
+}
+/* Inside search the clear owns the right edge; the glyph steps left of it.
+ * Both compositions, one rule: the plain layer wears .weft-search, the React
+ * SearchField wrapper carries data-slot="search-field" — verified by the
+ * board's smoke after its round found the offset stranded on the class arm. */
+.weft-search .weft-input[aria-invalid="true"],
+[data-slot="search-field"] [data-slot="input"][aria-invalid="true"] {
+  background-position: right calc(var(--weft-search-pad-end, 36px) + 2px) center;
+  padding-right: calc(var(--weft-search-pad-end, 36px) + 26px);
+}
+/* The same palette-or-absent pair weft.css keys its dark tokens on — an
+ * override keyed on :not([data-palette]) alone missed every surface that
+ * names the default palette explicitly, which the harness always does. */
+:root[data-theme^="dark"][data-palette="weft"] .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="weft"] [data-slot="textarea"][aria-invalid="true"],
+:root[data-theme^="dark"]:not([data-palette]) [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
+:root[data-palette="hud-glass"] .weft-input[aria-invalid="true"],
+:root[data-palette="hud-glass"] [data-slot="input"][aria-invalid="true"],
+:root[data-palette="hud-glass"] .weft-textarea[aria-invalid="true"],
+:root[data-palette="hud-glass"] [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23EF4444' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
+/* The message glyph masks over currentColor, so it is palette-proof for
+ * free — the hint is already painted --weft-stop. */
+.weft-field-hint.is-error::before {
+  content: ""; display: inline-block;
+  width: 12px; height: 12px;
+  margin-right: 4px; vertical-align: -1px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>") center / contain no-repeat;
+}
+
+.weft-btn.is-sm {
+  min-height: var(--weft-control-h-sm);
+  padding-inline: var(--weft-control-pad-x-sm);
 }
 
 .weft-select {
@@ -389,12 +514,32 @@ html,
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23F4F1E8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
 }
 
+/* The row answers to --weft-choice-row-h, NOT --weft-control-h (decision 1,
+ * clearance (b)). Taking the full control height — 44px at marketing — is why
+ * a 258px rail could not use this row and hand-rolled .weft-board-check; the
+ * 32px row clears the 24px target floor alone, and the field-group stack gap
+ * makes adjacent rows sit exactly 44px apart. A flex row with default
+ * stretch (a toolbar) still stretches it to its neighbours' height. */
 .weft-checkbox-wrap, .weft-radio-wrap {
   display: inline-flex; align-items: center; gap: 10px;
-  min-height: var(--weft-control-h);
+  min-height: var(--weft-choice-row-h);
   cursor: pointer;
   font-family: var(--weft-font-sans);
   font-size: 15px; color: var(--weft-ink);
+}
+/* Disabled reads on the whole row, not only the 18px box — the label is the
+ * larger half of the target and it must not look live. Keyed on the native
+ * attribute via :has() so a bare-markup iframe author gets it without knowing
+ * a modifier class exists (the same argument that made the switch's target
+ * floor independent of composition). */
+.weft-checkbox-wrap:has(.weft-checkbox:disabled),
+.weft-radio-wrap:has(.weft-radio:disabled) {
+  color: var(--weft-muted);
+  cursor: not-allowed;
+}
+.weft-checkbox:disabled, .weft-radio:disabled {
+  opacity: 0.55;                      /* matches the text controls' dimming */
+  cursor: not-allowed;
 }
 .weft-checkbox, .weft-radio {
   appearance: none; -webkit-appearance: none;
@@ -441,7 +586,10 @@ html,
 
 .weft-field-group {
   border: none; padding: 0; margin: 0 0 var(--weft-space-5);
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column;
+  /* 12px, so a stacked 32px choice row sits exactly 44px from its neighbour —
+   * the clearance rule as construction rather than as review. */
+  gap: var(--weft-choice-gap);
 }
 /* Same change, same reason: a legend names its group, and the uppercase
  * transform rewrote that name too — "Retention policy" exposed as
@@ -789,3 +937,238 @@ html,
 .weft-callout.is-band.is-warn { border-left-color: var(--weft-warn); }
 .weft-callout.is-band.is-stop { border-left-color: var(--weft-stop); }
 .weft-callout.is-band.is-ok { border-left-color: var(--weft-ok); }
+
+/* ── Search (P7, proposals document B §3) ─────────────────────────────────────
+ * Search as a stated pattern, not a type attribute. The recipe:
+ *
+ *   <div class="weft-search">
+ *     <label class="weft-sr-only" for="q">Search projects</label>
+ *     <span class="weft-search-icon" aria-hidden="true">
+ *       <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+ *            stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/>
+ *            <path d="m21 21-4.3-4.3"/></svg>
+ *     </span>
+ *     <input class="weft-input" id="q" type="search" name="q"
+ *            placeholder="e.g. weft-board" />
+ *     <button type="button" class="weft-search-clear" aria-label="Clear search">
+ *       <svg viewBox="0 0 24 24" width="14" height="14" fill="none"
+ *            stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+ *     </button>
+ *   </div>
+ *
+ * The glyphs are INLINE SVG reading currentColor, never data-URI backgrounds —
+ * a data URI cannot read a token, which is the select-chevron trap, and an
+ * inline glyph follows every palette and theme for free.
+ *
+ * The clear is a real button type="button" (anything else submits the
+ * containing form — the classic defect), named, 24px in both dimensions, and
+ * it appears only when there is something to clear. CSS's one live emptiness
+ * signal is :placeholder-shown, so the recipe carries a placeholder — a
+ * format hint, never the name; the hidden label is the name. Clearing itself
+ * is three lines of consumer JS (set '', dispatch input, refocus) documented
+ * in the design-system doc: a stylesheet cannot write a value, and the parity
+ * record carries that honestly rather than pretending.
+ *
+ * The trailing padding is provisional until document B settles the search
+ * input's trailing geometry; P5's enumerated measurements finalize it. */
+.weft-search { position: relative; display: inline-flex; align-items: center; width: 100%; }
+/* Trailing reserve settled by document B's owner call (2026-08-10): 4px inset
+ * + 24px clear + a density-scaled text gap, carried by the token — 36/32/30
+ * at marketing/compact/dense. Longhand inside the existing rule, per the P4
+ * cascade guard. */
+.weft-search .weft-input { padding-left: 32px; padding-right: var(--weft-search-pad-end, 36px); }
+.weft-search-icon {
+  position: absolute; left: 10px;
+  display: inline-flex; pointer-events: none;
+  color: var(--weft-muted);
+}
+.weft-search-clear {
+  position: absolute; right: 4px;
+  min-width: 24px; min-height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: transparent;
+  color: var(--weft-muted); cursor: pointer;
+  border-radius: var(--weft-radius-chip);
+}
+.weft-search-clear:hover { color: var(--weft-ink); }
+/* Only when there is something to clear — and never on a field that cannot be
+ * edited. Keyed on native state, so a bare-markup author gets the behaviour
+ * without a modifier class. */
+.weft-search:has(.weft-input:placeholder-shown) .weft-search-clear,
+.weft-search:has(.weft-input:disabled) .weft-search-clear,
+.weft-search:has(.weft-input[readonly]) .weft-search-clear { display: none; }
+/* The UA's own cancel affordance is unnamed and unstylable; the recipe ships
+ * a named one instead. */
+.weft-search .weft-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+/* ── Switch (P7) ──────────────────────────────────────────────────────────────
+ * A styled NATIVE checkbox — keyboard, form serialization (absent when
+ * unchecked, which is native semantics), disabled and focus are the
+ * browser's own. Markup: <input type="checkbox" class="weft-switch" ...>,
+ * usually inside a .weft-switch-wrap label like any other choice row.
+ *
+ * The BARE control is 40×24 and meets the target floor alone — conformance
+ * may not depend on composition an iframe author has no reason to know about.
+ * The track and thumb are pseudo-elements ON the input, never a clip-path:
+ * a clip would clip the focus ring off with it (tried, seen, dropped). The
+ * ring itself comes from the global dual-carrier rule and follows the pill
+ * radius on the element.
+ *
+ * Read-only is deliberately unsupported: native checkbox ignores the
+ * attribute, so a [readonly] selector here would claim a state that does not
+ * exist. Enabled or disabled only. */
+.weft-switch {
+  appearance: none; -webkit-appearance: none;
+  position: relative;
+  width: 40px; height: 24px;
+  margin: 0; padding: 0;
+  border: 0; border-radius: var(--weft-radius-pill);  /* PILL, not dot: 50% on a 40×24 oblong renders quarter-ellipse corners that taper to points; 999px clamps to true semicircular caps. Dot stays for the square thumbs below. */
+  background: transparent;
+  cursor: pointer; flex-shrink: 0;
+}
+/* Document B's proposal geometry (owner's visual pass): the track fills the
+ * whole 40×24 box as a pill, and the thumb is a fat 18px circle inset 3px —
+ * the first shipped shape (an 18px inset band with a 12px thumb) read as a
+ * different, "stretched off" control beside B's rendering. */
+.weft-switch::before {
+  content: ""; position: absolute; inset: 0;
+  box-sizing: border-box;
+  border-radius: var(--weft-radius-pill);
+  border: 1.5px solid var(--weft-ink);
+  background-color: var(--weft-control-fill-static);
+  transition:
+    background-color var(--weft-dur-fast) var(--weft-ease-out),
+    border-color var(--weft-dur-fast) var(--weft-ease-out);
+}
+.weft-switch::after {
+  content: ""; position: absolute;
+  top: 50%; left: 3px; transform: translateY(-50%);
+  width: 18px; height: 18px;
+  border-radius: var(--weft-radius-dot);
+  background-color: var(--weft-ink);
+  transition:
+    left var(--weft-dur-fast) var(--weft-ease-out),
+    background-color var(--weft-dur-fast) var(--weft-ease-out);
+}
+.weft-switch:hover:not(:disabled)::before { border-color: var(--weft-blue); }
+.weft-switch:checked::before {
+  background-color: var(--weft-blue);
+  border-color: var(--weft-blue);
+}
+/* The thumb reads the on-primary tier, so a palette that lifts its primary
+ * light (dark heritage-purple) corrects it at the token, not per control —
+ * the same tier the checked radio dot reads. */
+.weft-switch:checked::after {
+  left: 19px;                          /* 40 − 18 thumb − 3 inset */
+  background-color: var(--weft-on-blue);
+}
+/* B's disabled card: "state is not carried by colour alone." The BARE
+ * control carries the dashed unavailable stroke on its track — conformance
+ * may not depend on the wrap — and the wrap below composes B's lock glyph
+ * beside the label. */
+.weft-switch:disabled { opacity: 0.55; cursor: not-allowed; }
+.weft-switch:disabled::before { border-style: dashed; }
+/* The lock is a mask so it paints from a token, never a hardcoded stroke —
+ * the data-URI-glyph lesson from the chevron and the checkbox tick. */
+.weft-switch-wrap:has(.weft-switch:disabled)::after {
+  content: "";
+  width: 12px; height: 12px; flex-shrink: 0;
+  background-color: var(--weft-muted);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>") center / contain no-repeat;
+}
+.weft-switch-wrap { /* a choice row like any other */
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: var(--weft-choice-row-h);
+  cursor: pointer;
+  font-family: var(--weft-font-sans);
+  font-size: 15px; color: var(--weft-ink);
+}
+.weft-switch-wrap:has(.weft-switch:disabled) {
+  color: var(--weft-muted); cursor: not-allowed;
+}
+
+/* ── Slider (P7) ──────────────────────────────────────────────────────────────
+ * A styled NATIVE range input — keyboard steps, pointer drag, min/max/step,
+ * RTL and serialization are the browser's own. The control box is 24px tall
+ * (the floor, bare); the 18px thumb carries the boundary with the same
+ * 1.5px ink border the checkbox uses; the 4px track is decorative, exactly
+ * as the field fill is (the border carries 1.4.11, decision 3's shape).
+ *
+ * A native range has ONE thumb and never two: a bounded range is the
+ * RangeBounds recipe — two named sliders in a named fieldset — recorded in
+ * the parity matrix as a documented DIVERGENCE from React's multi-thumb
+ * Radix Slider, with a rationale and no expiry. Read-only: unsupported,
+ * same reason as the switch. */
+.weft-slider {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 24px;
+  margin: 0; padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.weft-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--weft-radius-pill);
+  background-color: var(--weft-rule-strong);
+}
+.weft-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px;
+  margin-top: -7px;                    /* (4 - 18) / 2 centres on the track */
+  border-radius: var(--weft-radius-dot);
+  border: 1.5px solid var(--weft-ink);
+  background-color: var(--weft-blue);
+  box-sizing: border-box;
+}
+.weft-slider::-moz-range-track {
+  height: 4px;
+  border-radius: var(--weft-radius-pill);
+  background-color: var(--weft-rule-strong);
+}
+.weft-slider::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: var(--weft-radius-dot);
+  border: 1.5px solid var(--weft-ink);
+  background-color: var(--weft-blue);
+  box-sizing: border-box;
+}
+.weft-slider:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Resting tiers (P7, heuristic 1 as amended by A3/A6) ─────────────────────
+ * Quiet — trigger-then-field — is the DEFAULT and is a surface rule enforced
+ * where surfaces are declared (the visibility-reasons gate), not a class.
+ * The two field-shaped tiers are modifiers on the real controls:
+ *
+ *   .is-underline  Tier 2. A real control whose underline is appearance only —
+ *                  the underline IS the boundary and keeps the 3:1 border
+ *                  token. Longhands only: the three transparent sides must
+ *                  never touch the bottom, which still deepens for invalid
+ *                  and hover through the base rules.
+ *   .is-low        Tier 3. A bordered field with quieter colour. NEVER the
+ *                  borderless filled form the original heuristic drew — A2/A3
+ *                  rule it out, because a fill reaching 3:1 costs the muted
+ *                  placeholder its text contrast (1.90:1 at 45% ink).
+ */
+.weft-input.is-underline, .weft-textarea.is-underline {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* Hover deepens the UNDERLINE, and only the underline. The base hover rule is
+ * class + :hover + two :not()s — (0,4,0) — which outweighs the (0,2,0) tier
+ * modifier and would repaint all four sides with --weft-ink, turning the
+ * underline tier into a boxed field exactly while the user reaches for it
+ * (P7 review round 1). Extra class weight, declared later, longhands only. */
+.weft-input.is-underline:hover:not(:disabled):not([readonly]),
+.weft-textarea.is-underline:hover:not(:disabled):not([readonly]) {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.weft-input.is-low, .weft-textarea.is-low, .weft-select.is-low {
+  background-color: transparent;
+  color: var(--weft-muted);
+}

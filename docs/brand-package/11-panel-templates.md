@@ -52,9 +52,9 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | Header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
 | Body grid | `.weft-board-body` (258px rail + fluid detail) |
 | Filter rail | `.weft-board-rail`, `.weft-board-rail-section`, `.weft-board-rail-label` |
-| Search | `.weft-input` (real `<input type="search">`) / `<Input>` |
+| Search | the `.weft-search` recipe (leading icon + real `<input type="search">` + named clear `type="button"`) / `<SearchField>` |
 | Segmented toggle | `.weft-toggle-group.is-joined` / `<ToggleGroup joined>` |
-| Checkbox rows | `.weft-board-checks`, `.weft-board-check` (`.is-disabled`), `.weft-board-check-note` + `.weft-checkbox` |
+| Checkbox rows | `.weft-board-checks` + the canonical `.weft-checkbox-wrap` row and `.weft-checkbox` (disabled styling keys on the native attribute — no modifier class); `.weft-board-note` for the caption |
 | Preset picker | `.weft-select` (real `<select>`) / `<Select>` |
 | List column | `.weft-board-detail` |
 | List header | `.weft-board-context`, `.weft-board-context-sub`, `.weft-board-context-note` |
@@ -91,9 +91,19 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 
   <div class="weft-board-body">
     <aside class="weft-board-rail">
-      <!-- Real form controls with accessible labels -->
+      <!-- Real form controls with accessible labels. Search is the stated
+           pattern (.weft-search): leading icon, named clear (type="button" —
+           anything else submits the form), clear visible only with content. -->
       <label class="weft-field-label" for="board-search">Search projects</label>
-      <input id="board-search" class="weft-input" type="search" name="q" placeholder="Search…">
+      <div class="weft-search">
+        <span class="weft-search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input id="board-search" class="weft-input" type="search" name="q" placeholder="Search…">
+        <button type="button" class="weft-search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
 
       <div class="weft-board-rail-section">
         <span class="weft-board-rail-label">Relatedness</span>
@@ -107,12 +117,12 @@ with a compact variant for narrow slots and a drawer for one item's detail.
       <div class="weft-board-rail-section">
         <span class="weft-board-rail-label">Filter by spaces</span>
         <div class="weft-board-checks">
-          <label class="weft-board-check">
+          <label class="weft-checkbox-wrap">
             <input type="checkbox" class="weft-checkbox" name="sp-studio" checked> Nodaste Studio
           </label>
-          <label class="weft-board-check is-disabled">
+          <label class="weft-checkbox-wrap">
             <input type="checkbox" class="weft-checkbox" name="sp-archive" disabled> ccore/archive
-            <span class="weft-board-check-note">unreachable</span>
+            <span class="weft-board-note">unreachable</span>
           </label>
         </div>
       </div>

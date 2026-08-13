@@ -98,8 +98,104 @@ describe('A5 — the description list is ordered, error first', () => {
     expect(text[1]).toContain('Whole days, 1 or more.');
   });
 
+  it('the message leads with an aria-hidden glyph — colour is never the only signal', () => {
+    render(<Field withError />);
+    const message = document.querySelector('[data-slot="form-message"]')!;
+    const glyph = message.querySelector('svg');
+    expect(glyph, 'WCAG 1.4.1: the red needs a shape beside it').toBeTruthy();
+    expect(glyph!.getAttribute('aria-hidden'), 'the glyph must stay out of the description').toBe('true');
+    expect(message.textContent).toContain('Zero is not a window.');
+  });
+
   it('marks the control invalid when an error is present', () => {
     render(<Field withError />);
     expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  // The five composition cases (P7): help-only and both are above; these are
+  // the remaining three. "Error removed, help survives" is the case that
+  // catches a merge implemented as an append.
+  it('exposes only the error when there is no help text — no phantom description reference', () => {
+    function ErrorOnly() {
+      const form = useForm<{ retention: string }>({ defaultValues: { retention: '0' } });
+      React.useEffect(() => {
+        form.setError('retention', { type: 'manual', message: 'Zero is not a window.' });
+      }, [form]);
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="retention"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Retention window</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    render(<ErrorOnly />);
+    const ids = (screen.getByRole('textbox').getAttribute('aria-describedby') ?? '')
+      .split(/\s+/)
+      .filter(Boolean);
+    const resolving = ids.filter((id) => document.getElementById(id));
+    expect(resolving, 'exactly the message — a reader receives the resolving subset').toHaveLength(1);
+    expect(resolving[0]).toMatch(/-form-item-message$/);
+  });
+
+  it('removing the error leaves the help text standing, with nothing stale', () => {
+    function Removable({ withError }: { withError: boolean }) {
+      const form = useForm<{ retention: string }>({ defaultValues: { retention: '0' } });
+      React.useEffect(() => {
+        if (withError) {
+          form.setError('retention', { type: 'manual', message: 'Zero is not a window.' });
+        } else {
+          form.clearErrors('retention');
+        }
+      }, [form, withError]);
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="retention"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Retention window</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormDescription>Whole days, 1 or more.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    const { rerender } = render(<Removable withError />);
+    rerender(<Removable withError={false} />);
+    const control = screen.getByRole('textbox');
+    const ids = (control.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+    expect(ids).toHaveLength(1);
+    expect(ids[0]).toMatch(/-form-item-description$/);
+    expect(document.getElementById(ids[0])?.textContent).toContain('Whole days, 1 or more.');
+    expect(control).toHaveAttribute('aria-invalid', 'false');
+  });
+
+  it('a choice group carries a usable group name in the React layer', () => {
+    // Mirrors the plain-CSS fieldset/legend recipe, which input-semantics
+    // already measures: the group role computes an accessible name.
+    // Exposure, never announcement.
+    render(
+      <fieldset role="radiogroup" aria-label="Retention policy">
+        <Input aria-label="proxy member" />
+      </fieldset>,
+    );
+    expect(screen.getByRole('radiogroup', { name: 'Retention policy' })).toBeTruthy();
   });
 });

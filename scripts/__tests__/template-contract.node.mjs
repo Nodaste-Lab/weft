@@ -20,7 +20,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync, writeFileSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -48,6 +48,12 @@ const weftTokens = collectDeclaredTokens(
 // These were board-local duplicates of canonical components; they must not
 // appear in the template CSS (or generated HTML specimens) post-cleanup.
 const DEPRECATED_BOARD_CLASSES = [
+  // Retired in P7: the canonical .weft-checkbox-wrap took the choice-row
+  // height, closing the reason this duplicate existed. The container
+  // (.weft-board-checks) survives — the trailing 's' keeps it clear of the
+  // word-boundary matcher — and the old -note suffix was renamed
+  // .weft-board-note so the retired stem cannot ride back in on a hyphen.
+  'weft-board-check',
   'weft-board-btn',
   'weft-board-status',
   'weft-board-type',
@@ -240,6 +246,20 @@ test('T2-c: generated HTML contains only real accessible controls', () => {
   );
 });
 
+test('T2-e2: the shipped panel-templates markdown teaches no retired class', () => {
+  // The retirement's missed callsite (P7 review round 1): the DOM-contract doc
+  // still taught .weft-board-check after the CSS retired it. Docs ship in the
+  // package, so a stale copyable skeleton is a consumer-facing regression.
+  const md = readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8');
+  const pattern = new RegExp(`\\b(${DEPRECATED_BOARD_CLASSES.join('|')})\\b`, 'g');
+  const hits = [...md.matchAll(pattern)].map((m) => m[0]);
+  assert.deepEqual(
+    [...new Set(hits)],
+    [],
+    `11-panel-templates.md still teaches retired classes: ${[...new Set(hits)].join(', ')}`,
+  );
+});
+
 test('T2-d: generator source references no deprecated board-local class names in specimen strings', () => {
   const generatorSrc = readFileSync(
     join(ROOT, 'scripts', 'generate-panel-templates-page.py'),
@@ -279,6 +299,83 @@ test('T2-e: no text-entry control in the template specimens is named by aria-lab
     `Template specimens naming a text-entry control with aria-label:\n  ${offenders.join('\n  ')}\n` +
       'Use a real <label>, hidden with .weft-sr-only where the surface cannot carry a visible one.',
   );
+});
+
+/**
+ * Search-pattern containment scan, shared by T2-f (generated HTML) and T2-f2
+ * (markdown skeleton). A real tag-walk with a div stack, NOT a proximity
+ * window: the first shape of this guard looked backwards N chars/lines for
+ * "weft-search", and its own probe proved that decorative — a bare input
+ * pasted right AFTER a compliant recipe block sat inside the window and
+ * passed. Containment is the actual rule, so containment is what's checked:
+ * a type="search" input passes only if an ENCLOSING, still-open
+ * .weft-search div holds it, and that div's subtree must also hold the
+ * named clear button.
+ */
+function searchPatternProblems(text, where) {
+  const problems = [];
+  const tagRe = /<div\b[^>]*>|<\/div>|<input\b[^>]*>|<button\b[^>]*>/gi;
+  // Each frame: { isSearch, sawSearchInput, sawNamedClear }
+  const stack = [];
+  const inSearch = () => stack.some((f) => f.isSearch);
+  let m;
+  while ((m = tagRe.exec(text)) !== null) {
+    const tag = m[0];
+    if (/^<div\b/i.test(tag)) {
+      stack.push({
+        isSearch: /class="[^"]*\bweft-search\b[^"]*"/.test(tag),
+        sawSearchInput: false,
+        sawNamedClear: false,
+      });
+    } else if (/^<\/div>/i.test(tag)) {
+      const frame = stack.pop();
+      if (frame?.isSearch && frame.sawSearchInput && !frame.sawNamedClear) {
+        problems.push(`${where}: a .weft-search block carries a search input but no named .weft-search-clear button`);
+      }
+    } else if (/^<input\b/i.test(tag) && /type="search"/i.test(tag)) {
+      if (!inSearch()) {
+        problems.push(`${where}: bare type="search" outside .weft-search: ${tag.slice(0, 80)}`);
+      } else {
+        for (const f of stack) if (f.isSearch) f.sawSearchInput = true;
+      }
+    } else if (/^<button\b/i.test(tag) && /weft-search-clear/.test(tag)) {
+      if (/aria-label="[^"]+"/.test(tag) && /type="button"/.test(tag)) {
+        for (const f of stack) if (f.isSearch) f.sawNamedClear = true;
+      }
+    }
+  }
+  return problems;
+}
+
+test('T2-f: every search input on the shipped template page uses the stated pattern, not a bare type attribute', () => {
+  // Search is a stated pattern (P7, document B §3). A bare
+  // <input type="search"> on the page consumers copy from teaches the
+  // superseded form — no named clear, no affordance — which is exactly how
+  // the pattern decays back out of the product one paste at a time.
+  const html = readFileSync(join(ROOT, 'docs', 'brand-package', 'panel-templates.html'), 'utf8');
+  const problems = searchPatternProblems(html, 'panel-templates.html');
+  assert.deepEqual(problems, [], problems.join('\n'));
+});
+
+test('T2-f2: no shipped markdown teaches a bare search — every brand-package doc, from disk', () => {
+  // T2-f covers the generated HTML; this covers every hand-written markdown
+  // file that ships (docs/ is in `files`), enumerated from disk so a new doc
+  // is scanned the day it lands — the same lesson the visibility audit and
+  // this guard each learned once: a fixed filename list is coverage that
+  // quietly stops covering. Same containment scan. Single-line inline-code
+  // spans are stripped first: a prose row saying "real `<input
+  // type="search">`" is a mention, not markup — while fenced skeletons keep
+  // their lines intact (they carry no backticks) and stay fully scanned.
+  const dir = join(ROOT, 'docs', 'brand-package');
+  const docs = readdirSync(dir).filter((f) => f.endsWith('.md')).sort();
+  assert.ok(docs.length >= 5, `expected the shipped brand-package docs, found ${docs.length}`);
+  const problems = [];
+  for (const doc of docs) {
+    const md = readFileSync(join(dir, doc), 'utf8');
+    const prose = md.replace(/`[^`\n]*`/g, '');
+    problems.push(...searchPatternProblems(prose, doc));
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
 });
 
 test('T3: docs/brand-package/11-panel-templates.md exists and is non-empty', () => {
