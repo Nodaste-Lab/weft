@@ -14,6 +14,7 @@ static-visible rather than reading as a hung field. Weft still evaluates
 nothing: validity, staleness, cancellation, and whether a failed check becomes
 an error belong to the consumer (decisions 7/10 — the ownership spies now also
 cover the status surface). Exposure, never announcement. The plain-CSS layer
-ships the same presentation as `.weft-field-hint.is-pending` / `.is-status`
-with the `-status` id and `aria-busy` markup conventions gated page-wide on
-the specimen surface.
+ships the same presentation as `.weft-field-hint.is-pending` and the four
+tone classes `.is-status-ok` / `.is-status-info` / `.is-status-warn` /
+`.is-status-stop`, with the `-status` id and `aria-busy` markup conventions
+gated page-wide on the specimen surface.

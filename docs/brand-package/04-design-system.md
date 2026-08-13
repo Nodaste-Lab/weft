@@ -865,7 +865,7 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 ```
 
 - Always label. `<label for="id">` wrapping, or a `<label>` wrapping the input directly.
-- Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5). Never color-only error signaling.
+- Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5) — and if the field carries an asynchronous status, its `-status` id sits between the two (amendment A9; see *Asynchronous status* above). Never color-only error signaling.
 - Always use `<fieldset>` + `<legend>` for radio groups. Don't fake a legend with a styled div — screen readers need the grouping semantics.
 - Don't restyle focus per-input. The global focus ring is the single source of truth.
 
