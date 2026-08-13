@@ -257,6 +257,88 @@ def switch_slider_section():
         f'<div class="grid">{cells}</div>')
 
 
+# ── 10. Asynchronous pending / result status (amendment A4, in force) ────────
+def pending_section():
+    def cell(sid, cap, markup, expect):
+        return (f'<div class="cell" data-pending-cell="{sid}">'
+                f'<span class="cap">{E(cap)}</span>{markup}'
+                f'<span class="expect">expects: {E(expect)}</span></div>')
+
+    cells = (
+        cell('pending', 'Pending — the check is in flight',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-pending">Source path</label>'
+             + control_html('input', 'pending', 'pd-pending',
+                            extra_attrs='aria-busy="true"',
+                            describedby='pd-pending-status pd-pending-hint')
+             + '<span class="weft-field-hint is-pending" id="pd-pending-status">Checking source&hellip;</span>'
+               '<span class="weft-field-hint" id="pd-pending-hint">Must be reachable over HTTPS.</span></div>',
+             'text in the hint slot with a pulsing dot — the right edge stays free '
+             '(chevron, clear, error glyph own it). The dot reuses weft-pulse, whose '
+             'final keyframe is opacity 1, so the reduced-motion freeze leaves it '
+             'static-visible instead of reading as a hung field. The control carries '
+             'aria-busy="true" while the CONSUMER says its check is pending — Weft '
+             'evaluates nothing, and nothing here blocks navigation or submission.'),
+        cell('pending-textarea', 'Pending — multiline',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-pending-ta">Recovery notes</label>'
+             + control_html('textarea', 'pending', 'pd-pending-ta',
+                            extra_attrs='aria-busy="true"',
+                            describedby='pd-pending-ta-status')
+             + '<span class="weft-field-hint is-pending" id="pd-pending-ta-status">Checking draft&hellip;</span></div>',
+             'the same contract on a textarea: hint-slot text plus dot, aria-busy on the control'),
+        cell('status-ok', 'Settled — ok',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-ok">Source path</label>'
+             + control_html('input', 'pending', 'pd-ok', describedby='pd-ok-status')
+             + '<span class="weft-field-hint is-status-ok" id="pd-ok-status">Source is reachable.</span></div>',
+             'a settled result: consumer text, ok tone, no dot, no aria-busy'),
+        cell('status-info', 'Settled — info',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-info">Source path</label>'
+             + control_html('input', 'pending', 'pd-info', describedby='pd-info-status')
+             + '<span class="weft-field-hint is-status-info" id="pd-info-status">Not yet validated.</span></div>',
+             'the not-yet-asked state is a settled presentation, not a pending one'),
+        cell('status-warn', 'Settled — warn (neither success nor failure)',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-warn">Source path</label>'
+             + control_html('input', 'pending', 'pd-warn', describedby='pd-warn-status')
+             + '<span class="weft-field-hint is-status-warn" id="pd-warn-status">Degraded &mdash; local content stays readable.</span></div>',
+             'the status-not-boolean case: a warning-toned RESULT. The field is NOT '
+             'invalid — no aria-invalid, no error boundary, no glyph. The consumer\'s '
+             'text carries the meaning; the tone colour only reinforces it.'),
+        cell('status-stop', 'Settled — stop, without claiming invalid',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-stop">Source path</label>'
+             + control_html('input', 'pending', 'pd-stop', describedby='pd-stop-status')
+             + '<span class="weft-field-hint is-status-stop" id="pd-stop-status">Blocked until local content is readable.</span></div>',
+             'a stop-toned status is presentation only. Whether the field becomes '
+             'INVALID — aria-invalid, the error boundary, the glyph, the -error id — '
+             'is the consumer\'s call through its own error machinery (decision 7), '
+             'as the next cell shows.'),
+        cell('order', 'Error + status + help — one ordered list',
+             '<div class="weft-field">'
+             '<label class="weft-field-label" for="pd-order">Source path</label>'
+             + control_html('input', 'pending', 'pd-order', state='invalid', value='vault-9',
+                            describedby='pd-order-error pd-order-status pd-order-hint')
+             + '<span class="weft-field-hint is-error" id="pd-order-error">Unable to reach source.</span>'
+               '<span class="weft-field-hint is-status-info" id="pd-order-status">Last checked a minute ago.</span>'
+               '<span class="weft-field-hint" id="pd-order-hint">Must be reachable over HTTPS.</span></div>',
+             'A5 extended, not reordered: error id first (urgent first), status id '
+             'second (the newest fact), help id third. Exposure, never announcement.'),
+    )
+    return section(
+        'pending', 'Asynchronous pending — presentation of a supplied state',
+        'Amendment A4 in force: commit starts evaluation; the consumer may prevent progression '
+        'while pending; Weft only presents the supplied pending or result state. The consumer '
+        'maps its own vocabulary (Heddle\'s is seven states) onto {pending | tone, text}; the '
+        'status id ends -status and sits between -error and -hint in the ONE ordered '
+        'aria-describedby list; a control referencing an is-pending hint carries '
+        'aria-busy="true". Staleness and cancellation are the consumer\'s: Weft presents the '
+        'current supplied state and nothing else.',
+        f'<div class="grid">{cells}</div>')
+
+
 # ── 9. Resting tiers (P7, heuristic 1 as amended) ────────────────────────────
 def tiers_section():
     long_value = 'A value considerably longer than the box it lives in, which must scroll natively rather than truncate'
@@ -792,6 +874,7 @@ def build(css_block):
         switch_slider_section(),
         clearance_section(),
         tiers_section(),
+        pending_section(),
     ])
     return f"""<!DOCTYPE html>
 <!-- GENERATED by scripts/generate-input-specimens.py — do not hand-edit.

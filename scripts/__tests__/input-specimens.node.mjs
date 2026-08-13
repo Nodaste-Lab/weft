@@ -111,7 +111,7 @@ test('S8: hint ids follow the documented pattern, and every reference resolves',
   for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
     for (const ref of list.split(/\s+/)) {
       if (!ids.has(ref)) problems.push(`${ref} is referenced but no element has that id`);
-      if (!/-(hint|error)$/.test(ref)) problems.push(`${ref} does not end in -hint or -error`);
+      if (!/-(hint|error|status)$/.test(ref)) problems.push(`${ref} does not end in -hint, -error or -status`);
     }
   }
   assert.deepEqual(problems, [], `Description wiring is broken:\n  ${problems.join('\n  ')}`);
@@ -126,10 +126,12 @@ test('S8a: an error element carries an -error id, and a hint carries -hint', () 
   const problems = [];
   for (const [, cls, id] of html.matchAll(/class="(weft-field-hint[^"]*)"[^>]*\bid="([^"]+)"/g)) {
     const isError = /\bis-error\b/.test(cls);
+    const isStatus = /\bis-(pending|status-\w+)\b/.test(cls);
     if (isError && !id.endsWith('-error')) problems.push(`#${id} is an error but its id is not -error`);
-    if (!isError && !id.endsWith('-hint')) problems.push(`#${id} is a hint but its id is not -hint`);
+    if (isStatus && !isError && !id.endsWith('-status')) problems.push(`#${id} is a status but its id is not -status`);
+    if (!isError && !isStatus && !id.endsWith('-hint')) problems.push(`#${id} is a hint but its id is not -hint`);
   }
-  assert.deepEqual(problems, [], `Hint and error ids must match their role:\n  ${problems.join('\n  ')}`);
+  assert.deepEqual(problems, [], `Hint, error and status ids must match their role:\n  ${problems.join('\n  ')}`);
 });
 
 test('S8b: where both are present, the error id comes first (amendment A5)', () => {
@@ -137,22 +139,69 @@ test('S8b: where both are present, the error id comes first (amendment A5)', () 
   // the ids exist, resolve, and are named correctly — all three of which the
   // WRONG order satisfies perfectly, which is exactly how this shipped
   // backwards: every guard around the rule was true and none was about it.
+  // A5 extended by the async follow-up, not reordered: error, then status,
+  // then help. Every pairwise violation is named, so a list that is wrong in
+  // two ways reports both.
+  const RANK = { error: 0, status: 1, hint: 2 };
   const problems = [];
   for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
     const refs = list.split(/\s+/).filter(Boolean);
-    const errorAt = refs.findIndex((r) => r.endsWith('-error'));
-    const hintAt = refs.findIndex((r) => r.endsWith('-hint'));
-    if (errorAt === -1 || hintAt === -1) continue;  // only one kind present
-    if (errorAt > hintAt) {
-      problems.push(`"${list}" lists the help text before the error`);
+    const ranked = refs
+      .map((r) => ({ ref: r, rank: RANK[r.match(/-(error|status|hint)$/)?.[1]] }))
+      .filter((r) => r.rank !== undefined);
+    for (let i = 1; i < ranked.length; i += 1) {
+      if (ranked[i].rank < ranked[i - 1].rank) {
+        problems.push(`"${list}" lists ${ranked[i].ref} after ${ranked[i - 1].ref}`);
+      }
     }
   }
   assert.deepEqual(
     problems,
     [],
-    'Amendment A5: one ordered aria-describedby list, error id first. A field in error has ' +
-      'one urgent thing to say and one background thing.\n  ' + problems.join('\n  '),
+    'Amendment A5 (as extended): one ordered aria-describedby list — error first, status ' +
+      'second, help last. A field in error has one urgent thing to say; the status is the ' +
+      'newest fact; the help is background.\n  ' + problems.join('\n  '),
   );
+});
+
+test('S14: aria-busy and the pending hint travel together, both directions', () => {
+  // The plain-CSS layer cannot produce ARIA, so pending is a markup
+  // convention: a control whose describedby references an `is-pending` hint
+  // carries aria-busy="true", and nothing else on the page carries aria-busy
+  // at all. One direction catches a pending hint that forgot the exposure;
+  // the other catches a control claiming busy with no pending presentation —
+  // both are half-conventions the page must not teach.
+  const pendingIds = new Set(
+    [...html.matchAll(/class="weft-field-hint[^"]*\bis-pending\b[^"]*"[^>]*\bid="([^"]+)"/g)].map((m) => m[1]),
+  );
+  assert.ok(pendingIds.size >= 1, 'expected at least one is-pending specimen');
+  const problems = [];
+  for (const [tag] of html.matchAll(/<(?:input|textarea|select)\b[^>]*>/g)) {
+    const busy = /aria-busy="true"/.test(tag);
+    const refs = (tag.match(/aria-describedby="([^"]+)"/)?.[1] ?? '').split(/\s+/);
+    const referencesPending = refs.some((r) => pendingIds.has(r));
+    if (referencesPending && !busy) problems.push(`references a pending hint without aria-busy: ${tag}`);
+    if (busy && !referencesPending) problems.push(`aria-busy with no pending hint referenced: ${tag}`);
+  }
+  assert.deepEqual(problems, [], `The pending convention shipped by halves:\n  ${problems.join('\n  ')}`);
+});
+
+test('S15: no two status specimens present different tones with identical text', () => {
+  // The consumer's TEXT carries the meaning; tone colour reinforces it. Two
+  // statuses distinguished by colour alone would be the 1.4.1 class the owner
+  // validation purged — the specimen page must not teach it.
+  const seen = new Map();
+  const problems = [];
+  for (const [, cls, body] of html.matchAll(
+    /class="weft-field-hint[^"]*\b(is-pending|is-status-\w+)\b[^"]*"[^>]*>([^<]*)</g,
+  )) {
+    const text = body.trim();
+    if (seen.has(text) && seen.get(text) !== cls) {
+      problems.push(`"${text}" is presented as both ${seen.get(text)} and ${cls}`);
+    }
+    seen.set(text, cls);
+  }
+  assert.deepEqual(problems, [], `Colour would be the only signal:\n  ${problems.join('\n  ')}`);
 });
 
 test('S12: every in-page link has a target', () => {
