@@ -96,6 +96,9 @@ try {
   if (typeof rootEntry.useCommitBoundary !== 'function') {
     failures.push('the root entry did not export useCommitBoundary as a function');
   }
+  if (typeof rootEntry.FormStatus !== 'function') {
+    failures.push('the root entry did not export FormStatus as a component function');
+  }
 
   if (failures.length) {
     console.error('Exports contract FAILED — consumers cannot resolve:\n' + failures.map((f) => `  - ${f}`).join('\n'));
