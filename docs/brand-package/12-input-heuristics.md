@@ -190,11 +190,11 @@ Operationally: at least one of border-against-surface or fill-against-surface re
 
 The original — nothing invalid persists past the commit boundary — cannot hold for a check that has to ask a server: the answer arrives after the boundary, so an invalid value provably persists past it while the request is in flight.
 
-**This amendment is conditional and describes a capability Weft does not currently have.** Asynchronous pending presentation is deferred out of weft#16 to a follow-up, so nothing in the current implementation presents a pending state at all. Written as a condition rather than as doctrine in force:
+**This amendment was written as a condition, and the condition has been met.** Asynchronous pending presentation was deferred out of weft#16 as unrequested scope; the follow-up landed on owner request once a consumer demonstrated the need (Heddle's seven-state `SourceValidationStatus`, which a pending/success/error boolean cannot express). The clause is now doctrine in force:
 
 > **When asynchronous pending presentation is introduced:** commit starts evaluation; the consumer may prevent progression while pending; Weft only presents the supplied pending or result state.
 
-Until then, rule 4's final sentence holds only for checks that answer synchronously, and a surface with an asynchronous check is outside what this document covers. The clause deliberately does not say Weft blocks navigation or submission — it does not and should not, and that stays true whenever the follow-up lands.
+What shipped is exactly the presenting side: `.weft-field-hint.is-pending` / `.is-status-*` and `FormStatus`, with the consumer supplying the pending flag or result tone plus its own words (see A9 for how the status joins the description list). The clause deliberately does not say Weft blocks navigation or submission — it does not, and that stayed true when the follow-up landed. Rule 4's original final sentence remains superseded: for a check that answers after the boundary, the honest contract is presentation of the supplied state, not a promise about persistence.
 
 ### A5 · Rule 10 — help and error compose in one ordered reference list
 
@@ -239,10 +239,18 @@ Switch and slider are enabled or disabled only. Native `checkbox` and `range` ig
 
 `scroll-padding-top` on `html` only helps when the *document* is the scrollport. Inside a HUD panel the panel body usually scrolls, and the `html` rule does nothing there — measured at 100% of a focused control covered inside the injected frame, 0% once the scrolling surface itself carries the padding. Weft ships no scroll container of its own and cannot guess which element is one, so **the surface marks its scrollport**: `.weft-scrollport` or `data-weft-scrollport`, which take `scroll-padding-top: var(--weft-sticky-chrome-h)` alongside `html`. The token sits in a bare `:root` block at (0,1,0) specificity, deliberately, so a consumer's own `:root` declaration ties and wins on source order.
 
+### A9 · Rule 10 — the asynchronous status joins the ordered description list
+
+**Extends** rule 10 and A5, landed with the asynchronous follow-up that put A4 in force.
+
+A5's list gains a third participant without reordering the two it had: **error id first, status id second, help id third**. The error keeps first position for A5's own reason — a field in error has one urgent thing to say. The status (`id="<control-id>-status"`) precedes the durable help text because it is the newest fact about the field: "checking…" or "degraded — local content stays readable" is worth reading before a format reminder the user has already seen. Every pair A5 ordered keeps its relative order, so no shipped case changed.
+
+Pending is the same list plus `aria-busy="true"` on the control — and both halves of that convention are gated together, in both directions, because a pending hint without the exposure and a busy control without the presentation are each half a contract. All of it is exposure, never announcement: a change to an `aria-describedby` target is not a dependable live update, and nothing in the follow-up claims otherwise.
+
 ---
 
 ## Open
 
 - **Whether the reasons in A6 are the right set.** That list is the whole rule: it is the only thing standing between quiet-by-default and every surface opting out. It has been challenged once, successfully — `sequence` joined the original four by owner call (2026-08-11, module version 2) — which is the route: an owner call on the record and a version bump, never a string quietly added.
 
-Amendments A1 through A8 are settled. Add to this list rather than resolving it silently.
+Amendments A1 through A9 are settled. Add to this list rather than resolving it silently.
