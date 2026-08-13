@@ -1,5 +1,192 @@
 # @nodaste-lab/weft
 
+## 0.4.0
+
+### Minor Changes
+
+- d265696: The commit boundary is standard, and nothing more is claimed (weft#16, P6).
+
+  `useCommitBoundary` is a new opt-in hook that says **when** a field committed —
+  blur, Enter in a single-line control, or an explicit consumer save — as one
+  deduplicated transaction: `{ reason, sources }`. A pointer Save registered on
+  `pointerdown` suppresses the intervening blur and reports it in `sources`; a
+  keyboard Save is deliberately two transactions; `cancelExplicitSave` (wired to
+  the Save control's `pointerleave` / `pointercancel`) releases a registration
+  whose activation will not complete, replaying an already-suppressed blur so a
+  boundary the user crossed is never swallowed. Enter in a textarea, Escape,
+  input-method composition (including the confirming Enter), paste, programmatic
+  updates and native `form.reset()` are not boundaries and emit nothing.
+
+  The helper never evaluates validity, never announces an error, never writes the
+  value, and never touches submission state — asserted with spies over the
+  consumer's own callbacks, and every guard in the suite was verified by
+  reintroducing its violation. Nothing is wired into `Form`; `Form` gained no
+  behaviour. Heuristics 4, 5 and 6 ship as doctrine the consumer implements, with
+  worked examples in the design-system doc.
+
+  The input-layer parity record (`scripts/input-parity.json`, `npm run
+test:parity`) opens with its first honest entry: the commit boundary is a
+  JavaScript behaviour with no plain-CSS counterpart, allowlisted with an owner
+  and an expiry that fails the gate the day it passes.
+
+- a565113: `InlineEditListRow` rides the commit boundary (component 1.1.0 → **2.0.0** — a
+  behaviour change, decided in proposals document C §5; prop surface unchanged).
+
+  Three behaviours changed, each away from a contract breach the old editing
+  state shipped: **Enter now inserts a newline** instead of committing (a
+  textarea's Enter is never a boundary — consumers relying on Enter-to-save
+  should note blur is the commit path); **an emptied value survives** — select
+  all, delete, leave commits `""` instead of silently restoring the previous
+  text, which was data loss with a tidy appearance; and **Escape offers a
+  discard instead of performing one** — the first press shows a visible,
+  `aria-describedby`-exposed offer and touches nothing, a second press performs
+  it, typing withdraws it, and an Escape inside IME composition belongs to the
+  IME. The draft otherwise commits **as typed**: no trimming, since Enter's
+  newline is now real input — all-whitespace normalizing to `""` is the one
+  exception.
+
+  Blur commits exactly once, through `useCommitBoundary`; unchanged drafts close
+  without calling `onUpdate`. Every changed behaviour was guarded by a test
+  first and every guard verified by reintroducing the old behaviour.
+
+  **On the version signal:** this is a breaking behaviour change at the
+  component level, mirrored as the component's 2.0.0 per AGENTS.md. The package
+  changeset stays **minor** deliberately: the package is 0.x, consumers pin
+  exact versions and adopt deliberately (AGENTS.md release flow step 4), and the
+  repo's own practice shipped the P2 control-height reflow and the P3
+  accessible-name change — both behaviour breaks — in the 0.3.0 minor. A major
+  changeset here would stamp 1.0.0, a stability declaration that is the owner's
+  to make, not a side effect of one component migration.
+
+- 5e37c4a: **P5 — one sizing model, both layers (the compose model).** Density sets the
+  tier; size steps within it. `--weft-control-h-sm` carries the decided per-tier
+  step map — 44→36, 36→32, 34→32, chosen so D4's 32px board buttons render
+  unchanged at dense — alongside `--weft-textarea-min-h` (96/80/72: the textarea
+  floor finally tracks its tier, closing the last recorded defect from the P1
+  harness) and `--weft-search-pad-end` (36/32/30, document B's settled trailing
+  reserve). All additive `:root` tokens.
+
+  Plain CSS gains the size modifier a sandboxed panel could never express:
+  `.weft-input.is-sm`, `.weft-select.is-sm` (left edge only — the chevron
+  reserve stays), `.weft-btn.is-sm`. React's `Button` and `SelectTrigger`
+  default/sm heights now resolve through the same tokens (old fixed pixels
+  remain as `var()` fallbacks, so rendering without `weft.css` is unchanged);
+  `lg`, `icon` and `dense` stay fixed-pixel React-only conveniences, recorded
+  as such. **This closes D4 against T2**: `size="sm"` no longer names 32px —
+  it names the small step of the current tier, and the two calls stop being
+  separately citable.
+
+  **Breaking, component-level** (package stays minor per the 0.x clause;
+  component majors carry the signal): `Input` 1.2.0 → **2.0.0** — it gains the
+  compose `size` axis (`"default" | "sm"`), and the native width-in-characters
+  `size` attribute is **removed** from its props so one name cannot mean two
+  things. `SearchField` (1.1.0) forwards the compose size and omits the native
+  attribute the same way.
+
+  **The recorded React-boundary parity gap is closed**: `--input` and
+  `--input-background` now read `--weft-control-border` / `--weft-control-fill`
+  — the same Option C pair the plain-CSS boundary reads — so a React field
+  paints the ~3.5:1 boundary instead of the 1.30:1 hairline. The
+  `dark:bg-input/30` re-dims in the primitives went in the same change; the
+  fill token answers both themes itself. `css-contract`'s holds-the-gap record
+  is deleted and inverted into a permanent guard, per its own instructions.
+  Every moved visual baseline was reviewed individually in the pinned
+  container.
+
+- d7a4b4a: P7 — complete the input surface (weft#16). Nothing is left for a consumer to
+  hand-roll.
+
+  **New in both layers:** search as a stated pattern (`SearchField` /
+  `.weft-search` — hidden label, currentColor glyphs, a named clear that appears
+  only with content, never submits, and rides the commit boundary); switch and
+  slider as styled **native** inputs (`.weft-switch` 40×24 bare, `.weft-slider`
+  with token thumb — keyboard, drag, min/max/step, RTL and serialization are the
+  browser's own, the unchecked switch serializes as absent, and read-only is
+  asserted unsupported in both layers); resting tiers as modifiers
+  (`.is-underline` / `variant="underline"`, `.is-low` / `variant="low"` — Input
+  1.1.0 → 1.2.0, additive).
+
+  **The choice row takes its own height:** `--weft-choice-row-h` (32px) and
+  `--weft-choice-gap` (12px) put stacked rows exactly 44px apart by
+  construction; `.weft-board-check` is retired for the canonical row and its
+  stem joins the deprecated-class gate.
+
+  **Quiet-by-default is enforced:** the five sanctioned visibility reasons (`sequence` added at version 2 by owner call) ship
+  as `@nodaste-lab/weft/tooling/visibility-reasons` (frozen list, predicate,
+  version, 16-case conformance fixture — one list, two repositories, no shared
+  CI job), Weft's own surfaces declare their reasons in
+  `scripts/visibility-declarations.json`, and the gate fails on a missing or
+  unknown one. No reason prop exists on any primitive.
+
+  **Parity is a matrix with a failing build:** seventeen capability cells in
+  `scripts/input-parity.json` — fourteen at parity, two allowlisted gaps with an
+  owner and an expiry (commit boundary, search clear action), and RangeBounds as
+  a documented divergence. `test:parity` fails on an unrecorded capability, a
+  fourth status, a dangling reference, or a passed expiry.
+
+### Patch Changes
+
+- 7fe8efa: **Three findings from the owner's visual review, all measured before fixed.**
+  (1) Disabled fields carry a **dashed boundary** in both layers — a dimmed
+  fill separated disabled from default by measurement but not by glance;
+  border-_style_ is a longhand, so a disabled invalid field renders dashed
+  **and** red. (2) The plain-CSS **switch takes document B's proposal
+  geometry** — the track fills the 40×24 pill and the thumb is an 18px circle
+  inset 3px (the shipped shape was a skinny 18px band with a 12px thumb, a
+  visibly different control); disabled adds the dashed track bare and B's
+  lock glyph beside the label in the wrap, painted through a mask so it reads
+  a token. (3) A **hovered ghost button is the button**: deep-blue fill with
+  on-blue text — the base hover's (0,3,0) background was landing under the
+  ghost's ink text at 2.48:1, and the guard that now holds it waits out the
+  colour transition before reading, because its first run passed the broken
+  cascade by racing it.
+  (4) **Error is never colour alone** (WCAG 1.4.1): invalid input and textarea
+  carry a trailing alert glyph — stroke matched to the resolved `--weft-stop`
+  per theme and palette, guarded by a tone-invariant test — and the error
+  message leads with the same glyph in both layers (masked over currentColor
+  in plain CSS; an `aria-hidden` svg in `FormMessage`, so the accessible
+  description stays the copy). The select is the stated field-level
+  exception: its right edge belongs to the chevron, so the message glyph and
+  border carry its non-colour cue — asserted, not omitted.
+  (5) **An unavailable dropdown option is struck through** — `option:disabled`
+  takes `line-through` + muted in the plain layer, `SelectItem` the matching
+  `data-[disabled]:line-through` in React, and every select specimen ships an
+  unavailable option so the treatment stays measured.
+  (6) **Pill caps, not ellipse taper**: the switch root/track and slider track
+  borrowed `--weft-radius-dot: 50%` — correct on squares, but on an oblong it
+  renders quarter-ellipse corners that taper to points. Every non-square pill
+  now takes `--weft-radius-pill` (999px clamps to true semicircular caps);
+  the dot token stays on the genuinely square thumbs and dots.
+  (7) **The React search field's invalid glyph steps clear of the clear** —
+  the offset rule keyed on `.weft-search` alone, which the React composition
+  never wears; its wrapper now carries `data-slot="search-field"` and the one
+  stylesheet rule names both arms, CSSOM-asserted so neither can quietly
+  drop.
+- b588134: **P8 — the heuristics are doctrine, and doctrine is gated.** The eleven input
+  heuristics merge into `04-design-system.md` § Form inputs as the operative
+  contract, with `12-input-heuristics.md` shipping alongside as the canonical
+  record of each rule's provenance — SC/R/C tags, original wording, and eight
+  amendments (A8 is new: `scroll-padding-top` on `html` alone does nothing when
+  a panel body scrolls; the surface marks its scrollport). Heuristic 4 merges
+  **without** its final sentence, held for the deferred asynchronous follow-up
+  — an acknowledged gap beats a rule known to be unenforceable. The class-name
+  drift is settled the only possible direction: the document now teaches the
+  shipped `weft-`-prefixed names, and the read-it-with-a-prefix disclaimer is
+  gone. The 05-accessibility contrast audit gains the measured form-control
+  boundary table (3.48–3.61:1 painted, disabled exempt per 1.4.11 and held to
+  renders-distinctly instead). All of it is machine-checked from this release
+  on: `npm run test:doctrine` fails on a named class or token that does not
+  ship, superseded wording that returns, a lost source tag, a quietly-filled
+  open question, or a doctrine reason list that drifts from the shipped module.
+
+  Two parity corrections the doctrine gate's review surfaced ship with it:
+  `Textarea`'s floor now resolves through `--weft-textarea-min-h` (old fixed
+  4rem as the tokenless fallback), and `Switch` takes document B's designed
+  40×24 control box — it was 32×18.4, under the 24px target floor its own
+  parity record claimed. The choice-row cells are reclassified as documented
+  divergences (the row is a plain-CSS recipe; React composes rows through its
+  form primitives), and the parity matrix now says exactly that.
+
 ## 0.3.0
 
 ### Minor Changes
