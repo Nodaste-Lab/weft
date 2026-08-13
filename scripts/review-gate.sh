@@ -82,7 +82,7 @@ done
 # the repo does not define is skipped, and anything it adds later is picked up
 # automatically. Override wholesale with --gates.
 build_default_gates() {
-  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract test:specimens test:review-gate test:contract build test:packed test:parity test:reasons test:types check:exports"
+  local candidates="test verify props test:props tokens test:css-contract test:contrast test:template-contract test:specimens test:doctrine test:review-gate test:contract build test:packed test:parity test:reasons test:types check:exports"
   local parts=""
   local s
   for s in $candidates; do

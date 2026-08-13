@@ -192,5 +192,35 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   help; no shipped A5 case changes relative order. Recorded as a proposed
   amendment for the heuristics file; wording is Katie's to overrule at the
   phase report.
+- 2026-08-13: **PA built, tests first throughout.** The two vitest suites
+  (25 assertions) written failing against a missing export; FormStatus +
+  the FormItem status registry landed them 34/34 with the shipped A5 suite
+  untouched. Plain CSS: `.is-pending` dot + four tone classes inside the
+  hint-slot block, declared BEFORE `.is-error` so a doubled-up element stays
+  an error on the cascade tie; `css/weft.css` untouched — no new token was
+  needed. Seven specimens; gates S8/S8a/S8b extended (pairwise
+  error<status<hint), S14 (busy ⇄ pending, both directions) and S15
+  (identical-text tone pairs refused) added; `input-pending.spec.ts` holds
+  the freeze contract, the untouched right edge, tone-token resolution and
+  CDP exposure (busy: 1). Form 1.1.0 → 1.2.0; `input`'s snapshot untouched.
+- 2026-08-13: Probe ledger: 27 probes run, 27 CAUGHT — but two only on the
+  second attempt, and both first attempts are the standing lesson again. The
+  S14 probe stripped `aria-busy` from before `aria-describedby` when the
+  generator emits it after (mutated nothing, gate "passed"); the fade-out
+  probe replaced the FIRST `animation: weft-pulse …` line in the file, which
+  is `.weft-pill::before`, not the dot (guard "passed" an unmutated dot).
+  Both rebuilt against the real rule and then CAUGHT. A probe that mutates
+  the wrong thing is indistinguishable from a decorative guard.
+- 2026-08-13: Doctrine: A4 flipped to in force with the condition and its
+  meeting recorded; A9 added (status joins the ordered list); 04's Form
+  inputs section gained the Asynchronous status subsection, the extended id
+  convention and a supplied-status ownership row. D1 taught that a backticked
+  weft- name may ship as `@keyframes` — and probed with a fake one, CAUGHT.
+  Found in passing: `test:doctrine` ran in CI and release but was missing
+  from review-gate.sh's candidate battery despite the P8 log claiming it
+  joined; added, and the review-gate self-suite stays 62/62.
+- 2026-08-13: Typing probe pins the tone axis closed under `--strict`
+  (probed by widening — CAUGHT); the packed root-entry shape probe carries
+  FormStatus (probed by dropping the barrel line — CAUGHT).
 
 {% /section %}
