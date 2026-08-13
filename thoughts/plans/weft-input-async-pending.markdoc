@@ -1,0 +1,196 @@
+---
+title: "Asynchronous pending presentation — the weft#16 deferred follow-up"
+ticket: Nodaste-Lab/weft#16 (successor stage; decision 9's deferral, now requested)
+branch: claude/input-async-pending (cut from main at 5774e09, PR #19 merged)
+status: in progress
+predecessor: thoughts/plans/weft-input-design-system.markdoc (claude/input-design-system-16-impl)
+---
+
+# Asynchronous pending presentation
+
+{% section id="condition" title="Why this opens now" %}
+
+Decision 9 (2026-08-07) deferred asynchronous pending presentation out of weft#16
+as unrequested scope, with the condition recorded as amendment A4 in
+`docs/brand-package/12-input-heuristics.md`: *when asynchronous pending
+presentation is introduced — commit starts evaluation; the consumer may prevent
+progression while pending; Weft only presents the supplied pending or result
+state.* Katie has requested the stage, and the consumer need is demonstrated:
+Heddle's `SourceValidationStatus` is a live seven-state asynchronous vocabulary
+that a pending/success/error model cannot express.
+
+The A4 clause deliberately does not say Weft blocks navigation or submission —
+it does not and will not. Decisions 7 and 10 stand: Weft never evaluates, and
+the spy-based ownership guard in `commit-boundary.test.tsx` must keep passing
+untouched.
+
+{% /section %}
+
+{% section id="groundtruth" title="Ground truth: the consumer's vocabulary, measured" %}
+
+From `heddle/src/app/services/sourceValidationService.ts` and its consumers,
+read 2026-08-13 (extending the four findings the handoff carried):
+
+- **Seven statuses**: `validating | reachable | unreachable | degraded |
+  blocked | unsupported-in-browser | unknown`.
+- **The service itself never returns `validating` or `unknown`.** Pending is
+  consumer-side: `SessionContextPanel` renders `Status: validating` when the
+  result record is *absent* (line 685) — pending is the absence of an answer,
+  not a status the check reports. `unknown` is likewise the consumer's
+  not-yet-asked value. The remaining five are settled results.
+- **The consumer already owns a tone mapping.** `severityForStatus` maps status
+  → `ok | info | warning | danger`: reachable→ok; blocked, unreachable→danger;
+  degraded, unsupported-in-browser→warning; validating, unknown→info.
+  `degraded` is a *warning-toned result that is neither success nor failure* —
+  `readable` stays true under it. This is the status-not-boolean finding as
+  shipped code.
+- **Results carry consumer text**: a `guidance` sentence and classified
+  `warnings[]`. The words are the consumer's; no fixed vocabulary could hold
+  them.
+- **Weft precedent, distinct surface**: `ProviderStatusBadge` (in Weft since the
+  Session Context work) presents a five-value *provider* vocabulary as a capsule
+  badge. It is not field-attached and carries no describedby relationship; it is
+  evidence that consumers keep inventing status presentation when the field
+  doesn't offer one, not a base to extend.
+- `SessionContextPanel`'s current rendering is the defect this stage exists to
+  replace: a bare string, colour from severity as the only visual signal (the
+  1.4.1 class the owner-validation round just purged from Weft), no
+  describedby relationship, no reduced-motion consideration.
+
+**Consequence for the contract**: Weft cannot own Heddle's seven statuses — the
+next consumer will have seven different ones. What Weft standardises is the
+*presentation contract*: a consumer-supplied pending flag or result tone plus
+consumer-supplied text, rendered in the hint slot with the describedby, motion,
+and exposure rules handled once. The consumer keeps the mapping from its own
+vocabulary onto that contract, exactly as it keeps validation itself
+(decision 7).
+
+{% /section %}
+
+{% section id="contract" title="The presentation contract" %}
+
+**Both layers, parity, no new allowlist entry** — this is CSS + markup
+convention in the plain layer and a thin component in React; no JavaScript
+behaviour is required for the plain layer to reach the same rendering.
+
+- **Placement: the hint slot.** The field's right edge is taken (chevron,
+  search clear, error glyph — asserted by `error-icon.spec.ts`); the pending
+  affordance adds nothing there. Plain CSS: `.weft-field-hint.is-pending`.
+  React: a new `FormStatus` member of the `Form` family rendering into the same
+  slot. `Input` gains no prop (counter-guard: props snapshot untouched for
+  `input`).
+- **Pending is text with a pulsing dot**, reusing `weft-pulse`, whose final
+  keyframe is opacity 1 — under Weft's reduced-motion freeze (0.001ms, one
+  iteration) the dot measures static-visible rather than reading as a hung
+  field. The dot is also the non-colour shape signal for pending.
+- **Results are a tone axis, not a boolean**: `ok | info | warn | stop`,
+  landing on the existing tokens `--weft-ok / --weft-info / --weft-warn /
+  --weft-stop` (the same four axes as Heddle's `severityForStatus`; `warn`
+  carries `degraded`). The consumer's text carries the meaning; tone colour
+  reinforces and is never the only signal distinguishing two states the
+  consumer renders with identical text — specimens must not ship identical-text
+  tone pairs. A `stop`-toned status is presentation only: whether the field is
+  *invalid* (`aria-invalid`, error machinery, A5 message) stays the consumer's
+  call, per decision 7.
+- **Describedby: A5's order extended, not reordered.** One ordered reference
+  list: error id first, status id second, help id third. Error keeps first
+  position (urgent thing first — A5's rationale); status precedes durable help
+  because it is the newest fact about the field. Existing pairs keep their
+  relative order, so every shipped A5 case is unchanged. Plain-CSS convention:
+  status ids end `-status`, enforced by the specimen structural gates alongside
+  the existing `-hint`/`-error` rules.
+- **`aria-busy` on the control while pending**, per the P2-era measurement
+  (`busy: 1` with the description resolving). React: `FormStatus`'s pending
+  registration reaches the control through the existing item context. Plain
+  CSS: a markup convention — a control whose describedby references an
+  `is-pending` hint carries `aria-busy="true"` — enforced page-wide by the
+  specimen gate in both directions (pending hint without busy fails; busy
+  without a pending hint fails).
+- **Replacement, not stacking.** A status change replaces the text under the
+  same id; ids never duplicate in the reference list. Staleness and
+  cancellation are consumer-owned — the consumer decides *what* state to
+  supply and when; Weft's whole behaviour is to present the current supplied
+  state.
+- **Exposure, never announcement.** Every claim in tests and prose: the
+  description *resolves* in the accessibility tree. A change to a describedby
+  target is not a dependable live update, and nothing here claims otherwise.
+
+**Non-goals**: evaluation of validity (decisions 7/10); blocking navigation,
+submission, or progression (A4's own clause); announcement claims; QuietField /
+DisclosureField (decision 8 — still waiting on two independent consumers);
+Heddle's own migration of `SessionContextPanel` (its repo, after release).
+
+{% /section %}
+
+{% section id="tests" title="Test manifest (written before implementation)" %}
+
+| File | Claims |
+|---|---|
+| `src/ui/__tests__/form-status.test.tsx` | FormStatus renders supplied text in the hint slot; pending dot present; tone attribute for each of the four tones; describedby order error→status→help asserted by POSITION across the A5 case matrix extended with status (help+status; error+status; all three; error removed, status+help survive; status removed, ids leave the list; no duplicated id); replacement under a stable id; `aria-busy` on the control while pending and gone when not; ownership spies — supplying pending/status calls no consumer callback, writes no value, touches no react-hook-form state. |
+| `src/ui/__tests__/source-validation-vocabulary.test.tsx` | The consumer-shaped transition suite against Heddle's seven states: a mapping fixture (status → {pending | tone, text}) drives FormStatus through validating→reachable, validating→degraded (warning result, field NOT invalid, readable), validating→unreachable (consumer chooses error machinery; status yields to A5 message order), reachable→validating (revalidation), unknown and unsupported-in-browser; each transition asserts the exposed describedby state and that Weft performed no evaluation (spies). |
+| `tests/contract/input-pending.spec.ts` | Rendered: the pending dot measures opacity 1 (static-visible) under `prefers-reduced-motion: reduce` and animates otherwise; the field's right edge is unchanged by pending (no new painted element in the reserve; padding untouched); tone colours resolve from the four tokens per palette × theme; specimen describedby order holds error→status→hint. |
+| `scripts/__tests__/input-specimens.node.mjs` (extended) | Structural gates: `-status` id convention resolves; order error→status→hint page-wide; `aria-busy` ⇄ `is-pending` pairing both directions; no identical-text tone-pair specimen. |
+| Counter-guards | `input` props snapshot untouched; `commit-boundary.test.tsx` ownership spies untouched and passing; `css/weft.css` diff additive-only (`check-pure-token-file`); no new parity gap (both layers ship). |
+
+Every guard added here gets probed by reintroducing its violation before it is
+believed. A guard that has not failed has not been verified.
+
+{% /section %}
+
+{% section id="phases" title="Phases" %}
+
+- **PA — the presentation** (this document's contract, tests first, both
+  layers, specimens, doctrine hooks: A4 flipped from condition to in-force,
+  A5's order note, both as amendments in `12-input-heuristics.md` with the
+  heuristics' amendment conventions; flagged to Katie in the phase report —
+  doctrine wording is hers to overrule).
+- **PB (secondary, only if PA blocks or closes with scope to spare)** — the
+  gallery error card (the visual suite photographs no invalid specimen), and
+  the dependency-free commit-boundary helper closing both allowlisted parity
+  gaps (`commit-boundary`, `search-clear-action`, expiry 2027-02-28).
+
+Close PA double-clean via `scripts/review-gate.sh` and report on a new PR.
+Codex is usage-capped until 2026-08-17; the live second reviewer is Katie's
+Cursor tracking board — ask her to run it rather than self-waiving.
+
+{% /section %}
+
+{% section id="log" title="Decisions / Deviations Log" %}
+
+- 2026-08-13: Stage opened on Katie's request; deferral condition met by
+  Heddle's seven-state `SourceValidationStatus`. Read first, in order: the
+  handoff (`thoughts/handoffs/weft-16/2026-08-12_input-async-pending-followup.md`,
+  branch `claude/input-design-system-16-impl` @ fa493c7), the predecessor
+  plan's Decisions/Deviations Log, PR #19's thread end to end (50 comments,
+  including all 21 tracking boards).
+- 2026-08-13: Sequencing gate checked: PR #19 MERGED (5774e09, 2026-08-13).
+  **0.4.0 not yet released** — the Release workflow versioned to 0.4.0 and
+  pushed `changeset-release/main` (a5e3cb7) but the org blocks Actions from
+  opening PRs, the same failure #18 resolved manually. Version Packages PR
+  **#20** opened manually to unblock; merging it publishes 0.4.0 and is
+  Katie's. Recorded as a deviation from the gate's letter (merged ✓, released
+  ✗): the branch is cut from merged main, which the release does not change;
+  nothing in this stage depends on the artifact. Flagged rather than waited
+  out — Katie can overrule by pausing this branch until #20 merges.
+- 2026-08-13: Branch `claude/input-async-pending` cut fresh from `main` at
+  `5774e09` with its own `node_modules` (`npm ci`). Working in the
+  `zen-herschel` worktree — the one the external Cursor agent reset three
+  times mid-P7 — so every unit of work commits and pushes immediately.
+- 2026-08-13: The vocabulary mapped from the consumer's shipped code rather
+  than from design (the decision-9 instruction). Two findings beyond the
+  handoff's four: the service never returns `validating`/`unknown` — pending
+  is the consumer-side absence of an answer, which is why Weft's contract
+  takes a supplied pending flag rather than reserving a status string; and the
+  consumer already ships the four-axis tone mapping (`severityForStatus`),
+  which is what the tone axis lands on. `ProviderStatusBadge` noted as
+  precedent-not-base.
+- 2026-08-13: `aria-busy` settled on the control (not the status element), on
+  the P2-era measured precedent (`busy: 1`, exposure verified 2026-08-07).
+  Presentation of a supplied state, inside decision 7's line.
+- 2026-08-13: Describedby order settled as error → status → help: A5's
+  rationale (urgent first) keeps error first; status is newer than durable
+  help; no shipped A5 case changes relative order. Recorded as a proposed
+  amendment for the heuristics file; wording is Katie's to overrule at the
+  phase report.
+
+{% /section %}
