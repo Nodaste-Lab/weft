@@ -293,7 +293,7 @@ html,
   animation: weft-pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
 }
 .weft-field-hint.is-status-ok   { color: var(--weft-ok); }
-.weft-field-hint.is-status-info { color: var(--weft-info); }
+.weft-field-hint.is-status-info { color: var(--weft-info-text); }  /* text-grade: --weft-info is 2.54:1 in light and its lift is an open design decision */
 .weft-field-hint.is-status-warn { color: var(--weft-warn); }
 .weft-field-hint.is-status-stop { color: var(--weft-stop); }
 .weft-field-hint.is-error { color: var(--weft-stop); }

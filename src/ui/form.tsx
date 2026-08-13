@@ -200,7 +200,7 @@ const STATUS_TONE_CLASS: Record<FormStatusTone, string> = {
   // tone is presentation only: whether the field is invalid stays the
   // consumer's call, through its own error machinery.
   ok: "text-[var(--weft-ok)]",
-  info: "text-[var(--weft-info)]",
+  info: "text-[var(--weft-info-text)]",
   warn: "text-[var(--weft-warn)]",
   stop: "text-[var(--weft-stop)]",
 };

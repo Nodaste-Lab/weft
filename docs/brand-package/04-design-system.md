@@ -778,7 +778,11 @@ shared `weft-pulse` keyframes, whose final keyframe is opacity 1 — frozen
 under `prefers-reduced-motion: reduce`, the dot measures static-visible. A
 settled result takes one of four tone classes — `.is-status-ok`,
 `.is-status-info`, `.is-status-warn`, `.is-status-stop` — on the matching tone
-tokens. The consumer's **text carries the meaning**; tone colour reinforces it
+tokens, with one deliberate exception: the info class reads `--weft-info-text`,
+a text-grade blue that clears AA on paper and cream, because `--weft-info`
+itself sits at 2.54:1 as light-theme text and lifting it is an open design
+decision this presentation routes around rather than resolves. The consumer's
+**text carries the meaning**; tone colour reinforces it
 and is never the only signal. A stop-toned status does not mark the field
 invalid: whether a failed check becomes an error — `aria-invalid`, the error
 boundary, the glyph, the `-error` id — stays the consumer's call through its

@@ -156,7 +156,7 @@ test.describe('tones resolve from the four tokens', () => {
         };
         const pairs: Array<[string, string]> = [
           ['#pd-ok-status', '--weft-ok'],
-          ['#pd-info-status', '--weft-info'],
+          ['#pd-info-status', '--weft-info-text'],
           ['#pd-warn-status', '--weft-warn'],
           ['#pd-stop-status', '--weft-stop'],
         ];

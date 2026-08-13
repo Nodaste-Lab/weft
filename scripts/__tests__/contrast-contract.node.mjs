@@ -30,7 +30,7 @@ const AA_NORMAL = 4.5;
  * of scope — --weft-blue backs the avatar chip rather than setting text;
  * --weft-link is the text-coloured member of that family, so it IS in scope.
  */
-const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-link', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info'];
+const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-link', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info', '--weft-info-text'];
 
 /**
  * Pre-existing failures, recorded so this gate can land without a drive-by
@@ -259,6 +259,38 @@ test('the category palette encodes on the dark panel canvas — visible, separat
  * cannot repeat it by being forgotten. `--weft-on-blue` carries text and is held
  * to AA; the rule and dot tiers are decorative and are not checked here.
  */
+test('the text-grade info token is defined in every block whose canvas flips', () => {
+  // --weft-info-text exists because light --weft-info fails AA as text and its
+  // lift is an open design decision. The trap is inheritance: hud-glass is a
+  // dark palette IN ITS OWN RIGHT (the chevron lesson) and the dark theme
+  // blocks flip the canvas — any of them inheriting the light text blue would
+  // paint a near-invisible status. So every block that flips the canvas must
+  // declare its own value; the base declaration alone is not coverage.
+  const blocks = extractTokenBlocks(css);
+  const mustDeclare = Object.keys(blocks).filter(
+    (name) => name.includes('data-theme^="dark"') || name.includes('hud-glass'),
+  );
+  assert.ok(mustDeclare.length >= 3, `expected the dark and hud-glass blocks, found ${mustDeclare.length}`);
+  const missing = mustDeclare.filter((name) => !blocks[name]['--weft-info-text']);
+  assert.deepEqual(
+    missing,
+    [],
+    `--weft-info-text is inherited from the LIGHT palette here, onto a dark canvas:\n  ${missing.join('\n  ')}`,
+  );
+  // And the base block must declare it at all: ON_PAPER silently skips a
+  // token that does not resolve to a hex, so WITHOUT this assertion, deleting
+  // the declaration entirely would leave every contrast check green while the
+  // status hint fell back to inherited text colour. Found by a probe whose
+  // restore step had quietly reverted the uncommitted declaration — the gate
+  // passed on a token that did not exist.
+  const { base, baseName } = weftBlocks(blocks);
+  assert.ok(baseName, 'could not find the base Weft palette block');
+  assert.ok(
+    base['--weft-info-text'],
+    'the base Weft palette does not declare --weft-info-text — the AA status text has no colour',
+  );
+});
+
 test('--weft-on-blue meets AA against --weft-blue in every palette that sets one', () => {
   const blocks = extractTokenBlocks(css);
   const base = blocks[Object.keys(blocks).find((n) => n.includes(':root,'))] ?? {};

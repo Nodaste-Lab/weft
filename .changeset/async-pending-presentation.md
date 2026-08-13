@@ -17,4 +17,7 @@ cover the status surface). Exposure, never announcement. The plain-CSS layer
 ships the same presentation as `.weft-field-hint.is-pending` and the four
 tone classes `.is-status-ok` / `.is-status-info` / `.is-status-warn` /
 `.is-status-stop`, with the `-status` id and `aria-busy` markup conventions
-gated page-wide on the specimen surface.
+gated page-wide on the specimen surface. One new token, additive: the info
+class reads `--weft-info-text` (blue-600 in light, AA on paper and cream;
+declared per palette block including hud-glass), because `--weft-info` sits at
+2.54:1 as light-theme text and its lift remains an open design decision.

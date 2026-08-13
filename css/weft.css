@@ -33,6 +33,7 @@
   --weft-warn:         #b45309;  /* amber-700 — AA as text: 5.02:1 on white, 4.73:1 on cream (was #d97706 at 3.19/3.00, fail). Feeds --hud-warning, used as small warning text across panels. */
   --weft-danger:       #ef4444;
   --weft-info:         #60a5fa;
+  --weft-info-text:    #2563eb;  /* blue-600 — AA as text: 5.17:1 on white, 4.87:1 on cream. --weft-info itself is 2.54:1 and its lift is an OPEN design decision (see contrast-contract KNOWN_FAILURES) — this is the text-grade info the async status hint reads, routed around that decision rather than resolving it. Same shape as --weft-warn's amber-700 lift. */
 
   /* ── Surfaces (mode-aware) ───────────────────────────────────────────── */
   --weft-cream:        #fbf8f0;
@@ -257,6 +258,7 @@
   --weft-warn:         #f59e0b;
   --weft-danger:       #f87171;
   --weft-info:         #c4b5fd;
+  --weft-info-text:    #c4b5fd;  /* matches --weft-info: already 9.35:1 on this paper */
 
   --primary:                       var(--weft-blue);
   /* Dark-mode primary is a LIGHT violet (violet-300), so on-primary text must be
@@ -356,6 +358,7 @@
   --weft-warn:         #f59e0b;
   --weft-danger:       #f87171;
   --weft-info:         #93c5fd;
+  --weft-info-text:    #93c5fd;  /* matches --weft-info: already 9.57:1 on this paper */
 
   /* Severity-row backgrounds use the lifted dark-mode hues. Slightly higher
    * alpha so the tint registers against the deep navy paper. */
@@ -497,6 +500,7 @@
   --weft-stop:                #ef4444;
   --weft-ok:                  #34d399;
   --weft-warn:                #fbbf24;
+  --weft-info-text:           #93c5fd;  /* hud-glass is a dark palette in its own right (the chevron lesson): without this it would inherit the LIGHT text blue onto a dark canvas. 9.6:1 on the glass paper. */
 }
 
 /* ── Font alternative: system fonts ─────────────────────────────────────── */
