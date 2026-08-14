@@ -261,13 +261,46 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   is corrected in-thread. PA's honest state: gates PASS · codex CLEAN ·
   antagonistic pass NOT yet run — the phase does not close until the board
   (or an equivalent adversarial prober) has had it.
-- 2026-08-14: Remaining: **the antagonistic pass** (Katie's Cursor board is
-  the live antagonistic reviewer — hers to run; the phase-close claim waits
-  on it); merge PR #20 (publishes 0.4.0) and PR #21 after it; the doctrine
-  wording (A4 in force, A9's order, aria-busy on the control) hers to
-  overrule; the open `--weft-info` lift decision, now with a measured
-  record. PB (gallery error card; the vanilla commit-boundary helper for
-  both 2027-02-28 parity gaps) stays available to a future session — not
-  started here.
+- 2026-08-14: **The board ran, twice.** First pass at `420fc2f`: NOT CLEAN —
+  one hard finding (status-without-help dangled the description id; the
+  rewrite made only the status arm element-conditional and the fixture
+  matrix never composed the case) plus two softs (Slot consumer-override;
+  the React dot's freeze unmeasured). Fixed at the class at `785378a`:
+  element-tracked inclusion for EVERY describedby arm (description and
+  message register presence; message only while carrying content — which
+  also closed the unnamed arm, an error presented outside FormMessage); a
+  bare control carries no aria-describedby; the SSR boundary widened
+  symmetrically and re-pinned; both softs taken as stated-and-pinned
+  boundaries. Three probes, three CAUGHT (5/1/10 failures). Second pass:
+  **board CLEAN at `785378a`** — its probes re-run PASS, the softs accepted,
+  the FormDescription/FormMessage singleton left explicitly as an owner
+  call.
+- 2026-08-14: **v0.4.0 released** — Katie merged PR #20 and the Release
+  workflow published and tagged from main on its own (it only ever failed at
+  PR creation). Heddle's adoption steps are unblocked in its repo.
+- 2026-08-14: The codex re-bind after the board's CLEAN caught one more
+  blocker before going CLEAN at `ff67f4c`: `design-system.html` — the
+  shipped self-contained rendered reference — still taught the pre-async
+  form-input section. The page now embeds the status CSS (weft-pulse
+  keyframes; info on `--weft-info-text`), renders pending + degraded
+  specimens with the aria-busy pairing and a code sample, and S11 grew
+  probed teeth (no-pending-specimen / busy-dropped / info-regressed all
+  fail — 3 probes CAUGHT). Nits: the README's amendment count is REMOVED
+  rather than corrected (a number in prose is a number that drifts), and
+  the rendered tone checks sweep palette × theme. En route, an aborted gate
+  run exposed machine-level environment damage: 24 duplicated " 2" folders
+  in `node_modules/@types` (tracked tree clean; fresh install; the same
+  pattern exists in the Heddle checkout — the duplicator is not this repo's
+  process and is worth hunting like the worktree resetter was).
+- 2026-08-14: Where the claim stands, precisely: gates PASS · codex CLEAN
+  at `ff67f4c`; **board CLEAN at `785378a`**, with the delta since being
+  reference-page/README/test-coverage only — whether that delta needs a
+  board re-check is the board's call, because the verdict binds to the SHA.
+  Remaining for Katie: doctrine wording (A4/A9/aria-busy) to overrule or
+  bless; the open `--weft-info` lift decision; the
+  FormDescription/FormMessage singleton call; the board's word on the
+  docs-only delta; merge. PB (gallery error card; the vanilla
+  commit-boundary helper for both 2027-02-28 parity gaps) stays available
+  to a future session — not started here.
 
 {% /section %}
