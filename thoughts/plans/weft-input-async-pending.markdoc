@@ -222,5 +222,41 @@ Cursor tracking board — ask her to run it rather than self-waiving.
 - 2026-08-13: Typing probe pins the tone axis closed under `--strict`
   (probed by widening — CAUGHT); the packed root-entry shape probe carries
   FormStatus (probed by dropping the barrel line — CAUGHT).
+- 2026-08-13: The Codex cap had reset early — probed with a one-word prompt
+  before assuming the handoff's Aug-17 date, and the real double-clean gate
+  ran instead of waiting on a substitute reviewer.
+- 2026-08-13/14: **PA closed DOUBLE-CLEAN at `03b3e67`** (gates PASS · codex
+  CLEAN · PR #21 marked ready). Five gate rounds, five findings, one pair of
+  nits — every fix at the class, every guard probed: (r1) the pending cells
+  were a Python TUPLE interpolated into the grid — visible repr punctuation
+  on the committed page that every selector-based gate read past; S16 now
+  refuses stray direct text in any .grid, probed with the original defect.
+  (r1) FormStatus registered on a passive effect — a pending field could
+  paint a frame unreferenced and not busy; registration moved to a layout
+  effect, held by flushSync tests that fail on useEffect, with the SSR
+  hydration boundary stated and pinned. (r2→r3) nits batched: changeset
+  named a class that doesn't exist; checklist line points at the status
+  slot. (r3) the info status was a new first-class text use of light
+  `--weft-info` at 2.54:1 — fixed as `--weft-info-text` (AA, per-palette
+  incl. hud-glass with a coverage test, ON_PAPER measures it) WITHOUT
+  taking the open `--weft-info` lift decision, which stays Katie's. (r4)
+  the replacement-not-stacking contract had no enforcement — the registry
+  now keys on the instance and a second live FormStatus throws, with
+  present/pending derived from the entry rather than effect order.
+- 2026-08-13/14: **Probe-restore rule, learned twice in one session and now
+  binding**: probes restore from scratch-directory snapshots, NEVER from
+  git, until the unit is committed — `git checkout` reverted uncommitted
+  work under two separate probes (the weft.css token declarations; the
+  round-4 registry), and in the first case the gate then PASSED against a
+  token that did not exist because ON_PAPER skips what does not resolve.
+  That silent-skip hole is itself closed (the coverage test requires the
+  base declaration; probed by deleting it — CAUGHT).
+- 2026-08-14: Remaining, all Katie's: merge PR #20 (publishes 0.4.0) and
+  PR #21 after it; the doctrine wording (A4 in force, A9's order, aria-busy
+  on the control) hers to overrule; the open `--weft-info` lift decision,
+  now with a measured record; the Cursor board pass if she wants a third
+  reviewer on the record. PB (gallery error card; the vanilla commit-boundary
+  helper for both 2027-02-28 parity gaps) stays available to a future
+  session — not started here.
 
 {% /section %}
