@@ -225,8 +225,8 @@ Cursor tracking board — ask her to run it rather than self-waiving.
 - 2026-08-13: The Codex cap had reset early — probed with a one-word prompt
   before assuming the handoff's Aug-17 date, and the real double-clean gate
   ran instead of waiting on a substitute reviewer.
-- 2026-08-13/14: **PA closed DOUBLE-CLEAN at `03b3e67`** (gates PASS · codex
-  CLEAN · PR #21 marked ready). Five gate rounds, five findings, one pair of
+- 2026-08-13/14: **PA closed gates PASS · codex CLEAN at `03b3e67`** (PR #21
+  marked ready). Five gate rounds, five findings, one pair of
   nits — every fix at the class, every guard probed: (r1) the pending cells
   were a Python TUPLE interpolated into the grid — visible repr punctuation
   on the committed page that every selector-based gate read past; S16 now
@@ -251,12 +251,23 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   token that did not exist because ON_PAPER skips what does not resolve.
   That silent-skip hole is itself closed (the coverage test requires the
   base declaration; probed by deleting it — CAUGHT).
-- 2026-08-14: Remaining, all Katie's: merge PR #20 (publishes 0.4.0) and
-  PR #21 after it; the doctrine wording (A4 in force, A9's order, aria-busy
-  on the control) hers to overrule; the open `--weft-info` lift decision,
-  now with a measured record; the Cursor board pass if she wants a third
-  reviewer on the record. PB (gallery error card; the vanilla commit-boundary
-  helper for both 2027-02-28 parity gaps) stays available to a future
-  session — not started here.
+- 2026-08-14: **The close is NOT double-clean, by owner correction.** Katie's
+  rule, now on the record: "double-clean" is reserved for a verdict that
+  includes an ANTAGONISTIC tester — gates plus a Codex CLEAN is a cooperative
+  review, and the P8 evidence is exactly why the distinction matters (the
+  Cursor board's adversarial probe caught the `form.reset()` hole six Codex
+  rounds missed). review-gate.sh's own "DOUBLE-CLEAN" banner uses the looser
+  sense; the script's label is not the claim. PR #21's earlier close comment
+  is corrected in-thread. PA's honest state: gates PASS · codex CLEAN ·
+  antagonistic pass NOT yet run — the phase does not close until the board
+  (or an equivalent adversarial prober) has had it.
+- 2026-08-14: Remaining: **the antagonistic pass** (Katie's Cursor board is
+  the live antagonistic reviewer — hers to run; the phase-close claim waits
+  on it); merge PR #20 (publishes 0.4.0) and PR #21 after it; the doctrine
+  wording (A4 in force, A9's order, aria-busy on the control) hers to
+  overrule; the open `--weft-info` lift decision, now with a measured
+  record. PB (gallery error card; the vanilla commit-boundary helper for
+  both 2027-02-28 parity gaps) stays available to a future session — not
+  started here.
 
 {% /section %}
