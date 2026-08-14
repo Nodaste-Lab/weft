@@ -302,5 +302,22 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   docs-only delta; merge. PB (gallery error card; the vanilla
   commit-boundary helper for both 2027-02-28 parity gaps) stays available
   to a future session — not started here.
+- 2026-08-14: **The `--weft-info` decision settled by Katie: keep the
+  split.** `--weft-info` stays #60a5fa for non-text uses — and, found while
+  closing it, for one legitimate dark-canvas TEXT use: the board's
+  provenance badge (`.weft-badge.is-info`), where the light blue measures
+  6.8:1+ on the dark slab and the dark text-blue would have been the
+  hud-glass trap inverted. Info-as-text on paper/cream rides
+  `--weft-info-text` #2563eb. Mechanics of the close: `--weft-info` left
+  the contrast gate's ON_PAPER list (it is not an on-paper text token by
+  owner decision) and both its KNOWN_FAILURES entries came out —
+  `--weft-danger`'s entries remain, that decision still open. The split
+  gained its counter-guard: no `.weft-field-hint` rule may paint with the
+  bare token, probed by reintroduction and — the probe ledger's recurring
+  lesson — the guard's FIRST version failed on a ReferenceError the probe
+  read as CAUGHT (`componentsCss` was never loaded in that file); rebuilt,
+  and the re-probe fails with the guard's own message. Decision records
+  updated in weft.css, weft-components.css, 04-design-system, and the
+  changeset.
 
 {% /section %}

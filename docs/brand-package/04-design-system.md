@@ -779,9 +779,12 @@ under `prefers-reduced-motion: reduce`, the dot measures static-visible. A
 settled result takes one of four tone classes — `.is-status-ok`,
 `.is-status-info`, `.is-status-warn`, `.is-status-stop` — on the matching tone
 tokens, with one deliberate exception: the info class reads `--weft-info-text`,
-a text-grade blue that clears AA on paper and cream, because `--weft-info`
-itself sits at 2.54:1 as light-theme text and lifting it is an open design
-decision this presentation routes around rather than resolves. The consumer's
+a text-grade blue that clears AA on paper and cream. The split is a settled
+owner decision (2026-08-14): `--weft-info` keeps its light value for non-text
+and dark-canvas uses — encodings, dots, borders, and the board's provenance
+badge, where the light blue is the readable choice — and info-as-text on
+paper or cream always rides `--weft-info-text`, a rule the contrast gate
+enforces rather than describes. The consumer's
 **text carries the meaning**; tone colour reinforces it
 and is never the only signal. A stop-toned status does not mark the field
 invalid: whether a failed check becomes an error — `aria-invalid`, the error

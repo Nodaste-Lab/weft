@@ -19,5 +19,7 @@ tone classes `.is-status-ok` / `.is-status-info` / `.is-status-warn` /
 `.is-status-stop`, with the `-status` id and `aria-busy` markup conventions
 gated page-wide on the specimen surface. One new token, additive: the info
 class reads `--weft-info-text` (blue-600 in light, AA on paper and cream;
-declared per palette block including hud-glass), because `--weft-info` sits at
-2.54:1 as light-theme text and its lift remains an open design decision.
+declared per palette block including hud-glass). The `--weft-info` contrast
+decision is settled as a split by owner call (2026-08-14): the bare token
+stays for non-text and dark-canvas uses; info-as-text on paper rides the
+text-grade token, enforced by the contrast gate.

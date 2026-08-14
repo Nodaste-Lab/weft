@@ -22,6 +22,7 @@ import { extractTokenBlocks } from '../design-system-tokens.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const css = readFileSync(join(ROOT, 'css', 'weft.css'), 'utf8');
+const componentsCss = readFileSync(join(ROOT, 'css', 'weft-components.css'), 'utf8');
 
 const AA_NORMAL = 4.5;
 
@@ -30,24 +31,31 @@ const AA_NORMAL = 4.5;
  * of scope — --weft-blue backs the avatar chip rather than setting text;
  * --weft-link is the text-coloured member of that family, so it IS in scope.
  */
-const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-link', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info', '--weft-info-text'];
+// --weft-info is ABSENT from this list by owner decision (Katie, 2026-08-14):
+// it is not an on-paper text token. Its light value (#60a5fa, 2.54:1 on
+// white) stays for non-text uses (encoding, dots, callout and badge borders)
+// and for dark-canvas text (the board's provenance badge, 6.8:1+ there);
+// info-as-text on paper/cream rides --weft-info-text, which IS measured
+// here. The split is enforced below: no field-hint rule may paint with the
+// bare token.
+const ON_PAPER = ['--weft-ink', '--weft-muted', '--weft-link', '--weft-ok', '--weft-stop', '--weft-warn', '--weft-danger', '--weft-info-text'];
 
 /**
  * Pre-existing failures, recorded so this gate can land without a drive-by
  * recolour of the brand palette. It ratchets: anything NEW fails immediately,
  * and these must shrink, never grow.
  *
- * Each is a real AA failure for normal text and wants a design decision, not a
- * unilateral hex change — --weft-info in particular is badly under (2.54:1).
+ * Each is a real AA failure for normal text and wants a design decision, not
+ * a unilateral hex change. --weft-info's entries came OUT on 2026-08-14 when
+ * the owner settled its decision as a split (see the ON_PAPER note above);
+ * --weft-danger's decision remains open.
  */
 const KNOWN_FAILURES = new Set([
   'light: --weft-danger',
-  'light: --weft-info',
-  // The same two brand hues on the tinted-fill surface (fill-soft over paper,
-  // marginally less contrast than paper itself). Not new failures — the same
-  // open design decision, measured on a second surface.
+  // The same hue on the tinted-fill surface (fill-soft over paper,
+  // marginally less contrast than paper itself). Not a new failure — the
+  // same open design decision, measured on a second surface.
   'light tinted: --weft-danger',
-  'light tinted: --weft-info',
 ]);
 
 function parseHex(value) {
@@ -259,6 +267,22 @@ test('the category palette encodes on the dark panel canvas — visible, separat
  * cannot repeat it by being forgotten. `--weft-on-blue` carries text and is held
  * to AA; the rule and dot tiers are decorative and are not checked here.
  */
+test('the info split holds: no field-hint rule paints with the bare info token', () => {
+  // The owner decision (2026-08-14) that closed --weft-info's open contrast
+  // entry is a SPLIT, and a split needs a counter-guard on each side: the
+  // paper-surface text this stage owns must ride --weft-info-text, never the
+  // bare token — a future hint rule reaching for var(--weft-info) would
+  // reopen the 2.54:1 failure while every declaration gate stayed green.
+  const offenders = [...componentsCss.matchAll(/\.weft-field-hint[^{]*\{[^}]*var\(--weft-info\)/g)].map(
+    (m) => m[0].slice(0, 60),
+  );
+  assert.deepEqual(
+    offenders,
+    [],
+    `field-hint rules painting with bare --weft-info (2.54:1 as light text):\n  ${offenders.join('\n  ')}`,
+  );
+});
+
 test('the text-grade info token is defined in every block whose canvas flips', () => {
   // --weft-info-text exists because light --weft-info fails AA as text and its
   // lift is an open design decision. The trap is inheritance: hud-glass is a
