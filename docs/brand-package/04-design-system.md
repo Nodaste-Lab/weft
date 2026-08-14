@@ -812,6 +812,17 @@ else, replacing under one stable id, never stacking. Nothing here blocks
 navigation, submission or progression, and every accessibility claim is
 exposure, never announcement.
 
+Two boundaries of the React wiring are stated rather than discovered, and
+pinned by test. **Ids are element-tracked**: an id appears in the ordered
+list only while its element is mounted (a status with no help text lists no
+description id; an error presented outside `FormMessage` lists no message
+id) — a reference to nothing is decoration's inverse and equally banned.
+And **a consumer prop on `FormControl` wins** over the wired exposure, by
+the Slot convention this repo uses everywhere: overriding
+`aria-describedby` or `aria-busy` is an escape hatch, and the consumer who
+takes it owns the order, resolution and busy-pairing contracts for that
+control.
+
 **The required marker is real text plus the attribute** (heuristic 7, and it marks the minority — never both). A bare `*` lands inside the accessible name as punctuation while `required` stays false; the observed name was "RETENTION\*" with `required` false. Write the word, keep the space before it — the name concatenates text nodes, so without it you get "Retentionrequired" — and set the attribute:
 
 ```html

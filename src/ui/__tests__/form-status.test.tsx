@@ -256,6 +256,155 @@ describe('FormStatus — replacement, not stacking', () => {
   });
 });
 
+describe('no id dangles — an id is listed only while its element is mounted (board probe)', () => {
+  /**
+   * The antagonistic board's hard finding: status-without-help left the
+   * DESCRIPTION id dangling, because the FormControl rewrite taught
+   * conditional inclusion for the status id and left the description id
+   * unconditional beside it — and every fixture in the original matrix
+   * mounted FormDescription, so "every listed id resolves" never saw the
+   * hole. The class is bigger than the instance: the message id was
+   * conditioned on ERROR STATE, not on a mounted FormMessage, so an error
+   * presented outside the message slot dangled the same way. The rule now:
+   * an id appears in the ONE ordered list only while its element is mounted
+   * (and, for the message, carrying content).
+   */
+  it('status without help: the description id is ABSENT and nothing dangles', () => {
+    // The board's probe, verbatim in shape.
+    render(<StatusField pending statusText="Checking source…" withHelp={false} />);
+    const ids = describedbyIds(screen.getByRole('textbox'));
+    expect(ids).toHaveLength(1);
+    expect(ids[0]).toMatch(/-form-item-status$/);
+    const dangling = ids.filter((id) => !document.getElementById(id));
+    expect(dangling, `dangling references: ${dangling.join(' ')}`).toHaveLength(0);
+  });
+
+  it('an error with no FormMessage mounted lists no message id — same class, other arm', () => {
+    function ErrorNoMessage() {
+      const form = useForm<{ source: string }>({ defaultValues: { source: 'vault' } });
+      React.useEffect(() => {
+        form.setError('source', { type: 'manual', message: 'Unable to reach source.' });
+      }, [form]);
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Source path</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                {/* the consumer presents the error elsewhere — its call */}
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    render(<ErrorNoMessage />);
+    const control = screen.getByRole('textbox');
+    expect(control).toHaveAttribute('aria-invalid', 'true');
+    const ids = describedbyIds(control);
+    const dangling = ids.filter((id) => !document.getElementById(id));
+    expect(dangling, `dangling references: ${dangling.join(' ')}`).toHaveLength(0);
+    expect(ids.some((id) => /-form-item-message$/.test(id))).toBe(false);
+  });
+
+  it('a bare control with nothing mounted carries no aria-describedby at all', () => {
+    function Bare() {
+      const form = useForm<{ source: string }>({ defaultValues: { source: 'vault' } });
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Source path</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    render(<Bare />);
+    expect(screen.getByRole('textbox')).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('the whole composition matrix resolves with zero dangling ids', () => {
+    const cases: Array<[string, React.ReactElement]> = [
+      ['help only', <StatusField key="a" />],
+      ['status only', <StatusField key="b" tone="warn" statusText="Degraded." withHelp={false} />],
+      ['error + status, no help', <StatusField key="c" withError tone="stop" statusText="Blocked." withHelp={false} />],
+      ['all three', <StatusField key="d" withError tone="stop" statusText="Blocked." />],
+    ];
+    for (const [label, ui] of cases) {
+      const { unmount } = render(ui);
+      const ids = describedbyIds(screen.getByRole('textbox'));
+      const dangling = ids.filter((id) => !document.getElementById(id));
+      expect(dangling, `${label}: dangling references: ${dangling.join(' ')}`).toHaveLength(0);
+      unmount();
+    }
+  });
+});
+
+describe('stated boundaries — pinned, not discovered (board soft findings)', () => {
+  it('a consumer prop on FormControl wins over the wired ARIA — the Slot escape hatch, stated', () => {
+    // Board soft finding 1: {...props} spreads after the wired attributes,
+    // so a consumer's own aria-describedby or aria-busy REPLACES Weft's.
+    // That is the shadcn Slot convention across this repo — consumer wins —
+    // and this pin makes it a stated escape hatch rather than a surprise:
+    // a consumer who overrides owns the whole contract (order, resolution,
+    // busy pairing) for that control.
+    function Overridden() {
+      const form = useForm<{ source: string }>({ defaultValues: { source: 'vault' } });
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Source path</FormLabel>
+                <FormControl aria-describedby="consumer-own" aria-busy={false}>
+                  <Input {...field} />
+                </FormControl>
+                <FormStatus pending>Checking source…</FormStatus>
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    render(<Overridden />);
+    const control = screen.getByRole('textbox');
+    expect(control.getAttribute('aria-describedby')).toBe('consumer-own');
+    expect(control.getAttribute('aria-busy')).toBe('false');
+  });
+
+  it('the React dot rides the same weft-pulse keyframes with no fill-mode of its own', () => {
+    // Board soft finding 2: the rendered freeze measurement runs on the
+    // plain-CSS ::before dot. The React dot is COVERED BY COMPOSITION: the
+    // freeze rule is `*, *::before, *::after` with !important, which beats
+    // an inline animation's duration and iteration count, and weft-pulse's
+    // final keyframe is opacity 1 — so the frozen React dot lands at the
+    // same static-visible state PROVIDED it names the same keyframes and
+    // adds no fill-mode that could hold a different end state. Those two
+    // facts are what this pins; the keyframe semantics under freeze are the
+    // rendered measurement in input-pending.spec.ts.
+    render(<StatusField pending statusText="Checking source…" />);
+    const dot = document.querySelector('[data-status-dot]') as HTMLElement;
+    const style = dot.getAttribute('style') ?? '';
+    expect(style).toContain('weft-pulse');
+    expect(style).not.toMatch(/forwards|backwards|both/);
+  });
+});
+
 describe('exposure commits before paint — layout effects, not passive (review round 1)', () => {
   /**
    * A passive-effect registration commits the DOM one paint early: a pending
@@ -340,9 +489,15 @@ describe('the server boundary is stated, not discovered', () => {
     const markup = renderToString(<StatusField pending statusText="Checking source…" />);
     expect(markup).toContain('data-slot="form-status"');
     expect(markup).toMatch(/id="[^"]*-form-item-status"/);
-    const describedby = markup.match(/aria-describedby="([^"]*)"/)?.[1] ?? '';
-    expect(describedby, 'the hydration boundary: no status reference in server markup').not.toMatch(
-      /-form-item-status/,
+    // The boundary widened with the dangling-id fix: EVERY reference is
+    // element-tracked now, so server markup carries the elements themselves
+    // (status, help) and NO aria-describedby at all — references and
+    // aria-busy attach at hydration, symmetrically, which is what keeps
+    // hydration mismatch-free. A server-side reader gets the visible text;
+    // the programmatic association is a client fact.
+    expect(markup).toContain('data-slot="form-description"');
+    expect(markup, 'the hydration boundary: no references in server markup').not.toContain(
+      'aria-describedby',
     );
     expect(markup).not.toContain('aria-busy="true"');
   });
