@@ -490,6 +490,15 @@ html,
 :root[data-theme^="dark"]:not([data-palette]) [data-slot="textarea"][aria-invalid="true"] {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
 }
+/* Heritage purple's dark canvas flips --weft-stop to #f87171 (board pass 5:
+ * the tone-token fix exposed this — the data-URI stroke cannot read tokens,
+ * so every canvas that flips stop needs its own glyph, the chevron lesson). */
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
 :root[data-palette="hud-glass"] .weft-input[aria-invalid="true"],
 :root[data-palette="hud-glass"] [data-slot="input"][aria-invalid="true"],
 :root[data-palette="hud-glass"] .weft-textarea[aria-invalid="true"],
