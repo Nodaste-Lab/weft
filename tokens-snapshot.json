@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.3.0",
+  "designSystemVersion": "0.4.0",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
