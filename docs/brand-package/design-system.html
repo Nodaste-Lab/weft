@@ -34,6 +34,9 @@
     /* ==== Semantic / accessible ==== */
     --weft-link: var(--weft-blue);                              /* text accent color — brightened in dark mode */
     --weft-stop: #a8382b;                                       /* error / validation failure — AA 6.27:1 on cream */
+    --weft-ok: #3a7a4a;                                         /* settled-ok status text — AA 5.17:1 white / 4.87:1 cream */
+    --weft-warn: #b45309;                                       /* degraded / warning status text — AA 5.02:1 / 4.73:1 */
+    --weft-info-text: #2563eb;                                  /* text-grade info — AA; --weft-info itself is 2.54:1 and its lift is an open decision */
     --weft-focus-ring: 0 0 0 2px var(--weft-cream), 0 0 0 4px var(--weft-blue);
 
     /* ==== On-blue (light-on-dark variants) ==== */
@@ -107,6 +110,9 @@
     /* Brighter link color for dark bg — 5.71:1 on --weft-cream, passes AA normal */
     --weft-link:        #5b87fd;
     --weft-stop:        #e06e63;                       /* lightened error — AA 5.69:1 on ink */
+    --weft-ok:          #4ade80;                       /* settled-ok status text on dark paper */
+    --weft-warn:        #f59e0b;                       /* degraded / warning status text on dark paper */
+    --weft-info-text:   #93c5fd;                       /* text-grade info on dark paper */
     --weft-focus-ring:  0 0 0 2px var(--weft-cream), 0 0 0 4px var(--weft-yellow);
 
     --weft-thread-blue:   rgba( 37,  99, 255, 0.18);
@@ -265,6 +271,12 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
+  /* The shipped name — the status dot rides weft-pulse, whose final keyframe
+     is opacity 1, so the reduced-motion freeze leaves it static-visible. */
+  @keyframes weft-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
 
   /* === FORM INPUTS === */
   .weft-field {
@@ -285,6 +297,18 @@
   .weft-field-hint {
     font-size: 13px; color: var(--weft-muted); line-height: 1.4;
   }
+  .weft-field-hint.is-pending::before {
+    content: ""; display: inline-block;
+    width: 6px; height: 6px;
+    margin-right: 6px; vertical-align: 1px;
+    border-radius: var(--weft-radius-dot);
+    background-color: var(--weft-blue);
+    animation: weft-pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
+  }
+  .weft-field-hint.is-status-ok   { color: var(--weft-ok); }
+  .weft-field-hint.is-status-info { color: var(--weft-info-text); }
+  .weft-field-hint.is-status-warn { color: var(--weft-warn); }
+  .weft-field-hint.is-status-stop { color: var(--weft-stop); }
   .weft-field-hint.is-error { color: var(--weft-stop); }
 
   .weft-input, .weft-textarea, .weft-select {
@@ -1901,6 +1925,32 @@
          <span class="c-key">aria-invalid</span>=<span class="c-str">"true"</span> <span class="c-key">aria-describedby</span>=<span class="c-str">"email-error email-hint"</span> <span class="c-tag">/&gt;</span>
   <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint is-error"</span> <span class="c-key">id</span>=<span class="c-str">"email-error"</span><span class="c-tag">&gt;</span>Needs a full address.<span class="c-tag">&lt;/span&gt;</span>
   <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint"</span> <span class="c-key">id</span>=<span class="c-str">"email-hint"</span><span class="c-tag">&gt;</span>Work addresses only.<span class="c-tag">&lt;/span&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></pre>
+        </div>
+      </div>
+
+      <!-- FORM INPUTS — ASYNC STATUS (amendment A4 in force) -->
+      <div class="spec-row">
+        <div class="spec-label">.weft-field-hint.is-pending<span>Asynchronous pending / result status &mdash; presentation of a <em>supplied</em> state (amendment A4 in force: commit starts evaluation; the consumer may prevent progression while pending; Weft only presents the supplied pending or result state). Text in the hint slot &mdash; the field's right edge belongs to the chevron, the clear and the error glyph. Pending is the consumer's words plus a pulsing dot on the shared <code>weft-pulse</code> keyframes, whose final keyframe is opacity 1, so the reduced-motion freeze leaves it static-visible instead of reading as hung. The control carries <code>aria-busy="true"</code> while pending. A settled result takes a tone class &mdash; <code>.is-status-ok</code> / <code>.is-status-info</code> / <code>.is-status-warn</code> / <code>.is-status-stop</code> &mdash; on the tone tokens (info reads <code>--weft-info-text</code>, the AA text-grade blue). The text carries the meaning; colour only reinforces it. A stop-toned status never claims invalid &mdash; that stays the consumer's, through its own error machinery. One ordered <code>aria-describedby</code> list: <code>-error</code> first, <code>-status</code> second, <code>-hint</code> last (amendment A9). Exposure, never announcement.</span></div>
+        <div class="spec-body">
+          <div class="demo" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 640px;">
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-status-pending">Source path</label>
+              <input class="weft-input" id="demo-status-pending" type="text" value="vault://notes" aria-busy="true" aria-describedby="demo-status-pending-status" />
+              <span class="weft-field-hint is-pending" id="demo-status-pending-status">Checking source&hellip;</span>
+            </div>
+            <div class="weft-field">
+              <label class="weft-field-label" for="demo-status-warn">Source path</label>
+              <input class="weft-input" id="demo-status-warn" type="text" value="vault://notes" aria-describedby="demo-status-warn-status" />
+              <span class="weft-field-hint is-status-warn" id="demo-status-warn-status">Degraded &mdash; local content stays readable.</span>
+            </div>
+          </div>
+<pre class="code"><span class="c-tag">&lt;div</span> <span class="c-key">class</span>=<span class="c-str">"weft-field"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;label</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-label"</span> <span class="c-key">for</span>=<span class="c-str">"source"</span><span class="c-tag">&gt;</span>Source path<span class="c-tag">&lt;/label&gt;</span>
+  <span class="c-tag">&lt;input</span> <span class="c-key">class</span>=<span class="c-str">"weft-input"</span> <span class="c-key">id</span>=<span class="c-str">"source"</span> <span class="c-key">type</span>=<span class="c-str">"text"</span> <span class="c-key">aria-busy</span>=<span class="c-str">"true"</span>
+         <span class="c-key">aria-describedby</span>=<span class="c-str">"source-status source-hint"</span> <span class="c-tag">/&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint is-pending"</span> <span class="c-key">id</span>=<span class="c-str">"source-status"</span><span class="c-tag">&gt;</span>Checking source&hellip;<span class="c-tag">&lt;/span&gt;</span>
+  <span class="c-tag">&lt;span</span> <span class="c-key">class</span>=<span class="c-str">"weft-field-hint"</span> <span class="c-key">id</span>=<span class="c-str">"source-hint"</span><span class="c-tag">&gt;</span>Must be reachable over HTTPS.<span class="c-tag">&lt;/span&gt;</span>
 <span class="c-tag">&lt;/div&gt;</span></pre>
         </div>
       </div>

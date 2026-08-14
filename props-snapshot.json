@@ -939,10 +939,24 @@
       }
     },
     "form": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "surface": {
         "variants": {},
-        "props": {},
+        "props": {
+          "pending": {
+            "optional": true,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "info",
+              "ok",
+              "stop",
+              "warn"
+            ]
+          }
+        },
         "native": [
           "div",
           "p"

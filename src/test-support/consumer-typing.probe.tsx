@@ -20,6 +20,7 @@
 import * as React from "react";
 import { useCommitBoundary, type CommitDetail } from "../ui/use-commit-boundary";
 import { SearchField, type SearchFieldProps } from "../ui/search-field";
+import { FormStatus, type FormStatusTone } from "../ui/form";
 import { Switch } from "../ui/switch";
 import { Slider } from "../ui/slider";
 
@@ -97,4 +98,24 @@ export function SearchFieldNameIsTheLabelProp() {
   void sneakyLabel;
   void sneakyRef;
   return <SearchField label="Search projects" />;
+}
+
+// FormStatus takes a supplied state and the consumer's words — the tone axis
+// is the four-value union, closed. A consumer mapping its own vocabulary
+// (Heddle's seven states) writes exactly these shapes; a fifth tone or a
+// truthy string for `pending` must not compile, because the tone list is a
+// contract shared with the plain-CSS classes, not an open string.
+export function FormStatusConsumer() {
+  const tones: FormStatusTone[] = ["ok", "info", "warn", "stop"];
+  void tones;
+  return (
+    <>
+      <FormStatus pending>Checking source…</FormStatus>
+      <FormStatus tone="warn">Degraded — local content stays readable.</FormStatus>
+      {/* @ts-expect-error — the tone axis is closed; "danger" is Heddle's word, not Weft's */}
+      <FormStatus tone="danger">nope</FormStatus>
+      {/* @ts-expect-error — pending is a boolean, not a status string */}
+      <FormStatus pending="validating">nope</FormStatus>
+    </>
+  );
 }

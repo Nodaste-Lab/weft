@@ -273,6 +273,29 @@ html,
   letter-spacing: 0.06em;
 }
 .weft-field-hint { font-size: 13px; color: var(--weft-muted); line-height: 1.4; }
+/* Async pending/result presentation (amendment A4, in force): the consumer
+ * supplies the state and the words; these classes only present them. Pending
+ * is text plus a pulsing dot — weft-pulse ends at opacity 1, so the
+ * reduced-motion freeze leaves the dot static-visible instead of reading as
+ * a hung field. The dot is square, so it keeps --weft-radius-dot (the pill
+ * token is for oblongs). Convention, gated on the specimen page: a status
+ * hint's id ends -status, sits between -error and -hint in the ONE ordered
+ * aria-describedby list, and a control referencing an is-pending hint
+ * carries aria-busy="true". Tone colour reinforces the consumer's text and
+ * is never the only signal. These rules sit BEFORE .is-error on purpose:
+ * a hint wearing both stays an error on the cascade tie. */
+.weft-field-hint.is-pending::before {
+  content: ""; display: inline-block;
+  width: 6px; height: 6px;
+  margin-right: 6px; vertical-align: 1px;
+  border-radius: var(--weft-radius-dot);
+  background-color: var(--weft-blue);
+  animation: weft-pulse var(--weft-dur-pulse) var(--weft-ease-in-out) infinite;
+}
+.weft-field-hint.is-status-ok   { color: var(--weft-ok); }
+.weft-field-hint.is-status-info { color: var(--weft-info-text); }  /* text-grade: the info split, settled by owner call 2026-08-14 — bare --weft-info is non-text/dark-canvas only */
+.weft-field-hint.is-status-warn { color: var(--weft-warn); }
+.weft-field-hint.is-status-stop { color: var(--weft-stop); }
 .weft-field-hint.is-error { color: var(--weft-stop); }
 
 .weft-input, .weft-textarea, .weft-select {
@@ -465,6 +488,16 @@ html,
 :root[data-theme^="dark"]:not([data-palette]) .weft-textarea[aria-invalid="true"],
 :root[data-theme^="dark"][data-palette="weft"] [data-slot="textarea"][aria-invalid="true"],
 :root[data-theme^="dark"]:not([data-palette]) [data-slot="textarea"][aria-invalid="true"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
+}
+/* Heritage purple's dark canvas flips --weft-stop to its lightened dark
+ * value (board pass 5: the tone-token fix exposed this — the data-URI stroke
+ * cannot read tokens, so every canvas that flips stop needs its own glyph,
+ * the chevron lesson; error-icon.spec holds stroke == resolved stop). */
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-input[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] [data-slot="input"][aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] .weft-textarea[aria-invalid="true"],
+:root[data-theme^="dark"][data-palette="heritage-purple"] [data-slot="textarea"][aria-invalid="true"] {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F87171' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='8' x2='12' y2='12'/><line x1='12' y1='16' x2='12.01' y2='16'/></svg>");
 }
 :root[data-palette="hud-glass"] .weft-input[aria-invalid="true"],

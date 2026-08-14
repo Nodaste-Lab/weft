@@ -111,7 +111,7 @@ test('S8: hint ids follow the documented pattern, and every reference resolves',
   for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
     for (const ref of list.split(/\s+/)) {
       if (!ids.has(ref)) problems.push(`${ref} is referenced but no element has that id`);
-      if (!/-(hint|error)$/.test(ref)) problems.push(`${ref} does not end in -hint or -error`);
+      if (!/-(hint|error|status)$/.test(ref)) problems.push(`${ref} does not end in -hint, -error or -status`);
     }
   }
   assert.deepEqual(problems, [], `Description wiring is broken:\n  ${problems.join('\n  ')}`);
@@ -126,10 +126,12 @@ test('S8a: an error element carries an -error id, and a hint carries -hint', () 
   const problems = [];
   for (const [, cls, id] of html.matchAll(/class="(weft-field-hint[^"]*)"[^>]*\bid="([^"]+)"/g)) {
     const isError = /\bis-error\b/.test(cls);
+    const isStatus = /\bis-(pending|status-\w+)\b/.test(cls);
     if (isError && !id.endsWith('-error')) problems.push(`#${id} is an error but its id is not -error`);
-    if (!isError && !id.endsWith('-hint')) problems.push(`#${id} is a hint but its id is not -hint`);
+    if (isStatus && !isError && !id.endsWith('-status')) problems.push(`#${id} is a status but its id is not -status`);
+    if (!isError && !isStatus && !id.endsWith('-hint')) problems.push(`#${id} is a hint but its id is not -hint`);
   }
-  assert.deepEqual(problems, [], `Hint and error ids must match their role:\n  ${problems.join('\n  ')}`);
+  assert.deepEqual(problems, [], `Hint, error and status ids must match their role:\n  ${problems.join('\n  ')}`);
 });
 
 test('S8b: where both are present, the error id comes first (amendment A5)', () => {
@@ -137,22 +139,100 @@ test('S8b: where both are present, the error id comes first (amendment A5)', () 
   // the ids exist, resolve, and are named correctly — all three of which the
   // WRONG order satisfies perfectly, which is exactly how this shipped
   // backwards: every guard around the rule was true and none was about it.
+  // A5 extended by the async follow-up, not reordered: error, then status,
+  // then help. Every pairwise violation is named, so a list that is wrong in
+  // two ways reports both.
+  const RANK = { error: 0, status: 1, hint: 2 };
   const problems = [];
   for (const [, list] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
     const refs = list.split(/\s+/).filter(Boolean);
-    const errorAt = refs.findIndex((r) => r.endsWith('-error'));
-    const hintAt = refs.findIndex((r) => r.endsWith('-hint'));
-    if (errorAt === -1 || hintAt === -1) continue;  // only one kind present
-    if (errorAt > hintAt) {
-      problems.push(`"${list}" lists the help text before the error`);
+    const ranked = refs
+      .map((r) => ({ ref: r, rank: RANK[r.match(/-(error|status|hint)$/)?.[1]] }))
+      .filter((r) => r.rank !== undefined);
+    for (let i = 1; i < ranked.length; i += 1) {
+      if (ranked[i].rank < ranked[i - 1].rank) {
+        problems.push(`"${list}" lists ${ranked[i].ref} after ${ranked[i - 1].ref}`);
+      }
     }
   }
   assert.deepEqual(
     problems,
     [],
-    'Amendment A5: one ordered aria-describedby list, error id first. A field in error has ' +
-      'one urgent thing to say and one background thing.\n  ' + problems.join('\n  '),
+    'Amendment A5 (as extended): one ordered aria-describedby list — error first, status ' +
+      'second, help last. A field in error has one urgent thing to say; the status is the ' +
+      'newest fact; the help is background.\n  ' + problems.join('\n  '),
   );
+});
+
+test('S14: aria-busy and the pending hint travel together, both directions', () => {
+  // The plain-CSS layer cannot produce ARIA, so pending is a markup
+  // convention: a control whose describedby references an `is-pending` hint
+  // carries aria-busy="true", and nothing else on the page carries aria-busy
+  // at all. One direction catches a pending hint that forgot the exposure;
+  // the other catches a control claiming busy with no pending presentation —
+  // both are half-conventions the page must not teach.
+  const pendingIds = new Set(
+    [...html.matchAll(/class="weft-field-hint[^"]*\bis-pending\b[^"]*"[^>]*\bid="([^"]+)"/g)].map((m) => m[1]),
+  );
+  assert.ok(pendingIds.size >= 1, 'expected at least one is-pending specimen');
+  const problems = [];
+  for (const [tag] of html.matchAll(/<(?:input|textarea|select)\b[^>]*>/g)) {
+    const busy = /aria-busy="true"/.test(tag);
+    const refs = (tag.match(/aria-describedby="([^"]+)"/)?.[1] ?? '').split(/\s+/);
+    const referencesPending = refs.some((r) => pendingIds.has(r));
+    if (referencesPending && !busy) problems.push(`references a pending hint without aria-busy: ${tag}`);
+    if (busy && !referencesPending) problems.push(`aria-busy with no pending hint referenced: ${tag}`);
+  }
+  assert.deepEqual(problems, [], `The pending convention shipped by halves:\n  ${problems.join('\n  ')}`);
+});
+
+test('S16: a grid holds only elements — no stray direct text (the tuple-repr class)', () => {
+  // Round-1 reviewer finding on the async follow-up: the pending section's
+  // cells were built as a Python TUPLE and interpolated, so the committed
+  // page carried visible "(' … ', ' … ')" text nodes — while every
+  // selector-based gate stayed green, because browsers still parsed the
+  // inner elements. The class is stray direct text inside a layout
+  // container, so the gate walks tags with a stack and refuses any
+  // non-whitespace text node sitting DIRECTLY inside a .grid, page-wide.
+  // Text deeper down (captions, hints, expects) lives inside cells and is
+  // untouched.
+  const VOID = new Set(['input', 'br', 'img', 'hr', 'meta', 'link', 'source', 'wbr']);
+  const problems = [];
+  const stack = [];
+  for (const tok of html.split(/(<[^>]+>)/)) {
+    if (!tok) continue;
+    if (tok.startsWith('<')) {
+      if (tok.startsWith('</')) {
+        stack.pop();
+      } else if (!tok.startsWith('<!')) {
+        const name = tok.match(/^<([a-zA-Z0-9-]+)/)?.[1]?.toLowerCase();
+        if (!name) continue;
+        if (tok.endsWith('/>') || VOID.has(name)) continue;
+        stack.push({ name, isGrid: /class="[^"]*\bgrid\b[^"]*"/.test(tok) });
+      }
+    } else if (stack[stack.length - 1]?.isGrid && tok.trim()) {
+      problems.push(`stray text directly inside a grid: ${JSON.stringify(tok.trim().slice(0, 60))}`);
+    }
+  }
+  assert.deepEqual(problems, [], `A grid renders cells, not text:\n  ${problems.join('\n  ')}`);
+});
+
+test('S15: no two status specimens present different tones with identical text', () => {
+  // The consumer's TEXT carries the meaning; tone colour reinforces it. Two
+  // statuses distinguished by colour alone would be the 1.4.1 class the owner
+  // validation purged — the specimen page must not teach it.
+  const seen = new Map();
+  const problems = [];
+  for (const [, cls, body] of html.matchAll(
+    /class="weft-field-hint[^"]*\b(is-pending|is-status-\w+)\b[^"]*"[^>]*>([^<]*)</g,
+  )) {
+    const text = body.trim();
+    if (seen.has(text) && seen.get(text) !== cls) {
+      problems.push(`"${text}" is presented as both ${seen.get(text)} and ${cls}`);
+    }
+    seen.set(text, cls);
+  }
+  assert.deepEqual(problems, [], `Colour would be the only signal:\n  ${problems.join('\n  ')}`);
 });
 
 test('S12: every in-page link has a target', () => {
@@ -393,6 +473,95 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
       for (const ref of refs) {
         if (!idsHere.has(ref)) problems.push(`in ${where}, aria-describedby names #${ref}, which does not exist`);
       }
+      // A9's full order where all three arms compose: -error, then -status,
+      // then -hint. Checked pairwise so a list wrong in two ways names both.
+      const st = refs.findIndex((r) => r.endsWith('-status'));
+      if (e !== -1 && st !== -1 && e > st) {
+        problems.push(`in ${where}, "${list}" lists the status before the error`);
+      }
+      if (st !== -1 && h !== -1 && st > h) {
+        problems.push(`in ${where}, "${list}" lists the help text before the status`);
+      }
+    }
+  }
+
+  // The asynchronous status contract (A4 in force / A9) must be TAUGHT here,
+  // not only in 04's prose — this page is the self-contained rendered
+  // reference and it shipped a release still carrying the pre-async section
+  // (caught by review, not by this guard; this is the guard growing teeth).
+  // Contract, not instance: a pending specimen must pair with aria-busy on
+  // its control; the tone classes must exist in the embedded CSS with info
+  // on the AA text-grade token; and the -status id convention must appear.
+  // Tag-scoped, attribute-order-independent (board soft finding: the first
+  // shape required class before id, so an attribute reorder would have read
+  // as "no specimen" while the DOM still had one).
+  const pendingIds = [...page.matchAll(/<span\b[^>]*>/g)]
+    .map((m) => m[0])
+    .filter((tag) => /class="[^"]*\bis-pending\b[^"]*"/.test(tag))
+    .map((tag) => tag.match(/\bid="([^"]+)"/)?.[1])
+    .filter(Boolean);
+  if (pendingIds.length === 0) {
+    problems.push('the page renders no is-pending specimen — the async status contract is untaught');
+  }
+  for (const pid of pendingIds) {
+    if (!pid.endsWith('-status')) problems.push(`#${pid} is a pending status but its id is not -status`);
+    const owner = [...page.matchAll(/<(?:input|textarea|select)\b[^>]*>/g)]
+      .map((m) => m[0])
+      .find((tag) => (tag.match(/aria-describedby="([^"]+)"/)?.[1] ?? '').split(/\s+/).includes(pid));
+    if (!owner) problems.push(`no control references the pending hint #${pid}`);
+    else if (!/aria-busy="true"/.test(owner)) {
+      problems.push(`the control referencing #${pid} does not carry aria-busy="true"`);
+    }
+  }
+  if (!/\.weft-field-hint\.is-status-info\s*\{[^}]*var\(--weft-info-text\)/.test(page)) {
+    problems.push('the embedded CSS does not paint .is-status-info with --weft-info-text (the AA text-grade token)');
+  }
+  for (const tone of ['ok', 'warn', 'stop']) {
+    if (!new RegExp(`\\.weft-field-hint\\.is-status-${tone}\\b`).test(page)) {
+      problems.push(`the embedded CSS carries no .is-status-${tone} rule`);
+    }
+  }
+  if (!/@keyframes weft-pulse/.test(page)) {
+    problems.push('the embedded CSS does not define the weft-pulse keyframes the pending dot rides');
+  }
+  // RESOLUTION, not mention: the page is self-contained, so a hint rule can
+  // name var(--weft-warn) while the page declares no such token — the
+  // degraded specimen then paints as ordinary ink, which is exactly the tone
+  // axis the section exists to show. Caught by the board's rendered probe;
+  // this is the static half with teeth: every token a field-hint rule
+  // references must be DECLARED somewhere in the page, and dark-capable
+  // pages must declare it in the dark block too.
+  const hintRules = [...page.matchAll(/\.weft-field-hint[^{]*\{([^}]*)\}/g)].map((m) => m[1]);
+  const hintRuleTokens = new Set(
+    hintRules.flatMap((body) => [...body.matchAll(/var\((--weft-[a-z-]+)\)/g)].map((m) => m[1])),
+  );
+  // TEXT colour tokens are the ones the dark block exists to flip;
+  // structural tokens (easing, duration, radius) inherit from one
+  // declaration, and the dot's background is --weft-blue, a brand accent the
+  // page's own dark-mode doc says stays fixed.
+  const hintColourTokens = new Set(
+    hintRules.flatMap((body) =>
+      [...body.matchAll(/(?:^|;)\s*color\s*:\s*var\((--weft-[a-z-]+)\)/g)].map((m) => m[1]),
+    ),
+  );
+  // Symmetry matters: "declared somewhere" alone let a light-only removal
+  // slip through on its first probe, because the dark block's declaration
+  // satisfied it while the light page painted ink. A text-colour token must
+  // be declared in BOTH blocks; any referenced token must exist in at least
+  // one.
+  const baseBlockMatch = page.match(/:root\s*\{[\s\S]*?\n  \}/);
+  const darkBlockMatch = page.match(/\[data-theme="dark"\]\s*\{[\s\S]*?\n  \}/);
+  for (const token of hintRuleTokens) {
+    if (!new RegExp(`${token}\\s*:`).test(page)) {
+      problems.push(`a field-hint rule references ${token}, which the self-contained page never declares — it computes to nothing and the specimen paints as ink`);
+      continue;
+    }
+    if (!hintColourTokens.has(token)) continue;
+    if (baseBlockMatch && !new RegExp(`${token}\\s*:`).test(baseBlockMatch[0])) {
+      problems.push(`${token} is declared outside the base :root — the page's light theme leaves the specimen unpainted`);
+    }
+    if (darkBlockMatch && !new RegExp(`${token}\\s*:`).test(darkBlockMatch[0])) {
+      problems.push(`${token} is declared for light only — the page's dark theme leaves the specimen unpainted`);
     }
   }
 

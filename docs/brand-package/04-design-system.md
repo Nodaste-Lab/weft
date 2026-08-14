@@ -629,15 +629,16 @@ Minimal two-item mono cap row: brand + year on the left, tagline on the right. 1
 >
 > **The rules here merge [12-input-heuristics.md](12-input-heuristics.md)** —
 > eleven rules, each tagged with its provenance (normative WCAG criterion,
-> published research, or house convention) and eight recorded amendments.
+> published research, or house convention) and nine recorded amendments.
 > This section carries the operative contract as shipped and tested; the
 > heuristics file stays canonical for the tags, the original wording and the
 > argument, so neither document restates the other. One rule is deliberately
-> partial: heuristic 4 merges *without* its final sentence ("nothing invalid
-> persists past the boundary"), which is unenforceable for a check that
-> answers asynchronously — its replacement is settled but travels with the
-> deferred asynchronous follow-up (amendment A4), and publishing an
-> acknowledged gap beats publishing a rule known to be wrong.
+> partial: heuristic 4 merges *without* its original final sentence, which is
+> unenforceable for a check that answers asynchronously. Its settled
+> replacement is now **in force** (amendment A4, condition met by the
+> asynchronous follow-up): commit starts evaluation; the consumer may prevent
+> progression while pending; Weft only presents the supplied pending or
+> result state — see *Asynchronous status* below.
 >
 > Everything else this section describes is measured:
 > control height at every tier and size step, disabled and read-only, a focus
@@ -750,13 +751,80 @@ This rung is for any control the surface cannot visibly label.)
 
 The plain-CSS layer cannot produce ARIA, so what Weft ships here is a markup convention, and `scripts/__tests__/input-specimens.node.mjs` enforces it across the whole specimen page:
 
-- a hint carries `id="<control-id>-hint"`; an error carries `id="<control-id>-error"`;
-- the control lists them in `aria-describedby` as **one ordered list with the error first**;
+- a hint carries `id="<control-id>-hint"`; an error carries `id="<control-id>-error"`; an asynchronous status carries `id="<control-id>-status"`;
+- the control lists them in `aria-describedby` as **one ordered list — error first, status second, help last**;
 - the React layer wires the same order by construction in `FormControl`, so a consumer using the primitives gets it without writing ids.
 
-**Error first is the rule, not a preference** (amendment A5). A field in error has one urgent thing to say and one background thing; leading with the format hint buries the reason the value was rejected behind text the user has already read. Order is asserted directly — in `src/ui/__tests__/form-describedby-order.test.tsx` for React and by `S8b` for the plain-CSS recipe — because both ids present in the *wrong* order satisfy every existence and resolution check, and did.
+**Error first is the rule, not a preference** (amendment A5). A field in error has one urgent thing to say and one background thing; leading with the format hint buries the reason the value was rejected behind text the user has already read. The status slot sits between them (amendment A9): newer than durable help, never ahead of the error — and no pair A5 ordered changes relative order. Order is asserted directly — in `src/ui/__tests__/form-describedby-order.test.tsx` and `form-status.test.tsx` for React and by `S8b` for the plain-CSS recipe — because the ids present in the *wrong* order satisfy every existence and resolution check, and did.
 
 A hint with an id that nothing points at is decoration. That is what shipped before this convention existed: `aria-invalid` was exposed and the description was empty.
+
+#### Asynchronous status — presenting a supplied state
+
+Amendment A4 is in force: **commit starts evaluation; the consumer may prevent
+progression while pending; Weft only presents the supplied pending or result
+state.** A check that has to ask a server answers after the commit boundary,
+so the field needs a way to say "asked, not yet answered" and "answered,
+neither well nor badly" — and Heddle's `SourceValidationStatus` (seven states;
+`degraded` is a result that is neither success nor failure, with local content
+still readable) is why the presentation takes a **status, not a boolean**.
+
+The affordance is **text in the hint slot**. The field's right edge already
+belongs to the select chevron, the search clear and the error glyph, and
+Weft's reduced-motion rule freezes animations rather than slowing them, so
+motion at the edge would read as a hung field. Pending is the consumer's text
+plus a pulsing dot: `.weft-field-hint.is-pending` paints a 6px dot on the
+shared `weft-pulse` keyframes, whose final keyframe is opacity 1 — frozen
+under `prefers-reduced-motion: reduce`, the dot measures static-visible. A
+settled result takes one of four tone classes — `.is-status-ok`,
+`.is-status-info`, `.is-status-warn`, `.is-status-stop` — on the matching tone
+tokens, with one deliberate exception: the info class reads `--weft-info-text`,
+a text-grade blue that clears AA on paper and cream. The split is a settled
+owner decision (2026-08-14): `--weft-info` keeps its light value for non-text
+and dark-canvas uses — encodings, dots, borders, and the board's provenance
+badge, where the light blue is the readable choice — and info-as-text on
+paper or cream always rides `--weft-info-text`, a rule the contrast gate
+enforces rather than describes. The consumer's
+**text carries the meaning**; tone colour reinforces it
+and is never the only signal. A stop-toned status does not mark the field
+invalid: whether a failed check becomes an error — `aria-invalid`, the error
+boundary, the glyph, the `-error` id — stays the consumer's call through its
+own error machinery.
+
+```html
+<div class="weft-field">
+  <label class="weft-field-label" for="source">Source path</label>
+  <input class="weft-input" id="source" type="text" aria-busy="true"
+         aria-describedby="source-status source-hint" />
+  <span class="weft-field-hint is-pending" id="source-status">Checking source…</span>
+  <span class="weft-field-hint" id="source-hint">Must be reachable over HTTPS.</span>
+</div>
+```
+
+While pending, the control carries `aria-busy="true"`; the specimen gate
+(`S14`) holds the pair together in both directions, because a pending hint
+without the exposure and a busy control without the presentation are each
+half a contract. In React, `FormStatus` is the same presentation as a member
+of the `Form` family — `<FormStatus pending>Checking…</FormStatus>` or
+`<FormStatus tone="warn">Degraded — local content stays readable.</FormStatus>`
+— with the id, the list position and the control's `aria-busy` wired by
+construction. The consumer keeps the whole question: its vocabulary, the
+mapping onto `{pending | tone, text}`, staleness, cancellation, and when a
+status is replaced — Weft presents the current supplied state and nothing
+else, replacing under one stable id, never stacking. Nothing here blocks
+navigation, submission or progression, and every accessibility claim is
+exposure, never announcement.
+
+Two boundaries of the React wiring are stated rather than discovered, and
+pinned by test. **Ids are element-tracked**: an id appears in the ordered
+list only while its element is mounted (a status with no help text lists no
+description id; an error presented outside `FormMessage` lists no message
+id) — a reference to nothing is decoration's inverse and equally banned.
+And **a consumer prop on `FormControl` wins** over the wired exposure, by
+the Slot convention this repo uses everywhere: overriding
+`aria-describedby` or `aria-busy` is an escape hatch, and the consumer who
+takes it owns the order, resolution and busy-pairing contracts for that
+control.
 
 **The required marker is real text plus the attribute** (heuristic 7, and it marks the minority — never both). A bare `*` lands inside the accessible name as punctuation while `required` stays false; the observed name was "RETENTION\*" with `required` false. Write the word, keep the space before it — the name concatenates text nodes, so without it you get "Retentionrequired" — and set the attribute:
 
@@ -815,7 +883,7 @@ Painted on top of the native input with `appearance: none`. An 18×18 control si
 ```
 
 - Always label. `<label for="id">` wrapping, or a `<label>` wrapping the input directly.
-- Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5). Never color-only error signaling.
+- Always associate errors. `aria-invalid="true"` plus one ordered `aria-describedby` list, **error id first**: `aria-describedby="<control>-error <control>-hint"` (amendment A5) — and if the field carries an asynchronous status, its `-status` id sits between the two (amendment A9; see *Asynchronous status* above). Never color-only error signaling.
 - Always use `<fieldset>` + `<legend>` for radio groups. Don't fake a legend with a styled div — screen readers need the grouping semantics.
 - Don't restyle focus per-input. The global focus ring is the single source of truth.
 
@@ -833,6 +901,7 @@ without reading the source:
 | — | Re-evaluating an error that already exists — heuristic 4 wants it on keystroke, and Weft emits no commit for that |
 | — | Whether an error is **shown** at all |
 | **How** a supplied error is exposed — `aria-invalid`, the ordered description list above | — |
+| **How** a supplied pending or result status is presented — the hint slot, `aria-busy`, the status position in that list | **What** the status is — its own vocabulary, the mapping onto `{pending \| tone, text}`, staleness, cancellation |
 | — | The **value** — Weft never writes it |
 | — | Submission, navigation, progression — Weft never blocks any of them |
 

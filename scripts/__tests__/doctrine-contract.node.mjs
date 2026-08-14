@@ -40,8 +40,15 @@ test('D1: every weft- class the doctrine names exists in the shipped CSS', () =>
     for (const m of text.matchAll(/`\.?(weft-[a-z-]+)`/g)) {
       const cls = m[1];
       if (cls.startsWith('weft-board')) continue; // template layer, own doc
-      if (!componentsCss.includes(`.${cls}`) && !templatesCss.includes(`.${cls}`)) {
-        problems.push(`${where} names .${cls}, which no shipped stylesheet defines`);
+      // A backticked name may ship as a class selector OR as a keyframes
+      // animation (the async doctrine names `weft-pulse`, which is real but
+      // is not a class). Either way it must exist — a keyframes reference
+      // this misses would let prose cite an animation nothing defines.
+      const shipsAsClass = componentsCss.includes(`.${cls}`) || templatesCss.includes(`.${cls}`);
+      const shipsAsKeyframes =
+        componentsCss.includes(`@keyframes ${cls}`) || templatesCss.includes(`@keyframes ${cls}`);
+      if (!shipsAsClass && !shipsAsKeyframes) {
+        problems.push(`${where} names ${cls}, which no shipped stylesheet defines as a class or keyframes`);
       }
     }
   }
