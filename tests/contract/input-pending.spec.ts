@@ -17,6 +17,7 @@
  */
 import { expect, test } from '@playwright/test';
 import {
+  PALETTES,
   SPECIMEN_PAGE,
   THEMES,
   VISIBLE_DELTA,
@@ -138,9 +139,15 @@ test.describe('the right edge stays free', () => {
 });
 
 test.describe('tones resolve from the four tokens', () => {
-  for (const theme of THEMES) {
-    test(`each tone lands on its token — ${theme}`, async ({ page }) => {
-      await applyAxes(page, { theme });
+  // The full palette × theme sweep, not only the default palette: the tone
+  // classes read tokens the palette blocks redeclare (info-text exists in
+  // FOUR blocks precisely because hud-glass must not inherit the light text
+  // blue), so the rendered check runs everywhere the declaration gate says
+  // a value changes.
+  for (const palette of PALETTES) {
+    for (const theme of THEMES) {
+    test(`each tone lands on its token — ${palette}/${theme}`, async ({ page }) => {
+      await applyAxes(page, { theme, palette });
       const reads = await page.evaluate(() => {
         const token = (name: string) =>
           getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -171,6 +178,7 @@ test.describe('tones resolve from the four tokens', () => {
         expect(r.painted, `${r.sel} carries ${r.tok}`).toBe(r.expected);
       }
     });
+    }
   }
 });
 

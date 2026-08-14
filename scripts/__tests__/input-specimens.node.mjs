@@ -473,7 +473,49 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
       for (const ref of refs) {
         if (!idsHere.has(ref)) problems.push(`in ${where}, aria-describedby names #${ref}, which does not exist`);
       }
+      // A9's full order where all three arms compose: -error, then -status,
+      // then -hint. Checked pairwise so a list wrong in two ways names both.
+      const st = refs.findIndex((r) => r.endsWith('-status'));
+      if (e !== -1 && st !== -1 && e > st) {
+        problems.push(`in ${where}, "${list}" lists the status before the error`);
+      }
+      if (st !== -1 && h !== -1 && st > h) {
+        problems.push(`in ${where}, "${list}" lists the help text before the status`);
+      }
     }
+  }
+
+  // The asynchronous status contract (A4 in force / A9) must be TAUGHT here,
+  // not only in 04's prose — this page is the self-contained rendered
+  // reference and it shipped a release still carrying the pre-async section
+  // (caught by review, not by this guard; this is the guard growing teeth).
+  // Contract, not instance: a pending specimen must pair with aria-busy on
+  // its control; the tone classes must exist in the embedded CSS with info
+  // on the AA text-grade token; and the -status id convention must appear.
+  const pendingIds = [...page.matchAll(/class="[^"]*\bis-pending\b[^"]*"[^>]*\bid="([^"]+)"/g)].map((m) => m[1]);
+  if (pendingIds.length === 0) {
+    problems.push('the page renders no is-pending specimen — the async status contract is untaught');
+  }
+  for (const pid of pendingIds) {
+    if (!pid.endsWith('-status')) problems.push(`#${pid} is a pending status but its id is not -status`);
+    const owner = [...page.matchAll(/<(?:input|textarea|select)\b[^>]*>/g)]
+      .map((m) => m[0])
+      .find((tag) => (tag.match(/aria-describedby="([^"]+)"/)?.[1] ?? '').split(/\s+/).includes(pid));
+    if (!owner) problems.push(`no control references the pending hint #${pid}`);
+    else if (!/aria-busy="true"/.test(owner)) {
+      problems.push(`the control referencing #${pid} does not carry aria-busy="true"`);
+    }
+  }
+  if (!/\.weft-field-hint\.is-status-info\s*\{[^}]*var\(--weft-info-text\)/.test(page)) {
+    problems.push('the embedded CSS does not paint .is-status-info with --weft-info-text (the AA text-grade token)');
+  }
+  for (const tone of ['ok', 'warn', 'stop']) {
+    if (!new RegExp(`\\.weft-field-hint\\.is-status-${tone}\\b`).test(page)) {
+      problems.push(`the embedded CSS carries no .is-status-${tone} rule`);
+    }
+  }
+  if (!/@keyframes weft-pulse/.test(page)) {
+    problems.push('the embedded CSS does not define the weft-pulse keyframes the pending dot rides');
   }
 
   assert.deepEqual(problems, [], `docs/brand-package/design-system.html has drifted:\n  ${problems.join('\n  ')}`);
