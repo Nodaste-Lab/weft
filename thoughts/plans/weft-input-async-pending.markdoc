@@ -319,5 +319,20 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   and the re-probe fails with the guard's own message. Decision records
   updated in weft.css, weft-components.css, 04-design-system, and the
   changeset.
+- 2026-08-14: **Owner approvals, recorded together (Katie, in-session):**
+  the doctrine wording stands as written (A4 in force, A9's
+  error → status → help order, aria-busy on the control); the
+  FormDescription/FormMessage singleton stays PRESENCE-ONLY — the throw is
+  FormStatus's alone, and retrofitting it onto 1.x components is declined;
+  and the merge of PR #21 is approved, to execute after the board's
+  re-probe of the heritage glyph fix, green CI, and a final gate re-bind
+  at the merge tip. The release (Version Packages, 0.5.0) stays the
+  owner's merge, per the #18/#20 precedent.
+- 2026-08-14: Board pass 5 (the heritage glyph) fixed and probed; en
+  route, two self-catches for the ledger: a probe read that looked like a
+  MISS because tail -1 swallowed the failure line (the guard was fine, the
+  capture was not), and a CI round lost to a bare hex in my own glyph
+  COMMENT — check-raw-colors does not exempt prose, and my partial local
+  battery had skipped that gate. Full battery before push, not after.
 
 {% /section %}
