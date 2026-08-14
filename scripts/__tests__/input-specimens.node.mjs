@@ -492,7 +492,14 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
   // Contract, not instance: a pending specimen must pair with aria-busy on
   // its control; the tone classes must exist in the embedded CSS with info
   // on the AA text-grade token; and the -status id convention must appear.
-  const pendingIds = [...page.matchAll(/class="[^"]*\bis-pending\b[^"]*"[^>]*\bid="([^"]+)"/g)].map((m) => m[1]);
+  // Tag-scoped, attribute-order-independent (board soft finding: the first
+  // shape required class before id, so an attribute reorder would have read
+  // as "no specimen" while the DOM still had one).
+  const pendingIds = [...page.matchAll(/<span\b[^>]*>/g)]
+    .map((m) => m[0])
+    .filter((tag) => /class="[^"]*\bis-pending\b[^"]*"/.test(tag))
+    .map((tag) => tag.match(/\bid="([^"]+)"/)?.[1])
+    .filter(Boolean);
   if (pendingIds.length === 0) {
     problems.push('the page renders no is-pending specimen — the async status contract is untaught');
   }
@@ -516,6 +523,46 @@ test('S11: the rendered reference page teaches the shipped input contract', () =
   }
   if (!/@keyframes weft-pulse/.test(page)) {
     problems.push('the embedded CSS does not define the weft-pulse keyframes the pending dot rides');
+  }
+  // RESOLUTION, not mention: the page is self-contained, so a hint rule can
+  // name var(--weft-warn) while the page declares no such token — the
+  // degraded specimen then paints as ordinary ink, which is exactly the tone
+  // axis the section exists to show. Caught by the board's rendered probe;
+  // this is the static half with teeth: every token a field-hint rule
+  // references must be DECLARED somewhere in the page, and dark-capable
+  // pages must declare it in the dark block too.
+  const hintRules = [...page.matchAll(/\.weft-field-hint[^{]*\{([^}]*)\}/g)].map((m) => m[1]);
+  const hintRuleTokens = new Set(
+    hintRules.flatMap((body) => [...body.matchAll(/var\((--weft-[a-z-]+)\)/g)].map((m) => m[1])),
+  );
+  // TEXT colour tokens are the ones the dark block exists to flip;
+  // structural tokens (easing, duration, radius) inherit from one
+  // declaration, and the dot's background is --weft-blue, a brand accent the
+  // page's own dark-mode doc says stays fixed.
+  const hintColourTokens = new Set(
+    hintRules.flatMap((body) =>
+      [...body.matchAll(/(?:^|;)\s*color\s*:\s*var\((--weft-[a-z-]+)\)/g)].map((m) => m[1]),
+    ),
+  );
+  // Symmetry matters: "declared somewhere" alone let a light-only removal
+  // slip through on its first probe, because the dark block's declaration
+  // satisfied it while the light page painted ink. A text-colour token must
+  // be declared in BOTH blocks; any referenced token must exist in at least
+  // one.
+  const baseBlockMatch = page.match(/:root\s*\{[\s\S]*?\n  \}/);
+  const darkBlockMatch = page.match(/\[data-theme="dark"\]\s*\{[\s\S]*?\n  \}/);
+  for (const token of hintRuleTokens) {
+    if (!new RegExp(`${token}\\s*:`).test(page)) {
+      problems.push(`a field-hint rule references ${token}, which the self-contained page never declares — it computes to nothing and the specimen paints as ink`);
+      continue;
+    }
+    if (!hintColourTokens.has(token)) continue;
+    if (baseBlockMatch && !new RegExp(`${token}\\s*:`).test(baseBlockMatch[0])) {
+      problems.push(`${token} is declared outside the base :root — the page's light theme leaves the specimen unpainted`);
+    }
+    if (darkBlockMatch && !new RegExp(`${token}\\s*:`).test(darkBlockMatch[0])) {
+      problems.push(`${token} is declared for light only — the page's dark theme leaves the specimen unpainted`);
+    }
   }
 
   assert.deepEqual(problems, [], `docs/brand-package/design-system.html has drifted:\n  ${problems.join('\n  ')}`);
