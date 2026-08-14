@@ -200,6 +200,50 @@ describe('A5 extended — one ordered list: error, then status, then help', () =
 });
 
 describe('FormStatus — replacement, not stacking', () => {
+  it('a second FormStatus in one FormItem throws — the singleton is enforced, not described', () => {
+    // Review round 4: two simultaneous statuses would render duplicate ids
+    // and leave aria-busy to layout-effect order. The registry keys on the
+    // instance and refuses a second live registration outright, the same way
+    // useFormField refuses to run outside FormField.
+    function Doubled() {
+      const form = useForm<{ source: string }>({ defaultValues: { source: 'vault' } });
+      return (
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Source path</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormStatus pending>Checking source…</FormStatus>
+                <FormStatus tone="ok">Also here.</FormStatus>
+              </FormItem>
+            )}
+          />
+        </Form>
+      );
+    }
+    // React re-throws commit-phase errors through the console as well; keep
+    // the test output clean without asserting on the noise.
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(() => render(<Doubled />)).toThrow(/one status per FormItem/);
+    } finally {
+      quiet.mockRestore();
+    }
+  });
+
+  it('a pending flip on the ONE status re-registers without tripping the singleton guard', () => {
+    const { rerender } = render(<StatusField pending statusText="Checking source…" />);
+    rerender(<StatusField tone="warn" statusText="Degraded." />);
+    rerender(<StatusField pending statusText="Checking again…" />);
+    expect(screen.getByRole('textbox')).toHaveAttribute('aria-busy', 'true');
+    expect(document.querySelectorAll('[data-slot="form-status"]')).toHaveLength(1);
+  });
+
   it('a status change replaces the text under the same id', () => {
     const { rerender } = render(<StatusField pending statusText="Checking source…" />);
     const before = document.querySelector('[data-slot="form-status"]')!.id;

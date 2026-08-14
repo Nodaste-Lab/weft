@@ -84,12 +84,16 @@ const FormItemContext = React.createContext<FormItemContextValue>(
  */
 type FormStatusRegistryValue = {
   status: { present: boolean; pending: boolean };
-  setStatus: React.Dispatch<React.SetStateAction<{ present: boolean; pending: boolean }>>;
+  register: (instance: object, pending: boolean) => void;
+  unregister: (instance: object) => void;
 };
 
 const FormStatusRegistryContext = React.createContext<FormStatusRegistryValue>({
   status: { present: false, pending: false },
-  setStatus: () => {},
+  // Outside a FormItem there is nothing to expose against; the element still
+  // renders, matching FormDescription's behaviour.
+  register: () => {},
+  unregister: () => {},
 });
 
 // Registration must land in a LAYOUT effect: a passive effect commits the
@@ -107,7 +111,34 @@ const useIsomorphicLayoutEffect =
 function FormItem({ className, ...props }: React.ComponentProps<"div">) {
   const id = React.useId();
   const [status, setStatus] = React.useState({ present: false, pending: false });
-  const registry = React.useMemo(() => ({ status, setStatus }), [status]);
+  // The registry is keyed by instance so the singleton contract is ENFORCED
+  // rather than described (review round 4): two simultaneous FormStatus
+  // children would render duplicate ids and leave aria-busy to layout-effect
+  // order, so a second live registration throws. A re-registration of the
+  // SAME instance (a pending flip, a StrictMode remount) is the ordinary
+  // update path. present/pending derive from the registered entry, never
+  // from whichever effect happened to run last.
+  const instancesRef = React.useRef(new Map<object, boolean>());
+  const register = React.useCallback((instance: object, pending: boolean) => {
+    const instances = instancesRef.current;
+    if (!instances.has(instance) && instances.size > 0) {
+      throw new Error(
+        "FormStatus: one status per FormItem — the contract is replacement, not stacking. " +
+          "Render a single FormStatus and change its props when the supplied state changes.",
+      );
+    }
+    instances.set(instance, pending);
+    setStatus({ present: true, pending: [...instances.values()].some(Boolean) });
+  }, []);
+  const unregister = React.useCallback((instance: object) => {
+    const instances = instancesRef.current;
+    instances.delete(instance);
+    setStatus({
+      present: instances.size > 0,
+      pending: [...instances.values()].some(Boolean),
+    });
+  }, []);
+  const registry = React.useMemo(() => ({ status, register, unregister }), [status, register, unregister]);
 
   return (
     <FormItemContext.Provider value={{ id }}>
@@ -223,12 +254,18 @@ function FormStatus({
   ...props
 }: React.ComponentProps<"p"> & { pending?: boolean; tone?: FormStatusTone }) {
   const { formStatusId } = useFormField();
-  const { setStatus } = React.useContext(FormStatusRegistryContext);
+  const { register, unregister } = React.useContext(FormStatusRegistryContext);
+  // A stable identity per mounted instance: the registry keys on it, which is
+  // what lets a pending flip re-register while a genuine SECOND instance is
+  // refused (one status per item — replacement, not stacking).
+  const instanceRef = React.useRef<{ key: object } | null>(null);
+  if (instanceRef.current === null) instanceRef.current = { key: {} };
+  const instance = instanceRef.current.key;
 
   useIsomorphicLayoutEffect(() => {
-    setStatus({ present: true, pending: !!pending });
-    return () => setStatus({ present: false, pending: false });
-  }, [setStatus, pending]);
+    register(instance, !!pending);
+    return () => unregister(instance);
+  }, [register, unregister, instance, pending]);
 
   return (
     <p
