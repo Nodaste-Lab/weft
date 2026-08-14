@@ -283,24 +283,40 @@ test('the info split holds: no field-hint rule paints with the bare info token',
   );
 });
 
-test('the text-grade info token is defined in every block whose canvas flips', () => {
-  // --weft-info-text exists because light --weft-info fails AA as text and its
-  // lift is an open design decision. The trap is inheritance: hud-glass is a
-  // dark palette IN ITS OWN RIGHT (the chevron lesson) and the dark theme
-  // blocks flip the canvas — any of them inheriting the light text blue would
-  // paint a near-invisible status. So every block that flips the canvas must
-  // declare its own value; the base declaration alone is not coverage.
+test('every status text tone is declared in every block whose canvas flips — and clears AA there', () => {
+  // The trap is inheritance: hud-glass and dark heritage-purple are dark
+  // canvases, and any tone token a block does not declare inherits the LIGHT
+  // value onto them. The first version of this test covered --weft-info-text
+  // alone; the board's pass-3 probe then measured dark heritage-purple
+  // painting status text with the INHERITED light ok (3.34:1) and stop
+  // (2.68:1) — the same class, two tokens over. So: every canvas-flipping
+  // block declares ALL FOUR tone text tokens, and where the block's own
+  // paper is an opaque hex, each declared tone must clear AA against it.
+  const STATUS_TEXT_TOKENS = ['--weft-ok', '--weft-warn', '--weft-stop', '--weft-info-text'];
   const blocks = extractTokenBlocks(css);
   const mustDeclare = Object.keys(blocks).filter(
     (name) => name.includes('data-theme^="dark"') || name.includes('hud-glass'),
   );
   assert.ok(mustDeclare.length >= 3, `expected the dark and hud-glass blocks, found ${mustDeclare.length}`);
-  const missing = mustDeclare.filter((name) => !blocks[name]['--weft-info-text']);
-  assert.deepEqual(
-    missing,
-    [],
-    `--weft-info-text is inherited from the LIGHT palette here, onto a dark canvas:\n  ${missing.join('\n  ')}`,
-  );
+  const problems = [];
+  for (const name of mustDeclare) {
+    const paper = parseHex(blocks[name]['--weft-paper'] ?? '');
+    for (const token of STATUS_TEXT_TOKENS) {
+      const raw = blocks[name][token];
+      if (!raw) {
+        problems.push(`${name} does not declare ${token} — it inherits the LIGHT value onto a dark canvas`);
+        continue;
+      }
+      const hex = parseHex(raw);
+      if (hex && paper) {
+        const ratio = contrast(hex, paper);
+        if (ratio < AA_NORMAL) {
+          problems.push(`${name}: ${token} (#${hex}) is ${ratio.toFixed(2)}:1 on its own paper (#${paper}), needs ${AA_NORMAL}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
   // And the base block must declare it at all: ON_PAPER silently skips a
   // token that does not resolve to a hex, so WITHOUT this assertion, deleting
   // the declaration entirely would leave every contrast check green while the

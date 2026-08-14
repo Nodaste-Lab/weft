@@ -130,6 +130,8 @@
       "--weft-danger": "#f87171",
       "--weft-info": "#c4b5fd",
       "--weft-info-text": "#c4b5fd",
+      "--weft-ok": "#4ade80",
+      "--weft-stop": "#f87171",
       "--primary": "var(--weft-blue)",
       "--primary-foreground": "#1a0f33",
       "--weft-on-blue": "rgba( 26, 15, 51, 0.95)",

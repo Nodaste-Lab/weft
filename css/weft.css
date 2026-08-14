@@ -259,6 +259,8 @@
   --weft-danger:       #f87171;
   --weft-info:         #c4b5fd;
   --weft-info-text:    #c4b5fd;  /* matches --weft-info: already 9.35:1 on this paper */
+  --weft-ok:           #4ade80;  /* board pass 3: without this the block inherited LIGHT ok (#3a7a4a, 3.34:1 here) — 9.90:1 on this paper */
+  --weft-stop:         #f87171;  /* same catch: inherited LIGHT stop measured 2.68:1 — 6.24:1 on this paper, matching --weft-danger's family */
 
   --primary:                       var(--weft-blue);
   /* Dark-mode primary is a LIGHT violet (violet-300), so on-primary text must be
