@@ -334,5 +334,35 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   capture was not), and a CI round lost to a bare hex in my own glyph
   COMMENT — check-raw-colors does not exempt prose, and my partial local
   battery had skipped that gate. Full battery before push, not after.
+- 2026-08-17: **PB executed** (branch `claude/gallery-status-and-error-cards`,
+  PR #23, cut from 0.5.0 main) — the gallery half: the `form-status` card
+  (pending with the dot and aria-busy; the four tones on distinct words;
+  the error + status + help composition holding A9's order) and the
+  `input-error-states` card (composed field with the glyph-led message;
+  a standalone invalid input — see the finding below for why standalone;
+  invalid textarea; the select exception; dashed disabled + invalid).
+  Tests first (10 assertions failing, then the cards); nine probes, nine
+  CAUGHT, restores from scratch snapshots. Baselines: 8 added, 40 moved,
+  every one reviewed individually in the pinned container — the moves are
+  two mechanical classes of inserting cards into the ordered auto-fit
+  grid (row-mate stretch; ±1px column rounding), old/new pairs eyeballed.
+  Showcase-only ids carry their shelf category in a gallery-local map
+  because manifest.uiPrimitives must mirror `src/ui/*.tsx` exactly; the
+  map is test-pinned. The vanilla commit-boundary helper (PB's other
+  half) is NOT started here. Two findings flagged for their own sessions:
+  an input composed under FormControl loses `data-slot="input"` (the
+  Slot's props land after Input's own attribute), so the composed path
+  never matches the CSS trailing-glyph selector — the two-layers-cannot-
+  drift claim has a hole the contract suites never photograph; and the
+  `search-field` card is absent from SHOWCASED_PRIMITIVE_IDS, so it never
+  renders on the site despite manifest `showcase: true`.
+- 2026-08-17: Codex round 1 (at 9023a8c): ISSUES — the auto-fit grid's
+  default stretch alignment let the two tall new cards inflate every
+  row-mate's height, so 40 unrelated baselines moved and every FUTURE
+  card insertion would rewrite dozens more. Fixed at the class:
+  `alignItems: 'start'` on the gallery grid — card height is now
+  content-determined and baselines insertion-order-independent (the ±1px
+  three-column rounding class remains, order-dependent by nature).
+  Baselines re-recorded in the container and re-reviewed individually.
 
 {% /section %}

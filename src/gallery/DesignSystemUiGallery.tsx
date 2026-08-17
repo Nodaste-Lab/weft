@@ -3158,6 +3158,11 @@ const galleryStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
   gap: 14,
+  // Cards keep their content height instead of stretching to the tallest
+  // row-mate: the visual suite screenshots each card's section, so stretched
+  // heights made every baseline depend on which cards happen to share its
+  // row — inserting one card rewrote dozens of unrelated snapshots.
+  alignItems: 'start',
 };
 
 const categoryBadgeStyle: CSSProperties = {
