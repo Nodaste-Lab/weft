@@ -24,6 +24,11 @@ const SECTIONS = [
   'panel-header',
   'tier-group',
   'copyable-ref',
+  // The two recorded gallery gaps: the async status presentation and the
+  // error-state card — the baselines these ids add are the point of the cards
+  // (error rendering was carried entirely by the contract suites before).
+  'form-status',
+  'input-error-states',
 ];
 
 for (const theme of ['light', 'dark', 'compact', 'dense'] as const) {
