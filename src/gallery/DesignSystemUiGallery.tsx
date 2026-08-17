@@ -228,9 +228,10 @@ import { StepsItem } from '../ui/steps-item';
 import { StatusIconRow } from '../ui/status-icon-row';
 
 /**
- * Every card the gallery shows: the showcased component ids from
- * `manifest.json` plus the showcase-only cards (state/composition
- * showcases with no `src/ui` file — see `showcaseOnlyCategoryById`).
+ * The gallery's default card list: the manifest component cards it shows by
+ * default plus the showcase-only cards (state/composition showcases with no
+ * `src/ui` file — see `showcaseOnlyCategoryById`). A card absent from this
+ * list does not render, whatever the manifest says about it.
  */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
@@ -779,7 +780,16 @@ function InputErrorStatesShowcase() {
       </div>
       <div style={fieldStackStyle}>
         <Select defaultValue="week">
-          <SelectTrigger state="error" aria-label="Recap period, invalid" className="w-full">
+          {/* Not composed under FormControl: the Slot's data-slot lands after
+              the trigger's own, which would cost it its slot identity. The
+              message is hand-associated instead — the select exception is
+              border PLUS the glyph-led message, never border alone. */}
+          <SelectTrigger
+            state="error"
+            aria-label="Recap period, invalid"
+            aria-describedby="ds-error-period-message"
+            className="w-full"
+          >
             <SelectValue placeholder="Choose a period" />
           </SelectTrigger>
           <SelectContent>
@@ -788,9 +798,13 @@ function InputErrorStatesShowcase() {
             <SelectItem value="month">Last 30 days</SelectItem>
           </SelectContent>
         </Select>
+        <span className="weft-field-hint is-error" id="ds-error-period-message">
+          Pick a period inside the retention window.
+        </span>
         <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
           the select is the stated exception — its right edge belongs to the
-          chevron, so the border and message carry the non-colour cue
+          chevron, so the border and the glyph-led message carry the non-colour
+          cue
         </span>
       </div>
       <div style={fieldStackStyle}>

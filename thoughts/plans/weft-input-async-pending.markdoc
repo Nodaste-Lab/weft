@@ -364,5 +364,26 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   content-determined and baselines insertion-order-independent (the ±1px
   three-column rounding class remains, order-dependent by nature).
   Baselines re-recorded in the container and re-reviewed individually.
+- 2026-08-17: Codex round 2 CLEAN at 9b2a887 with a comment nit, batched
+  into the next round. Round 3: ISSUES — the select error specimen showed
+  border alone where the doctrine's exception is border PLUS the glyph-led
+  message; fixed with a hand-associated `.weft-field-hint.is-error`
+  (not composed under FormControl — the Slot would swallow the trigger's
+  slot identity, the same class as the flagged Input finding), test
+  extended to require the referenced message, two probes CAUGHT.
+- 2026-08-17: **A correction for the ledger**: an earlier commit claimed a
+  passing verify run proved baselines "byte-stable" — false; a verify PASS
+  proves comparator-stable only. Update runs kept rewriting ~26 files and
+  consecutive verifies failed on DIFFERENT subsets (select, then
+  stat-row + switch, then panel-header + table): the gallery's fractional
+  column geometry (1032px grid → 334.66px columns) made card rasterization
+  flap between rounding states run to run. Fixed at the class: the site
+  wrapper is 1078px so the grid divides to 334px integer columns at
+  integer x. Evidence: three consecutive container verifies PASS and two
+  consecutive UPDATE runs produce zero byte differences — that is what
+  byte-stable actually looks like. All 84 baselines re-recorded once at
+  the integer geometry (every delta −1/−2px width, ±1px wrap rounding;
+  callout-dense +16 is one caption wrapping; input-error-states +27 is
+  the select message), each quantified, outliers eyeballed.
 
 {% /section %}

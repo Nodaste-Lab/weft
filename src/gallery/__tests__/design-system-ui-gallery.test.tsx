@@ -130,11 +130,23 @@ describe('gallery — error-state card (the 2026-08-12 recorded gap)', () => {
 
   it('mounts an invalid select trigger — the stated chevron-owns-the-edge exception', () => {
     const { container } = renderCard('input-error-states');
+    const trigger = container.querySelector(
+      '#input-error-states-example [data-slot="select-trigger"][aria-invalid="true"]',
+    );
+    expect(trigger, 'the invalid select trigger renders with its slot identity intact').toBeTruthy();
+    // The exception is border PLUS the glyph-led message, never border alone
+    // (04 § Form inputs: "its non-colour cue is the message icon plus the
+    // border — asserted, not omitted"). The trigger must reference a mounted
+    // glyph-led error message.
+    const ids = (trigger!.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+    expect(ids.length, 'the select error message is associated, not adjacent').toBeGreaterThan(0);
+    const message = container.querySelector(`[id="${ids[0]}"]`);
+    expect(message, 'the referenced message resolves to a mounted element').toBeTruthy();
     expect(
-      container.querySelector(
-        '#input-error-states-example [data-slot="select-trigger"][aria-invalid="true"]',
-      ),
-    ).toBeTruthy();
+      message!.classList.contains('weft-field-hint') && message!.classList.contains('is-error'),
+      'the message is the glyph-led error hint — the glyph rides .is-error',
+    ).toBe(true);
+    expect((message!.textContent ?? '').trim().length).toBeGreaterThan(0);
   });
 
   it('mounts the disabled+invalid compose — dashed and stop-coloured, both states true at once', () => {
