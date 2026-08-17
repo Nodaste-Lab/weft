@@ -263,11 +263,24 @@ function normalizeSurface(text) {
 // The earlier checks only looked inside class="…", so a regression in the
 // generated page's selector line or in comment prose would have published the
 // old name with a green suite.
+// …but naming a class in order to say it is gone is the opposite of teaching it.
+// The rebase onto main surfaced this: main's own docs read "The template-local
+// .weft-board-check is RETIRED — it existed only because the canonical row once
+// took the full 44px control height", which this rule flagged as a violation. A
+// retirement note is the most useful thing a doc can say about a deleted class,
+// so an explicit retirement marker near the mention exempts it. Anything that
+// names the class without saying it is gone still fails.
+const RETIREMENT_NOTE = /\b(retired|deleted|superseded|removed|no longer|former(?:ly)?|do not use)\b/i;
+
 function deprecatedClassViolations(text, label) {
   return DEPRECATED_BOARD_CLASSES.flatMap((cls) =>
-    [...text.matchAll(new RegExp(`\\b${cls}(?![-\\w])`, 'g'))].map((m) => {
+    [...text.matchAll(new RegExp(`\\b${cls}(?![-\\w])`, 'g'))].flatMap((m) => {
+      // Tight window, so a retirement note elsewhere in the file cannot launder
+      // an unrelated live reference further down.
+      const window = text.slice(Math.max(0, m.index - 140), m.index + 140);
+      if (RETIREMENT_NOTE.test(window)) return [];
       const line = text.slice(0, m.index).split('\n').length;
-      return `${label}:${line} — ${cls} was deleted; published material must not teach it`;
+      return [`${label}:${line} — ${cls} was deleted; published material must not teach it`];
     }),
   );
 }
@@ -646,6 +659,19 @@ test('T2-k coverage: the detectors survive quoting, ordering and extra classes',
 
   const selectorLabel = 'The band lives at .weft-board-drawer-prov in the template layer.';
   assert.equal(deprecatedClassViolations(selectorLabel, 'f').length, 1, 'a deprecated class in prose or a selector label must be caught');
+
+  // A retirement note is documentation, not guidance. main's own docs read this
+  // way, and the rule flagged them until the rebase surfaced it.
+  assert.deepEqual(
+    deprecatedClassViolations('The template-local .weft-board-check is RETIRED - it existed only because the canonical row once took the full control height.', 'f'),
+    [],
+    'saying a class is retired must not count as teaching it',
+  );
+  assert.equal(
+    deprecatedClassViolations('Use .weft-board-check for filter rows in the rail.', 'f').length,
+    1,
+    'naming it as live guidance still fails',
+  );
 
   // And the negatives, so the detectors are not simply always-on.
   assert.deepEqual(typeChipViolations(normalizeSurface("<span class='weft-badge is-space'>ccore/heddle</span>"), 'f'), []);
