@@ -227,7 +227,11 @@ import { Sticky } from '../ui/sticky';
 import { StepsItem } from '../ui/steps-item';
 import { StatusIconRow } from '../ui/status-icon-row';
 
-/** Every component id from `manifest.json`, in registry order. */
+/**
+ * Every card the gallery shows: the showcased component ids from
+ * `manifest.json` plus the showcase-only cards (state/composition
+ * showcases with no `src/ui` file — see `showcaseOnlyCategoryById`).
+ */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
   'action-button-row',
