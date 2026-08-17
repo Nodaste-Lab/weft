@@ -385,5 +385,21 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   the integer geometry (every delta −1/−2px width, ±1px wrap rounding;
   callout-dense +16 is one caption wrapping; input-error-states +27 is
   the select message), each quantified, outliers eyeballed.
+- 2026-08-17: Codex round 4: ISSUES — the three standalone invalid
+  specimens exposed aria-invalid with no associated reason (the doctrine's
+  own line: an unreferenced hint is decoration, and its inverse). Each now
+  references a glyph-led `.weft-field-hint.is-error`; the test suite
+  asserts resolution for every standalone invalid control; three probes
+  CAUGHT. En route the vertical twin of the geometry class surfaced:
+  integer-x killed the horizontal flap, but scrollIntoViewIfNeeded's
+  per-run fractional scroll offsets still flipped y-rounding (switch
+  captured 222px one run, 223px the next, against identical bytes). Fixed
+  at the class: the visual spec pins a 16000px viewport so the whole
+  ~15.8k page fits and NO capture ever scrolls — pixels are a pure
+  function of layout. Evidence: three consecutive verifies PASS and a
+  second update run changes zero bytes. 73 baselines re-recorded (66 at
+  ±1px rounding; the error card +75 for its three messages;
+  action-button-row −21 where the header wrap resolves to one line),
+  quantified, outliers eyeballed.
 
 {% /section %}

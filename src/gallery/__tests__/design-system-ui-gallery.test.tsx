@@ -94,6 +94,22 @@ describe('gallery — error-state card (the 2026-08-12 recorded gap)', () => {
     expect(section!.getAttribute('data-component-category')).toBe('inputs');
   });
 
+  // Doctrine: "a hint with an id that nothing points at is decoration" and
+  // its inverse — an aria-invalid control with no associated reason gives
+  // assistive tech "invalid" and nothing else. Every standalone invalid
+  // specimen must reference a mounted glyph-led error message.
+  function expectAssociatedError(container: HTMLElement, control: Element, label: string) {
+    const ids = (control.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+    expect(ids.length, `${label}: the error copy is associated, not adjacent`).toBeGreaterThan(0);
+    const message = container.querySelector(`[id="${ids[0]}"]`);
+    expect(message, `${label}: the referenced message resolves to a mounted element`).toBeTruthy();
+    expect(
+      message!.classList.contains('weft-field-hint') && message!.classList.contains('is-error'),
+      `${label}: the message is the glyph-led error hint`,
+    ).toBe(true);
+    expect((message!.textContent ?? '').trim().length, `${label}: the message has words`).toBeGreaterThan(0);
+  }
+
   it('mounts a standalone invalid input — the specimen the trailing-glyph selector actually matches', () => {
     const { container } = renderCard('input-error-states');
     // Composed under FormControl the input loses data-slot="input" (the
@@ -104,6 +120,7 @@ describe('gallery — error-state card (the 2026-08-12 recorded gap)', () => {
       '#input-error-states-example [data-slot="input"][aria-invalid="true"]:not([disabled])',
     );
     expect(input, 'the invalid input is what the stop boundary and trailing glyph key on').toBeTruthy();
+    expectAssociatedError(container as unknown as HTMLElement, input!, 'standalone input');
   });
 
   it('mounts a composed error field with a glyph-led message', () => {
@@ -123,9 +140,11 @@ describe('gallery — error-state card (the 2026-08-12 recorded gap)', () => {
 
   it('mounts an invalid textarea — the trailing glyph rides aria-invalid', () => {
     const { container } = renderCard('input-error-states');
-    expect(
-      container.querySelector('#input-error-states-example [data-slot="textarea"][aria-invalid="true"]'),
-    ).toBeTruthy();
+    const textarea = container.querySelector(
+      '#input-error-states-example [data-slot="textarea"][aria-invalid="true"]',
+    );
+    expect(textarea).toBeTruthy();
+    expectAssociatedError(container as unknown as HTMLElement, textarea!, 'textarea');
   });
 
   it('mounts an invalid select trigger — the stated chevron-owns-the-edge exception', () => {
@@ -151,10 +170,10 @@ describe('gallery — error-state card (the 2026-08-12 recorded gap)', () => {
 
   it('mounts the disabled+invalid compose — dashed and stop-coloured, both states true at once', () => {
     const { container } = renderCard('input-error-states');
-    expect(
-      container.querySelector(
-        '#input-error-states-example [data-slot="input"][aria-invalid="true"][disabled]',
-      ),
-    ).toBeTruthy();
+    const disabled = container.querySelector(
+      '#input-error-states-example [data-slot="input"][aria-invalid="true"][disabled]',
+    );
+    expect(disabled).toBeTruthy();
+    expectAssociatedError(container as unknown as HTMLElement, disabled!, 'disabled+invalid input');
   });
 });

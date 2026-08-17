@@ -763,10 +763,19 @@ function InputErrorStatesShowcase() {
       </span>
       <div style={fieldStackStyle}>
         <Label htmlFor="ds-error-name">Project name</Label>
-        <Input id="ds-error-name" aria-invalid="true" defaultValue="Q1 Launch Plan" />
+        <Input
+          id="ds-error-name"
+          aria-invalid="true"
+          aria-describedby="ds-error-name-error"
+          defaultValue="Q1 Launch Plan"
+        />
+        <span className="weft-field-hint is-error" id="ds-error-name-error">
+          That name is already in use.
+        </span>
         <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
           standalone invalid input: the trailing alert glyph sits at the field&apos;s
-          right edge — never colour alone
+          right edge, and the reason is associated — an unreferenced hint is
+          decoration
         </span>
       </div>
       <div style={fieldStackStyle}>
@@ -774,9 +783,13 @@ function InputErrorStatesShowcase() {
         <Textarea
           id="ds-error-notes"
           state="error"
+          aria-describedby="ds-error-notes-error"
           defaultValue="The party entered Brindlewick at dusk"
           rows={3}
         />
+        <span className="weft-field-hint is-error" id="ds-error-notes-error">
+          Add the scene outcome before saving.
+        </span>
       </div>
       <div style={fieldStackStyle}>
         <Select defaultValue="week">
@@ -813,8 +826,12 @@ function InputErrorStatesShowcase() {
           id="ds-error-disabled"
           disabled
           aria-invalid="true"
+          aria-describedby="ds-error-disabled-error"
           defaultValue="vault/archive/2025"
         />
+        <span className="weft-field-hint is-error" id="ds-error-disabled-error">
+          Archive is no longer reachable.
+        </span>
         <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
           disabled + invalid compose: the dashed stroke and the error colour are
           both true at once
