@@ -48,10 +48,13 @@ node scripts/check-pure-token-file.mjs   # weft.css stays injection-safe
 node scripts/check-raw-colors.mjs        # tokens only outside css/
 npm run build                            # tsup ESM bundle to dist/
 npx changeset                            # record a release intent (patch/minor/major)
+npm run release:local -- --publish       # cut the release from main (Actions are off; see Release flow)
 ```
 
-CI runs all of these plus a pack smoke that asserts the tarball ships
-`css/`, `src/`, `tooling/`, `manifest.json`, `props-snapshot.json`, `dist/`.
+The release script runs all of these plus a pack smoke that asserts the tarball
+ships `css/`, `src/`, `tooling/`, `manifest.json`, `props-snapshot.json`,
+`dist/`. (The CI workflow files describe the same battery but do not run:
+Actions are off for this repository.)
 
 ## Hard invariants — breaking these breaks consumers silently
 
@@ -96,9 +99,23 @@ CI runs all of these plus a pack smoke that asserts the tarball ships
    the break, and exact-pin adoption is the consumer safety. The package
    major is reserved for the deliberate 1.0.0 stability declaration, which
    is an owner call, never a side effect (owner call, 2026-08-11).
-2. PR → CI green → merge to `main`.
-3. The release workflow opens/updates a **Version Packages** PR; merging it
-   publishes to GitHub Packages and tags.
+2. PR → the review gate double-clean (`scripts/review-gate.sh`: repo gates PASS
+   + Codex CLEAN, bound to the PR head) → merge to `main`. **GitHub Actions
+   are off for this repository (owner decision, 2026-09-01)**: no CI runs on a
+   PR and nothing runs on a push to `main`, so the review gate is the merge
+   rule, not a courtesy.
+3. A maintainer cuts the release locally with `npm run release:local`
+   (`scripts/release-local.sh`): preflight (clean `main` equal to
+   `origin/main`, changesets present) → the release job's full gate battery
+   on that exact commit (browser contract suite included) →
+   `npm run release:version` committed as **Version Packages (x.y.z)** →
+   tag `vX.Y.Z`, push, GitHub release from the CHANGELOG entry → with
+   `--publish`, `npm publish` to GitHub Packages (needs a PAT with
+   `write:packages` in `~/.npmrc`; `--publish-only` retries just that step).
+   DocT and plan-reviewer vendor `css/` by commit sha, so the tag is what
+   they need; only Heddle's exact pin needs the publish. The Release
+   workflow file stays in the tree as the reference for what the script
+   mirrors; it does not run.
 4. Consumers adopt deliberately: bump the exact pin in Heddle
    (`"@nodaste-lab/weft": "x.y.z"`), `npm install`, run Heddle's
    `npm run linux:check` + visual suite; refresh plan-reviewer's vendored
