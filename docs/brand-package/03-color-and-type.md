@@ -45,7 +45,7 @@ updated: 2026-04-22
 | Token | Hex | Use |
 |---|---|---|
 | `ok` | `#3A7A4A` | Success, synced, healthy |
-| `warn` | `#D97706` | Caution, stale, blocked, needs review |
+| `warn` | `#B45309` | Caution, stale, blocked, needs review — amber-700, AA as text (5.02:1 on white, 4.73:1 on cream) |
 | `stop` | `#A8382B` | Failure, broken, destructive |
 | `danger` | `#EF4444` | Error, threat, damage |
 | `info` | `#60A5FA` | Hint, neutral status, character spotlight |
@@ -54,7 +54,7 @@ Functional colors are **tuned down**, not saturated alerts. Heddle doesn't shout
 
 **Dark-mode lift.** On the deep-navy paper used in dark mode, `warn` lifts to `#F59E0B`, `danger` to `#F87171`, `info` to `#93C5FD` so each role stays legible without losing semantic meaning. The `ok` and `stop` hold across modes.
 
-**Caution-color history.** The earlier `#C39432` muted amber read as muddy on cream and didn't register at low alpha. Replaced with Tailwind amber-600 (`#D97706`) for stronger caution legibility. Verify against brand yellow `#FFD866` — the two should never blur at small sizes.
+**Caution-color history.** The earlier `#C39432` muted amber read as muddy on cream and didn't register at low alpha. Replaced with Tailwind amber-600 (`#D97706`) for stronger caution legibility, then lifted again to amber-700 (`#B45309`) because amber-600 measured 3.19:1 on white and 3.00:1 on cream — fine for a border or a large icon, a fail for the small warning text panels actually set in it. `#B45309` is the value `css/weft.css` ships and the calibration line the other docs follow. Verify against brand yellow `#FFD866` — the two should never blur at small sizes.
 
 ### Severity-row backgrounds
 

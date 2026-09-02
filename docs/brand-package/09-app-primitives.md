@@ -270,7 +270,7 @@ The existing `--chart-1` through `--chart-5` are purple steps from the legacy th
   --weft-chart-1: var(--weft-blue);    /* #2563ff — primary, brand */
   --weft-chart-2: var(--weft-stop);    /* #a8382b — divergent rust-red */
   --weft-chart-3: var(--weft-ok);      /* #3a7a4a — divergent forest green */
-  --weft-chart-4: var(--weft-warn);    /* #c39432 — divergent amber */
+  --weft-chart-4: var(--weft-warn);    /* #b45309 — divergent amber (follows the shipped warn value) */
   --weft-chart-5: var(--weft-sepia);   /* #8c6f4a — warm brown from illustration palette */
 }
 ```
