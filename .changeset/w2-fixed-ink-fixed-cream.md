@@ -1,8 +1,8 @@
 ---
-"@nodaste-lab/weft": patch
+"@nodaste-lab/weft": minor
 ---
 
-Two mode-invariant fixed tokens, additive (plan phase W2): `--weft-fixed-ink:
+Two mode-invariant fixed tokens, additive — a minor per this repo's release flow (AGENTS.md: additive tokens are a minor; the plan's "patch" wording is superseded and logged as a deviation) (plan phase W2): `--weft-fixed-ink:
 #0b1020` and `--weft-fixed-cream: #f4f1e8`, declared once in `:root` of
 `css/weft.css` beside `--weft-fixed-white` with no dark or palette override.
 They carry the permanently-dark grounds the app surfaces need — a tooltip fill
