@@ -147,7 +147,16 @@ test('the fixed tokens are declared once in :root and overridden nowhere (mode-i
   const base = blocks[BASE_BLOCK];
   assert.ok(base, 'base token block must be extractable');
   const problems = [];
+  // "Declared once" is counted on the RAW file, not on the extractor's output:
+  // extractTokenBlocks keeps the last duplicate inside a block and merges a
+  // repeated selector block by assignment, so a second declaration anywhere
+  // would vanish before the block check saw it (codex, W2 round 1).
+  const raw = stripCssComments(weft);
   for (const [token, value] of Object.entries(FIXED_TOKENS)) {
+    const declarations = [...raw.matchAll(new RegExp(`${token}\\s*:`, 'g'))].length;
+    if (declarations !== 1) {
+      problems.push(`${token} is declared ${declarations} times in css/weft.css — a fixed token is declared exactly once`);
+    }
     if (base[token] !== value) {
       problems.push(`${token} must be declared as ${value} in the base block (found ${base[token] ?? 'nothing'})`);
     }
