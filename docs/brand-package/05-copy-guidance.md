@@ -2,7 +2,7 @@
 linked_project: Heddle Branding
 type: copy-guidance
 status: draft
-updated: 2026-04-20
+updated: 2026-09-01
 ---
 
 # 05 · Copy Guidance
@@ -114,6 +114,23 @@ Inline code for short identifiers; fenced code for anything multi-line or runnab
 - Nav items: `Docs`, `Pricing`, `Changelog`
 
 Title Case Only For: **the product word itself when it's a proper noun in running text** (Heddle, CCore, HUD, DocT), **and nowhere else**.
+
+All caps has exactly one home, ruled below.
+
+### When caps
+
+Ruled by the owner on 2026-09-01 (plan comment on the DocT document-view port) and recorded verbatim:
+
+> Technical labels in dense info areas use all caps; outside of that, all caps is not used for headers, sections, or small one-off items.
+
+How the rule applies on app surfaces:
+
+- **Caps, dense-info register only:** table column headers, stat-row labels in a metadata panel, status and queue pills inside panels, avatar initials, source paths and identifiers (shown as written). Always the mono face at label sizes (11–13px, tracked 0.10–0.18em).
+- **Sentence case everywhere else:** headings, section labels and eyebrows on app surfaces, tabs, buttons, menu items, tooltips, empty states, errors, and any label that stands alone (a single field label, a lone chip).
+- **Never mix registers in one row of the same component.** A metadata panel whose stat-row labels are caps keeps every label in that panel caps; a tab strip whose first tab is sentence case has no caps tab.
+- **Marketing `.eyebrow` is out of scope.** The site's section signifier in [[04-design-system]] keeps its uppercase. This ruling governs application surfaces and the primitives in [[09-app-primitives]].
+
+Which primitives changed under the ruling is recorded in [[09-app-primitives]] § Casing on app surfaces: `tabs`, `eyebrow-label` on app surfaces, menu section labels and compact `label` go sentence case (mono face and tracking kept); `table` headers, `stat-row` labels, panel `badge` text and `avatar` initials keep mono caps.
 
 ### Oxford comma
 

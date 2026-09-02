@@ -3,7 +3,7 @@ linked_project: Heddle Branding
 type: design-system
 name: Weft
 status: draft
-updated: 2026-04-28
+updated: 2026-09-01
 ---
 
 # 09 · Weft App Primitives — Heddle dense surfaces
@@ -285,6 +285,21 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 41 primitives in `manifest.json`, organized by category. Each entry below describes the Weft skin in terms of existing tokens. The actual primitive code (Radix + shadcn) is preserved.
 
+### Casing on app surfaces
+
+The owner's ruling of 2026-09-01, recorded verbatim in [[05-copy-guidance]] § When caps: **technical labels in dense info areas use all caps; outside of that, all caps is not used for headers, sections, or small one-off items.** Applied to the entries below:
+
+- **Mono caps stays** (the dense-info register): `table` column headers, `stat-row` labels in a metadata panel, `badge` text inside a dense panel (queue pills, status chips), `avatar` initials, `calendar` weekday labels (a grid header). `source-pill` shows paths and identifiers as written.
+- **Sentence case, mono face and tracking kept:** `tabs`, `eyebrow-label` on app surfaces, `dropdown-menu` and `context-menu` section labels, `label` in compact form layouts, `menubar` and `navigation-menu` triggers. Each entry says so where it used to say caps.
+- **Never mix registers in one row of the same component.**
+- The marketing `.eyebrow` in [[04-design-system]] is outside this ruling and unchanged.
+
+Entries that changed under the ruling are change tickets in `Nodaste-Lab/weft` where the shipped primitive still uppercases (`eyebrow-label` does; `tabs` does not).
+
+### Equal-specificity ties
+
+Two rules at identical specificity setting the same property resolve by source order, and the loser fails silently — nothing throws and the source reads fine. Every state layered on a selected row or an active tab is exposed to this: a status colour on the icon, a listening badge, an underline colour, each competing with the `[aria-current]` / `[data-state="active"]` rule for one property. The fix is structural, not a specificity bump: give the varying part its own custom property and let the more specific state re-point that property. The `sidebar` and `tabs` entries below carry the rule; it applies wherever a state is layered on a current-item treatment.
+
 ### Layout
 
 **`card`** — surface/paper fill, border/rule stroke 1px, radius/card. Header padding `--weft-stack-gap × 2`. Body padding `--weft-stack-gap × 1.5` in marketing, `--weft-stack-gap` in compact. Footer separator: 1px border-top in border/rule.
@@ -301,6 +316,7 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 - *Expanded state*: active item gets brand/yellow-soft bg + 3px brand/yellow left-border (the "you are here" treatment, mirroring the maturity row Here state). Item label Inter Tight, icon 16×16 in text/muted (default) → text/ink (active).
 - *Collapsed state* (icons only): drop the brand/yellow accent. Active item gets a neutral treatment instead — icon flips from text/muted to text/ink, plus a subtle 1px text/link left-border indicator (still readable, not loud). The brand-yellow row would be visual noise without the surrounding label content; neutral keeps the dense icon column scannable.
+- *Equal-specificity ties*: state layered on the current row — an agent-status colour on the icon, a listening badge — must not set the same property as the `[aria-current="page"]` rule at equal specificity, or the later rule wins by source order and the state vanishes on the selected row. Give the varying part its own custom property (the badge's cut-out ring reads `--weft-listen-ring`; the icon colour reads a state property) and let the selected-row rule re-point that property rather than the colour itself. See § Equal-specificity ties.
 
 ### Disclosure
 
@@ -308,7 +324,7 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 **`collapsible`** — minimal shell, no border by default. Trigger reveals content with no animation override.
 
-**`tabs`** — tab list in HORIZONTAL row, gap 0, 1px border/rule bottom under the list. Each tab: padding 12/16 (compact 8/14), Label/Default mono caps 13 / 0.15em / text/muted (inactive), text/link (active). Active tab gets 2px brand/blue bottom border that overlaps the list border. Hover (inactive): text/ink.
+**`tabs`** — tab list in HORIZONTAL row, gap 0, 1px border/rule bottom under the list. Each tab: padding 12/16 (compact 8/14), Label/Default mono, **sentence case**, 13 / 0.15em / text/muted (inactive), text/link (active). Active tab gets 2px brand/blue bottom border that overlaps the list border. Hover (inactive): text/ink. Casing changed under the 2026-09-01 ruling (was mono caps): a tab is a small one-off label, not a dense-info label. Equal-specificity ties: the active state re-points a custom property for the label colour and the underline colour; a second rule at equal specificity on the same property loses by source order (see § Equal-specificity ties).
 
 ### Overlay
 
@@ -326,17 +342,17 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 ### Menus
 
-**`dropdown-menu`** — same shell as popover. Items at 32px (compact) / 36px (marketing) with 12px horizontal padding. Item label Body/Small, icon 16×16 text/muted left-aligned. Hover row: bg `--weft-on-blue-bg` (cream-aware: in compact, treat as "subtle blue tint"), or alternative `border/rule` at 30% alpha. Active/selected: bg `--weft-yellow-soft`. Separator: 1px border/rule. Section label: Label/Small mono caps text/muted with 8px top/bottom padding.
+**`dropdown-menu`** — same shell as popover. Items at 32px (compact) / 36px (marketing) with 12px horizontal padding. Item label Body/Small, icon 16×16 text/muted left-aligned. Hover row: bg `--weft-on-blue-bg` (cream-aware: in compact, treat as "subtle blue tint"), or alternative `border/rule` at 30% alpha. Active/selected: bg `--weft-yellow-soft`. Separator: 1px border/rule. Section label: Label/Small mono, sentence case, text/muted with 8px top/bottom padding (sentence case under the 2026-09-01 casing ruling; was caps).
 
 **`context-menu`** — identical to dropdown-menu in skin. Trigger context is gesture, not button; styling is the same.
 
-**`menubar`** — top bar of menu triggers. Each trigger: padding 6/12, Label/Default mono caps text/ink (default), text/link (hover). Open menu uses dropdown-menu skin.
+**`menubar`** — top bar of menu triggers. Each trigger: padding 6/12, Label/Default mono, sentence case, text/ink (default), text/link (hover). Sentence case under the 2026-09-01 casing ruling (was caps). Open menu uses dropdown-menu skin.
 
 ### Navigation
 
 **`breadcrumb`** — items in Body/Small text/muted, separator slash in text/muted at 50% alpha. Active item text/ink. Hover: text/link with 1px underline at link color. Compact density: gap 6px between items; marketing: gap 8px.
 
-**`navigation-menu`** — top-level triggers in Mono Caps Label/Default text/ink. Hover: text/link. Active triggers: bg `--weft-yellow-soft`. Open viewport: surface/paper card with border/rule 1px, radius/card.
+**`navigation-menu`** — top-level triggers in Label/Default mono, sentence case, text/ink (sentence case under the 2026-09-01 casing ruling; was caps). Hover: text/link. Active triggers: bg `--weft-yellow-soft`. Open viewport: surface/paper card with border/rule 1px, radius/card.
 
 **`pagination`** — pill-shaped buttons (radius/pill), Inter Tight Regular 13. Default: text/muted, no border. Active: bg brand/blue, text on-blue/text. Hover (inactive): bg cream at 50% alpha.
 
@@ -354,9 +370,9 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 **`slider`** — track 4px (compact) / 6px (marketing) tall, bg border/rule, fill brand/blue from 0 to value. Thumb: 16×16 (compact 14×14), surface/paper fill, 2px brand/blue stroke, radius/dot. Focus: Focus Ring on thumb. Range slider (two thumbs): same thumb styling, fill spans between thumbs.
 
-**`calendar`** (react-day-picker) — header row: month/year in Heading/H3 / Body/Default Medium center, navigation lucide chevrons left/right (24×24, text/muted). Weekday labels: Label/Small mono caps text/muted. Day cells: 32×32 (compact) / 40×40 (marketing), rounded radius/card. Today: bg `brand/yellow-soft`. Selected: bg brand/blue, text on-blue/text. Hover: bg cream. Out-of-month: text/muted at 50% alpha. AA 24px touch-target floor is met at both densities; AAA 44×44 isn't a target for this primitive.
+**`calendar`** (react-day-picker) — header row: month/year in Heading/H3 / Body/Default Medium center, navigation lucide chevrons left/right (24×24, text/muted). Weekday labels: Label/Small mono caps text/muted (a grid header — caps stay under the 2026-09-01 casing ruling). Day cells: 32×32 (compact) / 40×40 (marketing), rounded radius/card. Today: bg `brand/yellow-soft`. Selected: bg brand/blue, text on-blue/text. Hover: bg cream. Out-of-month: text/muted at 50% alpha. AA 24px touch-target floor is met at both densities; AAA 44×44 isn't a target for this primitive.
 
-**`label`** — Body/Small Medium in marketing, Label/Small mono caps in compact form layouts. text/muted color. Required indicator: the word `required` in `state/stop` after the label, **with a space before it** — the accessible name concatenates the label's text nodes, so without one the name reads "Emailrequired". A bare asterisk is not used: it lands in the name as punctuation while leaving the control's `required` state false. The control carries the `required` attribute too; the word and the attribute are both required.
+**`label`** — Body/Small Medium in marketing, Label/Small mono in compact form layouts, sentence case in both (a field label stands alone; 2026-09-01 casing ruling — was mono caps in compact). text/muted color. Required indicator: the word `required` in `state/stop` after the label, **with a space before it** — the accessible name concatenates the label's text nodes, so without one the name reads "Emailrequired". A bare asterisk is not used: it lands in the name as punctuation while leaving the control's `required` state false. The control carries the `required` attribute too; the word and the attribute are both required.
 
 **`form`** — wrapper for label + control + hint, mirrors the Field component from Weft v1. Compact: stack gap 4px between label/control, 4px between control/hint. Marketing: 8px each.
 
@@ -372,7 +388,7 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 **`alert`** — surface/paper bg, 4px left-border in the relevant state color (state/stop, `--weft-ok`, `--weft-warn`, brand/blue for info). Icon at top-left, 20×20, in the state color. Title in Body/Default Medium text/ink. Body in Body/Small text/muted. Padding `--weft-stack-gap` × 1.5.
 
-**`badge`** — extends the Weft Pill anatomy. Default: brand/yellow bg, brand/blue-ink text, mono caps Label/Small. Variants: `info` (brand/blue + on-blue/text), `success` (`--weft-ok` + on-blue/text), `warn` (`--weft-warn` + brand/blue-ink), `destructive` (state/stop + on-blue/text).
+**`badge`** — extends the Weft Pill anatomy. Default: brand/yellow bg, brand/blue-ink text, mono caps Label/Small inside a dense panel (a queue pill, a status chip beside a stat row); a badge standing alone in header chrome takes sentence case (2026-09-01 casing ruling). Variants: `info` (brand/blue + on-blue/text), `success` (`--weft-ok` + on-blue/text), `warn` (`--weft-warn` + brand/blue-ink), `destructive` (state/stop + on-blue/text).
 
 **`progress`** — track height 6px (compact 4px), bg border/rule, fill brand/blue, radius/pill on both. Indeterminate: animated linear-gradient brand/blue → transparent → brand/blue; respects `prefers-reduced-motion`.
 
@@ -382,15 +398,15 @@ For sequential and diverging palettes (different from categorical), Weft doesn't
 
 ### Data display
 
-**`avatar`** — circle, 32px (compact) / 40px (marketing), surface/paper bg, 1px border/rule. Fallback: initials in Label/Small mono caps text/ink, centered.
+**`avatar`** — circle, 32px (compact) / 40px (marketing), surface/paper bg, 1px border/rule. Fallback: initials in Label/Small mono caps text/ink, centered (initials are an identifier; caps stay under the 2026-09-01 casing ruling).
 
-**`table`** — header row: Label/Default mono caps text/muted, padding `--weft-control-pad-x` left/right, 1px border/rule bottom. Body rows: Body/Small (compact) or Body/Default (marketing), `--weft-row-h` tall, 1px border/rule between rows. Row hover: bg cream at 60% alpha (subtle, density-aware). Selected row: bg `brand/yellow-soft`. Captions: Body/Small text/muted above table.
+**`table`** — header row: Label/Default mono caps text/muted (the dense-info register; caps stay under the 2026-09-01 casing ruling), padding `--weft-control-pad-x` left/right, 1px border/rule bottom. Body rows: Body/Small (compact) or Body/Default (marketing), `--weft-row-h` tall, 1px border/rule between rows. Row hover: bg cream at 60% alpha (subtle, density-aware). Selected row: bg `brand/yellow-soft`. Captions: Body/Small text/muted above table.
 
 ### Heddle-specific primitives (added 2026-04)
 
 These eight primitives were added during the Heddle bypass-sweep pass. They consolidate patterns that repeated across panels and weren't covered by stock shadcn. All registered in `manifest.json`.
 
-**`eyebrow-label`** — uppercase tracked-out section label. Resolves to JetBrains Mono automatically under `data-palette="weft"` via the global type rule. Variants: `size` (sm 10/0.10em, default 12/0.06em, lg 14/0.04em), `tone` (muted, default, accent), optional leading `icon` slot (12×12).
+**`eyebrow-label`** — tracked-out section label in sentence case on app surfaces (2026-09-01 casing ruling: an app-surface eyebrow is a section label, so it drops the uppercase and keeps its tracking; the marketing `.eyebrow` keeps its caps). Resolves to JetBrains Mono automatically under `data-palette="weft"` via the global type rule. Variants: `size` (sm 10/0.10em, default 12/0.06em, lg 14/0.04em), `tone` (muted, default, accent), optional leading `icon` slot (12×12).
 
 **`panel-header`** + slots (`PanelHeaderTitle`, `PanelHeaderActions`, `PanelHeaderDismiss`) — top strip of a HUD panel. Composable: each slot is a separate component so panels compose their own action sets without rebuilding the strip layout. Title slot accepts an icon. Dismiss slot renders an X close button on the right.
 
@@ -400,7 +416,7 @@ These eight primitives were added during the Heddle bypass-sweep pass. They cons
 
 **`pill-toggle-group`** + `pill-toggle-group-item` — gap-separated pill segmented control. **Distinct from shadcn `toggle-group`** which renders joined segments with shared borders. Use this for period selectors (This Session / Last 7 Days / etc.) and mode toggles where pills should breathe. Active pill: brand/blue at 15% bg + brand/blue-ink text + 40% brand/blue border. Inactive: paper bg + muted text. Wraps cleanly when options exceed the row.
 
-**`stat-row`** — label-on-left, value-on-right key/value row with optional `hint` slot (small badge after the value). Used in PartyStats (HP / AC / temp HP), SessionContext (participant stats), BattleTracker (threat levels), recap detail sections.
+**`stat-row`** — label-on-left, value-on-right key/value row with optional `hint` slot (small badge after the value). Labels take mono caps: a stat row in a metadata panel is the dense-info register the 2026-09-01 casing ruling names. Used in PartyStats (HP / AC / temp HP), SessionContext (participant stats), BattleTracker (threat levels), recap detail sections.
 
 **`empty-state`** — centered `icon` + `title` + `description` + optional `action` slot for "nothing to show yet" surfaces. `tone` variants: default (neutral muted) or warning (soft amber tint, used for "Add an OpenAI API key first" patterns).
 
@@ -517,6 +533,7 @@ Most prior items resolved (see Resolved table). What's still outstanding:
 | `--weft-link-visited` | Approved and added. Light: muted purple `#5b3d99`. Dark: lighter purple `#b8a3e8`. Calibrate hex during accessibility pass. |
 | HUD vs. Weft cohabitation | HUD-lock decision system added above (3 rules + decision matrix). Per-surface inventory is implementation work that happens during migration. |
 | Panel-builder bespoke blocks | Promoted to Next phase. Mockup → approval → code-edit cycle approved. |
+| Casing on app surfaces | Owner ruling 2026-09-01: all caps only for technical labels in dense info areas (table headers, stat-row labels, panel badges, avatar initials); sentence case for headers, sections, tabs and one-off labels. Recorded in [[05-copy-guidance]] § When caps; applied in § Casing on app surfaces. |
 
 ---
 
@@ -525,4 +542,5 @@ Most prior items resolved (see Resolved table). What's still outstanding:
 - [[04-design-system]] — the Weft spec this doc extends. Read first.
 - [[03-color-and-type]] — palette, type roles, functional state guidance (`ok` / `warn` / `stop` rule).
 - [[05-accessibility]] — full contrast audit. Density tokens here don't loosen a11y; the floor remains.
+- [[05-copy-guidance]] — § When caps holds the owner's casing ruling verbatim; § Casing on app surfaces above is its application to these primitives.
 - [[02-logo-usage]] — logo asset variants. App surfaces typically use `heddle-mark.svg` at 24-32px, not the lockup.
