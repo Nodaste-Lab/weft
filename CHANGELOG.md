@@ -1,5 +1,40 @@
 # @nodaste-lab/weft
 
+## 0.6.0
+
+### Minor Changes
+
+- 6b20c46: Two mode-invariant fixed tokens, additive — a minor per this repo's release flow (AGENTS.md: additive tokens are a minor; the plan's "patch" wording is superseded and logged as a deviation) (plan phase W2): `--weft-fixed-ink:
+#0b1020` and `--weft-fixed-cream: #f4f1e8`, declared once in `:root` of
+  `css/weft.css` beside `--weft-fixed-white` with no dark or palette override.
+  They carry the permanently-dark grounds the app surfaces need — a tooltip fill
+  and a floating selection toolbar that read the same in both themes, and the
+  hover wash and separator on that ground (`--weft-fixed-cream` at 16% and 28%
+  alpha) — so a consumer stops pinning raw values for them. `css-contract` now
+  asserts the whole fixed set (`--weft-brand-cream`, `--weft-fixed-white`,
+  `--weft-fixed-ink`, `--weft-fixed-cream`) is declared in the base block and
+  re-declared nowhere; `tokens-snapshot.json` re-baselined additively. DocT
+  vendors this release in its P7 and removes its two pins.
+
+### Patch Changes
+
+- 6b20c46: Brand-package amendments for the DocT document-view port (plan phase W1; docs
+  only). `05-copy-guidance` § When caps records the owner's casing ruling
+  verbatim (2026-09-01): technical labels in dense info areas use all caps;
+  outside of that, all caps is not used for headers, sections, or small one-off
+  items. `09-app-primitives` § Casing on app surfaces applies it per entry —
+  `tabs`, app-surface `eyebrow-label`, menu section labels, compact `label`,
+  `menubar` and `navigation-menu` triggers go sentence case with the mono face
+  and tracking kept; `table` headers, `stat-row` labels, panel `badge` text,
+  `avatar` initials and `calendar` weekday labels keep mono caps; the marketing
+  `.eyebrow` is out of scope. `09` also names the equal-specificity-tie rule
+  (state layered on a current row re-points a custom property instead of
+  fighting the `[aria-current]` rule) in the `sidebar` and `tabs` entries.
+  `04-design-system` SVG discipline gains the lucide stroke contract (round caps
+  and joins, width 2) and sanctions `currentColor` beside the inline `style=`
+  form; the Tokens section documents `--weft-fixed-ink` and
+  `--weft-fixed-cream` beside `--weft-fixed-white`.
+
 ## 0.5.0
 
 ### Minor Changes

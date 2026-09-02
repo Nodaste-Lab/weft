@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.5.0",
+  "designSystemVersion": "0.6.0",
   "tokens": {
     "theme": "css/theme.css",
     "tailwind": "css/tailwind.css"
