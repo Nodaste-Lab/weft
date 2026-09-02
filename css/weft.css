@@ -44,6 +44,8 @@
   /* ── Mode-invariant brand fixed colors ───────────────────────────────── */
   --weft-brand-cream:  #fbf8f0;  /* cream that stays cream — mono-cream lockup, mark-on-blue tile */
   --weft-fixed-white:  #ffffff;  /* white that stays white — checkbox glyph, radio dot */
+  --weft-fixed-ink:    #0b1020;  /* ink that stays ink — tooltip fill, floating selection-toolbar ground */
+  --weft-fixed-cream:  #f4f1e8;  /* cream that stays cream on a fixed-ink ground — on-ink hover wash and separator alphas */
 
   /* ── Borders + rules ─────────────────────────────────────────────────── */
   --weft-rule:         rgba(11, 16, 32, 0.12);

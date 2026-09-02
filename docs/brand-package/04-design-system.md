@@ -3,7 +3,7 @@ linked_project: Heddle Branding
 type: design-system
 name: Weft
 status: draft
-updated: 2026-04-28
+updated: 2026-09-01
 ---
 
 # 04 · Weft — the Heddle Design System
@@ -61,12 +61,14 @@ Every visual decision on the site traces back to a token in `:root`. No hex code
   /* Mode-invariant brand fixed colors — DO NOT flip in dark mode */
   --weft-brand-cream: #fbf8f0;                 /* cream that stays cream — mono-cream lockup, mark-on-blue tile */
   --weft-fixed-white: #ffffff;                 /* white that stays white — checkbox glyph, radio dot */
+  --weft-fixed-ink:   #0b1020;                 /* ink that stays ink — tooltip fill, floating selection-toolbar ground */
+  --weft-fixed-cream: #f4f1e8;                 /* cream that stays cream on a fixed-ink ground — on-ink hover wash and separator alphas */
 }
 ```
 
 `--weft-stop` is the one semantic-status color Weft ships by default — used for form error borders, error-hint copy, and the "destructive" state where it's needed. Success/warn states aren't in the core token set; if you need them, add `--weft-ok` and `--weft-warn` following the `03-color-and-type.md` "tuned down, not saturated alerts" rule.
 
-**Mode-invariant brand fixed colors.** `--weft-brand-cream` and `--weft-fixed-white` look like duplicates of `--weft-cream` and `--weft-paper`, but they're a different contract: they **do not flip** in dark mode. Use them only inside brand assets and component glyphs that must hold their color when the theme inverts — the cream lockup placed on dark surfaces (still cream, not ink), the white check inside a checked checkbox (still white, not paper-dark), the white dot inside a selected radio. The blue ground stays blue across modes, so the glyph on it must too. **That reasoning is scoped to palettes whose primary stays dark**: dark `heritage-purple` lifts its primary to a light violet, so it overrides the whole `--weft-on-blue-*` tier to dark ink and flips the checkbox tick with a scoped rule — a white glyph on violet-300 measures 1.85:1. The guard is in `contrast-contract`: any palette that redefines `--weft-blue` is checked against its own `--weft-on-blue`. Reach for `--weft-cream` or `--weft-paper` for everything else.
+**Mode-invariant brand fixed colors.** `--weft-brand-cream` and `--weft-fixed-white` look like duplicates of `--weft-cream` and `--weft-paper`, but they're a different contract: they **do not flip** in dark mode. Use them only inside brand assets and component glyphs that must hold their color when the theme inverts — the cream lockup placed on dark surfaces (still cream, not ink), the white check inside a checked checkbox (still white, not paper-dark), the white dot inside a selected radio. The blue ground stays blue across modes, so the glyph on it must too. **That reasoning is scoped to palettes whose primary stays dark**: dark `heritage-purple` lifts its primary to a light violet, so it overrides the whole `--weft-on-blue-*` tier to dark ink and flips the checkbox tick with a scoped rule — a white glyph on violet-300 measures 1.85:1. The guard is in `contrast-contract`: any palette that redefines `--weft-blue` is checked against its own `--weft-on-blue`. `--weft-fixed-ink` (`#0b1020`, the light-mode value of `--weft-ink`) and `--weft-fixed-cream` (`#f4f1e8`) extend the same contract to permanently-dark grounds: a tooltip and a floating selection toolbar keep an ink fill in both themes so they read across light and dark contexts, and the hover wash and separator on that ground are `--weft-fixed-cream` at 16% and 28% alpha — never `--weft-cream`, which goes dark with the theme and would vanish into the fill. All four fixed tokens are declared once in `:root` and never in a dark or palette block; `scripts/__tests__/css-contract.node.mjs` asserts it. Reach for `--weft-cream` or `--weft-paper` for everything else.
 
 ### On-blue (light-on-dark alphas)
 
@@ -216,7 +218,17 @@ SVG `stroke=` and `fill=` presentation attributes don't accept CSS custom proper
 <circle r="4" style="fill: var(--weft-yellow); stroke: var(--weft-blue)" />
 ```
 
-Never hard-code a hex in an SVG inside a page component.
+`currentColor` is the second sanctioned mechanism. It is a valid presentation-attribute value, so `stroke="currentColor"` traces to whatever token the parent's `color` reads, inherits, themes with it, and lets a hover or active state recolour the whole icon by changing one property:
+
+```html
+<button style="color: var(--weft-muted)">
+  <svg stroke="currentColor" fill="none" aria-hidden="true" focusable="false">…</svg>
+</button>
+```
+
+Prefer `currentColor` for an icon that follows its control's text colour; use the inline `style=` form when one icon carries two tokens (a blue stroke around a yellow fill). Both trace to a token; neither admits a literal.
+
+**Stroke contract.** Heddle ships lucide-react, and lucide draws every icon with `stroke-width="2"`, `stroke-linecap="round"` and `stroke-linejoin="round"`. A hand-authored icon has to match the library it sits beside: declare all three, because an omitted cap or join falls back to the SVG defaults (`butt` and `miter`) and the icon terminates in chopped ends and spiked corners — which reads as an invisible edge cropping it. lucide is the reference. A surface that mixes hand-drawn and library icons can enforce the contract once with `svg { stroke-linecap: round; stroke-linejoin: round; }`, since a stylesheet rule beats the presentation attribute.
 
 Decorative SVGs — icons whose meaning is carried by the adjacent heading — must ship with `aria-hidden="true" focusable="false"` so screen readers don't announce "image" as noise. Informational SVGs (diagrams, charts) need a `<title>` child instead.
 
@@ -323,7 +335,7 @@ Dark mode is a token override, not a second design. Flipping `document.documentE
 }
 ```
 
-**What stays fixed** (in the Weft palette): `--weft-blue`, `--weft-blue-deep`, `--weft-blue-ink`, `--weft-yellow`, the full `--weft-on-blue-*` scale, plus `--weft-brand-cream` and `--weft-fixed-white`. A palette whose dark mode lifts the primary *light* — dark `heritage-purple` — must override the on-blue tier along with it, and does. Brand accents read true in both modes; the blue slab is the same blue slab. The mode-invariant fixed colors hold their value so brand assets and component glyphs that anchor against the blue ground don't break when the theme inverts.
+**What stays fixed** (in the Weft palette): `--weft-blue`, `--weft-blue-deep`, `--weft-blue-ink`, `--weft-yellow`, the full `--weft-on-blue-*` scale, plus the fixed set `--weft-brand-cream`, `--weft-fixed-white`, `--weft-fixed-ink` and `--weft-fixed-cream`. A palette whose dark mode lifts the primary *light* — dark `heritage-purple` — must override the on-blue tier along with it, and does. Brand accents read true in both modes; the blue slab is the same blue slab. The mode-invariant fixed colors hold their value so brand assets and component glyphs that anchor against the blue ground don't break when the theme inverts.
 
 **Why these choices:**
 
@@ -413,6 +425,8 @@ Padding `5px 12px`. The pulsing dot is a `::before` pseudo-element, 6×6px blue 
 ### `.eyebrow` — section signifier with hairline
 
 Mono caps section label, 12px / 0.18em / blue. Preceded by a 40px × 1px blue hairline.
+
+This is the marketing section signifier and keeps its caps. The app-surface casing ruling of 2026-09-01 ([[05-copy-guidance]] § When caps; [[09-app-primitives]] § Casing on app surfaces) governs application chrome and does not reach it.
 
 ```html
 <div class="eyebrow">For teams beyond individual AI</div>
