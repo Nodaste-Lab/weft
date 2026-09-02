@@ -28,7 +28,8 @@
 # Publishing needs write:packages on npm.pkg.github.com — a fine-grained PAT
 # in ~/.npmrc (`//npm.pkg.github.com/:_authToken=…`) or NODE_AUTH_TOKEN. The
 # script checks `npm whoami` against the registry before it publishes and
-# never prints the token.
+# never prints the token. NODE_AUTH_TOKEN is what the repo's tracked .npmrc
+# reads; when it is unset the script fills it from ~/.npmrc itself.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -135,6 +136,15 @@ publish_step() {
   say "[5/5] publish"
   [ "$PUBLISH" = 1 ] || { echo "  skipped (no --publish): DocT and plan-reviewer vendor by commit; publish when Heddle adopts"; return; }
   if [ "$DRY" = 1 ]; then echo "  would: npm whoami --registry=$REGISTRY && npm publish"; return; fi
+  # The repo's tracked .npmrc reads the registry token from ${NODE_AUTH_TOKEN}
+  # (the CI shape) and, being project-level, wins over ~/.npmrc — so inside
+  # the repo an `npm login` alone sends an EMPTY token and the registry answers
+  # 401/403 while curl with the same token succeeds (0.6.0 release, 2026-09-01).
+  # Fall back to the maintainer's own ~/.npmrc entry, never echoing it.
+  if [ -z "${NODE_AUTH_TOKEN:-}" ] && [ -f "$HOME/.npmrc" ]; then
+    NODE_AUTH_TOKEN="$(sed -nE 's|^//npm.pkg.github.com/:_authToken=(.*)$|\1|p' "$HOME/.npmrc" | tr -d '[:space:]')"
+    [ -n "$NODE_AUTH_TOKEN" ] && export NODE_AUTH_TOKEN && echo "  token: from ~/.npmrc (NODE_AUTH_TOKEN was unset)"
+  fi
   local who
   who="$(npm whoami --registry="$REGISTRY" 2>/dev/null)" \
     || die "not authenticated to $REGISTRY — put a PAT with write:packages in ~/.npmrc as //npm.pkg.github.com/:_authToken=… (or NODE_AUTH_TOKEN) and re-run with --publish-only"
