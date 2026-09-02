@@ -126,3 +126,39 @@ test('the React input bridge carries the control boundary pair', () => {
     'The React input fill must read the same Option C token the plain-CSS boundary reads.',
   );
 });
+
+// ---------------------------------------------------------------------------
+// Mode-invariant fixed tokens (04-design-system § Tokens, "Mode-invariant brand
+// fixed colors"). Declared once in the base block and re-declared in NO dark or
+// palette block, so a tooltip fill or a checkbox glyph holds its value when the
+// theme inverts. --weft-fixed-ink is the light-mode ink, held; a dark theme
+// moves --weft-ink and leaves this one alone.
+
+const BASE_BLOCK = ':root, :root[data-palette="weft"]';
+const FIXED_TOKENS = {
+  '--weft-brand-cream': '#fbf8f0',
+  '--weft-fixed-white': '#ffffff',
+  '--weft-fixed-ink': '#0b1020',
+  '--weft-fixed-cream': '#f4f1e8',
+};
+
+test('the fixed tokens are declared once in :root and overridden nowhere (mode-invariant)', () => {
+  const blocks = extractTokenBlocks(weft);
+  const base = blocks[BASE_BLOCK];
+  assert.ok(base, 'base token block must be extractable');
+  const problems = [];
+  for (const [token, value] of Object.entries(FIXED_TOKENS)) {
+    if (base[token] !== value) {
+      problems.push(`${token} must be declared as ${value} in the base block (found ${base[token] ?? 'nothing'})`);
+    }
+    for (const [selector, decls] of Object.entries(blocks)) {
+      if (selector === BASE_BLOCK) continue;
+      if (token in decls) {
+        problems.push(`${token} is re-declared in "${selector}" — fixed tokens do not flip with theme or palette`);
+      }
+    }
+  }
+  assert.deepEqual(problems, [], problems.join('\n'));
+  assert.equal(base['--weft-fixed-ink'], base['--weft-ink'],
+    '--weft-fixed-ink is the light-mode --weft-ink, held across themes');
+});

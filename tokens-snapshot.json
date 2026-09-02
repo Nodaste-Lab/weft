@@ -20,6 +20,8 @@
       "--weft-muted": "#5a6485",
       "--weft-brand-cream": "#fbf8f0",
       "--weft-fixed-white": "#ffffff",
+      "--weft-fixed-ink": "#0b1020",
+      "--weft-fixed-cream": "#f4f1e8",
       "--weft-rule": "rgba(11, 16, 32, 0.12)",
       "--weft-rule-strong": "rgba(11, 16, 32, 0.28)",
       "--weft-overlay": "rgba(11, 16, 32, 0.40)",
