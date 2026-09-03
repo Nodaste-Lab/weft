@@ -1053,7 +1053,7 @@
       "id": "weft-board",
       "path": "css/weft-templates.css",
       "classPrefix": "weft-board",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "summary": "Operator action board — filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
       "docs": "docs/brand-package/11-panel-templates.md"
     }

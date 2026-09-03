@@ -174,14 +174,17 @@ SECTIONS = [
   '<span class="weft-badge is-space">ccore/heddle</span>'
   '<span class="weft-badge is-status is-stop">BLOCKED</span>'
   '</div></div></div>'),
- ("Row chips", ".weft-badge.is-space + .weft-badge.is-outline", S,
-  "<code>.weft-badge.is-space</code> for workspace; <code>.weft-badge.is-outline</code> for type chip",
-  "Canonical. No evidence = no chip.",
+ ("Row chips", ".weft-badge.is-space + .weft-source-pill", S,
+  "<code>.weft-badge.is-space</code> (<code>weft-components.css</code>) for workspace; "
+  "<code>.weft-source-pill</code> / <code>SourcePill</code> (React) for the mono type chip",
+  "Canonical, and the two stay distinct (D5/D6 chip split): D5 keeps the space chip on "
+  "<code>Badge</code>, D6 moved only the mono chip to <code>SourcePill</code> for its truncation "
+  "and muted tone. No evidence = no chip.",
   '<div class="weft-board" style="padding:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
   '<span class="weft-badge is-space">Nodaste Studio</span>'
   '<span class="weft-badge is-space">ccore/heddle</span>'
-  '<span class="weft-badge is-outline">signal</span>'
-  '<span class="weft-badge is-outline">decision</span>'
+  '<span class="weft-source-pill">signal</span>'
+  '<span class="weft-source-pill">decision</span>'
   '</div>'),
 ]),
 ("Provenance", [
@@ -206,29 +209,30 @@ SECTIONS = [
  ("Drawer shell", ".weft-board-drawer (.is-wide)", P,
   "<code>sheet</code> — edge-mounted overlay; <code>panel-block-shell</code>",
   "Different mount: <code>sheet</code> overlays, this sits inline. An inline detail panel is an unfilled shape.",
-  '<div class="weft-board"><div class="weft-board-drawer">'
+  '<div class="weft-board"><div class="weft-board-drawer is-blocked">'
   '<div class="weft-panel-header" data-size="board">'
   '<div class="weft-panel-header-title">Account Recovery dependency unresolved</div>'
   '<div class="weft-panel-header-actions">'
-  '<span class="weft-badge is-space">signal</span>'
-  '<button class="weft-btn is-ghost" type="button" aria-label="Close drawer">×</button>'
+  '<span class="weft-source-pill">signal</span>'
+  '<button class="weft-panel-header-dismiss" type="button" aria-label="Close drawer">×</button>'
   '</div></div>'
   '<div class="weft-board-drawer-body">The account-recovery flow depends on the token migration.</div>'
-  '<div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
+  '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b> <span class="weft-badge is-outline is-info">direct</span></div>'
   '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn" type="button">Reassign</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
   '</div></div></div>'),
  ("Drawer header", '.weft-panel-header[data-size="board"]', S,
   "<code>.weft-panel-header</code> (<code>weft-components.css</code>); <code>PanelHeader size=&quot;board&quot;</code> (React)",
-  "Canonical. Title auto-inherits board size from parent context.",
+  "Canonical, at board scale. One panel-header scale across the board and its drawer (Katie, 2026-08) — "
+  "the drawer is not treated as subordinate. The size is set explicitly; nothing is inherited.",
   '<div class="weft-board"><div class="weft-board-drawer">'
   '<div class="weft-panel-header" data-size="board">'
   '<div class="weft-panel-header-title">Account Recovery dependency</div>'
   '<div class="weft-panel-header-actions">'
   '<span class="weft-badge is-space">ccore/heddle</span>'
-  '<button class="weft-btn is-ghost" type="button" aria-label="Close">×</button>'
+  '<button class="weft-panel-header-dismiss" type="button" aria-label="Close">×</button>'
   '</div></div></div></div>'),
  ("Reference row", ".weft-copyable-ref + .weft-copyable-ref-copy", S,
   "<code>.weft-copyable-ref</code> (<code>weft-components.css</code>); <code>CopyableRef</code> (React)",
@@ -246,27 +250,45 @@ SECTIONS = [
   '<textarea id="demo-reply" class="weft-textarea" name="reply" rows="2"'
   ' placeholder="Reply…"></textarea>'
   '</div>'),
- ("Provenance band", ".weft-board-drawer-prov", P,
-  "<code>callout</code> (muted)", "Muted footer band retained as template-local.",
+ ("Provenance band", ".weft-callout.is-band", S,
+  "<code>.weft-callout.is-band</code> (<code>weft-components.css</code>); "
+  "<code>Callout variant=&quot;band&quot;</code> (React)",
+  "Canonical. D8 kept the introduced band and landed it as a Callout variant, "
+  "so the board-local class is deleted.",
   '<div class="weft-board"><div class="weft-board-drawer">'
-  '<div class="weft-board-drawer-prov"><b>Why you’re seeing this:</b>'
+  '<div class="weft-callout is-band is-info"><b>Why you’re seeing this:</b>'
   ' <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI (pr_9f2a…c1)</div>'
   '</div></div>'),
  ("Action row", ".weft-action-button-row", S,
   "<code>.weft-action-button-row</code> (<code>weft-components.css</code>); <code>ActionButtonRow</code> (React; <code>dense</code> is opt-in, default false)",
-  "Canonical grouped actions row. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
-  '<div class="weft-board"><div class="weft-action-button-row" style="padding:10px 12px">'
+  "Canonical grouped actions row. <b>Fill is spent only where urgency is real (D3):</b> a blocked "
+  "item's drawer gets the filled primary; awaiting and FYI drawers use a ghost primary with link "
+  "secondaries. Use <code>.weft-action-button-row-trailing</code> to push a trailing link right.",
+  '<div class="weft-board" style="padding:12px">'
+  '<div style="font:10px var(--weft-font-mono);color:var(--weft-muted);text-transform:uppercase;margin-bottom:4px">blocked — act now</div>'
+  '<div class="weft-board-drawer is-blocked" style="margin-bottom:12px">'
+  '<div class="weft-action-button-row" style="padding:10px 12px">'
   '<button class="weft-btn" type="button">Resolve for me</button>'
-  '<button class="weft-btn" type="button">Reassign</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
   '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
-  '</div></div>'),
- ("Drawer buttons", ".weft-btn + .weft-btn.is-ghost + .weft-btn.is-link", S,
+  '</div></div>'
+  '<div style="font:10px var(--weft-font-mono);color:var(--weft-muted);text-transform:uppercase;margin-bottom:4px">awaiting / fyi — no fill</div>'
+  '<div class="weft-board-drawer">'
+  '<div class="weft-action-button-row" style="padding:10px 12px">'
+  '<button class="weft-btn is-ghost" type="button">Resolve for me</button>'
+  '<button class="weft-btn is-link" type="button">Reassign</button>'
+  '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open ↗</button></span>'
+  '</div></div></div>'),
+ ("Button treatments", ".weft-btn / .is-ghost / .is-link", S,
   "<code>.weft-btn</code> (<code>weft-components.css</code>); <code>Button</code> (React)",
-  "Canonical. The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, set by the application.",
+  "The three treatments, shown together. <b>Which one is primary is decided by urgency, not by "
+  "position (D3)</b> — filled belongs to a blocked item's drawer; elsewhere the primary is the ghost. "
+  "The 34px tier is activated by <code>data-density=&quot;dense&quot;</code> on <code>:root</code>, "
+  "set by the application.",
   '<div class="weft-board" style="padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
-  '<button class="weft-btn" type="button">Resolve</button>'
-  '<button class="weft-btn is-ghost" type="button">Reassign</button>'
-  '<button class="weft-btn is-link" type="button">Open ↗</button>'
+  '<button class="weft-btn" type="button">Filled</button>'
+  '<button class="weft-btn is-ghost" type="button">Ghost</button>'
+  '<button class="weft-btn is-link" type="button">Link ↗</button>'
   '</div>'),
  ("Status chip", ".weft-badge.is-status + tone", S,
   "<code>.weft-badge.is-status</code> (<code>weft-components.css</code>); <code>Badge variant=&quot;status&quot;</code> (React)",
@@ -317,9 +339,17 @@ SECTIONS = [
   "Canonical, and the specimen renders the canonical class rather than the board-local one — "
   "copyable markup must not contradict the guidance. D9: notice for load failures, "
   "<code>EmptyState variant=&quot;centered&quot;</code> for genuine empty states.",
+  # Two specimens, because a one-line notice hides how the treatment behaves
+  # (Katie, 2026-08): a wrapped message is the common case on a narrow board slot,
+  # and the dashed border has to hold the block without the text crowding it.
   '<div class="weft-board" style="padding:14px">'
-  '<div class="weft-callout is-dashed">'
+  '<div class="weft-callout is-dashed" style="margin-bottom:10px">'
   '<b>Couldn\'t load action items.</b> Connecting your account…'
+  '</div>'
+  '<div class="weft-callout is-dashed" style="max-width:340px">'
+  '<b>Couldn\'t load action items from 2 of 5 spaces.</b> '
+  'ccore/archive and nodaste-studio didn\'t respond. The items below are '
+  'everything we could reach — retry to fill the gaps.'
   '</div></div>'),
  ("Loading", "—", None,
   "<code>skeleton</code>",
@@ -332,12 +362,26 @@ DOCTRINE = [
   "A signal, a decision and a clarification all sit in <code>is-awaiting</code> if they need a response."),
  ("Urgency ordering is part of the meaning",
   "<code>is-blocked</code> → <code>is-awaiting</code> → <code>is-fyi</code>, always."),
+ ("Fill is a signal, not decoration",
+  "A filled <code>.weft-btn</code> appears only in a blocked item's drawer, where acting now is the "
+  "point. Awaiting and FYI drawers use a ghost primary with link secondaries. Spending fill on every "
+  "drawer makes it mean nothing, and puts two competing boxes in a row the operator is scanning."),
+ ("A tier's dot must agree with its urgency",
+  "<code>is-blocked</code> takes <code>.weft-dot.is-stop</code>, <code>is-awaiting</code> takes "
+  "<code>.is-warn</code>, <code>is-fyi</code> takes <code>.is-info</code>. A tier whose colour "
+  "contradicts its meaning is the signal itself being wrong. Per-item dots on the rows below are "
+  "a separate thing."),
  ("Never invent provenance",
   "A row with no relation evidence gets <b>no chip</b>, never a guessed one."),
  ("Never render an empty tier set",
   "An empty board reads as “nothing needs you”. Show <code>EmptyState</code> or <code>Callout</code> instead."),
  ("Evidence absence renders no chip",
   "If the relation field is empty, omit the badge entirely. Never substitute a guessed chip."),
+ ("Never two primary buttons",
+  "At most one filled <code>.weft-btn</code> in an action row — the action you want taken. "
+  "Everything beside it is <code>.is-ghost</code> or <code>.is-link</code>. Two filled buttons make "
+  "the operator choose between them instead of acting, which is the opposite of what a board is for. "
+  "A row of peer actions (a toolbar) correctly has none."),
 ]
 
 BADGE = {'REUSES': 'ok', 'DUPLICATES': 'dup', 'PARTIAL': 'part', 'NEW': 'new'}
@@ -444,7 +488,13 @@ def build(css_block):
 <!-- GENERATED by scripts/generate-panel-templates-page.py — do not hand-edit.
      All specimens use canonical weft-components.css classes and real form controls.
      No forbidden board-local selectors appear in any specimen HTML. -->
-<html lang="en" data-palette="weft">
+<!-- data-density="dense" is what makes these specimens the reviewed board surface.
+     T2 put the 34px tier on :root as an application preference; this page is the
+     application, so it has to set it. Without it every control falls back to the
+     44px default — buttons, inputs, selects and the header all render a third
+     too large, and the page misrepresents the very template it documents.
+     Guarded by T2-i in scripts/__tests__/template-contract.node.mjs. -->
+<html lang="en" data-palette="weft" data-density="dense">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -60,15 +60,17 @@ with a compact variant for narrow slots and a drawer for one item's detail.
 | List header | `.weft-board-context`, `.weft-board-context-sub`, `.weft-board-context-note` |
 | Degradation toast | `.weft-board-toast`, `.weft-board-toast-icon`, `.weft-board-toast-sub`, `.weft-board-toast-retry`, `.weft-board-toast-close` |
 | Priority tier | `.weft-tier-group` (`.is-blocked` / `.is-awaiting` / `.is-fyi`) / `<TierGroup>` |
-| Status dot | `.weft-dot` (`.is-ok` / `.is-warn` / `.is-stop` / `.is-info`) / `<Dot>` |
+| Status dot | `.weft-dot` (`.is-ok` / `.is-warn` / `.is-stop` / `.is-info`) / `<Dot>` — a **tier's** dot is fixed by its urgency: `is-blocked`→`.is-stop`, `is-awaiting`→`.is-warn`, `is-fyi`→`.is-info`. Per-item dots on rows are independent |
 | Action row | `.weft-hud-list-row`, `.weft-hud-list-row-col`, `.weft-hud-list-row-title`, `.weft-hud-list-row-meta`, `.weft-hud-list-row-aside` / `<HudListRow>` |
-| Row chips | `.weft-badge.is-space` for workspace; `.weft-badge.is-outline` for type |
+| Row chips | `.weft-badge.is-space` for workspace; `.weft-source-pill` / `<SourcePill>` for the mono type chip (D6) |
 | Provenance | `.weft-badge.is-outline` + tone modifier (`.is-ok` / `.is-info` / `.is-warn`); `.weft-board-legend`, `.weft-board-legend-item` |
-| Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`, `.weft-board-drawer-prov` |
-| Drawer header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
+| Drawer | `.weft-board-drawer` (`.is-wide`), `.weft-board-drawer-body`; provenance uses `.weft-callout.is-band` (D8) |
+| Drawer header | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` — one header scale across the board and its drawer |
+| Dismiss | `.weft-panel-header-dismiss` / `<PanelHeaderDismiss>` — borderless 24×24 glyph. **Not** a `.weft-btn`: a ghost button draws a bordered box at full control height, which is the wrong shape for a close affordance (D10 names dismiss as its own slot) |
 | Reference row | `.weft-copyable-ref`, `.weft-copyable-ref-copy` / `<CopyableRef>` |
 | Reply field | `.weft-textarea` (real `<textarea>`) / `<Textarea>` |
 | Action row | `.weft-action-button-row`; `.weft-action-button-row-trailing` for the trailing link slot / `<ActionButtonRow>` |
+| Drawer urgency | `.weft-board-drawer.is-blocked` — a blocked item's drawer. Only this drawer gets a filled `.weft-btn` (D3); awaiting and FYI use a ghost primary with link secondaries |
 | Button | `.weft-btn`, `.weft-btn.is-ghost`, `.weft-btn.is-link` / `<Button>` |
 | Status chip | `.weft-badge.is-status` + tone / `<Badge variant="status">` |
 | Compact variant | `.weft-board-panel`, `.weft-board-panel-head`, `.weft-board-panel-body` + `.weft-stat-row` / `<StatRow>` |
@@ -198,13 +200,33 @@ uses a real `<textarea class="weft-textarea">`. Actions go in `.weft-action-butt
 a trailing link gets wrapped in `.weft-action-button-row-trailing` to push it to
 the far right without descendant-selector child styling.
 
+**Fill is a signal, not decoration.** A filled `.weft-btn` appears only in a
+blocked item's drawer (`.weft-board-drawer.is-blocked`), where acting now is the
+point. Awaiting and FYI drawers use a ghost primary with link secondaries.
+Spending fill on every drawer makes it mean nothing, and puts two competing
+boxes in a row the operator is scanning. Decided by Katie, 2026-08.
+
+**Never two primary buttons.** At most one filled `.weft-btn` in an action row —
+the action you want taken. Every sibling is `.is-ghost` or `.is-link`. Two filled
+buttons make the operator choose between them instead of acting, which is the
+opposite of what a board is for.
+
+Zero is fine and is not a violation: `.weft-action-button-row` is also the
+container for peer-action toolbars (Copy / Email / Vault / Generate — see
+[09-app-primitives.md](09-app-primitives.md)), where every control is a ghost and
+none of them is *the* action. The rule is a ceiling, not a quota. Enforced by
+`npm run test:template-contract`.
+
 ```html
-<div class="weft-board-drawer">
+<!-- .is-blocked: this drawer belongs to a blocked item, which is what earns
+     the filled primary below. An awaiting or FYI drawer drops .is-blocked and
+     its primary becomes .weft-btn.is-ghost (D3). -->
+<div class="weft-board-drawer is-blocked">
   <div class="weft-panel-header" data-size="board">
     <div class="weft-panel-header-title">Ticket title</div>
     <div class="weft-panel-header-actions">
-      <span class="weft-badge is-space">signal</span>
-      <button type="button" class="weft-btn is-ghost" aria-label="Close">×</button>
+      <span class="weft-source-pill">signal</span>
+      <button type="button" class="weft-panel-header-dismiss" aria-label="Close">×</button>
     </div>
   </div>
 
@@ -219,14 +241,14 @@ the far right without descendant-selector child styling.
   <textarea id="drawer-reply" class="weft-textarea" name="reply" rows="2"
             placeholder="Reply…"></textarea>
 
-  <div class="weft-board-drawer-prov">
+  <div class="weft-callout is-band is-info">
     <b>Why you're seeing this:</b>
     <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI
   </div>
 
   <div class="weft-action-button-row">
     <button type="button" class="weft-btn">Resolve for me</button>
-    <button type="button" class="weft-btn">Reassign</button>
+    <button type="button" class="weft-btn is-link">Reassign</button>
     <span class="weft-action-button-row-trailing">
       <button type="button" class="weft-btn is-link">Open ↗</button>
     </span>
@@ -280,9 +302,10 @@ The migration consolidated all board-local duplicates into canonical
 | Urgency tier + head + count | `.weft-tier-group` / `<TierGroup>` |
 | Status dot | `.weft-dot` / `<Dot>` |
 | Action item rows + chips | `.weft-hud-list-row` / `<HudListRow>` |
-| Space and type chips | `.weft-badge.is-space` / `.weft-badge.is-outline` |
+| Space chip | `.weft-badge.is-space` / `<Badge variant="space">` (D5) |
+| Mono type chip | `.weft-source-pill` / `<SourcePill>` (D6) |
 | Evidence chips | `.weft-badge.is-outline` + tone modifier |
-| Drawer header + close | `.weft-panel-header[data-size="board"]` / `<PanelHeader>` |
+| Drawer header + close | `.weft-panel-header[data-size="board"]` / `<PanelHeader size="board">` |
 | Canonical reference row + copy | `.weft-copyable-ref` / `<CopyableRef>` |
 | Reply div (display-only) | `.weft-textarea` (real `<textarea>`) |
 | Drawer action row | `.weft-action-button-row` / `<ActionButtonRow>` |

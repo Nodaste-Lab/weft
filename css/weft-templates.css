@@ -201,8 +201,19 @@
 }
 .weft-board-drawer.is-wide { max-width: none; }
 
+/* D3 (Katie, 2026-08): a filled primary is spent only where urgency is real.
+ * The drawer for a blocked item carries .is-blocked and gets the filled button;
+ * awaiting and FYI drawers use a ghost primary with link secondaries. Fill is
+ * therefore a signal, not the default decoration on every drawer. The border
+ * tint mirrors .weft-tier-group.is-blocked so the drawer reads as part of that
+ * tier rather than as an unrelated surface. */
+.weft-board-drawer.is-blocked {
+  border-color: color-mix(in srgb, var(--weft-stop) 45%, transparent);
+}
+
 /* D10: drawer header uses weft-panel-header[data-size="board"] (weft-components.css).
  * Board-local drawer header and close classes are deleted.
+ * One header scale across the board and its drawer (Katie, 2026-08).
  * Plain-CSS markup:
  *   <div class="weft-panel-header" data-size="board">
  *     <div class="weft-panel-header-title">…</div>
@@ -238,21 +249,34 @@
  * reinforce it.
  */
 
-.weft-board-drawer-prov {
-  padding: 9px 12px;
-  background: var(--weft-fill-soft);
-  border-bottom: 1px solid var(--weft-rule);
-  font-size: 11.5px; color: var(--weft-muted);
-  display: flex; gap: 7px; align-items: baseline; flex-wrap: wrap;
-}
-.weft-board-drawer-prov b { color: var(--weft-ink); }
+/* D8: the provenance band uses .weft-callout.is-band (weft-components.css).
+ * D8 kept both introduced treatments and landed them as Callout variants, so the
+ * board-local band is deleted rather than "retained as template-local".
+ * Plain-CSS markup:
+ *   <div class="weft-callout is-band is-info">
+ *     <b>Why you're seeing this:</b>
+ *     <span class="weft-badge is-outline is-info">direct</span> tagged to Heddle UI
+ *   </div>
+ */
 
 /* D3: drawer action row uses .weft-action-button-row (weft-components.css).
  * The board-local drawer actions class is deleted.
- * Plain-CSS markup:
- *   <div class="weft-action-button-row">
- *     <button class="weft-btn">Resolve</button>
- *     <button class="weft-btn is-link">Open ↗</button>
+ * Fill is spent only where urgency is real (D3, Katie 2026-08): the filled
+ * primary belongs to a blocked item's drawer. Awaiting and FYI drawers drop
+ * .is-blocked and take a ghost primary.
+ * Plain-CSS markup — blocked:
+ *   <div class="weft-board-drawer is-blocked">
+ *     <div class="weft-action-button-row">
+ *       <button class="weft-btn">Resolve</button>
+ *       <button class="weft-btn is-link">Open ↗</button>
+ *     </div>
+ *   </div>
+ * Plain-CSS markup — awaiting / fyi:
+ *   <div class="weft-board-drawer">
+ *     <div class="weft-action-button-row">
+ *       <button class="weft-btn is-ghost">Resolve</button>
+ *       <button class="weft-btn is-link">Open ↗</button>
+ *     </div>
  *   </div>
  */
 
