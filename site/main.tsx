@@ -21,7 +21,12 @@ function ThemeToggle() {
 
 function Site() {
   return (
-    <div style={{ maxWidth: 1080, margin: '0 auto', padding: '32px 24px 96px' }}>
+    // 1078, not a round 1080: the gallery grid inside is (maxWidth - 48
+    // padding) wide with two 14px gaps, and (1030 - 28) / 3 = 334 exactly —
+    // integer columns at integer x. At 1080 the columns measure 334.66px, and
+    // fractional card geometry made the visual captures flap between rounding
+    // states run to run (the baseline-churn class codex round 3 chased).
+    <div style={{ maxWidth: 1078, margin: '0 auto', padding: '32px 24px 96px' }}>
       <header
         style={{
           display: 'flex',

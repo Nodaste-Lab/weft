@@ -95,6 +95,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormStatus,
 } from '../ui/form';
 import { FollowUpBlock } from '../ui/follow-up-block';
 import { FollowUpItem } from '../ui/follow-up-item';
@@ -226,7 +227,12 @@ import { Sticky } from '../ui/sticky';
 import { StepsItem } from '../ui/steps-item';
 import { StatusIconRow } from '../ui/status-icon-row';
 
-/** Every component id from `manifest.json`, in registry order. */
+/**
+ * The gallery's default card list: the manifest component cards it shows by
+ * default plus the showcase-only cards (state/composition showcases with no
+ * `src/ui` file — see `showcaseOnlyCategoryById`). A card absent from this
+ * list does not render, whatever the manifest says about it.
+ */
 export const SHOWCASED_PRIMITIVE_IDS = [
   'accordion',
   'action-button-row',
@@ -261,6 +267,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'follow-up-block',
   'follow-up-item',
   'form',
+  'form-status',
   'hover-card',
   'html-viewer',
   'hud-list-row',
@@ -275,6 +282,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'image',
   'inline-edit-list-row',
   'input',
+  'input-error-states',
   'knowledge-search-result-row',
   'label',
   'list-block',
@@ -332,6 +340,20 @@ export const SHOWCASED_PRIMITIVE_IDS = [
 const primitiveCategoryById = new Map(
   designSystemManifest.uiPrimitives.map((primitive) => [primitive.id, primitive.category]),
 );
+
+// Showcase-only cards: state/composition showcases with no src/ui file of
+// their own. manifest.uiPrimitives must mirror src/ui/*.tsx exactly (the
+// verify gate compares the two lists), so these ids carry their shelf
+// category here instead — the gallery test pins each mapping, because an
+// unmapped id silently renders as "uncategorized" and falls off the shelf.
+const showcaseOnlyCategoryById = new Map<string, string>([
+  ['form-status', 'forms'],
+  ['input-error-states', 'inputs'],
+]);
+
+function categoryForPrimitiveId(id: string): string | undefined {
+  return primitiveCategoryById.get(id) ?? showcaseOnlyCategoryById.get(id);
+}
 
 function capitalizePrimitiveWord(word: string): string {
   return word.length > 0 ? `${word[0].toUpperCase()}${word.slice(1)}` : word;
@@ -392,7 +414,7 @@ function categoryGroupsForIds(ids: readonly string[]) {
   return galleryCategoryOrder.map((category) => ({
     category,
     label: primitiveCategoryLabels[category] ?? category,
-    ids: ids.filter((id) => primitiveCategoryById.get(id) === category),
+    ids: ids.filter((id) => categoryForPrimitiveId(id) === category),
   }))
   .filter((group) => group.ids.length > 0);
 }
@@ -585,6 +607,235 @@ function HudToggleSwitchDemo() {
       <div className="flex items-center gap-2">
         <HudToggleSwitch active={false} onToggle={() => undefined} ariaLabel="Disabled toggle" disabled />
         <span className="text-xs text-muted-foreground">disabled</span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The async status presentation (amendment A4 in force, 0.5.0): the consumer
+ * supplies pending or a settled tone plus its own words; Weft presents them in
+ * the hint slot. One FormStatus per FormItem — the registry throws on a second
+ * live instance — so every specimen is its own field. Tone colour reinforces
+ * the text and is never the only signal, which is why no two tone specimens
+ * share their words (the gallery test refuses identical-text tone pairs, the
+ * same rule S15 holds over the specimen page).
+ */
+function FormStatusShowcase() {
+  const form = useForm<{
+    pending: string;
+    ok: string;
+    info: string;
+    warn: string;
+    stop: string;
+    compose: string;
+  }>({
+    defaultValues: {
+      pending: 'vault/sources/field-notes',
+      ok: 'vault/sources/campaign-wiki',
+      info: 'vault/sources/new-import',
+      warn: 'vault/sources/mirrored-archive',
+      stop: 'vault/sources/blocked-crawl',
+      compose: 'not-a-url',
+    },
+  });
+  // The error is consumer-supplied through the form machinery (decision 7):
+  // the gallery plays the consumer so the composition can be photographed.
+  React.useEffect(() => {
+    form.setError('compose', { type: 'manual', message: 'Unable to reach source.' });
+  }, [form]);
+
+  const statusField = (
+    name: 'pending' | 'ok' | 'info' | 'warn' | 'stop',
+    label: string,
+    status: ReactNode,
+  ) => (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="text-xs">{label}</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+          {status}
+        </FormItem>
+      )}
+    />
+  );
+
+  return (
+    <Form {...form}>
+      <div className="grid max-w-sm gap-4">
+        {statusField(
+          'pending',
+          'Source path — pending',
+          <FormStatus pending>Checking source…</FormStatus>,
+        )}
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          pending: the consumer&apos;s text plus the pulsing dot; the control carries
+          aria-busy while the supplied state is pending
+        </span>
+        {statusField(
+          'ok',
+          'Source path — ok',
+          <FormStatus tone="ok">Source is reachable.</FormStatus>,
+        )}
+        {statusField(
+          'info',
+          'Source path — info',
+          <FormStatus tone="info">Not checked in this session yet.</FormStatus>,
+        )}
+        {statusField(
+          'warn',
+          'Source path — warn',
+          <FormStatus tone="warn">Degraded — local content stays readable.</FormStatus>,
+        )}
+        {statusField(
+          'stop',
+          'Source path — stop',
+          <FormStatus tone="stop">Source blocked by its robots policy.</FormStatus>,
+        )}
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          four settled tones; a stop-toned status does not mark the field invalid —
+          that stays the consumer&apos;s call
+        </span>
+        <FormField
+          control={form.control}
+          name="compose"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Source URL — error + status + help</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormStatus tone="info">Rechecked two minutes ago.</FormStatus>
+              <FormDescription className="text-xs">
+                Must be reachable over HTTPS.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          one ordered describedby list: error first, status second, help last (A9)
+        </span>
+      </div>
+    </Form>
+  );
+}
+
+/**
+ * The recorded 2026-08-12 gap: the visual suite photographed no invalid
+ * specimen, so error rendering was carried entirely by the contract suites.
+ * This card mounts every error presentation the baselines should hold: the
+ * stop boundary, the trailing alert glyph on input and textarea, the
+ * glyph-led message, the select as the stated chevron-owns-the-edge
+ * exception, and the dashed-disabled + invalid compose.
+ */
+function InputErrorStatesShowcase() {
+  const form = useForm<{ email: string }>({ defaultValues: { email: 'katie@' } });
+  React.useEffect(() => {
+    form.setError('email', { type: 'manual', message: 'Needs a full address.' });
+  }, [form]);
+
+  return (
+    <div className="grid max-w-sm gap-4">
+      <Form {...form}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-xs">Email</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </Form>
+      <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+        the composed field: stop boundary, aria-invalid wired by the form, and a
+        message led by the alert glyph
+      </span>
+      <div style={fieldStackStyle}>
+        <Label htmlFor="ds-error-name">Project name</Label>
+        <Input
+          id="ds-error-name"
+          aria-invalid="true"
+          aria-describedby="ds-error-name-error"
+          defaultValue="Q1 Launch Plan"
+        />
+        <span className="weft-field-hint is-error" id="ds-error-name-error">
+          That name is already in use.
+        </span>
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          standalone invalid input: the trailing alert glyph sits at the field&apos;s
+          right edge, and the reason is associated — an unreferenced hint is
+          decoration
+        </span>
+      </div>
+      <div style={fieldStackStyle}>
+        <Label htmlFor="ds-error-notes">Session notes</Label>
+        <Textarea
+          id="ds-error-notes"
+          state="error"
+          aria-describedby="ds-error-notes-error"
+          defaultValue="The party entered Brindlewick at dusk"
+          rows={3}
+        />
+        <span className="weft-field-hint is-error" id="ds-error-notes-error">
+          Add the scene outcome before saving.
+        </span>
+      </div>
+      <div style={fieldStackStyle}>
+        <Select defaultValue="week">
+          {/* Not composed under FormControl: the Slot's data-slot lands after
+              the trigger's own, which would cost it its slot identity. The
+              message is hand-associated instead — the select exception is
+              border PLUS the glyph-led message, never border alone. */}
+          <SelectTrigger
+            state="error"
+            aria-label="Recap period, invalid"
+            aria-describedby="ds-error-period-message"
+            className="w-full"
+          >
+            <SelectValue placeholder="Choose a period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="today">This session</SelectItem>
+            <SelectItem value="week">Last 7 days</SelectItem>
+            <SelectItem value="month">Last 30 days</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="weft-field-hint is-error" id="ds-error-period-message">
+          Pick a period inside the retention window.
+        </span>
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          the select is the stated exception — its right edge belongs to the
+          chevron, so the border and the glyph-led message carry the non-colour
+          cue
+        </span>
+      </div>
+      <div style={fieldStackStyle}>
+        <Label htmlFor="ds-error-disabled">Archive path</Label>
+        <Input
+          id="ds-error-disabled"
+          disabled
+          aria-invalid="true"
+          aria-describedby="ds-error-disabled-error"
+          defaultValue="vault/archive/2025"
+        />
+        <span className="weft-field-hint is-error" id="ds-error-disabled-error">
+          Archive is no longer reachable.
+        </span>
+        <span className="text-[length:var(--text-xs)] text-[var(--hud-text-3)]">
+          disabled + invalid compose: the dashed stroke and the error colour are
+          both true at once
+        </span>
       </div>
     </div>
   );
@@ -1192,6 +1443,14 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       <PrimitiveCard
+        id="form-status"
+        title="Form Status"
+        summary="Asynchronous status presentation (A4 in force): consumer-supplied pending or settled tone plus its own words, rendered in the hint slot with aria-busy and the A9 describedby order wired by construction."
+      >
+        <FormStatusShowcase />
+      </PrimitiveCard>
+
+      <PrimitiveCard
         id="follow-up-block"
         title="FollowUpBlock"
         summary="Generated-response suggestion container that composes FollowUpItem without adding chat state."
@@ -1581,6 +1840,14 @@ export function DesignSystemUiGallery({
             <Input variant="inline" aria-label="Rename board" defaultValue="Launch board" />
           </div>
         </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="input-error-states"
+        title="Input Error States"
+        summary="Error is never colour alone: the stop boundary, the trailing alert glyph on input and textarea, the glyph-led message, the select's chevron-owns-the-edge exception, and the dashed disabled + invalid compose."
+      >
+        <InputErrorStatesShowcase />
       </PrimitiveCard>
 
       <PrimitiveCard
@@ -2839,7 +3106,7 @@ function PrimitiveCard({
   summary: string;
   children: ReactNode;
 }) {
-  const category = primitiveCategoryById.get(id) ?? 'uncategorized';
+  const category = categoryForPrimitiveId(id) ?? 'uncategorized';
   const label = primitiveCategoryLabels[category] ?? category;
   const ownerAnchor = ownerAnchorForComponent(id);
   const visibleIds = React.useContext(PrimitiveVisibilityContext);
@@ -2926,6 +3193,11 @@ const galleryStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
   gap: 14,
+  // Cards keep their content height instead of stretching to the tallest
+  // row-mate: the visual suite screenshots each card's section, so stretched
+  // heights made every baseline depend on which cards happen to share its
+  // row — inserting one card rewrote dozens of unrelated snapshots.
+  alignItems: 'start',
 };
 
 const categoryBadgeStyle: CSSProperties = {
