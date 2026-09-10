@@ -175,4 +175,25 @@ describe('TierGroup', () => {
     expect(container.querySelector('[data-slot="tier-group"]')).not.toBeNull();
     expect(container.textContent).toContain('a');
   });
+
+  it("derives the tier dot from urgency, matching the plain-CSS contract", () => {
+    // The pairing blocked/stop, awaiting/warn, fyi/info is enforced for
+    // plain-CSS markup by test:template-contract. Before this, <TierGroup>
+    // rendered no dot at all and offered no slot for one, so a React consumer
+    // could not satisfy the documented rule without rebuilding the header.
+    // Deriving it from `urgency` makes the two surfaces agree by construction.
+    for (const [urgency, tone] of [["blocked", "stop"], ["awaiting", "warn"], ["fyi", "info"]] as const) {
+      const { container, unmount } = render(
+        <TierGroup urgency={urgency} label="Tier">
+          <div>row</div>
+        </TierGroup>,
+      );
+      const dot = container.querySelector('[data-slot="dot"]');
+      expect(dot, `${urgency} tier must render its own dot`).not.toBeNull();
+      expect(dot).toHaveAttribute("data-tone", tone);
+      // Decorative: the tier already carries an accessible name via aria-label.
+      expect(dot).toHaveAttribute("aria-hidden");
+      unmount();
+    }
+  });
 });

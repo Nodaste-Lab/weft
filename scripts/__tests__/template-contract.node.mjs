@@ -68,6 +68,9 @@ const DEPRECATED_BOARD_CLASSES = [
   'weft-board-evidence',
   'weft-board-rail-search',
   'weft-board-pick',
+  // D8 kept both introduced treatments and landed them as Callout variants, so
+  // the board-local band is superseded by .weft-callout.is-band.
+  'weft-board-drawer-prov',
 ];
 
 // ── CSS tests ────────────────────────────────────────────────────────────────
@@ -167,6 +170,715 @@ test('T2-b: generator is deterministic — --output mode matches committed file'
     html,
     'Generator output does not match the committed docs/brand-package/panel-templates.html. Run: python3 scripts/generate-panel-templates-page.py . <scratchpad>',
   );
+});
+
+// ── One primary per action row ───────────────────────────────────────────────
+// Katie's rule, 2026-08: never two filled .weft-btn in an action row. Two
+// filled buttons make the operator choose between them instead of acting.
+// Caught by eye on the published page, where three specimens taught the wrong
+// pattern — including the copy-paste DOM contract in the markdown. The rule is
+// only worth stating if the reference material can't drift from it again, so it
+// is checked in both the generated page and the documented skeleton.
+const classSet = (attr) => new Set(attr.split(/\s+/).filter(Boolean));
+const hasAll = (attr, ...needed) => {
+  const set = classSet(attr);
+  return needed.every((c) => set.has(c));
+};
+
+const PRIMARY_BTN = /<button[^>]*\bclass="([^"]*\bweft-btn\b[^"]*)"/gi;
+// Only the variants weft-components.css actually defines as non-filled. A class
+// the stylesheet does not implement — .weft-btn.is-secondary, say — still renders
+// as a filled primary, so exempting it by name would blind the guard to exactly
+// the drift it exists to catch. Widen this only alongside a CSS variant.
+// Membership, not a substring match. `\bis-ghost\b` also matches inside
+// `helper-is-ghost`, because the hyphen is a word boundary — so an unrelated
+// helper class silently exempted a filled button. The whole point of matching on
+// the set is defeated by asking a regex about the string.
+const NON_PRIMARY_CLASSES = ['is-ghost', 'is-link'];
+const isNonPrimary = (attr) => {
+  const set = classSet(attr);
+  return NON_PRIMARY_CLASSES.some((c) => set.has(c));
+};
+
+// Depth-matched rather than terminator-matched. The first version required the
+// row's </div> to be followed by another </div> or end-of-input, which silently
+// found nothing in CSS comments — where an example ends at the comment marker —
+// so the guard reported clean on a surface it was not reading. Walking div depth
+// makes the extractor independent of what follows the row.
+function extractActionRows(text) {
+  const open = /<div[^>]*\bclass="([^"]*)"[^>]*>/gi;
+  const rows = [];
+  let m;
+  while ((m = open.exec(text)) !== null) {
+    if (!classSet(m[1]).has('weft-action-button-row')) continue;
+    const start = m.index + m[0].length;
+    const tag = /<(\/?)div\b[^>]*>/gi;
+    tag.lastIndex = start;
+    let depth = 1;
+    let end = text.length;
+    let t;
+    while (depth > 0 && (t = tag.exec(text)) !== null) {
+      depth += t[1] ? -1 : 1;
+      if (depth === 0) end = t.index;
+    }
+    rows.push({ body: text.slice(start, end), index: m.index });
+  }
+  return rows;
+}
+
+function actionRowViolations(text, label) {
+  return extractActionRows(text).flatMap((row) => {
+    const classes = [...row.body.matchAll(PRIMARY_BTN)].map((m) => m[1]);
+    const primaries = classes.filter((c) => !isNonPrimary(c));
+    if (primaries.length <= 1) return [];
+    const line = text.slice(0, row.index).split('\n').length;
+    return [`${label}:${line} — ${primaries.length} filled .weft-btn in one action row (max 1) (${classes.join(' | ')})`];
+  });
+}
+
+// CSS authoring examples are indented under a leading " * ". Strip that decoration
+// so the markup reads the same as it does on the other two surfaces, and every
+// detector can be pointed at all three without special-casing.
+function undecorate(text) {
+  return text.split('\n').map((l) => l.replace(/^\s*\*[ \t]?/, '')).join('\n');
+}
+
+// One canonical form for every surface before any detector runs. The generated
+// page HTML-escapes its attribute quotes, the markdown and CSS examples are
+// hand-authored and may use single quotes; none of that is the contract. Doing
+// this once is why the detectors can be literal about `class="…"` without being
+// literal about how an author happened to type it.
+function normalizeSurface(text) {
+  return text
+    .replace(/&quot;/g, '"')
+    // EVERY attribute, not just class. The first version rewrote class only, so a
+    // hand-authored data-size='board' walked straight past the drawer rule — the
+    // same under-coverage this normalization exists to prevent, reintroduced by
+    // scoping it to the one attribute I happened to be thinking about.
+    .replace(/\b([a-zA-Z][\w-]*)='([^']*)'/g, '$1="$2"');
+}
+
+// A deprecated class is superseded guidance wherever it appears — inside a class
+// attribute, in a selector label like `.weft-board-drawer-prov`, or in prose.
+// The earlier checks only looked inside class="…", so a regression in the
+// generated page's selector line or in comment prose would have published the
+// old name with a green suite.
+// …but naming a class in order to say it is gone is the opposite of teaching it.
+// The rebase onto main surfaced this: main's own docs read "The template-local
+// .weft-board-check is RETIRED — it existed only because the canonical row once
+// took the full 44px control height", which this rule flagged as a violation. A
+// retirement note is the most useful thing a doc can say about a deleted class,
+// so an explicit retirement marker near the mention exempts it. Anything that
+// names the class without saying it is gone still fails.
+const RETIREMENT_NOTE = /\b(retired|deleted|superseded|removed|no longer|former(?:ly)?|do not use)\b/i;
+
+function deprecatedClassViolations(text, label) {
+  return DEPRECATED_BOARD_CLASSES.flatMap((cls) =>
+    [...text.matchAll(new RegExp(`\\b${cls}(?![-\\w])`, 'g'))].flatMap((m) => {
+      // Tight window, so a retirement note elsewhere in the file cannot launder
+      // an unrelated live reference further down.
+      const window = text.slice(Math.max(0, m.index - 140), m.index + 140);
+      if (RETIREMENT_NOTE.test(window)) return [];
+      const line = text.slice(0, m.index).split('\n').length;
+      return [`${label}:${line} — ${cls} was deleted; published material must not teach it`];
+    }),
+  );
+}
+
+// Prose form of the D6 rule, kept separate from the markup form because a doc can
+// get this wrong either way: by showing the old markup, or by describing it.
+function proseTypeChipViolations(text, label) {
+  return text.split('\n').flatMap((line, i) => {
+    if (!/\btype chip/i.test(line)) return [];
+    if (!/weft-badge[.\s]is-outline|weft-badge is-outline/.test(line)) return [];
+    return [`${label}:${i + 1} maps the type chip to .weft-badge.is-outline — D6 moved it to .weft-source-pill`];
+  });
+}
+
+test('T2-e: action rows carry at most one primary button', () => {
+  const violations = [
+    ...actionRowViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),
+    ...actionRowViolations(
+      readFileSync(join(ROOT, 'docs', 'brand-package', '11-panel-templates.md'), 'utf8'),
+      '11-panel-templates.md',
+    ),
+  ];
+  assert.deepEqual(
+    violations,
+    [],
+    `Action rows must carry at most one filled .weft-btn; every sibling is .is-ghost or .is-link.\n${violations.join('\n')}`,
+  );
+});
+
+test('T2-e regression: the guard actually catches a second primary', () => {
+  const twoPrimaries =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn" type="button">Resolve</button>' +
+    '<button class="weft-btn" type="button">Reassign</button>' +
+    '</div>';
+  assert.equal(actionRowViolations(twoPrimaries, 'fixture').length, 1);
+
+  const onePrimary = twoPrimaries.replace('weft-btn" type="button">Reassign', 'weft-btn is-ghost" type="button">Reassign');
+  assert.deepEqual(actionRowViolations(onePrimary, 'fixture'), []);
+
+  // A trailing link is not a second primary, and the trailing wrapper class
+  // must not be mistaken for the row itself.
+  const withTrailing =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn" type="button">Resolve</button>' +
+    '<span class="weft-action-button-row-trailing"><button class="weft-btn is-link" type="button">Open</button></span>' +
+    '</div>';
+  assert.deepEqual(actionRowViolations(withTrailing, 'fixture'), []);
+
+  // Zero primaries is deliberately allowed, not an oversight. The rule is a
+  // ceiling, not a quota: .weft-action-button-row is also the container for
+  // peer-action toolbars (Copy / Email / Vault / Generate — 09-app-primitives.md
+  // §action-button-row), where every control is a ghost and none is *the*
+  // action. Requiring exactly one would fail that documented use.
+  const allGhost =
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn is-ghost" type="button">Copy</button>' +
+    '<button class="weft-btn is-ghost" type="button">Email</button>' +
+    '<button class="weft-btn is-ghost" type="button">Vault</button>' +
+    '</div>';
+  assert.deepEqual(actionRowViolations(allGhost, 'fixture'), []);
+
+  // A variant weft-components.css does not implement is still a filled button,
+  // so it must count as a primary rather than be exempted by its class name.
+  const fakeVariant = twoPrimaries.replace('weft-btn" type="button">Reassign', 'weft-btn is-secondary" type="button">Reassign');
+  assert.equal(actionRowViolations(fakeVariant, 'fixture').length, 1);
+});
+
+// ── D5 / D6 chip split ───────────────────────────────────────────────────────
+// D6 adopted SourcePill for the mono type chip and deleted weft-board-type,
+// while D5 kept the space chip on Badge. The decision asked for a guard that the
+// two stay distinct and can coexist in one row. The page had been showing the
+// type chip as .weft-badge.is-outline — the pre-D6 pattern — so the reference
+// material silently taught something the design system had already moved past.
+test('T2-f: the row-chip specimen shows the D5/D6 split — Badge space chip beside a SourcePill', () => {
+  const html = readFileSync(generatedHtmlPath, 'utf8');
+  const row = html.match(/<div class="demo">(?:(?!<\/div>\s*<div class="meta">)[\s\S])*?weft-source-pill[\s\S]*?<div class="meta">/);
+  assert.ok(row, 'the generated page must contain a specimen using .weft-source-pill (D6)');
+  assert.ok(
+    /weft-badge is-space/.test(row[0]),
+    'the D5 Badge space chip and the D6 SourcePill must render in the same row without colliding',
+  );
+  assert.ok(
+    !/weft-board-type/.test(html),
+    'weft-board-type was deleted by D6 and must not reappear',
+  );
+});
+
+// The first version of the guard above scanned only the generated page, and
+// review immediately found a third copy of the pre-D6 mapping in a second
+// markdown table it could not see. Both files are published reference material,
+// so both are checked — a rule enforced on one surface is not enforced.
+const canonicalMdPath = join(ROOT, 'docs', 'brand-package', '11-panel-templates.md');
+
+test('T2-g: the canonical markdown teaches no superseded mapping', () => {
+  const md = readFileSync(canonicalMdPath, 'utf8');
+  const problems = [];
+
+  // Deprecated board-local classes must not survive in prose or tables either.
+  // The CSS check (T1-d) does not see this file at all.
+  for (const cls of DEPRECATED_BOARD_CLASSES) {
+    for (const m of md.matchAll(new RegExp(`\\.${cls}(?![-\\w])`, 'g'))) {
+      problems.push(`${cls} at line ${md.slice(0, m.index).split('\n').length} — deleted; docs must not teach it`);
+    }
+  }
+
+  // D6: any line describing the mono/type chip must point at SourcePill, never
+  // back at the Badge outline variant it moved off. Badge.is-outline is still
+  // correct for evidence chips, so this is scoped by context rather than banned.
+  problems.push(...proseTypeChipViolations(md, '11-panel-templates.md'));
+  problems.push(...typeChipViolations(md, '11-panel-templates.md'));
+  assert.deepEqual(problems, [], `Superseded mappings in 11-panel-templates.md:\n${problems.join('\n')}`);
+});
+
+// Prose-matching was not enough: review found `signal` — a type value — rendered
+// as a space badge in two drawer examples, on lines that never say "type chip".
+// The durable check is on the markup and the vocabulary, not on the description
+// beside it: a known item type must never wear the workspace chip.
+const ITEM_TYPE_VALUES = ['signal', 'decision', 'clarification'];
+
+// Match on the class SET, never on the attribute string. Review found the literal
+// form missed single quotes, reordered classes and extra classes — all valid in
+// the hand-authored markdown and CSS examples — so the guard could report clean on
+// bad published markup. Order and spelling of the attribute are not the contract;
+// the set of classes is.
+
+function typeChipViolations(text, label) {
+  const types = new Set(ITEM_TYPE_VALUES);
+  const pattern = /<(?:span|div)[^>]*\bclass="([^"]*)"[^>]*>\s*([^<]*?)\s*</gi;
+  return [...text.matchAll(pattern)].flatMap((m) => {
+    if (!hasAll(m[1], 'weft-badge', 'is-space')) return [];
+    if (!types.has(m[2].trim().toLowerCase())) return [];
+    const line = text.slice(0, m.index).split('\n').length;
+    return [`${label}:${line} — "${m[2].trim()}" is an item type, not a workspace; D6 puts it on .weft-source-pill, not .weft-badge.is-space`];
+  });
+}
+
+// The page renders every specimen live from css/, which is only faithful if the
+// page puts itself in the density the board is designed for. T2 placed the 34px
+// tier on :root as an application preference; this page is the application. It
+// had shipped without it, so every control rendered at the 44px default — a third
+// too large — while the specimen text beside them explained the dense tier.
+// Katie caught it as "the preset picker looks wrong, input fields, button size".
+// ── Every rule, every published surface ──────────────────────────────────────
+// Eight of the last ten review findings on this PR were the same shape: a rule
+// enforced on fewer surfaces than it covers, or a detector too literal about how
+// an author typed something. The per-surface tests above stay for their specific
+// error messages; this one exists so that adding a rule or a surface cannot
+// quietly leave a hole. Everything is normalized first, so quoting style, class
+// order and comment decoration are not part of the contract.
+// The drawer-header rule lived only in T2-j, which reads CSS comments, so the two
+// markup surfaces could regress back to a board-scale drawer header with a green
+// suite — review confirmed it by mutating both. Same block-walk as the action row.
+// Container tags, not just <div>: the markdown skeleton wraps the board in a
+// <section>, so a div-only walker silently skipped that surface's boards.
+const CONTAINER = 'div|section|aside|article|main|nav';
+
+function extractBlocks(text, className) {
+  const open = new RegExp(`<(?:${CONTAINER})[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi');
+  const blocks = [];
+  let m;
+  while ((m = open.exec(text)) !== null) {
+    if (!classSet(m[1]).has(className)) continue;
+    const start = m.index + m[0].length;
+    const tag = new RegExp(`<(/?)(?:${CONTAINER})\\b[^>]*>`, 'gi');
+    tag.lastIndex = start;
+    let depth = 1;
+    let end = text.length;
+    let t;
+    while (depth > 0 && (t = tag.exec(text)) !== null) {
+      depth += t[1] ? -1 : 1;
+      if (depth === 0) end = t.index;
+    }
+    blocks.push({ body: text.slice(start, end), index: m.index, classes: m[1] });
+  }
+  return blocks;
+}
+
+// REMOVED (Katie, 2026-08): the drawer-header scale rule. It briefly required the
+// drawer header to be default-size, on the reasoning that a detail panel is
+// subordinate to the board containing it. That was my judgement rather than a
+// recorded decision, and it was reversed — one panel-header scale applies across
+// the board and its drawer. Left as a note rather than deleted silently, so the
+// reversal is visible to whoever wonders why the drawer is board-scale.
+//
+// extractBlocks() above is still used by the dismiss-slot, tier-order and
+// tier-pairing rules; only this detector went away.
+
+// ── Slot occupancy ───────────────────────────────────────────────────────────
+// Every rule above this point is a PROHIBITION: do not use a deleted class, do
+// not use two filled buttons, do not put board scale on a drawer. Katie found a
+// failure none of them could ever catch — the drawer's close control was a
+// .weft-btn.is-ghost, which drew a 34px bordered box where the design calls for a
+// borderless 24px glyph. Nothing was deprecated and no variant was misused; a
+// ghost button is perfectly legal Weft. It was simply the wrong occupant of a
+// named slot.
+//
+// D10 adopted PanelHeader for its three slots — title, actions, DISMISS — and
+// weft-components.css gives the dismiss slot its own control (border: 0,
+// background: none, 24x24). The specimens filled that slot by hand instead.
+// Tellingly, the plain-CSS authoring example in weft-templates.css had it right
+// all along, so the two published pages disagreed with the stylesheet's own
+// guidance and every guard reported clean.
+//
+// This is the first OBLIGATION rule: a named slot must be filled by its
+// designated control. Prohibition checks cannot express that, which is why
+// eleven rounds of them missed it.
+// Approximating the accessible name, not reading one attribute. The first version
+// checked aria-label plus a literal glyph, which review showed would miss an
+// icon-only <svg><title>Close</title></svg> and a plain visible "Close" — the same
+// wrong occupant, just named differently. Each of the four ways a close control
+// announces itself is recognised.
+const DISMISS_NAME = /(?:aria-label|title)="[^"]*\b(?:close|dismiss)\b/i;
+const DISMISS_SVG_TITLE = /<title>\s*(?:close|dismiss)\b[^<]*<\/title>/i;
+const DISMISS_GLYPH = /^\s*(?:×|✕|⨯|&times;|X)\s*$/;
+const DISMISS_TEXT = /^\s*(?:close|dismiss)\b/i;
+
+function dismissSlotViolations(text, label) {
+  return extractBlocks(text, 'weft-panel-header-actions').flatMap((block) => {
+    const buttons = [...block.body.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)];
+    return buttons.flatMap((b) => {
+      const attrs = b[1];
+      const inner = b[2];
+      const stripped = inner.replace(/<[^>]*>/g, '').trim();
+      const isDismiss =
+        DISMISS_NAME.test(attrs) ||
+        DISMISS_SVG_TITLE.test(inner) ||
+        DISMISS_GLYPH.test(stripped) ||
+        DISMISS_TEXT.test(stripped);
+      if (!isDismiss) return [];
+      const cls = attrs.match(/\bclass="([^"]*)"/);
+      // Presence is not agreement — the same trap as the tier-dot tones. A
+      // control carrying BOTH weft-panel-header-dismiss and weft-btn renders as
+      // the bordered ghost button, because .weft-btn.is-ghost outranks the
+      // single-class dismiss rule. So the dismiss class must be there AND the
+      // button classes must not.
+      if (cls) {
+        const set = classSet(cls[1]);
+        if (set.has('weft-panel-header-dismiss') && !set.has('weft-btn')) return [];
+      }
+      const line = text.slice(0, block.index).split('\n').length;
+      return [`${label}:${line} — the panel-header dismiss slot is filled by "${cls ? cls[1] : '(no class)'}"; it must be .weft-panel-header-dismiss (borderless 24px), not a bordered button`];
+    });
+  });
+}
+
+// ── Required ordering ────────────────────────────────────────────────────────
+// The third category, and review found it by answering the question directly:
+// prohibitions say what may not appear, obligations say what must occupy a slot,
+// and neither can express a rule about SEQUENCE. The board's own doctrine says
+// "Urgency ordering is part of the meaning — is-blocked → is-awaiting → is-fyi,
+// always," and until now a reordered specimen would have published a board that
+// teaches the wrong priority with a green suite.
+//
+// Ranked, not positional: a surface may show any subset of tiers, but whichever
+// it shows must appear in this relative order.
+const URGENCY_RANK = { blocked: 0, awaiting: 1, fyi: 2 };
+
+function tierOrderViolations(text, label) {
+  // Scope per board, so two independent boards on one page each start over.
+  const boards = extractBlocks(text, 'weft-board');
+  const scopes = boards.length ? boards : [{ body: text, index: 0 }];
+
+  return scopes.flatMap((scope) => {
+    const open = new RegExp(`<(?:${CONTAINER})[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi');
+    const seen = [];
+    let m;
+    while ((m = open.exec(scope.body)) !== null) {
+      const set = classSet(m[1]);
+      if (!set.has('weft-tier-group')) continue;   // membership: skips -head, -sub, -count
+      const urgency = Object.keys(URGENCY_RANK).find((u) => set.has(`is-${u}`));
+      if (urgency) seen.push(urgency);
+    }
+    const wrong = seen.some((u, i) => i > 0 && URGENCY_RANK[u] < URGENCY_RANK[seen[i - 1]]);
+    if (!wrong) return [];
+    const line = text.slice(0, scope.index).split('\n').length;
+    return [`${label}:${line} — urgency tiers published as ${seen.join(' → ')}; the order is semantic and must be blocked → awaiting → fyi`];
+  });
+}
+
+// ── Required pairing ─────────────────────────────────────────────────────────
+// The fourth category. Ordering checks the sequence of tiers; this checks that
+// each tier's own state is internally consistent. A blocked tier carrying an info
+// dot is not a prohibited class, not an empty slot, and not out of order — it is
+// simply a tier whose colour contradicts its meaning, which on an operator board
+// is the signal itself being wrong.
+//
+// The pairing was load-bearing in the published specimen and written down
+// nowhere, so it survived only as long as nobody edited it. Now both.
+const TIER_DOT = { blocked: 'stop', awaiting: 'warn', fyi: 'info' };
+// Every tone weft-components.css defines for .weft-dot, in source order.
+const DOT_TONES = ['ok', 'warn', 'stop', 'info', 'muted'];
+
+function tierDotPairingViolations(text, label) {
+  return extractBlocks(text, 'weft-tier-group').flatMap((tier) => {
+    const set = classSet(tier.classes);
+    const urgency = Object.keys(TIER_DOT).find((u) => set.has(`is-${u}`));
+    if (!urgency) return [];
+    // The head carries the tier's own dot; dots on rows below are per-item.
+    const heads = extractBlocks(tier.body, 'weft-tier-group-head');
+    const scope = heads.length ? heads[0].body : tier.body;
+    const dot = [...scope.matchAll(new RegExp(`<(?:${CONTAINER}|span)[^>]*\\bclass="([^"]*)"[^>]*>`, 'gi'))]
+      .map((d) => classSet(d[1]))
+      .find((cs) => cs.has('weft-dot'));
+    const want = TIER_DOT[urgency];
+    // A missing dot is a violation, not a pass. React derives the dot from
+    // urgency and always renders one; if the plain-CSS surfaces could drop it
+    // silently the two would disagree again — the same asymmetry that made the
+    // pairing rule unreachable from React in the first place.
+    if (!dot) {
+      const line = text.slice(0, tier.index).split('\n').length;
+      return [`${label}:${line} — the is-${urgency} tier has no .weft-dot; its urgency must carry an is-${want} dot`];
+    }
+    // Exactly one tone, and it must be the right one. Presence alone is not
+    // enough: `is-stop is-info` carries the required class while css/weft-components.css
+    // declares .is-info after .is-stop at equal specificity, so the dot renders
+    // info — the precise defect this rule exists to prevent, passed by the rule.
+    const tones = DOT_TONES.filter((t) => dot.has(`is-${t}`));
+    if (tones.length === 1 && tones[0] === want) return [];
+    const got = tones.length ? tones.map((t) => `is-${t}`).join(' + ') : '(no tone)';
+    const line = text.slice(0, tier.index).split('\n').length;
+    return [`${label}:${line} — the is-${urgency} tier carries a ${got} dot; its meaning requires is-${want}`];
+  });
+}
+
+// D3 (Katie, 2026-08): fill is spent only where urgency is real. A filled
+// .weft-btn belongs to a blocked item's drawer; awaiting and FYI drawers take a
+// ghost primary. Review caught the rule being stated in prose while the very
+// next code block — the copy-paste skeleton — showed a filled button in a
+// non-blocked drawer. Same shape as every earlier miss: a rule asserted on one
+// surface and contradicted on the others, so it is a detector rather than a note.
+function drawerFillViolations(text, label) {
+  return extractBlocks(text, 'weft-board-drawer').flatMap((drawer) => {
+    if (classSet(drawer.classes).has('is-blocked')) return [];
+    const filled = [...drawer.body.matchAll(PRIMARY_BTN)]
+      .map((m) => m[1])
+      .filter((c) => !isNonPrimary(c));
+    if (!filled.length) return [];
+    const line = text.slice(0, drawer.index).split('\n').length;
+    return [`${label}:${line} — a filled .weft-btn sits in a drawer without .is-blocked; fill belongs to blocked items only (D3)`];
+  });
+}
+
+function publishedSurfaces() {
+  return [
+    ['panel-templates.html', normalizeSurface(readFileSync(generatedHtmlPath, 'utf8'))],
+    ['11-panel-templates.md', normalizeSurface(readFileSync(canonicalMdPath, 'utf8'))],
+    ['weft-templates.css (comment)', normalizeSurface(undecorate(cssComments))],
+  ];
+}
+
+test('T2-k: every rule holds on every published surface', () => {
+  const problems = publishedSurfaces().flatMap(([label, text]) => [
+    ...deprecatedClassViolations(text, label),
+    ...typeChipViolations(text, label),
+    ...proseTypeChipViolations(text, label),
+    ...actionRowViolations(text, label),
+    ...dismissSlotViolations(text, label),
+    ...tierOrderViolations(text, label),
+    ...tierDotPairingViolations(text, label),
+    ...drawerFillViolations(text, label),
+  ]);
+  assert.deepEqual(problems, [], `Published material is out of date:\n${problems.join('\n')}`);
+});
+
+test('T2-k coverage: the detectors survive quoting, ordering and extra classes', () => {
+  // Each of these was a real miss reported by review, in the exact form reported.
+  const singleQuoted = normalizeSurface(
+    "<div class='weft-action-button-row'>" +
+    "<button class='weft-btn'>Resolve</button><button class='weft-btn'>Reassign</button></div>",
+  );
+  assert.equal(actionRowViolations(singleQuoted, 'f').length, 1, 'single-quoted class attributes must still be read');
+
+  const reordered = normalizeSurface(`<span class='is-space weft-badge is-compact'>signal</span>`);
+  assert.equal(typeChipViolations(reordered, 'f').length, 1, 'class order and extra classes must not defeat the chip check');
+
+  const selectorLabel = 'The band lives at .weft-board-drawer-prov in the template layer.';
+  assert.equal(deprecatedClassViolations(selectorLabel, 'f').length, 1, 'a deprecated class in prose or a selector label must be caught');
+
+  // A retirement note is documentation, not guidance. main's own docs read this
+  // way, and the rule flagged them until the rebase surfaced it.
+  assert.deepEqual(
+    deprecatedClassViolations('The template-local .weft-board-check is RETIRED - it existed only because the canonical row once took the full control height.', 'f'),
+    [],
+    'saying a class is retired must not count as teaching it',
+  );
+  assert.equal(
+    deprecatedClassViolations('Use .weft-board-check for filter rows in the rail.', 'f').length,
+    1,
+    'naming it as live guidance still fails',
+  );
+
+  // And the negatives, so the detectors are not simply always-on.
+  assert.deepEqual(typeChipViolations(normalizeSurface("<span class='weft-badge is-space'>ccore/heddle</span>"), 'f'), []);
+  assert.deepEqual(actionRowViolations(normalizeSurface("<div class='weft-action-button-row'><button class='weft-btn'>Go</button></div>"), 'f'), []);
+  assert.deepEqual(deprecatedClassViolations('the weft-board-drawer holds the detail panel', 'f'), []);
+
+  // A helper class must not exempt a filled button: \bis-ghost\b also matches
+  // inside `helper-is-ghost`, because the hyphen is a word boundary.
+  const helperClass = normalizeSurface(
+    '<div class="weft-action-button-row">' +
+    '<button class="weft-btn">Resolve</button><button class="weft-btn helper-is-ghost">Reassign</button></div>',
+  );
+  assert.equal(actionRowViolations(helperClass, 'f').length, 1, 'an unrelated helper class must not exempt a filled button');
+
+
+
+  // Slot occupancy — the failure Katie found by eye. A ghost button is legal
+  // Weft, so only an obligation rule catches it.
+  const ghostDismiss = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost" aria-label="Close">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(ghostDismiss, 'f').length, 1, 'a bordered button must not fill the dismiss slot');
+
+  // Recognised by glyph too, not only by accessible name.
+  const glyphOnly = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(glyphOnly, 'f').length, 1, 'an unlabelled × must still be recognised as the dismiss slot');
+
+  // Both forms review demonstrated would slip past an aria-label-only recogniser.
+  const svgTitled = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost"><svg aria-hidden="true"><title>Close</title></svg></button></div>',
+  );
+  assert.equal(dismissSlotViolations(svgTitled, 'f').length, 1, 'an icon-only dismiss named by <title> must be recognised');
+
+  const visibleText = normalizeSurface(
+    '<div class="weft-panel-header-actions"><button class="weft-btn is-ghost">Close</button></div>',
+  );
+  assert.equal(dismissSlotViolations(visibleText, 'f').length, 1, 'a visibly-labelled Close must be recognised');
+
+  // Required ordering — the third category. Sequence, not presence or occupancy.
+  const tier = (u) => `<div class="weft-tier-group is-${u}"><div class="weft-tier-group-head">${u}</div></div>`;
+  const reorderedTiers = normalizeSurface(`<div class="weft-board">${tier('awaiting')}${tier('blocked')}${tier('fyi')}</div>`);
+  assert.equal(tierOrderViolations(reorderedTiers, 'f').length, 1, 'a reordered board must fail');
+
+  const correct = normalizeSurface(`<div class="weft-board">${tier('blocked')}${tier('awaiting')}${tier('fyi')}</div>`);
+  assert.deepEqual(tierOrderViolations(correct, 'f'), []);
+
+  // A subset is fine as long as the relative order holds.
+  assert.deepEqual(tierOrderViolations(normalizeSurface(`<div class="weft-board">${tier('blocked')}${tier('fyi')}</div>`), 'f'), []);
+
+  // Two independent boards each start over, so board B may open with blocked
+  // again after board A ended on fyi.
+  const twoBoards = normalizeSurface(
+    `<div class="weft-board">${tier('blocked')}${tier('fyi')}</div><div class="weft-board">${tier('blocked')}</div>`,
+  );
+  assert.deepEqual(tierOrderViolations(twoBoards, 'f'), [], 'ordering is scoped per board');
+
+  // A <section> board must be walked too, not only a <div>.
+  const sectionBoard = normalizeSurface(`<section class="weft-board">${tier('fyi')}${tier('blocked')}</section>`);
+  assert.equal(tierOrderViolations(sectionBoard, 'f').length, 1, 'section-wrapped boards must be walked');
+
+  // Required pairing — the fourth category. The tier's colour must agree with
+  // its meaning; on an operator board a mismatched dot IS the wrong signal.
+  const paired = (u, tone) =>
+    `<div class="weft-tier-group is-${u}"><div class="weft-tier-group-head">` +
+    `<span class="weft-dot is-${tone}" aria-hidden="true"></span>${u}</div></div>`;
+  assert.equal(tierDotPairingViolations(normalizeSurface(paired('blocked', 'info')), 'f').length, 1, 'a blocked tier with an info dot must fail');
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('blocked', 'stop')), 'f'), []);
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('awaiting', 'warn')), 'f'), []);
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(paired('fyi', 'info')), 'f'), []);
+
+  // Per-item dots on rows below the head are not the tier's own signal.
+  const rowDot =
+    '<div class="weft-tier-group is-blocked"><div class="weft-tier-group-head">' +
+    '<span class="weft-dot is-stop"></span>Blockers</div>' +
+    '<div class="weft-hud-list-row"><span class="weft-dot is-info"></span>row</div></div>';
+  assert.deepEqual(tierDotPairingViolations(normalizeSurface(rowDot), 'f'), [], "a row's own dot is not the tier's signal");
+
+  // D3 fill rule. Review found the prose and the skeleton disagreeing, so the
+  // rule is checked rather than described.
+  const row = (cls) => `<div class="weft-action-button-row"><button class="${cls}">Resolve</button>` +
+    '<button class="weft-btn is-link">Open</button></div>';
+  assert.equal(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer">${row('weft-btn')}</div>`), 'f').length,
+    1,
+    'a filled primary in a non-blocked drawer must fail',
+  );
+  assert.deepEqual(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer is-blocked">${row('weft-btn')}</div>`), 'f'),
+    [],
+    'a blocked drawer earns the fill',
+  );
+  assert.deepEqual(
+    drawerFillViolations(normalizeSurface(`<div class="weft-board-drawer">${row('weft-btn is-ghost')}</div>`), 'f'),
+    [],
+    'a ghost primary is fine anywhere',
+  );
+
+  // Two tones on one dot: the required class is present, but the later CSS rule
+  // wins, so the tier renders the wrong signal. Presence is not agreement.
+  const conflicting =
+    '<div class="weft-tier-group is-blocked"><div class="weft-tier-group-head">' +
+    '<span class="weft-dot is-stop is-info"></span>Blockers</div></div>';
+  assert.equal(tierDotPairingViolations(normalizeSurface(conflicting), 'f').length, 1, 'a conflicting second tone must fail');
+
+  // No dot at all — previously passed, which let the CSS surfaces drop the dot
+  // while React always renders one.
+  const dotless =
+    '<div class="weft-tier-group is-awaiting"><div class="weft-tier-group-head">Awaiting you</div></div>';
+  assert.equal(tierDotPairingViolations(normalizeSurface(dotless), 'f').length, 1, 'a tier with no dot must fail');
+
+  // Canonical passes, and a non-dismiss action in the same slot is left alone.
+  assert.deepEqual(
+    dismissSlotViolations(normalizeSurface('<div class="weft-panel-header-actions"><button class="weft-panel-header-dismiss" aria-label="Close">×</button></div>'), 'f'),
+    [],
+  );
+  assert.deepEqual(
+    dismissSlotViolations(normalizeSurface('<div class="weft-panel-header-actions"><button class="weft-btn is-ghost" aria-label="Refresh board">⟳</button></div>'), 'f'),
+    [],
+    'a refresh action is not a dismiss and keeps its button treatment',
+  );
+
+  // Both classes at once: the dismiss class is present but .weft-btn.is-ghost
+  // outranks it, so the control still renders as a bordered box.
+  const dualClass = normalizeSurface(
+    '<div class="weft-panel-header-actions">' +
+    '<button class="weft-panel-header-dismiss weft-btn is-ghost" aria-label="Close">×</button></div>',
+  );
+  assert.equal(dismissSlotViolations(dualClass, 'f').length, 1, 'a dismiss carrying weft-btn still renders bordered and must fail');
+});
+
+test('T2-i: the generated page sets the density the board is designed for', () => {
+  const html = readFileSync(generatedHtmlPath, 'utf8');
+  const htmlTag = html.match(/<html[^>]*>/);
+  assert.ok(htmlTag, 'generated page must have an <html> tag');
+  assert.match(
+    htmlTag[0],
+    /data-density="dense"/,
+    `The breakdown page must render at the board's density, or its specimens misrepresent the template. Got: ${htmlTag[0]}`,
+  );
+});
+
+// Third published surface. weft-templates.css carries plain-CSS authoring examples
+// inside its comments — the markup a panel author copies when they are not using
+// React. Every CSS guard above runs against `stripped`, which deletes comments, so
+// those examples were structurally invisible to all of them. Review found the
+// drawer-header guidance there still teaching data-size="board" after both other
+// surfaces had been corrected: the third time in this PR that a rule was enforced
+// on fewer surfaces than it covers. The same detectors now run over all three.
+const cssComments = [...templateCss.matchAll(/\/\*[\s\S]*?\*\//g)].map((m) => m[0]).join('\n');
+
+test('T2-j: authoring examples in CSS comments obey the same rules as the published pages', () => {
+  const problems = [];
+
+  for (const cls of DEPRECATED_BOARD_CLASSES) {
+    if (new RegExp(`class="[^"]*\\b${cls}\\b`).test(cssComments)) {
+      problems.push(`${cls} appears in a weft-templates.css authoring example — it was deleted`);
+    }
+  }
+  const examples = undecorate(cssComments);
+  problems.push(...typeChipViolations(examples, 'weft-templates.css (comment)'));
+  problems.push(...actionRowViolations(examples, 'weft-templates.css (comment)'));
+  problems.push(...proseTypeChipViolations(examples, 'weft-templates.css (comment)'));
+
+  // (The drawer-header scale check that used to sit here was removed with the
+  // rule itself — see the note above drawerHeader... for why. The CSS authoring
+  // example now correctly shows data-size="board" on the drawer header.)
+
+  assert.deepEqual(problems, [], `weft-templates.css authoring examples are out of date:\n${problems.join('\n')}`);
+
+  // Coverage proof, not just a clean result. Review demonstrated by mutation that
+  // the previous version of this test found zero action rows in CSS comments and
+  // still reported clean — a guard asserting coverage it did not have. These
+  // fixtures reproduce the comment shape, decoration and terminator included, so
+  // the test fails if the surface ever stops being read.
+  const commentShaped = [
+    '/* Plain-CSS markup:',
+    ' *   <div class="weft-action-button-row">',
+    ' *     <button class="weft-btn">Resolve</button>',
+    ' *     <button class="weft-btn">Reassign</button>',
+    ' *   </div>',
+    ' */',
+  ].join('\n');
+  assert.equal(
+    actionRowViolations(undecorate(commentShaped), 'fixture').length,
+    1,
+    'the action-row detector must read markup inside CSS comments',
+  );
+  assert.equal(
+    proseTypeChipViolations(undecorate('/* the mono type chip uses .weft-badge.is-outline */'), 'fixture').length,
+    1,
+    'the prose detector must read guidance inside CSS comments',
+  );
+});
+
+test('T2-h: item type values never wear the workspace chip', () => {
+  const violations = [
+    ...typeChipViolations(readFileSync(generatedHtmlPath, 'utf8'), 'panel-templates.html'),
+    ...typeChipViolations(readFileSync(canonicalMdPath, 'utf8'), '11-panel-templates.md'),
+  ];
+  assert.deepEqual(violations, [], `D5/D6 chip split violated:\n${violations.join('\n')}`);
+
+  // Both directions, so the fixture proves the matcher rather than the file.
+  assert.equal(typeChipViolations('<span class="weft-badge is-space">signal</span>', 'f').length, 1);
+  assert.deepEqual(typeChipViolations('<span class="weft-badge is-space">ccore/heddle</span>', 'f'), []);
+  assert.deepEqual(typeChipViolations('<span class="weft-source-pill">signal</span>', 'f'), []);
 });
 
 test('T2-c: generated HTML contains only real accessible controls', () => {

@@ -707,7 +707,11 @@ html,
   border-color: color-mix(in srgb, var(--weft-warn) 40%, transparent);
 }
 .weft-tier-group.is-awaiting .weft-tier-group-head {
-  background: color-mix(in srgb, var(--weft-warn) 10%, transparent);
+  /* Yellow, not amber (Katie, 2026-08). --weft-warn is an amber-700, so a tint of
+   * it reads orange and sat too close to the blocked tier's red. --weft-yellow-soft
+   * is the only general-purpose yellow carrying a dark-theme variant, so the tier
+   * still follows the theme instead of pinning a light-mode colour. */
+  background: var(--weft-yellow-soft);
 }
 .weft-tier-group.is-fyi .weft-tier-group-head { background: var(--weft-fill-soft); }
 
