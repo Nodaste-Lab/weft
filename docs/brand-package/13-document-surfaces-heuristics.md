@@ -66,6 +66,14 @@ WCAG 1.4.1.
 - Pattern: the rail panels are exclusive; opening one closes the others, and any action that needs a panel reveals it — starting a comment, selecting a thread, pressing the Comments control, opening History from the Info panel's version count.
 - Anti-pattern: an action that flips a flag while the panel it needs stays hidden. The epic shipped three of these before the pass caught them: starting a comment under an open History rail, selecting a marker under it, and the Comments control collapsing the comments it was hiding. Every one looked like a dead click.
 
+### Keyboard, focus and touch
+
+- Use when: any entry has a hover affordance, an overlay, or a tappable part — which is every entry below.
+- Not for: decorative marks that are `aria-hidden` by definition (the peer caret), whose presence is announced elsewhere.
+- Heuristics: tab through the surface with the mouse unplugged; every hover affordance (Restore on a version row, a row's action buttons, a thread's kebab) appears on `:focus-within`; every overlay moves focus in on open, closes on Escape and returns focus to its trigger; nothing tappable is under `--weft-touch-target` (24px compact); the global Focus Ring shows on every interactive part unless the entry says otherwise; every animation collapses under reduced motion.
+- Pattern: the sheet's contract (focus in, Escape, scrim, close button, focus back) reused by every popover that becomes a sheet; the bottom bar's 44px touch wrap around a 34px glyph.
+- Anti-pattern: a hover-only Restore that a keyboard never reaches; a sheet that leaves focus behind the scrim; crumb links, comment markers and board card titles at 20px on a phone (the epic pass recorded these as the residual to fix); colour as the only focus indicator.
+
 ## Additions
 
 ### document-tree (weft#28)

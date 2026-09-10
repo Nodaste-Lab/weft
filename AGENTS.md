@@ -155,6 +155,7 @@ grounded in the definitions and the DocT owner rulings through 2026-09-09.
 Read it before implementing, changing or reviewing any of those primitives.
 The rules that are not negotiable:
 
+
 1. **Colour is semantic only.** It means a state or a category, never a
    person (owner ruling 2026-09-06, re-affirmed 2026-09-09). Underline
    style is context; fill is ownership; two facts never share a channel.
@@ -183,6 +184,16 @@ The rules that are not negotiable:
    tests and the docs move the same day.** "Comment" became "Start thread"
    and four consumer suites sat red for a week because nobody ran them;
    grep the tests the day of the ruling.
+8. **Keyboard, focus and touch are part of every entry, not an audit
+   afterwards.** A hover affordance (Restore on a version row, a row's
+   action buttons) also appears on `:focus-within`; an overlay — sheet,
+   popover, composer — moves focus in on open, closes on Escape and returns
+   focus to its trigger; `--weft-touch-target` (24px compact) is the floor
+   for anything tappable, and the global Focus Ring applies unless an entry
+   says otherwise. `docs/brand-package/05-accessibility.md` and the
+   accessibility paragraph at the head of § Document surfaces are the
+   references; the seven rules above cover colour and state and would still
+   let a hover-only control or an under-24px target ship.
 
 The illustrated form of the companion (Figma frames from the DocT library
 and DocT's product captures beside each entry) is what the owner reviews;
