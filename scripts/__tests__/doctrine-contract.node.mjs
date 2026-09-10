@@ -19,6 +19,7 @@ const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8');
 
 const designSystem = read('docs', 'brand-package', '04-design-system.md');
 const heuristics = read('docs', 'brand-package', '12-input-heuristics.md');
+const surfaceHeuristics = read('docs', 'brand-package', '13-document-surfaces-heuristics.md');
 const componentsCss = read('css', 'weft-components.css');
 const templatesCss = read('css', 'weft-templates.css');
 const tokensCss = read('css', 'weft.css');
@@ -35,6 +36,7 @@ test('D1: every weft- class the doctrine names exists in the shipped CSS', () =>
   for (const doc of [
     ['04-design-system.md', formInputs],
     ['12-input-heuristics.md', heuristics],
+    ['13-document-surfaces-heuristics.md', surfaceHeuristics],
   ]) {
     const [where, text] = doc;
     for (const m of text.matchAll(/`\.?(weft-[a-z-]+)`/g)) {
@@ -57,9 +59,14 @@ test('D1: every weft- class the doctrine names exists in the shipped CSS', () =>
 
 test('D2: every --weft- token the doctrine names is declared', () => {
   const problems = [];
-  for (const m of formInputs.matchAll(/`(--weft-[a-z-]+)`/g)) {
-    if (!tokensCss.includes(`${m[1]}:`)) {
-      problems.push(`04-design-system.md names ${m[1]}, which css/weft.css does not declare`);
+  for (const [where, text] of [
+    ['04-design-system.md', formInputs],
+    ['13-document-surfaces-heuristics.md', surfaceHeuristics],
+  ]) {
+    for (const m of text.matchAll(/`(--weft-[a-z-]+)`/g)) {
+      if (!tokensCss.includes(`${m[1]}:`)) {
+        problems.push(`${where} names ${m[1]}, which css/weft.css does not declare`);
+      }
     }
   }
   assert.deepEqual(problems, [], problems.join('\n'));
@@ -114,7 +121,7 @@ test('D4b: every documented --input bridge mapping states the one that ships', (
     assert.ok(shipped[name], `css/weft.css declares no ${name} bridge`);
   }
   const problems = [];
-  for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md']) {
+  for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md', '13-document-surfaces-heuristics.md']) {
     const text = read('docs', 'brand-package', doc);
     for (const [name, target] of Object.entries(shipped)) {
       // Any mapping-shaped statement: a table row, or prose with a mapping
@@ -193,4 +200,39 @@ test('D8: the reason list in doctrine matches the shipped module', async () => {
     !/one of four reasons|four permitted strings/.test(heuristics),
     `the heuristics still count four reasons; the module ships ${VISIBILITY_REASONS.length}`,
   );
+});
+
+test('D10: the document-surfaces heuristics keep their structure — one entry per weft#28–#49 with all five parts, five foundations, eleven cross-cutting anti-patterns', () => {
+  const problems = [];
+  const parts = ['Use when', 'Not for', 'Heuristics', 'Pattern', 'Anti-pattern'];
+  const entries = [...surfaceHeuristics.matchAll(/^### (.+?)\n([\s\S]*?)(?=^### |^## |(?![\s\S]))/gm)];
+  const ticketCounts = new Map();
+  for (const [, title, body] of entries) {
+    const ticket = /\(weft#(\d+)\)/.exec(title)?.[1];
+    if (ticket) {
+      const n = Number(ticket);
+      ticketCounts.set(n, (ticketCounts.get(n) ?? 0) + 1);
+      if (n < 28 || n > 49) problems.push(`"${title}" names weft#${n}, outside the W3 register 28–49`);
+    }
+    for (const part of parts) {
+      if (!new RegExp(`^- ${part}:`, 'm').test(body)) problems.push(`"${title}" lacks "- ${part}:"`);
+    }
+  }
+  for (let n = 28; n <= 49; n += 1) {
+    const count = ticketCounts.get(n) ?? 0;
+    if (count !== 1) problems.push(`weft#${n} has ${count} entries; exactly one is required`);
+  }
+  const ticketed = [...ticketCounts.values()].reduce((sum, count) => sum + count, 0);
+  if (ticketed !== 22) problems.push(`expected 22 ticketed entries, found ${ticketed}`);
+  const foundations = surfaceHeuristics.slice(
+    surfaceHeuristics.indexOf('## Foundations that every entry inherits'),
+    surfaceHeuristics.indexOf('## Additions')
+  );
+  const foundationCount = (foundations.match(/^### /gm) || []).length;
+  if (foundationCount !== 5) problems.push(`expected five foundations, found ${foundationCount}`);
+  const crossCutting = surfaceHeuristics.slice(surfaceHeuristics.indexOf('## Cross-cutting anti-patterns'));
+  const numbered = (crossCutting.match(/^\d+\. \*\*/gm) || []).length;
+  if (numbered !== 11) problems.push(`expected eleven cross-cutting anti-patterns, found ${numbered}`);
+  if (!/\[\[05-accessibility\]\]/.test(surfaceHeuristics)) problems.push('the accessibility floor is not cross-referenced');
+  assert.deepEqual(problems, [], problems.join('\n'));
 });

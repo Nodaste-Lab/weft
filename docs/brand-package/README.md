@@ -22,6 +22,7 @@ Use this folder as the single source of truth for anyone (human or agent) writin
 - [[04-voice-and-tone]] — personality, tonal flex, surface-by-surface
 - [[04-design-system]] — **Weft**, the implementation reference (tokens, components, dark mode) · [Figma file](https://www.figma.com/design/q58dgHZAnham7wlnjXpgcT/Weft-Design-System)
 - [[12-input-heuristics]] — the input rules' provenance: eleven tagged rules (WCAG criterion / research / house convention), the amendment ledger, and the deliberately-open questions. The operative contract lives in [[04-design-system]] § Form inputs; this file carries the argument.
+- [[13-document-surfaces-heuristics]] — use cases, heuristics, patterns and anti-patterns for every document-surface addition, change and pattern (weft#28–#49), grounded in the W3 definitions and the DocT owner rulings; five foundations (the ruled three-channel rule, casing, honest empties, one panel at a time, keyboard / focus / touch) and eleven cross-cutting anti-patterns, seven from the DocT epic pass and four from the accessibility floor
 - [[05-accessibility]] — WCAG 2.1 audit + remediation status for Weft
 - [[05-copy-guidance]] — formatting rules, vocabulary, patterns
 - [[06-ai-agent-style-guide]] — worked examples written for agents to pattern-match against
