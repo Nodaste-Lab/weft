@@ -1,7 +1,7 @@
 ---
 title: Document surfaces heuristics
 linked_project: Heddle Branding
-status: adopted — companion to 09-app-primitives § Document surfaces (W3, 2026-09-01) and the DocT owner rulings through 2026-09-09; W4 folds the entries into the primitive definitions
+status: adopted — companion to 09-app-primitives § Document surfaces (W3, 2026-09-01) and the DocT owner rulings through 2026-09-09; W4 folds the entries into the primitive definitions, all but `identity-colour` (weft#31), which the ruling closes without shipping
 scope: App primitives → Document surfaces
 ---
 
