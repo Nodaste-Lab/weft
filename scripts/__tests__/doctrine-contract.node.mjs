@@ -201,3 +201,31 @@ test('D8: the reason list in doctrine matches the shipped module', async () => {
     `the heuristics still count four reasons; the module ships ${VISIBILITY_REASONS.length}`,
   );
 });
+
+test('D10: the document-surfaces heuristics keep their structure — one entry per weft#28–#49 with all five parts, five foundations, eleven cross-cutting anti-patterns', () => {
+  const problems = [];
+  const parts = ['Use when', 'Not for', 'Heuristics', 'Pattern', 'Anti-pattern'];
+  const entries = [...surfaceHeuristics.matchAll(/^### (.+?)\n([\s\S]*?)(?=^### |^## |(?![\s\S]))/gm)];
+  const byTicket = new Map();
+  for (const [, title, body] of entries) {
+    const ticket = /\(weft#(\d+)\)/.exec(title)?.[1];
+    if (ticket) byTicket.set(Number(ticket), { title, body });
+    for (const part of parts) {
+      if (!new RegExp(`^- ${part}:`, 'm').test(body)) problems.push(`"${title}" lacks "- ${part}:"`);
+    }
+  }
+  for (let n = 28; n <= 49; n += 1) {
+    if (!byTicket.has(n)) problems.push(`no entry for weft#${n}`);
+  }
+  const foundations = surfaceHeuristics.slice(
+    surfaceHeuristics.indexOf('## Foundations that every entry inherits'),
+    surfaceHeuristics.indexOf('## Additions')
+  );
+  const foundationCount = (foundations.match(/^### /gm) || []).length;
+  if (foundationCount !== 5) problems.push(`expected five foundations, found ${foundationCount}`);
+  const crossCutting = surfaceHeuristics.slice(surfaceHeuristics.indexOf('## Cross-cutting anti-patterns'));
+  const numbered = (crossCutting.match(/^\d+\. \*\*/gm) || []).length;
+  if (numbered !== 11) problems.push(`expected eleven cross-cutting anti-patterns, found ${numbered}`);
+  if (!/\[\[05-accessibility\]\]/.test(surfaceHeuristics)) problems.push('the accessibility floor is not cross-referenced');
+  assert.deepEqual(problems, [], problems.join('\n'));
+});

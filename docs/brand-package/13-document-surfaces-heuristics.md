@@ -204,7 +204,7 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 
 - Use when: a list can be narrowed on several axes at once and the person needs to see what is applied.
 - Not for: a single search box, or a sort control.
-- Heuristics: search first, then chip groups in the ruled order (Name, Listeners, Type, Health, Status, Visibility, Board column, Comments); chips are toggle buttons with `aria-pressed` and `min-height: var(--weft-touch-target)`; Tab walks the input and every chip, Escape closes and returns focus to the trigger; the trigger shows the applied count; `max-height min(400px, 100vh − 24px)` with internal scroll; on a phone it is a bottom sheet with the sheet's focus contract.
+- Heuristics: search first, then chip groups in the ruled order (Name, Listeners, Type, Health, Status, Visibility, Board column, Comments); chips are toggle buttons with `aria-pressed` and `min-height: var(--weft-touch-target)`; Tab walks the input and every chip, Escape closes and returns focus to the trigger; the trigger shows the applied count; `max-height: min(400px, calc(100vh - 24px))` with internal scroll; on a phone it is a bottom sheet with the sheet's focus contract.
 - Pattern: the same shell serves the tree filter and the comments strip's filter (Status, Type, People, Agent on plans only).
 - Anti-pattern: a popover that outgrows the viewport (the harness pass found one at 560px and capped it); an "Unread" chip (ruling 6: there is no unread); chip labels in caps.
 

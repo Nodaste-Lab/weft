@@ -159,10 +159,10 @@ The rules that are not negotiable:
 1. **Colour is semantic only.** It means a state or a category, never a
    person (owner ruling 2026-09-06, re-affirmed 2026-09-09). Underline
    style is context; fill is ownership; two facts never share a channel.
-   The § Document surfaces text still reads "colour is identity or state"
-   in its three-channels paragraph and the identity-colour entry (weft#31);
-   that is history awaiting W4's rewrite, not a licence. Do not ship a
-   per-person hue on anchors, carets, avatars or thread numbers.
+   The three-channels paragraph in § Document surfaces states the ruled
+   form; the identity-colour entry (weft#31) and the entries that still read
+   "identity accent" are history awaiting W4's rewrite, not a licence. Do
+   not ship a per-person hue on anchors, carets, avatars or thread numbers.
 2. **Casing on app surfaces** (owner ruling 2026-09-01): sentence case
    everywhere except the dense-info register; never two registers in one
    row of one component; app tabs use the sans face (weft#43).
