@@ -15,6 +15,15 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 
 ## Foundations that every entry inherits
 
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Missing foundation: accessibility floor. Restate (or inherit by name) the § Document
+surfaces paragraph in 09: Focus Ring on every interactive; prefers-reduced-motion
+collapses every named animation; --weft-touch-target is the floor. Add
+[[05-accessibility]] to Cross-references. Agents told to read only this companion
+will not know the floor is in force.
+-->
+
 ### The three channels — as ruled
 
 **Colour is semantic only: it means a state or a category, never a person. Underline style is context. Fill is ownership.**
@@ -22,24 +31,38 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: anything on a document surface carries meaning by colour, decoration or fill.
 - Not for: telling people apart. The W3 text still says "colour is identity or state"; the owner ruled on 2026-09-06 that colour never names a person and re-affirmed it at the epic pass. Identity is carried by a name, initials or the agent glyph — the attribution mark — never by a hue.
 - Heuristics: cover the labels and ask what each colour means; if the answer is "who", it is wrong. A tag must be readable with colour removed (the underline style carries it). Mine-versus-theirs must be readable in greyscale (solid versus outline).
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+"Readable with colour removed" via underline style alone is not enough for users who
+cannot discriminate wavy/dashed/dotted. On text-anchor the type word lives on the
+thread, not the passage — require a non-style channel on or beside the mark
+(number tone already helps orphan/resolved; action-needed vs risk still collide).
+WCAG 1.4.1.
+-->
 - Pattern: one neutral wash on every anchored passage; the selected thread keeps the primary ring; the tag changes only the underline style; the badge changes only its fill for ownership.
 - Anti-pattern: a per-person hue on anchors, carets and avatars (the identity-colour subsystem, weft#31). It looked rich and told a reader nothing they could act on, and it collided with state colour on the same mark. The frames stay in the library as history; do not ship them.
 
 ### Casing on app surfaces
 
-- Use when: any label on an app surface. Sentence case, mono face and tracking kept, everywhere except the dense-info register (table headers, stat-row labels, badge text inside a dense panel, avatar initials, calendar weekday labels).
+- Use when: any label on an app surface. Sentence case everywhere except the dense-info register (table headers, stat-row labels, badge text inside a dense panel, avatar initials, calendar weekday labels). The face stays mono with its tracking for eyebrows, menu section labels, compact form labels and menubar triggers; app tabs are the one exception and use the sans face (owner ruling 2026-09-02, weft#43).
+- Not for: marketing surfaces, where the `.eyebrow` and the mono tabs are unchanged, and identifiers, which are written as they are.
 - Heuristics: two registers never meet in one row of one component. A board column header is a heading, not a table header: sentence case.
+- Pattern: sentence-case label, mono face, tracking kept; caps only where the entry is a dense-info register and says so.
 - Anti-pattern: uppercase tabs and eyebrows on app surfaces (weft#43, weft#44 fix the shipped primitives). Shouting labels read as marketing inside a working tool.
 
 ### Honest empties
 
 - Use when: a row is a real fact whose value is absent — Last reviewed, Plan fields, Related documents.
+- Not for: hiding a fact a person would look for; an absent Last reviewed is information, an absent Plan section on a text document is not.
+- Heuristics: read each row and ask whether its absence would mislead; if it would, keep the row and show the honest empty. Every value on the surface must trace to a field the route serves.
 - Pattern: show the row with an honest empty ("Never", "—", "No plan metadata") when the row itself is the fact; leave the row out entirely when the data does not apply to the document kind (no Plan section on a text document, no Related documents block when there is neither a fork nor a parent).
 - Anti-pattern: a placeholder value that reads as data ("Design review draft · Signed off" in a fixture is illustration, not a default), or a "None" line that fills a section a person did not need.
 
 ### One panel at a time
 
 - Use when: the rail carries more than one panel (Comments, Info, History).
+- Not for: surfaces with room for two panels by design (a wide compare view is its own region, not a rail panel).
+- Heuristics: for every control, name the panel its result appears in; open every other panel and press it; the result must still appear.
 - Pattern: the rail panels are exclusive; opening one closes the others, and any action that needs a panel reveals it — starting a comment, selecting a thread, pressing the Comments control, opening History from the Info panel's version count.
 - Anti-pattern: an action that flips a flag while the panel it needs stays hidden. The epic shipped three of these before the pass caught them: starting a comment under an open History rail, selecting a marker under it, and the Comments control collapsing the comments it was hiding. Every one looked like a dead click.
 
@@ -50,6 +73,13 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: a workspace's documents form a hierarchy a person navigates and reorders, and the row must also tell them what is happening on each document (listener state, comment count, working status).
 - Not for: flat lists of results (use a list), or a single document's outline (use the plan's contents navigation).
 - Heuristics: the row is one control — its `aria-expanded` is the state and a click on the caret glyph reaches the row; there is no separate expand button. Indent is drawn by padding, so hover and selected fills run edge to edge. Row height is `--weft-row-h`. Action buttons show on hover and never take the row's name.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+BLOCKER vs W3 document-tree: kebab appears on hover, focus-within, or while its
+menu is open — not hover alone. Also missing the keyboard model (arrows /
+Left-Right / Enter / F2 / Shift+F10). "show on hover" trains agents to ship a
+hover-only affordance (WCAG 2.1.1 / 1.4.13). Match W3 wording.
+-->
 - Pattern: title, then status as text ("· All comments addressed · plan-reviewer (A) · theirs") in the accessible name, so the name a screen reader gives equals what the eye sees; the listening badge sits on the type icon and the count on the right.
 - Anti-pattern: per-row expand buttons (they double the tab stops); nesting children in a way that makes the parent's text unmatchable (tests broke on exactly this); a "stale" or count badge whose text runs into the title ("Team notesstale") — badges need a separator or an accessible name of their own.
 
@@ -66,13 +96,23 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: a run of prose has a thread, on a text document or a rendered plan.
 - Not for: search hits, spelling marks or selection — those are transient and must never look like an anchor.
 - Heuristics: one neutral wash for every anchored passage; the selected thread's passage keeps the primary ring; the underline style is the tag (solid, wavy, dashed, dotted) and the resolved tag is dotted and muted; the mark shows a number plus initials for a person or the agent glyph, never both.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Underline style as the sole on-passage channel for action-needed vs risk-issue
+fails users who cannot tell decoration styles apart. Type word is on the thread
+header only. Require a non-style cue on/beside the mark (WCAG 1.4.1).
+-->
 - Pattern: overlapping threads on one node list on `data-html-comment-thread-ids`, the passage's style follows the newest thread's tag, and the marker for each thread stays visible beside it.
 - Anti-pattern: an anchor tinted by its author (weft#31 era); a resolved anchor painted the old blue; treating the passage's colour as proof of state in a test — the state lives on the tag attribute, not on a colour.
 
 ### identity-colour (weft#31) — superseded
 
-- Status: superseded by the semantic-colour ruling. Keep the token names out of new work. Where the definition says "the author's identity accent", read "the attribution mark".
-- Heuristic for reviewers: if a design needs a legend to say which person is which colour, the design has already lost; names are the legend.
+- Status: superseded by the semantic-colour ruling (owner, 2026-09-06; re-affirmed 2026-09-09).
+- Use when: never, for new work. The token names stay documented in [[09-app-primitives]] as the history of what was tried.
+- Not for: anchors, carets, avatars, thread numbers or any mark a person's name already covers. Where the definition says "the author's identity accent", read "the attribution mark".
+- Heuristics: if a design needs a legend to say which person is which colour, the design has already lost; names are the legend. A colour that changes when the author changes is identity colour by another name.
+- Pattern: one neutral wash, the attribution mark (number plus initials, or the agent glyph) for who, colour reserved for state and category.
+- Anti-pattern: the four-pair palette applied per person, and W4 shipping it as a primitive; the ruling asks W4 to drop it.
 
 ### peer-caret (weft#32)
 
@@ -89,6 +129,12 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Heuristics: hidden while the selection is collapsed; tracks the selection; flips below when there is no room above; docks above the bottom bar on a phone; its ground is the fixed ink in both themes; the comment control is named "Comment on this text".
 - Pattern: format controls, a separator, then the comment control; the composer it opens reveals the comments sidebar and closes any open rail panel.
 - Anti-pattern: an "Add comment" button somewhere in the page chrome (there is none since P4); a toolbar that lingers after the selection collapses; an accessible name shared with the anchors it creates — the anchors are named "Comment on this text" too, so a test or a screen reader must scope to the toolbar.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Duplicate accessible name is a defect to rename, not a scoping tip. Toolbar can
+keep the verb; markers should read e.g. "Thread N on …". Ambiguous names ship
+forever if heuristics tell tests/SR to work around them.
+-->
 
 ### comment-composer (weft#34)
 
@@ -128,6 +174,12 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Not for: HTML plans — the same picker offers one control, "Ask your agent what changed", which opens the composer on the plan's title node, pre-filled. No diff is drawn for a plan.
 - Heuristics: the picker rows carry name, tag chip, meta line and a word delta ("+18 / −4 words", "no word change"); an autosave reads "Autosave" in italic and carries no name; Compare shows both texts side by side with per-line status and a word delta; Back to document returns without losing the picks.
 - Pattern: pick two, Compare (or Ask), read, back. Restore lives on the row, hidden until hover, and is disabled with a reason on a commented text document because the body route refuses to rewrite anchored text.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+BLOCKER vs W3 version-diff: Restore appears on hover or focus-within — not
+"hidden until hover". Do not document a hover-only Restore as the pattern
+(WCAG 2.1.1 / 1.4.13). Match W3 wording.
+-->
 - Anti-pattern: a Restore that shows a "not yet supported" toast (the stub P6 replaced); a version list repeated in the Info panel (ruled: consolidate — the panel keeps only the count, which opens the rail); expecting a named save to be the only new version when an autosave of the same edit lands beside it.
 
 ### bottom-bar (weft#39)
@@ -145,31 +197,45 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: a rail panel or an anchored popover has to appear on a phone.
 - Not for: the tree on a phone (that is a left sheet) or anything that fits as a popover on a tablet.
 - Heuristics: opaque paper ground, never inherited; drag handle; close button labelled "Close panel"; `min(70vh, 560px)` for a panel, `max-height 80vh` for a popover that became a sheet; sits above the bottom bar; Escape, scrim and the close button all close it; focus returns to the trigger.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Incomplete vs W3 sheet-bottom: focus must move in on open AND return to the
+trigger on close; reduced motion: no slide. Returning focus alone leaves
+keyboard/SR users on the trigger under a blocking sheet.
+-->
 - Pattern: History, Info and Comments each open as this sheet; Compare, Ask and Restore from the History sheet close the sheet first so the document is in view.
 - Anti-pattern: a sheet that stays open under a confirm dialog; a sheet that inherits the column's transparent ground and shows the page through it; a test that taps a node under an open sheet and blames the node.
 
 ### badge — spinner slot (weft#41)
 
 - Use when: a queue pill shows `claimed` (Agent working) and needs motion to say "in progress".
+- Not for: `pending`, `acknowledged` or `resolved`, and never as a generic loading indicator on a surface that is not a queue pill.
 - Heuristics: a 7px ring, `currentColor`, one rotation per 0.9s, static under reduced motion; the other three states have no spinner; mono caps only inside a dense panel, sentence case in the comments rail.
+- Pattern: the pill reads "Agent working" with the ring leading; the same badge, static, heads the listener pill.
 - Anti-pattern: a spinner on `pending` (nothing is happening yet); a spinner that keeps spinning after the claim ends.
 
 ### avatar — identity variant (weft#42) — narrowed by the ruling
 
 - Use when: initials must stand for a person or an agent.
+- Not for: carrying state (a working agent is the badge's job) or identity by colour.
 - Heuristics: initials keep caps (an identifier); an agent's "(A)" lives in the name, not the initials; the identity-coloured ground is out under the semantic ruling — neutral ground, ink initials.
+- Pattern: 24 inline in a thread or member row, 32 as the compact default, 40 in the hover card; a stacked group overlaps by 6px with a paper ring.
 - Anti-pattern: a coloured avatar ring used as the only way to tell two commenters apart.
 
 ### tabs — sentence case, sans face (weft#43)
 
 - Use when: two or more views of the same region (Document tree / Kanban board).
+- Not for: navigation between routes (that is a link or the sidebar), or a single view with no alternative.
 - Heuristics: quiet tabs — no primary fill on the pressed tab; the underline and the text weight carry the state; sans face on app surfaces (owner ruling 2026-09-02), mono stays on marketing.
+- Pattern: two sentence-case labels, a 2px underline on the active one over the list's 1px rule, `aria-pressed` on the active tab, the same region swapped in place.
 - Anti-pattern: a filled, button-like active tab; uppercase tab labels; a tab that navigates away from the region it labels.
 
 ### eyebrow-label — sentence case (weft#44)
 
 - Use when: a small label above a group on an app surface ("Spaces").
+- Not for: a heading (an eyebrow labels a group, it does not title a page) or a badge.
 - Heuristics: sentence case with the tracking kept; the shipped primitive still uppercases until W4, so the doc and the code disagree on purpose and the ticket says so.
+- Pattern: mono, small, tracked, sentence case, muted; sits above the group it names with the group's own spacing.
 - Anti-pattern: an eyebrow that shouts over the content it labels.
 
 ## Patterns
@@ -179,31 +245,62 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: a list can be narrowed on several axes at once and the person needs to see what is applied.
 - Not for: a single search box, or a sort control.
 - Heuristics: search first, then chip groups in the ruled order (Name, Listeners, Type, Health, Status, Visibility, Board column, Comments); chips are toggle buttons with `aria-pressed`; the trigger shows the applied count; `max-height min(400px, 100vh − 24px)` with internal scroll; on a phone it is a bottom sheet.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Dropped from W3 filter-popover: Tab through input and chips; Escape closes and
+returns focus to the trigger; chips carry min-height: var(--weft-touch-target).
+Viewport cap + aria-pressed alone are not the keyboard/touch contract.
+-->
 - Pattern: the same shell serves the tree filter and the comments strip's filter (Status, Type, People, Agent on plans only).
 - Anti-pattern: a popover that outgrows the viewport (the harness pass found one at 560px and capped it); an "Unread" chip (ruling 6: there is no unread); chip labels in caps.
 
 ### share-flyout (weft#46) — closed after the Copy-link ruling
 
 - Use when: a person needs to know who can see a document and move it between their personal space and Shared.
+- Not for: per-document permissions (there are none; access is per workspace) or inviting people (an admin's job elsewhere).
 - Heuristics: one Share button, locked on a personal document; the flyout tells the truth — access is per workspace, membership is an admin's — and offers exactly one mutation, the move through the existing transfer; it must be capped to the viewport and scroll inside, because a workspace with many agents grows the member list past 800px.
+- Pattern: heading, access card with the sentence, the member list, one move button; the ruling of 2026-09-04 narrowed the header control to Copy link, so the flyout's truth-telling is the pattern to keep wherever a share control returns.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Dropped from W3 share-flyout: Escape closes. Also state that the action is the
+one tab stop after the trigger (member rows are static / avatars skipped).
+-->
 - Anti-pattern: a flyout listing members a person cannot change with no way to act (the reason the owner narrowed it); a flyout whose only action sits below the fold.
 
 ### person-hover-card (weft#47)
 
 - Use when: a name in the header or a thread can carry a little more — documents, last active, owner for an agent — and two actions (Documents, Mention).
+- Not for: a profile page, or anything a person must read before acting (a hover card is glanceable and dismisses on leave).
 - Heuristics: opens on hover after the delay and on focus; a live dot when the person is present; every action resolves to a real route or a real insertion.
+- Pattern: avatar and name, then stat rows, then two equal-width actions; the same card for a person and an agent, with the "Agent" pill and the Owner row the only differences.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Live dot conveys presence by colour alone (WCAG 1.4.1) — needs a text / aria
+equivalent. Opens on focus (good) but no Escape / dismiss heuristic.
+-->
 - Anti-pattern: a card with stats that are not fetched; a Mention that inserts nothing when no editor is focused.
 
 ### Responsive workspace — tablet (weft#48)
 
 - Use when: 768–1199. The sidebar is a 56px icon rail and the tree opens as a left sheet; the rail keeps its column and its panel is a right sheet; the comments rail is a sheet below 1280.
+- Not for: widths at or above 1280, where the rail keeps its panel as a column and the comments rail is a column, or below 768, where the phone pattern takes over.
 - Heuristics: the document region is present and unobscured on load; explicit grid areas so an item leaving flow cannot shift the others; choosing a document closes the tree sheet; the driver opens the sheet before touching a sidebar control.
+- Pattern: `56px minmax(0, 1fr) auto` with named areas; icon rail on the left, the tree as a left sheet at 288px, the rail strip on the right with its panel as a right sheet at `min(360px, 70vw)`.
 - Anti-pattern: a sidebar control the layout hides with no opener (the harness pass added "Open documents"); resizers left visible at a width where they cannot act.
 
 ### Responsive workspace — phone (weft#49)
 
 - Use when: below 768. One column; mobile bar on top with the sidebar trigger and the title; bottom bar and bottom sheets for the rail; anchored popovers become sheets; the crumb trail scrolls on its own line with the listener pill beneath it; the document head wraps to title, then Share and the menu.
+- Not for: landscape phones at 844 wide, which take the phone pattern's usability invariants but have no pixel reference, or tablets.
 - Heuristics: nothing under 24px is a target (the pass recorded crumb links, comment markers, the title field and board cards as the residual to fix); the chrome collapses while the document scrolls and returns when it stops; a tap on a plan node opens the composer as a sheet.
+- Pattern: one column at viewport height; mobile bar, scrolling crumb trail with the listener pill beneath, the document, the bottom bar; every panel and popover a bottom sheet above the bar.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Residual <24px targets are recorded but not forbidden — promote to an
+anti-pattern / AGENTS non-negotiable or they never clear. Chrome collapse must
+not steal the hit target or move focus at the moment of the tap (already in
+anti-pattern; make it a positive heuristic too).
+-->
 - Anti-pattern: a full desktop rail squeezed into 390px; panels open at rest; the chrome collapse leaving a node under the bar at the moment of the tap.
 
 ## Cross-cutting anti-patterns from the epic pass
@@ -218,6 +315,15 @@ These are the ones that survived every unit test and were caught only by running
 6. **Two facts in one channel.** If a hue means both "risk" and "Ana", neither reads.
 7. **A suite that nobody has run since its ruling.** The verification matrix names the suite; the phase that changes the control runs it.
 
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Consider adding cross-cutting anti-patterns:
+- Hover-only affordance (must also appear on focus-within).
+- Overlay that does not move focus in / Escape-dismiss / return focus.
+- Target under --weft-touch-target (24px compact floor).
+- Accessible name shared by two different controls.
+-->
+
 
 ## Where the visuals are
 
@@ -231,3 +337,8 @@ These are the ones that survived every unit test and were caught only by running
 - [[05-copy-guidance]] § When caps — the casing ruling verbatim.
 - [[04-design-system]] Tokens — the fixed tokens (`--weft-fixed-ink`, `--weft-fixed-cream`) the composer, toolbar and tooltip grounds read.
 - [[12-input-heuristics]] — the same five-part shape applied to form inputs; the two documents are read together when a document surface carries a field.
+<!--
+A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
+Add [[05-accessibility]] — WCAG floor, focus ring, reduced motion, touch targets.
+The companion that agents must read before implementing should point at it.
+-->

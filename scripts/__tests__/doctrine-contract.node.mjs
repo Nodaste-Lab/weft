@@ -19,6 +19,7 @@ const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8');
 
 const designSystem = read('docs', 'brand-package', '04-design-system.md');
 const heuristics = read('docs', 'brand-package', '12-input-heuristics.md');
+const surfaceHeuristics = read('docs', 'brand-package', '13-document-surfaces-heuristics.md');
 const componentsCss = read('css', 'weft-components.css');
 const templatesCss = read('css', 'weft-templates.css');
 const tokensCss = read('css', 'weft.css');
@@ -35,6 +36,7 @@ test('D1: every weft- class the doctrine names exists in the shipped CSS', () =>
   for (const doc of [
     ['04-design-system.md', formInputs],
     ['12-input-heuristics.md', heuristics],
+    ['13-document-surfaces-heuristics.md', surfaceHeuristics],
   ]) {
     const [where, text] = doc;
     for (const m of text.matchAll(/`\.?(weft-[a-z-]+)`/g)) {
@@ -57,9 +59,14 @@ test('D1: every weft- class the doctrine names exists in the shipped CSS', () =>
 
 test('D2: every --weft- token the doctrine names is declared', () => {
   const problems = [];
-  for (const m of formInputs.matchAll(/`(--weft-[a-z-]+)`/g)) {
-    if (!tokensCss.includes(`${m[1]}:`)) {
-      problems.push(`04-design-system.md names ${m[1]}, which css/weft.css does not declare`);
+  for (const [where, text] of [
+    ['04-design-system.md', formInputs],
+    ['13-document-surfaces-heuristics.md', surfaceHeuristics],
+  ]) {
+    for (const m of text.matchAll(/`(--weft-[a-z-]+)`/g)) {
+      if (!tokensCss.includes(`${m[1]}:`)) {
+        problems.push(`${where} names ${m[1]}, which css/weft.css does not declare`);
+      }
     }
   }
   assert.deepEqual(problems, [], problems.join('\n'));
@@ -114,7 +121,7 @@ test('D4b: every documented --input bridge mapping states the one that ships', (
     assert.ok(shipped[name], `css/weft.css declares no ${name} bridge`);
   }
   const problems = [];
-  for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md']) {
+  for (const doc of ['04-design-system.md', '05-accessibility.md', '09-app-primitives.md', '12-input-heuristics.md', '13-document-surfaces-heuristics.md']) {
     const text = read('docs', 'brand-package', doc);
     for (const [name, target] of Object.entries(shipped)) {
       // Any mapping-shaped statement: a table row, or prose with a mapping
