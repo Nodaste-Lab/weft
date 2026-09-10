@@ -15,30 +15,13 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 
 ## Foundations that every entry inherits
 
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Missing foundation: accessibility floor. Restate (or inherit by name) the § Document
-surfaces paragraph in 09: Focus Ring on every interactive; prefers-reduced-motion
-collapses every named animation; --weft-touch-target is the floor. Add
-[[05-accessibility]] to Cross-references. Agents told to read only this companion
-will not know the floor is in force.
--->
-
 ### The three channels — as ruled
 
 **Colour is semantic only: it means a state or a category, never a person. Underline style is context. Fill is ownership.**
 
 - Use when: anything on a document surface carries meaning by colour, decoration or fill.
 - Not for: telling people apart. The W3 text still says "colour is identity or state"; the owner ruled on 2026-09-06 that colour never names a person and re-affirmed it at the epic pass. Identity is carried by a name, initials or the agent glyph — the attribution mark — never by a hue.
-- Heuristics: cover the labels and ask what each colour means; if the answer is "who", it is wrong. A tag must be readable with colour removed (the underline style carries it). Mine-versus-theirs must be readable in greyscale (solid versus outline).
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-"Readable with colour removed" via underline style alone is not enough for users who
-cannot discriminate wavy/dashed/dotted. On text-anchor the type word lives on the
-thread, not the passage — require a non-style channel on or beside the mark
-(number tone already helps orphan/resolved; action-needed vs risk still collide).
-WCAG 1.4.1.
--->
+- Heuristics: cover the labels and ask what each colour means; if the answer is "who", it is wrong. A tag must be readable with colour removed and with decoration removed: the underline style carries it for the eye, and a non-style cue carries it for everyone else — the marker's number tone, the type word on the thread header, and the mark's accessible name ("Thread 2 · Action needed"), so a reader who cannot tell wavy from dashed still knows (WCAG 1.4.1). Mine-versus-theirs must be readable in greyscale (solid versus outline) and in the pill's text ("you" / the owner's name).
 - Pattern: one neutral wash on every anchored passage; the selected thread keeps the primary ring; the tag changes only the underline style; the badge changes only its fill for ownership.
 - Anti-pattern: a per-person hue on anchors, carets and avatars (the identity-colour subsystem, weft#31). It looked rich and told a reader nothing they could act on, and it collided with state colour on the same mark. The frames stay in the library as history; do not ship them.
 
@@ -80,14 +63,7 @@ WCAG 1.4.1.
 
 - Use when: a workspace's documents form a hierarchy a person navigates and reorders, and the row must also tell them what is happening on each document (listener state, comment count, working status).
 - Not for: flat lists of results (use a list), or a single document's outline (use the plan's contents navigation).
-- Heuristics: the row is one control — its `aria-expanded` is the state and a click on the caret glyph reaches the row; there is no separate expand button. Indent is drawn by padding, so hover and selected fills run edge to edge. Row height is `--weft-row-h`. Action buttons show on hover and never take the row's name.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-BLOCKER vs W3 document-tree: kebab appears on hover, focus-within, or while its
-menu is open — not hover alone. Also missing the keyboard model (arrows /
-Left-Right / Enter / F2 / Shift+F10). "show on hover" trains agents to ship a
-hover-only affordance (WCAG 2.1.1 / 1.4.13). Match W3 wording.
--->
+- Heuristics: the row is one control — its `aria-expanded` is the state and a click on the caret glyph reaches the row; there is no separate expand button. Indent is drawn by padding, so hover and selected fills run edge to edge. Row height is `--weft-row-h`. The kebab appears on hover, on `:focus-within`, and while its menu is open — never on hover alone — and never takes the row's name. Keyboard, as W3 defines it: arrows move between rows, Left collapses or moves to the parent, Right expands or moves to the first child, Enter opens, F2 renames, Shift+F10 opens the menu.
 - Pattern: title, then status as text ("· All comments addressed · plan-reviewer (A) · theirs") in the accessible name, so the name a screen reader gives equals what the eye sees; the listening badge sits on the type icon and the count on the right.
 - Anti-pattern: per-row expand buttons (they double the tab stops); nesting children in a way that makes the parent's text unmatchable (tests broke on exactly this); a "stale" or count badge whose text runs into the title ("Team notesstale") — badges need a separator or an accessible name of their own.
 
@@ -103,13 +79,7 @@ hover-only affordance (WCAG 2.1.1 / 1.4.13). Match W3 wording.
 
 - Use when: a run of prose has a thread, on a text document or a rendered plan.
 - Not for: search hits, spelling marks or selection — those are transient and must never look like an anchor.
-- Heuristics: one neutral wash for every anchored passage; the selected thread's passage keeps the primary ring; the underline style is the tag (solid, wavy, dashed, dotted) and the resolved tag is dotted and muted; the mark shows a number plus initials for a person or the agent glyph, never both.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Underline style as the sole on-passage channel for action-needed vs risk-issue
-fails users who cannot tell decoration styles apart. Type word is on the thread
-header only. Require a non-style cue on/beside the mark (WCAG 1.4.1).
--->
+- Heuristics: one neutral wash for every anchored passage; the selected thread's passage keeps the primary ring; the underline style is the tag (solid, wavy, dashed, dotted) and the resolved tag is dotted and muted; the mark shows a number plus initials for a person or the agent glyph, never both. The style is never the only cue: the number's tone and the mark's accessible name carry the tag too, and the thread header spells the type word, so action needed and risk / issue are told apart without reading a line style.
 - Pattern: overlapping threads on one node list on `data-html-comment-thread-ids`, the passage's style follows the newest thread's tag, and the marker for each thread stays visible beside it.
 - Anti-pattern: an anchor tinted by its author (weft#31 era); a resolved anchor painted the old blue; treating the passage's colour as proof of state in a test — the state lives on the tag attribute, not on a colour.
 
@@ -136,13 +106,7 @@ header only. Require a non-style cue on/beside the mark (WCAG 1.4.1).
 - Not for: HTML plans. On a plan a click on a paragraph opens the composer and a dragged range is for copying; the toolbar never appears there.
 - Heuristics: hidden while the selection is collapsed; tracks the selection; flips below when there is no room above; docks above the bottom bar on a phone; its ground is the fixed ink in both themes; the comment control is named "Comment on this text".
 - Pattern: format controls, a separator, then the comment control; the composer it opens reveals the comments sidebar and closes any open rail panel.
-- Anti-pattern: an "Add comment" button somewhere in the page chrome (there is none since P4); a toolbar that lingers after the selection collapses; an accessible name shared with the anchors it creates — the anchors are named "Comment on this text" too, so a test or a screen reader must scope to the toolbar.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Duplicate accessible name is a defect to rename, not a scoping tip. Toolbar can
-keep the verb; markers should read e.g. "Thread N on …". Ambiguous names ship
-forever if heuristics tell tests/SR to work around them.
--->
+- Anti-pattern: an "Add comment" button somewhere in the page chrome (there is none since P4); a toolbar that lingers after the selection collapses; two different controls with one accessible name — DocT's anchors currently share the toolbar's "Comment on this text", which is a defect to fix by naming the marks ("Thread 2 on this text"), not a scoping tip for tests and screen readers.
 
 ### comment-composer (weft#34)
 
@@ -181,13 +145,7 @@ forever if heuristics tell tests/SR to work around them.
 - Use when: two versions of a **text document** are picked in the History rail and a person wants to see the words that changed.
 - Not for: HTML plans — the same picker offers one control, "Ask your agent what changed", which opens the composer on the plan's title node, pre-filled. No diff is drawn for a plan.
 - Heuristics: the picker rows carry name, tag chip, meta line and a word delta ("+18 / −4 words", "no word change"); an autosave reads "Autosave" in italic and carries no name; Compare shows both texts side by side with per-line status and a word delta; Back to document returns without losing the picks.
-- Pattern: pick two, Compare (or Ask), read, back. Restore lives on the row, hidden until hover, and is disabled with a reason on a commented text document because the body route refuses to rewrite anchored text.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-BLOCKER vs W3 version-diff: Restore appears on hover or focus-within — not
-"hidden until hover". Do not document a hover-only Restore as the pattern
-(WCAG 2.1.1 / 1.4.13). Match W3 wording.
--->
+- Pattern: pick two, Compare (or Ask), read, back. Restore lives on the row, shown on hover and on `:focus-within` so a keyboard reaches it, and is disabled with a reason on a commented text document because the body route refuses to rewrite anchored text.
 - Anti-pattern: a Restore that shows a "not yet supported" toast (the stub P6 replaced); a version list repeated in the Info panel (ruled: consolidate — the panel keeps only the count, which opens the rail); expecting a named save to be the only new version when an autosave of the same edit lands beside it.
 
 ### bottom-bar (weft#39)
@@ -204,13 +162,7 @@ BLOCKER vs W3 version-diff: Restore appears on hover or focus-within — not
 
 - Use when: a rail panel or an anchored popover has to appear on a phone.
 - Not for: the tree on a phone (that is a left sheet) or anything that fits as a popover on a tablet.
-- Heuristics: opaque paper ground, never inherited; drag handle; close button labelled "Close panel"; `min(70vh, 560px)` for a panel, `max-height 80vh` for a popover that became a sheet; sits above the bottom bar; Escape, scrim and the close button all close it; focus returns to the trigger.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Incomplete vs W3 sheet-bottom: focus must move in on open AND return to the
-trigger on close; reduced motion: no slide. Returning focus alone leaves
-keyboard/SR users on the trigger under a blocking sheet.
--->
+- Heuristics: opaque paper ground, never inherited; drag handle; close button labelled "Close panel"; `min(70vh, 560px)` for a panel, `max-height 80vh` for a popover that became a sheet; sits above the bottom bar; focus moves into the sheet on open; Escape, scrim and the close button all close it; focus returns to the trigger; no slide under reduced motion.
 - Pattern: History, Info and Comments each open as this sheet; Compare, Ask and Restore from the History sheet close the sheet first so the document is in view.
 - Anti-pattern: a sheet that stays open under a confirm dialog; a sheet that inherits the column's transparent ground and shows the page through it; a test that taps a node under an open sheet and blames the node.
 
@@ -252,13 +204,7 @@ keyboard/SR users on the trigger under a blocking sheet.
 
 - Use when: a list can be narrowed on several axes at once and the person needs to see what is applied.
 - Not for: a single search box, or a sort control.
-- Heuristics: search first, then chip groups in the ruled order (Name, Listeners, Type, Health, Status, Visibility, Board column, Comments); chips are toggle buttons with `aria-pressed`; the trigger shows the applied count; `max-height min(400px, 100vh − 24px)` with internal scroll; on a phone it is a bottom sheet.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Dropped from W3 filter-popover: Tab through input and chips; Escape closes and
-returns focus to the trigger; chips carry min-height: var(--weft-touch-target).
-Viewport cap + aria-pressed alone are not the keyboard/touch contract.
--->
+- Heuristics: search first, then chip groups in the ruled order (Name, Listeners, Type, Health, Status, Visibility, Board column, Comments); chips are toggle buttons with `aria-pressed` and `min-height: var(--weft-touch-target)`; Tab walks the input and every chip, Escape closes and returns focus to the trigger; the trigger shows the applied count; `max-height min(400px, 100vh − 24px)` with internal scroll; on a phone it is a bottom sheet with the sheet's focus contract.
 - Pattern: the same shell serves the tree filter and the comments strip's filter (Status, Type, People, Agent on plans only).
 - Anti-pattern: a popover that outgrows the viewport (the harness pass found one at 560px and capped it); an "Unread" chip (ruling 6: there is no unread); chip labels in caps.
 
@@ -266,26 +212,16 @@ Viewport cap + aria-pressed alone are not the keyboard/touch contract.
 
 - Use when: a person needs to know who can see a document and move it between their personal space and Shared.
 - Not for: per-document permissions (there are none; access is per workspace) or inviting people (an admin's job elsewhere).
-- Heuristics: one Share button, locked on a personal document; the flyout tells the truth — access is per workspace, membership is an admin's — and offers exactly one mutation, the move through the existing transfer; it must be capped to the viewport and scroll inside, because a workspace with many agents grows the member list past 800px.
+- Heuristics: one Share button, locked on a personal document; the flyout tells the truth — access is per workspace, membership is an admin's — and offers exactly one mutation, the move through the existing transfer, which is the one tab stop after the trigger (member rows are static and their avatars are skipped); Escape closes and returns focus; it must be capped to the viewport and scroll inside, because a workspace with many agents grows the member list past 800px.
 - Pattern: heading, access card with the sentence, the member list, one move button; the ruling of 2026-09-04 narrowed the header control to Copy link, so the flyout's truth-telling is the pattern to keep wherever a share control returns.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Dropped from W3 share-flyout: Escape closes. Also state that the action is the
-one tab stop after the trigger (member rows are static / avatars skipped).
--->
 - Anti-pattern: a flyout listing members a person cannot change with no way to act (the reason the owner narrowed it); a flyout whose only action sits below the fold.
 
 ### person-hover-card (weft#47)
 
 - Use when: a name in the header or a thread can carry a little more — documents, last active, owner for an agent — and two actions (Documents, Mention).
 - Not for: a profile page, or anything a person must read before acting (a hover card is glanceable and dismisses on leave).
-- Heuristics: opens on hover after the delay and on focus; a live dot when the person is present; every action resolves to a real route or a real insertion.
+- Heuristics: opens on hover after the delay and on focus; Escape and leaving dismiss it and focus returns to the name; a live dot when the person is present, with a text equivalent ("In this document") so presence is not colour alone; every action resolves to a real route or a real insertion.
 - Pattern: avatar and name, then stat rows, then two equal-width actions; the same card for a person and an agent, with the "Agent" pill and the Owner row the only differences.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Live dot conveys presence by colour alone (WCAG 1.4.1) — needs a text / aria
-equivalent. Opens on focus (good) but no Escape / dismiss heuristic.
--->
 - Anti-pattern: a card with stats that are not fetched; a Mention that inserts nothing when no editor is focused.
 
 ### Responsive workspace — tablet (weft#48)
@@ -300,15 +236,8 @@ equivalent. Opens on focus (good) but no Escape / dismiss heuristic.
 
 - Use when: below 768. One column; mobile bar on top with the sidebar trigger and the title; bottom bar and bottom sheets for the rail; anchored popovers become sheets; the crumb trail scrolls on its own line with the listener pill beneath it; the document head wraps to title, then Share and the menu.
 - Not for: landscape phones at 844 wide, which take the phone pattern's usability invariants but have no pixel reference, or tablets.
-- Heuristics: nothing under 24px is a target (the pass recorded crumb links, comment markers, the title field and board cards as the residual to fix); the chrome collapses while the document scrolls and returns when it stops; a tap on a plan node opens the composer as a sheet.
+- Heuristics: nothing tappable is under `--weft-touch-target` — this is a floor, not a preference, and the crumb links, comment markers, title field and board cards the epic pass found at 20px are defects to clear, not residuals to keep; the chrome collapses while the document scrolls and returns when it stops, and the collapse never moves a hit target or focus at the moment of a tap; a tap on a plan node opens the composer as a sheet.
 - Pattern: one column at viewport height; mobile bar, scrolling crumb trail with the listener pill beneath, the document, the bottom bar; every panel and popover a bottom sheet above the bar.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Residual <24px targets are recorded but not forbidden — promote to an
-anti-pattern / AGENTS non-negotiable or they never clear. Chrome collapse must
-not steal the hit target or move focus at the moment of the tap (already in
-anti-pattern; make it a positive heuristic too).
--->
 - Anti-pattern: a full desktop rail squeezed into 390px; panels open at rest; the chrome collapse leaving a node under the bar at the moment of the tap.
 
 ## Cross-cutting anti-patterns from the epic pass
@@ -322,16 +251,10 @@ These are the ones that survived every unit test and were caught only by running
 5. **A fixture value that reads as data.** Reference captures may illustrate; the product shows only what the route serves.
 6. **Two facts in one channel.** If a hue means both "risk" and "Ana", neither reads.
 7. **A suite that nobody has run since its ruling.** The verification matrix names the suite; the phase that changes the control runs it.
-
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Consider adding cross-cutting anti-patterns:
-- Hover-only affordance (must also appear on focus-within).
-- Overlay that does not move focus in / Escape-dismiss / return focus.
-- Target under --weft-touch-target (24px compact floor).
-- Accessible name shared by two different controls.
--->
-
+8. **A hover-only affordance.** Anything that appears on hover also appears on `:focus-within`, or a keyboard never reaches it.
+9. **An overlay without the focus contract.** Focus moves in on open, Escape dismisses, focus returns to the trigger; a sheet that leaves focus behind the scrim strands keyboard and screen-reader users.
+10. **A target under the touch floor.** `--weft-touch-target` (24px compact) is the minimum for anything tappable.
+11. **Two controls with one accessible name.** Rename one; never document a scoping workaround.
 
 ## Where the visuals are
 
@@ -342,11 +265,7 @@ Consider adding cross-cutting anti-patterns:
 ## Cross-references
 
 - [[09-app-primitives]] § Document surfaces — the definitions these heuristics sit beside; § Casing on app surfaces — the casing ruling applied per entry.
+- [[05-accessibility]] — the contrast floors, focus and reduced-motion rules the keyboard, focus and touch foundation applies; read with the accessibility paragraph at the head of § Document surfaces.
 - [[05-copy-guidance]] § When caps — the casing ruling verbatim.
 - [[04-design-system]] Tokens — the fixed tokens (`--weft-fixed-ink`, `--weft-fixed-cream`) the composer, toolbar and tooltip grounds read.
 - [[12-input-heuristics]] — the same five-part shape applied to form inputs; the two documents are read together when a document surface carries a field.
-<!--
-A11Y-FEEDBACK (Cursor-Composer) — remove when addressed:
-Add [[05-accessibility]] — WCAG floor, focus ring, reduced motion, touch targets.
-The companion that agents must read before implementing should point at it.
--->

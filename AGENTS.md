@@ -193,7 +193,9 @@ The rules that are not negotiable:
    says otherwise. `docs/brand-package/05-accessibility.md` and the
    accessibility paragraph at the head of § Document surfaces are the
    references; the seven rules above cover colour and state and would still
-   let a hover-only control or an under-24px target ship.
+   let a hover-only control or an under-24px target ship. Two different
+   controls never share an accessible name; rename one rather than document
+   a workaround.
 
 The illustrated form of the companion (Figma frames from the DocT library
 and DocT's product captures beside each entry) is what the owner reviews;
