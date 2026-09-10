@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test';
 
+// The whole gallery fits in the viewport (page measures ~15.8k px), so no
+// screenshot ever scrolls. Scroll offsets were the residual nondeterminism:
+// scrollIntoViewIfNeeded lands at slightly different fractional offsets per
+// run, fractional element-y rounds differently, and captures flapped ±1px
+// between runs. With scroll out of the capture path, a card's pixels are a
+// pure function of layout.
+test.use({ viewport: { width: 1080, height: 16000 } });
+
 // A representative, render-stable subset of showcase primitives. Every id maps
 // to the gallery's `<section id="${id}-example">` cards. Broad enough to catch
 // token/theming regressions; small enough to keep CI fast.
@@ -24,6 +32,11 @@ const SECTIONS = [
   'panel-header',
   'tier-group',
   'copyable-ref',
+  // The two recorded gallery gaps: the async status presentation and the
+  // error-state card — the baselines these ids add are the point of the cards
+  // (error rendering was carried entirely by the contract suites before).
+  'form-status',
+  'input-error-states',
 ];
 
 for (const theme of ['light', 'dark', 'compact', 'dense'] as const) {

@@ -334,5 +334,72 @@ Cursor tracking board — ask her to run it rather than self-waiving.
   capture was not), and a CI round lost to a bare hex in my own glyph
   COMMENT — check-raw-colors does not exempt prose, and my partial local
   battery had skipped that gate. Full battery before push, not after.
+- 2026-08-17: **PB executed** (branch `claude/gallery-status-and-error-cards`,
+  PR #23, cut from 0.5.0 main) — the gallery half: the `form-status` card
+  (pending with the dot and aria-busy; the four tones on distinct words;
+  the error + status + help composition holding A9's order) and the
+  `input-error-states` card (composed field with the glyph-led message;
+  a standalone invalid input — see the finding below for why standalone;
+  invalid textarea; the select exception; dashed disabled + invalid).
+  Tests first (10 assertions failing, then the cards); nine probes, nine
+  CAUGHT, restores from scratch snapshots. Baselines: 8 added, 40 moved,
+  every one reviewed individually in the pinned container — the moves are
+  two mechanical classes of inserting cards into the ordered auto-fit
+  grid (row-mate stretch; ±1px column rounding), old/new pairs eyeballed.
+  Showcase-only ids carry their shelf category in a gallery-local map
+  because manifest.uiPrimitives must mirror `src/ui/*.tsx` exactly; the
+  map is test-pinned. The vanilla commit-boundary helper (PB's other
+  half) is NOT started here. Two findings flagged for their own sessions:
+  an input composed under FormControl loses `data-slot="input"` (the
+  Slot's props land after Input's own attribute), so the composed path
+  never matches the CSS trailing-glyph selector — the two-layers-cannot-
+  drift claim has a hole the contract suites never photograph; and the
+  `search-field` card is absent from SHOWCASED_PRIMITIVE_IDS, so it never
+  renders on the site despite manifest `showcase: true`.
+- 2026-08-17: Codex round 1 (at 9023a8c): ISSUES — the auto-fit grid's
+  default stretch alignment let the two tall new cards inflate every
+  row-mate's height, so 40 unrelated baselines moved and every FUTURE
+  card insertion would rewrite dozens more. Fixed at the class:
+  `alignItems: 'start'` on the gallery grid — card height is now
+  content-determined and baselines insertion-order-independent (the ±1px
+  three-column rounding class remains, order-dependent by nature).
+  Baselines re-recorded in the container and re-reviewed individually.
+- 2026-08-17: Codex round 2 CLEAN at 9b2a887 with a comment nit, batched
+  into the next round. Round 3: ISSUES — the select error specimen showed
+  border alone where the doctrine's exception is border PLUS the glyph-led
+  message; fixed with a hand-associated `.weft-field-hint.is-error`
+  (not composed under FormControl — the Slot would swallow the trigger's
+  slot identity, the same class as the flagged Input finding), test
+  extended to require the referenced message, two probes CAUGHT.
+- 2026-08-17: **A correction for the ledger**: an earlier commit claimed a
+  passing verify run proved baselines "byte-stable" — false; a verify PASS
+  proves comparator-stable only. Update runs kept rewriting ~26 files and
+  consecutive verifies failed on DIFFERENT subsets (select, then
+  stat-row + switch, then panel-header + table): the gallery's fractional
+  column geometry (1032px grid → 334.66px columns) made card rasterization
+  flap between rounding states run to run. Fixed at the class: the site
+  wrapper is 1078px so the grid divides to 334px integer columns at
+  integer x. Evidence: three consecutive container verifies PASS and two
+  consecutive UPDATE runs produce zero byte differences — that is what
+  byte-stable actually looks like. All 84 baselines re-recorded once at
+  the integer geometry (every delta −1/−2px width, ±1px wrap rounding;
+  callout-dense +16 is one caption wrapping; input-error-states +27 is
+  the select message), each quantified, outliers eyeballed.
+- 2026-08-17: Codex round 4: ISSUES — the three standalone invalid
+  specimens exposed aria-invalid with no associated reason (the doctrine's
+  own line: an unreferenced hint is decoration, and its inverse). Each now
+  references a glyph-led `.weft-field-hint.is-error`; the test suite
+  asserts resolution for every standalone invalid control; three probes
+  CAUGHT. En route the vertical twin of the geometry class surfaced:
+  integer-x killed the horizontal flap, but scrollIntoViewIfNeeded's
+  per-run fractional scroll offsets still flipped y-rounding (switch
+  captured 222px one run, 223px the next, against identical bytes). Fixed
+  at the class: the visual spec pins a 16000px viewport so the whole
+  ~15.8k page fits and NO capture ever scrolls — pixels are a pure
+  function of layout. Evidence: three consecutive verifies PASS and a
+  second update run changes zero bytes. 73 baselines re-recorded (66 at
+  ±1px rounding; the error card +75 for its three messages;
+  action-button-row −21 where the header wrap resolves to one line),
+  quantified, outliers eyeballed.
 
 {% /section %}
