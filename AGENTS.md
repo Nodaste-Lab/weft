@@ -145,6 +145,50 @@ Final pre-publish check: `npm pack` here, install the tarball in Heddle,
 re-run its gates. The published artifact — not your working tree — is what
 consumers get.
 
+## Document surfaces — rules an agent must not break
+
+The document-view entries in `docs/brand-package/09-app-primitives.md`
+§ Document surfaces (W3, weft#28–#49) have a companion,
+`docs/brand-package/13-document-surfaces-heuristics.md`: one entry per
+ticket with **use when / not for / heuristics / pattern / anti-pattern**,
+grounded in the definitions and the DocT owner rulings through 2026-09-09.
+Read it before implementing, changing or reviewing any of those primitives.
+The rules that are not negotiable:
+
+1. **Colour is semantic only.** It means a state or a category, never a
+   person (owner ruling 2026-09-06, re-affirmed 2026-09-09). Underline
+   style is context; fill is ownership; two facts never share a channel.
+   The § Document surfaces text still reads "colour is identity or state"
+   in its three-channels paragraph and the identity-colour entry (weft#31);
+   that is history awaiting W4's rewrite, not a licence. Do not ship a
+   per-person hue on anchors, carets, avatars or thread numbers.
+2. **Casing on app surfaces** (owner ruling 2026-09-01): sentence case
+   everywhere except the dense-info register; never two registers in one
+   row of one component; app tabs use the sans face (weft#43).
+3. **Honest empties.** A row that is a fact shows an honest empty
+   ("Never", "—"); a row whose data does not apply to the document kind is
+   left out. Fixture values illustrate; a primitive never ships one as a
+   default.
+4. **One panel at a time on the rail**, and every action that needs a
+   panel reveals it. A control that only works when another panel happens
+   to be closed is a dead click (DocT shipped three before its epic pass
+   caught them).
+5. **Overlays are capped to the viewport and scroll inside.** Data grows;
+   the viewport does not (the share flyout lost its move control below
+   800px in a workspace with many agents).
+6. **State is an attribute, colour is how it is drawn.** Resolved, selected,
+   working — each is readable with colour removed and testable without
+   reading a colour.
+7. **When a ruling renames a control or changes a colour, the copy, the
+   tests and the docs move the same day.** "Comment" became "Start thread"
+   and four consumer suites sat red for a week because nobody ran them;
+   grep the tests the day of the ruling.
+
+The illustrated form of the companion (Figma frames from the DocT library
+and DocT's product captures beside each entry) is what the owner reviews;
+the Figma pages and the `assets/document-view-screenshots` branch of
+`Nodaste-Lab/doct` are named at the end of the document.
+
 ## Known deferred items
 
 - **`--hud-*` transitional aliases: deprecation clock started 2026-07-10.**

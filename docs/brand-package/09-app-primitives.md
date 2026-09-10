@@ -430,7 +430,7 @@ Reading the sizes: the reference was drawn on the mockup's own compact ladder (r
 
 #### Three channels
 
-**Colour is identity or state. Underline style is context. Fill is ownership.** A person's identity colour drives their avatar, their comment number, their anchor tint and their anchor underline, so their colour is one value everywhere. A queue state — `pending`, `agent_working`, `all_addressed` — drives the listening badge's colour and the listener pill's. A thread's context tag — `action-needed`, `risk-issue`, `resolved` — changes only the underline *style* (wavy, dashed, dotted) and never its colour. Whether a listening agent is yours or someone else's changes only the badge's *fill* (solid or outline) and never its colour. Two facts never share a channel, so no state can hide another. `comment-highlight-semantics.ts` in DocT states the first two; the third is added here for `listening-badge` and `listener-pill`. Phase W4 promotes this paragraph to a Pattern in [[04-design-system]]; until then this is its home and every entry below cites it by name.
+**Colour is identity or state. Underline style is context. Fill is ownership.** **Superseded in its first clause (DocT owner ruling 2026-09-06, re-affirmed 2026-09-09): colour is semantic only — it means a state or a category, never a person. Identity is carried by the attribution mark (a name, initials or the agent glyph), and the identity-colour subsystem below is history, not a target; W4 rewrites this paragraph and the entries that read "identity accent" to the ruled form. Until then [[13-document-surfaces-heuristics]] carries the rule as ruled.** A person's identity colour drives their avatar, their comment number, their anchor tint and their anchor underline, so their colour is one value everywhere. A queue state — `pending`, `agent_working`, `all_addressed` — drives the listening badge's colour and the listener pill's. A thread's context tag — `action-needed`, `risk-issue`, `resolved` — changes only the underline *style* (wavy, dashed, dotted) and never its colour. Whether a listening agent is yours or someone else's changes only the badge's *fill* (solid or outline) and never its colour. Two facts never share a channel, so no state can hide another. `comment-highlight-semantics.ts` in DocT states the first two; the third is added here for `listening-badge` and `listener-pill`. Phase W4 promotes this paragraph to a Pattern in [[04-design-system]]; until then this is its home and every entry below cites it by name.
 
 #### Additions
 
@@ -632,6 +632,7 @@ Most prior items resolved (see Resolved table). What's still outstanding:
 ## Cross-references
 
 - [[04-design-system]] — the Weft spec this doc extends. Read first.
+- [[13-document-surfaces-heuristics]] — use cases, heuristics, patterns and anti-patterns for § Document surfaces, one entry per ticket; read it before implementing or reviewing any of them.
 - [[03-color-and-type]] — palette, type roles, functional state guidance (`ok` / `warn` / `stop` rule).
 - [[05-accessibility]] — full contrast audit. Density tokens here don't loosen a11y; the floor remains.
 - [[05-copy-guidance]] — § When caps holds the owner's casing ruling verbatim; § Casing on app surfaces above is its application to these primitives.
