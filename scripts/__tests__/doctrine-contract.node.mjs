@@ -206,17 +206,24 @@ test('D10: the document-surfaces heuristics keep their structure — one entry p
   const problems = [];
   const parts = ['Use when', 'Not for', 'Heuristics', 'Pattern', 'Anti-pattern'];
   const entries = [...surfaceHeuristics.matchAll(/^### (.+?)\n([\s\S]*?)(?=^### |^## |(?![\s\S]))/gm)];
-  const byTicket = new Map();
+  const ticketCounts = new Map();
   for (const [, title, body] of entries) {
     const ticket = /\(weft#(\d+)\)/.exec(title)?.[1];
-    if (ticket) byTicket.set(Number(ticket), { title, body });
+    if (ticket) {
+      const n = Number(ticket);
+      ticketCounts.set(n, (ticketCounts.get(n) ?? 0) + 1);
+      if (n < 28 || n > 49) problems.push(`"${title}" names weft#${n}, outside the W3 register 28–49`);
+    }
     for (const part of parts) {
       if (!new RegExp(`^- ${part}:`, 'm').test(body)) problems.push(`"${title}" lacks "- ${part}:"`);
     }
   }
   for (let n = 28; n <= 49; n += 1) {
-    if (!byTicket.has(n)) problems.push(`no entry for weft#${n}`);
+    const count = ticketCounts.get(n) ?? 0;
+    if (count !== 1) problems.push(`weft#${n} has ${count} entries; exactly one is required`);
   }
+  const ticketed = [...ticketCounts.values()].reduce((sum, count) => sum + count, 0);
+  if (ticketed !== 22) problems.push(`expected 22 ticketed entries, found ${ticketed}`);
   const foundations = surfaceHeuristics.slice(
     surfaceHeuristics.indexOf('## Foundations that every entry inherits'),
     surfaceHeuristics.indexOf('## Additions')

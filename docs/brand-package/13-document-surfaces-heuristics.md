@@ -72,7 +72,7 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 - Use when: a discussion is anchored to a passage or a plan node and belongs in the rail beside the document.
 - Not for: free-standing conversation with no anchor (that is chat), or a single reply field (that is `thread-reply-field`).
 - Heuristics: the header goes to the thread's place in the document on click; the number circle carries the tone (neutral, action needed, risk / issue, resolved) and the attribution mark carries who; the type word appears only for the three tagged states; the robot glyph appears only while an agent is queued, working, acknowledged, needing attention or resolved.
-- Pattern: header outside the body, uniform message rows, one reply field at the bottom that starts a thread on Enter and says so in its hint.
+- Pattern: header outside the body, uniform message rows, one reply field at the bottom that posts a reply to this thread on Enter and says so in its hint; starting a thread is the composer's job, never the reply field's.
 - Anti-pattern: a submit button still named "Comment" after the ruling made it "Start thread" — copy and tests must move with the ruling; an identity colour on the number; a resolved thread whose passage keeps a loud underline (resolved is the dotted, muted style).
 
 ### text-anchor (weft#30)
@@ -112,7 +112,7 @@ Each entry has the same five parts. **Use when** is the situation that calls for
 
 - Use when: a person starts a thread from a paragraph of a plan or a selection in a text document.
 - Not for: replies (that is the thread's reply field) or a mention-only note.
-- Heuristics: opens at 320 by default and is resizable (ruled 2026-09-06); anchored 8px from the paragraph the click actually selected — not the section around it; keeps 12px clear of that paragraph above or below; on a phone it is a bottom sheet with the drag handle. The hint reads "↵ starts thread · ⌘↵ asks agent · Esc cancels". On a plan the submit is dual: Agent primary, Thread secondary; a selected mention disables Agent with the existing copy.
+- Heuristics: opens at 320 by default and is resizable (ruled 2026-09-06); anchored 8px from the paragraph the click actually selected — not the section around it; keeps 12px clear of that paragraph above or below; on a phone it is a bottom sheet with the drag handle. On a plan the submit is dual — Agent primary, Thread secondary — and the hint reads "↵ starts thread · ⌘↵ asks agent · Esc cancels"; on a text document there is no Agent slot, Thread is the primary, and the hint reads "↵ starts thread · Esc cancels". A selected mention disables Agent with the existing copy.
 - Pattern: quoted source, textarea, actions row; Cancel left, submit set right.
 - Anti-pattern: the composer bottom-docking over the target because its placement used an estimated height; a composer that opens while the comments sidebar stays hidden, so the posted thread has nowhere to appear; a fixed width on the tablet; measuring the composer against the whole section rather than the selected paragraph (a test did this and blamed the product).
 
