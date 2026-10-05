@@ -8,6 +8,7 @@ import {
   ChevronUpIcon,
 } from "lucide-react";
 
+import { useInputModality } from "./input-modality";
 import { cn } from "./utils";
 
 function Select({
@@ -39,6 +40,7 @@ function SelectTrigger({
   // Consistent with Input/Textarea. (readonly isn't meaningful for a select — use disabled.)
   state?: "default" | "error" | "disabled";
 }) {
+  useInputModality();
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"

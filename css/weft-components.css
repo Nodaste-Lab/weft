@@ -43,6 +43,37 @@
   box-shadow: var(--weft-focus-ring);
   border-radius: 3px;
 }
+/* Select, dropdown-menu and context-menu popups mark their active item with a
+ * fill (`focus:bg-accent`), a layered utility the unlayered ring above outranks.
+ * The ring stays off the popup's own listbox, menu and items; the fill is the
+ * state. Triggers keep the ring for keyboard users.
+ *
+ * Radix returns focus to the trigger by script when a popup closes, and the
+ * browser calls that `:focus-visible` because the popup item held it, even after
+ * a mouse choice. src/ui/input-modality.ts records the last input kind on
+ * <html>; after a pointer press the trigger (and, for a context-menu trigger
+ * wrapped around a row, the row's links and buttons) shows its resting look
+ * instead. Navigation keys flip it back to the full ring; modifier chords and
+ * Escape do not count as navigation. With no tracker running the attribute is
+ * unset, so nothing here applies and the ring behaves as before. */
+:is([data-slot^="select-"], [data-slot^="dropdown-menu-"], [data-slot^="context-menu-"]):is([role="listbox"], [role="option"], [role="menu"], [role^="menuitem"]):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+:root[data-weft-input-modality="pointer"] :is(
+  [data-slot="select-trigger"],
+  [data-slot="dropdown-menu-trigger"],
+  [data-slot="context-menu-trigger"],
+  [data-slot="context-menu-trigger"] :is(a, button, [tabindex])
+):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+/* The select trigger also paints its border in the ring colour on focus-visible
+ * (`focus-visible:border-ring`); restore the resting border after a pointer press. */
+:root[data-weft-input-modality="pointer"] [data-slot="select-trigger"]:focus-visible {
+  border-color: var(--input);
+}
 /* SC 2.4.11 Focus Not Obscured (Minimum), Level AA — heuristic 9.
  *
  * Focusing a control below the fold scrolls it flush to the viewport top, which
