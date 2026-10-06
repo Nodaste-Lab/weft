@@ -74,6 +74,16 @@
 :root[data-weft-input-modality="pointer"] [data-slot="select-trigger"]:focus-visible {
   border-color: var(--input);
 }
+/* Button carries the same `focus-visible:border-ring`, and a dropdown-menu or
+ * context-menu trigger is usually a Button via asChild. Its resting border is the
+ * base-layer default (`* { border-color: var(--border) }`), so restore that one. */
+:root[data-weft-input-modality="pointer"] :is(
+  [data-slot="dropdown-menu-trigger"],
+  [data-slot="context-menu-trigger"],
+  [data-slot="context-menu-trigger"] :is(a, button, [tabindex])
+):focus-visible {
+  border-color: var(--border);
+}
 /* SC 2.4.11 Focus Not Obscured (Minimum), Level AA — heuristic 9.
  *
  * Focusing a control below the fold scrolls it flush to the viewport top, which

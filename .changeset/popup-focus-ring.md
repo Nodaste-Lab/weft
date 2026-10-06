@@ -15,8 +15,9 @@ and context-menu triggers now start a tiny modality tracker
 (`src/ui/input-modality.ts`) that sets `data-weft-input-modality` on `<html>`
 (`pointer` after a press, `keyboard` after a navigation key; lone modifiers,
 Cmd/Ctrl/Alt chords and Escape do not count). While it reads `pointer`, those
-triggers, links and buttons inside a context-menu trigger, and the select
-trigger's `focus-visible:border-ring` border show their resting look.
+triggers, links and buttons inside a context-menu trigger, and the
+`focus-visible:border-ring` border on the select trigger and on a Button used
+as a dropdown-menu or context-menu trigger show their resting look.
 
 Consumers that already carry a workaround can delete it. CSS-only consumers
 (injected panel iframes) never run the tracker, so the attribute stays unset and

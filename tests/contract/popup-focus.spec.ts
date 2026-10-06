@@ -16,11 +16,14 @@ const SPECIMENS = `
     <button id="pf-before">before</button>
     <style>
       /* What Tailwind's focus-visible:border-ring utility does, in its layer. */
-      @layer utilities { #pf-select-trigger:focus-visible { border-color: rgb(1, 2, 3); } }
+      @layer utilities {
+        #pf-select-trigger:focus-visible { border-color: rgb(1, 2, 3); }
+        #pf-menu-trigger:focus-visible, #pf-row-link:focus-visible { border-color: rgb(1, 2, 3); }
+      }
     </style>
     <button id="pf-select-trigger" data-slot="select-trigger" style="border-width:1px;border-style:solid">Space</button>
-    <button id="pf-menu-trigger" data-slot="dropdown-menu-trigger">Create</button>
-    <div data-slot="context-menu-trigger"><a id="pf-row-link" href="#row">Row</a></div>
+    <button id="pf-menu-trigger" data-slot="dropdown-menu-trigger" style="border-width:1px;border-style:solid">Create</button>
+    <div data-slot="context-menu-trigger"><a id="pf-row-link" href="#row" style="border-width:1px;border-style:solid">Row</a></div>
     <button id="pf-plain">plain</button>
     <div role="listbox" data-slot="select-content" id="pf-listbox" tabindex="-1">
       <div role="option" data-slot="select-item" id="pf-option" tabindex="-1">Private</div>
@@ -85,22 +88,30 @@ test.describe('popup triggers', () => {
     });
   }
 
-  test('the select trigger drops the ring-coloured border after a pointer press', async ({ page }) => {
-    await setup(page);
-    await page.focus('#pf-select-trigger');
-    expect((await ring(page, '#pf-select-trigger')).border).toBe('rgb(1, 2, 3)');
-    await page.evaluate(() => document.documentElement.setAttribute('data-weft-input-modality', 'pointer'));
-    const resting = await page.evaluate(() => {
-      const probe = document.createElement('div');
-      probe.style.borderTop = '1px solid var(--input)';
-      document.body.append(probe);
-      const color = getComputedStyle(probe).borderTopColor;
-      probe.remove();
-      return color;
+  // The select trigger rests on `border-input`; a Button (the usual asChild
+  // dropdown-menu or context-menu trigger) rests on the base-layer `--border`.
+  for (const [selector, token] of [
+    ['#pf-select-trigger', '--input'],
+    ['#pf-menu-trigger', '--border'],
+    ['#pf-row-link', '--border'],
+  ] as const) {
+    test(`${selector} drops the ring-coloured border after a pointer press`, async ({ page }) => {
+      await setup(page);
+      await page.focus(selector);
+      expect((await ring(page, selector)).border).toBe('rgb(1, 2, 3)');
+      await page.evaluate(() => document.documentElement.setAttribute('data-weft-input-modality', 'pointer'));
+      const resting = await page.evaluate((t) => {
+        const probe = document.createElement('div');
+        probe.style.borderTop = `1px solid var(${t})`;
+        document.body.append(probe);
+        const color = getComputedStyle(probe).borderTopColor;
+        probe.remove();
+        return color;
+      }, token);
+      expect((await ring(page, selector)).border).toBe(resting);
+      expect(resting).not.toBe('rgb(1, 2, 3)');
     });
-    expect((await ring(page, '#pf-select-trigger')).border).toBe(resting);
-    expect(resting).not.toBe('rgb(1, 2, 3)');
-  });
+  }
 
   test('controls outside the popup families keep the ring after a pointer press', async ({ page }) => {
     await setup(page);
