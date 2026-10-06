@@ -97,7 +97,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
           <span style={crumbStyle}>{crumb(route)}</span>
           <ThemeToggle />
         </header>
-        <main id="main" style={mainStyle}>
+        <main id="main" tabIndex={-1} style={mainStyle}>
           {children}
         </main>
       </div>

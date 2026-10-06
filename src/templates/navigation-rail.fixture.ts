@@ -36,6 +36,12 @@ export const navigationRailTree: NavigationRailTreeNode[] = [
     children: [
       { id: 'crm-1', title: 'Acme — notes', kind: 'document', href: '#crm-1' },
       { id: 'crm-2', title: 'Renewal checklist', kind: 'document', href: '#crm-2' },
+      {
+        id: 'crm-archive',
+        title: 'Archive',
+        kind: 'folder',
+        children: [{ id: 'crm-3', title: '2025 renewals', kind: 'document', href: '#crm-3' }],
+      },
     ],
   },
   { id: 'legal', title: 'Legal', kind: 'folder', children: [] },

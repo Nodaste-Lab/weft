@@ -127,15 +127,12 @@ function TreeNode({
   labels: NavigationRailLabels;
   onNodeAction?: (node: NavigationRailTreeNode) => void;
 }) {
-  const action = (
-    <SidebarMenuAction
-      showOnHover
-      aria-label={labels.nodeActions(node.title)}
-      onClick={() => onNodeAction?.(node)}
-    >
+  // No handler, no control: a tabbable button that does nothing is a dead click.
+  const action = onNodeAction ? (
+    <SidebarMenuAction showOnHover aria-label={labels.nodeActions(node.title)} onClick={() => onNodeAction(node)}>
       <MoreHorizontal aria-hidden="true" focusable="false" />
     </SidebarMenuAction>
-  );
+  ) : null;
 
   if (node.kind === 'folder') {
     return (
@@ -191,21 +188,31 @@ function SubTreeNode({
   labels: NavigationRailLabels;
   onNodeAction?: (node: NavigationRailTreeNode) => void;
 }) {
+  const action = onNodeAction ? (
+    <SidebarMenuAction showOnHover aria-label={labels.nodeActions(node.title)} onClick={() => onNodeAction(node)}>
+      <MoreHorizontal aria-hidden="true" focusable="false" />
+    </SidebarMenuAction>
+  ) : null;
+
   if (node.kind === 'folder') {
     return (
       <Collapsible asChild className="group/collapsible">
         <SidebarMenuSubItem>
           <CollapsibleTrigger asChild>
-            <SidebarMenuSubButton>
-              <Folder aria-hidden="true" focusable="false" />
-              <span>{node.title}</span>
-              <ChevronRight
-                aria-hidden="true"
-                focusable="false"
-                className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
-              />
+            {/* SidebarMenuSubButton is an anchor by default; a disclosure is a button. */}
+            <SidebarMenuSubButton asChild>
+              <button type="button">
+                <Folder aria-hidden="true" focusable="false" />
+                <span>{node.title}</span>
+                <ChevronRight
+                  aria-hidden="true"
+                  focusable="false"
+                  className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                />
+              </button>
             </SidebarMenuSubButton>
           </CollapsibleTrigger>
+          {action}
           {node.children && node.children.length > 0 ? (
             <CollapsibleContent>
               <SidebarMenuSub>
@@ -227,6 +234,7 @@ function SubTreeNode({
           <span>{node.title}</span>
         </a>
       </SidebarMenuSubButton>
+      {action}
     </SidebarMenuSubItem>
   );
 }

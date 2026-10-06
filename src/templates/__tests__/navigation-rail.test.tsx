@@ -24,6 +24,7 @@ function renderFixture(overrides: Partial<React.ComponentProps<typeof Navigation
       profile={navigationRailProfile}
       labels={navigationRailLabels}
       onCreate={() => {}}
+      onNodeAction={() => {}}
       {...overrides}
     />,
   );
@@ -68,6 +69,25 @@ describe('NavigationRail template', () => {
     expect(action.className).toMatch(/group-hover\/menu-item:opacity-100/);
     fireEvent.click(action);
     expect(onNodeAction).toHaveBeenCalledWith(expect.objectContaining({ id: 'legal' }));
+  });
+
+  it('renders no row actions when no handler is given (no dead clicks)', () => {
+    renderFixture({ onNodeAction: undefined });
+    expect(screen.queryByRole('button', { name: /Document actions/ })).toBeNull();
+  });
+
+  it('nested folders are keyboard-operable disclosure buttons with their own row actions', () => {
+    const onNodeAction = vi.fn();
+    renderFixture({ onNodeAction });
+    fireEvent.click(screen.getByRole('button', { name: 'CRM records' }));
+    const nested = screen.getByRole('button', { name: 'Archive' });
+    expect(nested.tagName).toBe('BUTTON');
+    expect(nested).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(nested);
+    expect(nested).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('link', { name: /2025 renewals/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Document actions for 2025 renewals' }));
+    expect(onNodeAction).toHaveBeenCalledWith(expect.objectContaining({ id: 'crm-3' }));
   });
 
   it('ships no fixture content as a default (honest empties)', () => {

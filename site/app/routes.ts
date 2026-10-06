@@ -9,6 +9,11 @@ export interface Route {
 
 const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all'];
 
+/** True for an app route (`#/…`); false for a plain fragment such as `#main`, which the browser owns. */
+export function isRouteHash(hash: string): boolean {
+  return hash === '' || hash === '#' || hash.startsWith('#/');
+}
+
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#\/?/, '').replace(/\/+$/, '');
   if (!path) return { section: 'home' };
@@ -24,9 +29,14 @@ export function hrefFor(section: Section, id?: string): string {
 }
 
 export function useRoute(): Route {
-  const [route, setRoute] = React.useState<Route>(() => parseHash(window.location.hash));
+  const [route, setRoute] = React.useState<Route>(() => (isRouteHash(window.location.hash) ? parseHash(window.location.hash) : { section: 'home' }));
   React.useEffect(() => {
-    const onChange = () => setRoute(parseHash(window.location.hash));
+    const onChange = () => {
+      // A fragment link (skip link, in-page anchor) is not a navigation: keep
+      // the route and let the browser move to the target.
+      if (!isRouteHash(window.location.hash)) return;
+      setRoute(parseHash(window.location.hash));
+    };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);
