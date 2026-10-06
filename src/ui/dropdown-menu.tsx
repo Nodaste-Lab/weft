@@ -4,6 +4,7 @@ import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 
+import { useInputModality } from "./input-modality";
 import { cn } from "./utils";
 
 function DropdownMenu({
@@ -24,6 +25,7 @@ const DropdownMenuTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
 >(({ ...props }, ref) => {
+  useInputModality();
   return (
     <DropdownMenuPrimitive.Trigger
       ref={ref}
