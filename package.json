@@ -70,6 +70,7 @@
     "test:contrast": "node --test scripts/__tests__/contrast-contract.node.mjs",
     "test:template-contract": "node --test scripts/__tests__/template-contract.node.mjs",
     "test:react-template-contract": "node --test scripts/__tests__/react-template-contract.node.mjs",
+    "test:site-docs": "node --test scripts/__tests__/site-docs-contract.node.mjs",
     "test:review-gate": "node --test scripts/__tests__/extract-constraints.node.mjs scripts/__tests__/review-gate.node.mjs scripts/__tests__/release-local.node.mjs",
     "release:local": "bash scripts/release-local.sh"
   },

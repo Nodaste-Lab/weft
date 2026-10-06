@@ -2966,12 +2966,18 @@ function TemplatesSection() {
             </div>
           </div>
           <div style={templateSurfaceStyle}>
-            {template.id === 'navigation-rail' ? <NavigationRailTemplateDemo /> : null}
+            <TemplateExample id={template.id} />
           </div>
         </section>
       ))}
     </section>
   );
+}
+
+/** The live example for one react template, without the card chrome; the site's template pages use it. */
+export function TemplateExample({ id }: { id: string }) {
+  if (id === 'navigation-rail') return <NavigationRailTemplateDemo />;
+  return null;
 }
 
 function NavigationRailTemplateDemo() {
