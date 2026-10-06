@@ -3,7 +3,8 @@ import { TemplateExample } from '../../../src/gallery/DesignSystemUiGallery';
 import { docForPath, sectionFor } from '../content';
 import { displayTitle, templates } from '../nav';
 import { hrefFor } from '../routes';
-import { Code, Frame, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, tagStyle } from './shared';
+import { Code, Frame, LastEdited, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, tagStyle } from './shared';
+import { templateDate } from '../dates';
 
 export function TemplatePage({ id }: { id?: string }) {
   if (!id) {
@@ -38,6 +39,7 @@ export function TemplatePage({ id }: { id?: string }) {
             <Code>{id}</Code>
             <span style={tagStyle}>{kind}</span>
             <span style={tagStyle}>v{template.version}</span>
+            <LastEdited entry={templateDate(id)} />
           </>
         }
       />

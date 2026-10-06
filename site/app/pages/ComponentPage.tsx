@@ -8,7 +8,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../sr
 import { Button } from '../../../src/ui/button';
 import { Playground } from './Playground';
 import { SpecimenMatrix } from './SpecimenMatrix';
-import { Code, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
+import { Code, LastEdited, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
+import { componentDate } from '../dates';
 
 type Surface = { version: string; surface: { variants: Record<string, string[]>; props: Record<string, string>; native: string[] } };
 
@@ -48,6 +49,7 @@ export function ComponentPage({ id }: { id?: string }) {
           <>
             <Code>{id}</Code>
             <span style={tagStyle}>v{primitive.version}</span>
+            <LastEdited entry={componentDate(id)} />
           </>
         }
       />

@@ -15,3 +15,5 @@ test-results/
 # container. Keep the local artifacts out of the tree so the review gate
 # never binds a verdict to a dirty checkout.
 tests/visual/**/*-darwin.png
+site/generated/
+.claude/settings.local.json

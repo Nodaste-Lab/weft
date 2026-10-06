@@ -49,6 +49,7 @@ npm run test:props                       # the gate's own unit tests
 node scripts/check-pure-token-file.mjs   # weft.css stays injection-safe
 node scripts/check-raw-colors.mjs        # tokens only outside css/
 npm run build                            # tsup ESM bundle to dist/
+npm run site:dev                         # the design system site (one page per component; see .claude/skills/weft-site)
 npx changeset                            # record a release intent (patch/minor/major)
 npm run release:local -- --publish       # cut the release from main (Actions are off; see Release flow)
 ```

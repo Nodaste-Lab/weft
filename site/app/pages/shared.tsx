@@ -148,3 +148,19 @@ export const tagStyle: CSSProperties = {
   fontSize: 11,
   padding: '2px 8px',
 };
+
+/** "Last edited 2026-10-06" with the per-file breakdown in the title; "uncommitted" when a part has unsaved edits. */
+export function LastEdited({ entry }: { entry?: { latest: string | null; source: string | null; docs: string | null; specimen?: string | null; fixture?: string | null } }) {
+  if (!entry || !entry.latest) return null;
+  const parts = [
+    ['source', entry.source],
+    ['docs', entry.docs],
+    ['specimen', entry.specimen],
+    ['fixture', entry.fixture],
+  ].filter(([, v]) => v) as [string, string][];
+  return (
+    <span style={tagStyle} title={parts.map(([k, v]) => `${k}: ${v}`).join(' · ')} data-last-edited={entry.latest}>
+      Last edited {entry.latest}
+    </span>
+  );
+}
