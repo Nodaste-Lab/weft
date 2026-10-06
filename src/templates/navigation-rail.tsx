@@ -24,6 +24,7 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
+  SidebarTrigger,
 } from '../ui/sidebar';
 
 /**
@@ -56,13 +57,22 @@ export interface NavigationRailNavItem {
   isActive?: boolean;
 }
 
-export interface NavigationRailTreeNode {
+export interface NavigationRailFolderNode {
   id: string;
   title: string;
-  kind: 'folder' | 'document';
-  href?: string;
+  kind: 'folder';
   children?: NavigationRailTreeNode[];
 }
+
+export interface NavigationRailDocumentNode {
+  id: string;
+  title: string;
+  kind: 'document';
+  /** Where the row navigates. Required: a document row is always a link. */
+  href: string;
+}
+
+export type NavigationRailTreeNode = NavigationRailFolderNode | NavigationRailDocumentNode;
 
 export interface NavigationRailProfile {
   name: string;
@@ -83,8 +93,10 @@ export interface NavigationRailLabels {
   create: string;
   /** Accessible name of a row's actions control, given the row title. */
   nodeActions: (title: string) => string;
-  /** Accessible name of the rail's resize/toggle rail. */
-  toggle?: string;
+  /** Accessible name of the trigger in the main column that opens and closes the rail. */
+  toggle: string;
+  /** Accessible name of the edge rail, the pointer affordance on wide viewports. Distinct from `toggle`: two controls never share a name. */
+  rail: string;
 }
 
 export interface NavigationRailProps {
@@ -308,9 +320,17 @@ export function NavigationRail({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
-        <SidebarRail aria-label={labels.toggle} />
+        <SidebarRail aria-label={labels.rail} />
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        {/* The rail is off-canvas: on a narrow viewport it is a closed sheet,
+            and the edge rail is a desktop affordance, so the main column
+            always carries a named trigger. */}
+        <div data-slot="navigation-rail-bar" className="flex items-center gap-2 px-2 py-1">
+          <SidebarTrigger aria-label={labels.toggle} />
+        </div>
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }

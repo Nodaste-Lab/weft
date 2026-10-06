@@ -12,6 +12,11 @@ const components = (propsSnapshot as { components: Record<string, { surface: { v
 const primitiveIds = new Set(manifest.uiPrimitives.map((p) => p.id));
 
 describe('specimens', () => {
+  it('cover every manifest primitive', () => {
+    const missing = [...primitiveIds].filter((id) => !id.endsWith('.figma') && !(id in specimens));
+    expect(missing).toEqual([]);
+  });
+
   for (const [id, specimen] of Object.entries(specimens)) {
     describe(id, () => {
       it('names a manifest primitive and a real module', () => {

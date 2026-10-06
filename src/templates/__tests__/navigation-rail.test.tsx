@@ -40,6 +40,12 @@ describe('NavigationRail template', () => {
     await expectA11yClean(container);
   });
 
+  it('always carries a named trigger in the main column, so an off-canvas rail can be opened', () => {
+    renderFixture();
+    const trigger = screen.getByRole('button', { name: 'Toggle navigation' });
+    expect(trigger.closest('[data-slot="navigation-rail-bar"]')).not.toBeNull();
+  });
+
   it('shows a navigation count as a badge', () => {
     renderFixture();
     const signals = screen.getByRole('link', { name: /Signals/ }).closest('li');

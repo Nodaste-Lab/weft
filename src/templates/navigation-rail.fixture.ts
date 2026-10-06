@@ -59,4 +59,5 @@ export const navigationRailLabels: NavigationRailLabels = {
   create: 'Create document',
   nodeActions: (title) => `Document actions for ${title}`,
   toggle: 'Toggle navigation',
+  rail: 'Collapse or expand navigation from the edge',
 };

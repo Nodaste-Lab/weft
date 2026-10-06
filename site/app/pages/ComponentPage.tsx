@@ -11,7 +11,8 @@ import { SpecimenMatrix } from './SpecimenMatrix';
 import { Code, LastEdited, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
 import { componentDate } from '../dates';
 
-type Surface = { version: string; surface: { variants: Record<string, string[]>; props: Record<string, string>; native: string[] } };
+type PropContract = { optional: boolean; union: string[] | null };
+type Surface = { version: string; surface: { variants: Record<string, string[]>; props: Record<string, PropContract>; native: string[] } };
 
 export function ComponentPage({ id }: { id?: string }) {
   if (!id) {
@@ -108,7 +109,18 @@ function ApiTables({ api }: { api: Surface }) {
         <Table head={['Variant', 'Values']} rows={variants.map(([name, values]) => [<Code key="n">{name}</Code>, values.map((v) => <Code key={v}>{v}</Code>)])} />
       ) : null}
       {props.length ? (
-        <Table head={['Prop', 'Type']} rows={props.map(([name, type]) => [<Code key="n">{name}</Code>, <span key="t" style={{ fontFamily: 'var(--weft-font-mono)', fontSize: 12 }}>{String(type)}</span>])} />
+        <Table
+          head={['Prop', 'Required', 'Values']}
+          rows={props.map(([name, contract]) => [
+            <Code key="n">{name}</Code>,
+            <span key="r" style={{ fontSize: 12 }}>{contract.optional ? 'optional' : 'required'}</span>,
+            contract.union && contract.union.length ? (
+              contract.union.map((v) => <Code key={v}>{v}</Code>)
+            ) : (
+              <span key="v" style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>not enumerable</span>
+            ),
+          ])}
+        />
       ) : null}
       {native.length ? (
         <p style={{ margin: 0, fontSize: 13, color: 'var(--muted-foreground)' }}>

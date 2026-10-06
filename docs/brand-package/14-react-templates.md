@@ -54,6 +54,8 @@ with `showOnHover`, menu badge, sub-menu for nested rows, footer, rail),
 `collapsible` for folders, `select` for the space picker, `avatar` for the
 profile.
 
+**Opening the rail.** The rail is off-canvas. The main column carries a `SidebarTrigger` named by `labels.toggle`, so a narrow viewport (where the rail is a closed sheet) and a keyboard user both have a route to it; the edge `SidebarRail`, named by `labels.rail`, is the pointer affordance on wide viewports. The two names differ: two controls never share an accessible name.
+
 **Data shape.** `spaces` + `currentSpaceId`; `navigation` rows with optional
 `count` and `isActive`; `tree` of `folder` / `document` nodes; `profile`; and
 `labels` for every accessible name (group labels, picker, create, per-row
