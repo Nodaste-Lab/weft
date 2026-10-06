@@ -4,6 +4,7 @@ import { DesignSystemUiGallery } from '../../../src/gallery/DesignSystemUiGaller
 import { COMPONENT_DOC_SECTIONS, componentDocs, isWritten, splitSections } from '../content';
 import { categoryLabels, displayTitle, patternsUsing, primitiveById, primitives, templatesUsing } from '../nav';
 import { hrefFor } from '../routes';
+import { SpecimenMatrix } from './SpecimenMatrix';
 import { Code, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
 
 type Surface = { version: string; surface: { variants: Record<string, string[]>; props: Record<string, string>; native: string[] } };
@@ -52,6 +53,9 @@ export function ComponentPage({ id }: { id?: string }) {
       <div data-component-example={id}>
         <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />
       </div>
+
+      <SectionHeading id="variants-and-states">Variants and states</SectionHeading>
+      <SpecimenMatrix id={id} />
 
       {COMPONENT_DOC_SECTIONS.map((heading) => (
         <React.Fragment key={heading}>
