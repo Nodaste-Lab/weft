@@ -3,6 +3,16 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
 import designSystemManifest from '../../manifest.json';
+import { NavigationRail } from '../templates/navigation-rail';
+import {
+  navigationRailCurrentSpaceId,
+  navigationRailLabels,
+  navigationRailNavigation,
+  navigationRailProfile,
+  navigationRailSpaces,
+  navigationRailTree,
+  navigationRailTreeLabel,
+} from '../templates/navigation-rail.fixture';
 import {
   Accordion,
   AccordionContent,
@@ -593,11 +603,15 @@ function HudToggleSwitchDemo() {
 type DesignSystemUiGalleryProps = {
   ids?: readonly string[];
   showCategoryLinks?: boolean;
+  /** Render the Templates section (manifest.templates, kind: react). Defaults
+   *  to on for the full gallery and off when a consumer passes an `ids` subset. */
+  showTemplates?: boolean;
 };
 
 export function DesignSystemUiGallery({
   ids = ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS,
   showCategoryLinks = true,
+  showTemplates = ids === ALPHABETIZED_SHOWCASED_PRIMITIVE_IDS,
 }: DesignSystemUiGalleryProps) {
   const [switchOn, setSwitchOn] = React.useState(true);
   const [toggleOn, setToggleOn] = React.useState(true);
@@ -2823,7 +2837,8 @@ export function DesignSystemUiGallery({
       </PrimitiveCard>
 
       </div>
-    </div>
+            {showTemplates ? <TemplatesSection /> : null}
+      </div>
     </PrimitiveVisibilityContext.Provider>
   );
 }
@@ -2884,6 +2899,133 @@ function PrimitiveCard({
     </section>
   );
 }
+
+
+const reactTemplates = designSystemManifest.templates.filter(
+  (template) => (template as { kind?: string }).kind === 'react',
+) as ReadonlyArray<{
+  id: string;
+  version: string;
+  summary: string;
+  composes?: readonly string[];
+  docs: string;
+}>;
+
+function templateDisplayTitle(id: string) {
+  return id
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+/**
+ * Templates — the third Weft level. Each react template renders with its own
+ * fixture inside a bounded frame, with the primitives it composes listed
+ * beside it so the composition strategy is the thing on display.
+ */
+function TemplatesSection() {
+  return (
+    <section id="templates" aria-labelledby="templates-heading" style={templatesSectionStyle}>
+      <div style={{ display: 'grid', gap: 4 }}>
+        <h2 id="templates-heading" style={templatesHeadingStyle}>
+          Templates
+        </h2>
+        <p style={summaryStyle}>
+          Whole surfaces composed from components. A template is a heuristic: a product wires the same
+          primitives to its own data and routing.
+        </p>
+      </div>
+      {reactTemplates.map((template) => (
+        <section
+          key={template.id}
+          id={`${template.id}-template`}
+          data-template-id={template.id}
+          style={templateCardStyle}
+        >
+          <div style={{ display: 'grid', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+              <span style={titleStyle}>{templateDisplayTitle(template.id)}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={categoryBadgeStyle}>Template · react</span>
+                <code style={codeStyle}>{template.id}</code>
+                <span style={metaTextStyle}>v{template.version}</span>
+              </div>
+            </div>
+            <p style={summaryStyle}>{template.summary}</p>
+            <p style={summaryStyle}>
+              Composes:{' '}
+              {(template.composes ?? []).map((id, index) => (
+                <React.Fragment key={id}>
+                  {index > 0 ? ', ' : null}
+                  <a href={`#${id}-example`} style={ownerLinkStyle}>
+                    {id}
+                  </a>
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
+          <div style={templateSurfaceStyle}>
+            {template.id === 'navigation-rail' ? <NavigationRailTemplateDemo /> : null}
+          </div>
+        </section>
+      ))}
+    </section>
+  );
+}
+
+function NavigationRailTemplateDemo() {
+  const [spaceId, setSpaceId] = React.useState(navigationRailCurrentSpaceId);
+  return (
+    // `Sidebar` renders position:fixed; the transform makes this wrapper the
+    // containing block so the rail resolves to this frame, as in the sidebar card.
+    <div className="flex h-[420px] w-full overflow-hidden rounded-md border [transform:translateZ(0)]">
+      <NavigationRail
+        spaces={navigationRailSpaces}
+        currentSpaceId={spaceId}
+        onSpaceChange={setSpaceId}
+        navigation={navigationRailNavigation}
+        treeLabel={navigationRailTreeLabel}
+        tree={navigationRailTree}
+        onCreate={() => undefined}
+        onNodeAction={() => undefined}
+        profile={navigationRailProfile}
+        labels={navigationRailLabels}
+        className="min-h-0 h-full"
+      >
+        <div className="text-muted-foreground p-3 text-xs">Main column beside the rail.</div>
+      </NavigationRail>
+    </div>
+  );
+}
+
+const templatesSectionStyle: CSSProperties = {
+  display: 'grid',
+  gap: 14,
+  marginTop: 24,
+};
+
+const templatesHeadingStyle: CSSProperties = {
+  margin: 0,
+  color: 'var(--hud-text-1)',
+  fontSize: 'var(--text-lg)',
+  fontWeight: 600,
+};
+
+const templateCardStyle: CSSProperties = {
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-sm)',
+  background: 'var(--hud-surface-raised)',
+  padding: 16,
+  display: 'grid',
+  gap: 12,
+};
+
+const templateSurfaceStyle: CSSProperties = {
+  background: 'var(--hud-section-fill-medium)',
+  border: '1px solid var(--hud-border)',
+  borderRadius: 'var(--radius-sm)',
+  padding: 14,
+};
 
 const galleryPageStyle: CSSProperties = {
   display: 'grid',

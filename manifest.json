@@ -1050,7 +1050,23 @@
   ],
   "templates": [
     {
+      "id": "navigation-rail",
+      "kind": "react",
+      "path": "src/templates/navigation-rail.tsx",
+      "fixture": "src/templates/navigation-rail.fixture.ts",
+      "version": "1.0.0",
+      "summary": "Workspace rail — space picker, section navigation with counts, document tree with folders and per-row actions, signed-in profile. React template composed only from Weft primitives; all content arrives through props.",
+      "composes": [
+        "sidebar",
+        "collapsible",
+        "select",
+        "avatar"
+      ],
+      "docs": "docs/brand-package/14-react-templates.md"
+    },
+    {
       "id": "weft-board",
+      "kind": "css",
       "path": "css/weft-templates.css",
       "classPrefix": "weft-board",
       "version": "2.0.0",

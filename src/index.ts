@@ -107,3 +107,5 @@ export * from './ui/use-mobile';
 export * from './ui/utils';
 export * from './ui/hud-issue-contract';
 export * from './ui/knowledge-search-categories';
+// React templates (manifest.templates, kind: react).
+export * from './templates/navigation-rail';
