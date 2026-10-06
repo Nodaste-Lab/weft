@@ -53,3 +53,4 @@ A binary setting that takes effect the moment it changes. It owns the track, the
 - The track measures 24×40, meeting the floor on its own (`--weft-touch-target`, WCAG 2.5.8). The labelled row widens the target further.
 - There is no read-only switch. A value that must be shown but not changed is disabled, with the reason in text.
 - The thumb's transform transition stops under `prefers-reduced-motion`; the state remains readable from position.
+- Open: the unchecked track is drawn with `bg-switch-background`, and no `--switch-background` token is defined in any Weft stylesheet, so in the light theme an unchecked switch has no visible track (WCAG 1.4.11 non-text contrast). The dark theme falls back to `bg-input/80`. The fix is a token in `css/theme.css`, not a consumer workaround.

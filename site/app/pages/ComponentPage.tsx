@@ -4,6 +4,9 @@ import { DesignSystemUiGallery } from '../../../src/gallery/DesignSystemUiGaller
 import { COMPONENT_DOC_SECTIONS, componentDocs, isWritten, splitSections } from '../content';
 import { categoryLabels, displayTitle, patternsUsing, primitiveById, primitives, templatesUsing } from '../nav';
 import { hrefFor } from '../routes';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../src/ui/collapsible';
+import { Button } from '../../../src/ui/button';
+import { Playground } from './Playground';
 import { SpecimenMatrix } from './SpecimenMatrix';
 import { Code, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
 
@@ -55,7 +58,17 @@ export function ComponentPage({ id }: { id?: string }) {
       </div>
 
       <SectionHeading id="variants-and-states">Variants and states</SectionHeading>
-      <SpecimenMatrix id={id} />
+      <Playground id={id} />
+      <Collapsible style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+        <CollapsibleTrigger asChild>
+          <Button type="button" variant="outline" size="sm" style={{ justifySelf: 'start' }}>
+            All variants and states at once
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SpecimenMatrix id={id} />
+        </CollapsibleContent>
+      </Collapsible>
 
       {COMPONENT_DOC_SECTIONS.map((heading) => (
         <React.Fragment key={heading}>
