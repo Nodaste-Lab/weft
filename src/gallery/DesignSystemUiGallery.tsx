@@ -2952,17 +2952,18 @@ function TemplatesSection() {
               </div>
             </div>
             <p style={summaryStyle}>{template.summary}</p>
-            <p style={summaryStyle}>
-              Composes:{' '}
-              {(template.composes ?? []).map((id, index) => (
-                <React.Fragment key={id}>
-                  {index > 0 ? ', ' : null}
-                  <a href={`#${id}-example`} style={ownerLinkStyle}>
-                    {id}
-                  </a>
-                </React.Fragment>
-              ))}
-            </p>
+            <div style={{ display: 'grid', gap: 4 }}>
+              <span style={metaTextStyle}>Components used ({(template.composes ?? []).length})</span>
+              <ul aria-label={`Components used by ${templateDisplayTitle(template.id)}`} style={composesListStyle}>
+                {(template.composes ?? []).map((id) => (
+                  <li key={id}>
+                    <a href={`#${id}-example`} style={ownerLinkStyle}>
+                      {id}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div style={templateSurfaceStyle}>
             {template.id === 'navigation-rail' ? <NavigationRailTemplateDemo /> : null}
@@ -2997,6 +2998,15 @@ function NavigationRailTemplateDemo() {
     </div>
   );
 }
+
+const composesListStyle: CSSProperties = {
+  margin: 0,
+  padding: 0,
+  listStyle: 'none',
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '4px 12px',
+};
 
 const templatesSectionStyle: CSSProperties = {
   display: 'grid',

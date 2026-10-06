@@ -70,6 +70,9 @@ for (const t of reactTemplates) {
     for (const id of t.composes) {
       assert.ok(used.has(id), `${where} declares composes "${id}" but never imports ../ui/${id}`);
     }
+    for (const id of used) {
+      assert.ok(t.composes.includes(id), `${where} imports ../ui/${id} but composes[] does not list it — the list must name every component used`);
+    }
   });
 
   test(`R3 ${where}: token-only`, () => {
