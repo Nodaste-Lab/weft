@@ -90,6 +90,22 @@ describe('NavigationRail template', () => {
     expect(onNodeAction).toHaveBeenCalledWith(expect.objectContaining({ id: 'crm-3' }));
   });
 
+  it('an empty folder is an inert row, not a disclosure button', () => {
+    renderFixture();
+    expect(screen.queryByRole('button', { name: 'Legal' })).toBeNull();
+    const row = screen.getByText('Legal').closest('[data-empty-folder]');
+    expect(row).not.toBeNull();
+    expect(row).not.toHaveAttribute('aria-expanded');
+  });
+
+  it('nested row actions reveal on hover and focus-within of the sub-item', () => {
+    renderFixture();
+    fireEvent.click(screen.getByRole('button', { name: 'CRM records' }));
+    const action = screen.getByRole('button', { name: 'Document actions for Acme — notes' });
+    expect(action.className).toMatch(/group-hover\/menu-sub-item:opacity-100/);
+    expect(action.className).toMatch(/group-focus-within\/menu-sub-item:opacity-100/);
+  });
+
   it('ships no fixture content as a default (honest empties)', () => {
     render(
       <NavigationRail

@@ -134,6 +134,21 @@ function TreeNode({
     </SidebarMenuAction>
   ) : null;
 
+  if (node.kind === 'folder' && !(node.children && node.children.length > 0)) {
+    // An empty folder is a fact, not a disclosure: no chevron, no aria-expanded, nothing to expand.
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton asChild>
+          <div data-empty-folder="">
+            <Folder aria-hidden="true" focusable="false" />
+            <span>{node.title}</span>
+          </div>
+        </SidebarMenuButton>
+        {action}
+      </SidebarMenuItem>
+    );
+  }
+
   if (node.kind === 'folder') {
     return (
       <Collapsible asChild className="group/collapsible">
@@ -188,11 +203,32 @@ function SubTreeNode({
   labels: NavigationRailLabels;
   onNodeAction?: (node: NavigationRailTreeNode) => void;
 }) {
+  // SidebarMenuAction's reveal targets group/menu-item; a sub-item is
+  // group/menu-sub-item, so the same reveal is added for that group here.
   const action = onNodeAction ? (
-    <SidebarMenuAction showOnHover aria-label={labels.nodeActions(node.title)} onClick={() => onNodeAction(node)}>
+    <SidebarMenuAction
+      showOnHover
+      className="group-hover/menu-sub-item:opacity-100 group-focus-within/menu-sub-item:opacity-100"
+      aria-label={labels.nodeActions(node.title)}
+      onClick={() => onNodeAction(node)}
+    >
       <MoreHorizontal aria-hidden="true" focusable="false" />
     </SidebarMenuAction>
   ) : null;
+
+  if (node.kind === 'folder' && !(node.children && node.children.length > 0)) {
+    return (
+      <SidebarMenuSubItem>
+        <SidebarMenuSubButton asChild>
+          <div data-empty-folder="">
+            <Folder aria-hidden="true" focusable="false" />
+            <span>{node.title}</span>
+          </div>
+        </SidebarMenuSubButton>
+        {action}
+      </SidebarMenuSubItem>
+    );
+  }
 
   if (node.kind === 'folder') {
     return (

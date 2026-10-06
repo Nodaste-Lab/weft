@@ -55,7 +55,11 @@ import {
 } from '../ui/card';
 import { Carousel } from '../ui/carousel';
 import { Checkbox } from '../ui/checkbox';
+import { AddItemButton } from '../ui/add-item-button';
 import { Chip } from '../ui/chip';
+import { EyebrowLabel } from '../ui/eyebrow-label';
+import { PillToggleGroup, PillToggleGroupItem } from '../ui/pill-toggle-group';
+import { SourcePill } from '../ui/source-pill';
 import { Dot } from '../ui/dot';
 import { CodeBlock } from '../ui/code-block';
 import { ContentViewer } from '../ui/content-viewer';
@@ -308,6 +312,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'repeat-list-field-column',
   'resizable',
   'scroll-area',
+  'search-field',
   'section-block',
   'section-item',
   'select',
@@ -427,6 +432,19 @@ const componentShelfAnchorByCategory: Record<string, string> = {
 
 function ownerAnchorForComponent(id: string): string {
   return id;
+}
+
+function PillToggleGroupDemo() {
+  const [period, setPeriod] = React.useState('week');
+  return (
+    <div style={{ width: 280 }}>
+      <PillToggleGroup value={period} onValueChange={setPeriod} aria-label="Period">
+        <PillToggleGroupItem value="day">Day</PillToggleGroupItem>
+        <PillToggleGroupItem value="week">Week</PillToggleGroupItem>
+        <PillToggleGroupItem value="month">Month</PillToggleGroupItem>
+      </PillToggleGroup>
+    </div>
+  );
 }
 
 function AttentionTicketCardDemo() {
@@ -666,6 +684,49 @@ export function DesignSystemUiGallery({
             </AccordionItem>
           </Accordion>
         </PrimitiveCard>
+
+      <PrimitiveCard
+        id="add-item-button"
+        title="Add Item Button"
+        summary="Dashed-border 'add item' trigger for editable list footers."
+      >
+        <div style={{ display: 'grid', gap: 8, width: 220 }}>
+          <AddItemButton onClick={() => undefined}>Add item</AddItemButton>
+          <AddItemButton disabled>Add item</AddItemButton>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="eyebrow-label"
+        title="Eyebrow Label"
+        summary="Uppercase tracked-out section label. Picks up the mono face under data-palette='weft'."
+      >
+        <div style={{ display: 'grid', gap: 6 }}>
+          <EyebrowLabel>Section</EyebrowLabel>
+          <EyebrowLabel tone="muted">Muted section</EyebrowLabel>
+          <EyebrowLabel tone="accent" size="lg">Accent, large</EyebrowLabel>
+        </div>
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="pill-toggle-group"
+        title="Pill Toggle Group"
+        summary="Gap-separated pill segmented control. Distinct from joined ToggleGroup; used for period and mode selectors."
+      >
+        <PillToggleGroupDemo />
+      </PrimitiveCard>
+
+      <PrimitiveCard
+        id="source-pill"
+        title="Source Pill"
+        summary="Small monospace pill for file paths and origin tags."
+      >
+        <div style={{ display: 'grid', gap: 6, width: 200 }}>
+          <SourcePill>notes/2026-10-05.md</SourcePill>
+          <SourcePill tone="muted">notes/archive/2025-11-02.md</SourcePill>
+          <SourcePill>notes/projects/launch/2026-10-05-retrospective-and-follow-ups.md</SourcePill>
+        </div>
+      </PrimitiveCard>
 
       <PrimitiveCard
         id="alert-dialog"
