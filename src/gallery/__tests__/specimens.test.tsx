@@ -40,7 +40,9 @@ describe('specimens', () => {
         }
         const { container } = render(<div>{cells}</div>);
         expect(container.childElementCount).toBe(1);
-        await expectA11yClean(container);
+        // jsdom cannot hand axe a frame window, so axe is told not to enter
+        // iframes (frame-title still runs on the iframe element itself).
+        await expectA11yClean(container, { iframes: false });
       });
     });
   }

@@ -18,3 +18,12 @@ headings, `related[]`, pattern docs and template register entries, and runs
 in the release and review batteries. The one-page gallery stays at `#/all`
 at its previous geometry for the visual baselines. First written component
 doc: `sidebar`. No token, class or component prop change.
+
+Every component page also shows every variant and every state, each cell
+labelled with the JSX that produces it and the import line above: a
+specimen per component (`src/gallery/specimens/<category>.tsx`, 100 of
+100) says how to render one instance; the site lays out each enumerable
+prop from `props-snapshot.json` as a row, the specimen's states as another,
+and the first two axes as a grid. `src/gallery/__tests__/specimens.test.tsx`
+renders every cell with an axe pass. All 100 components have their seven
+documentation sections written.
