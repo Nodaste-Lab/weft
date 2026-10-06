@@ -4,11 +4,11 @@ import { render } from '@testing-library/react';
 import manifest from '../../../manifest.json';
 import propsSnapshot from '../../../props-snapshot.json';
 import { specimens } from '../specimens';
-import { coerceAxisValue } from '../specimen-types';
+import { axesFromSurface, coerceAxisValue } from '../specimen-types';
 import { expectA11yClean } from '../../test-support/ds-assert';
 
 type PropEntry = { optional: boolean; union: string[] | null };
-const components = (propsSnapshot as { components: Record<string, { surface: { props: Record<string, PropEntry> } }> }).components;
+const components = (propsSnapshot as { components: Record<string, { surface: { variants: Record<string, string[]>; props: Record<string, PropEntry>; native: string[] } }> }).components;
 const primitiveIds = new Set(manifest.uiPrimitives.map((p) => p.id));
 
 describe('specimens', () => {
@@ -19,20 +19,21 @@ describe('specimens', () => {
         expect(specimen.module).toBe(id);
       });
 
-      it('declared axes exist in the prop contract with a value union', () => {
+      it('declared axes exist in the prop contract with enumerable values', () => {
+        const available = new Set(axesFromSurface(components[id]?.surface).map((a) => a.prop));
         for (const axis of specimen.axes ?? []) {
-          expect(components[id]?.surface.props[axis]?.union, `${id}.${axis}`).toBeTruthy();
+          expect(available.has(axis), `${id}.${axis}`).toBe(true);
         }
       });
 
       it('renders every axis value and every state accessibly', async () => {
         const base = specimen.base ?? {};
-        const props = components[id]?.surface.props ?? {};
-        const axes = (specimen.axes ?? Object.keys(props).filter((k) => Array.isArray(props[k].union) && !['as', 'asChild'].includes(k)));
+        const all = axesFromSurface(components[id]?.surface);
+        const axes = specimen.axes ? specimen.axes.map((p) => all.find((a) => a.prop === p)).filter((a): a is { prop: string; values: string[] } => Boolean(a)) : all;
         const cells: React.ReactNode[] = [];
         for (const axis of axes) {
-          for (const value of props[axis].union ?? []) {
-            cells.push(<div key={`${axis}-${value}`}>{specimen.render({ ...base, ...(specimen.axisBase?.[axis] ?? {}), [axis]: coerceAxisValue(value) })}</div>);
+          for (const value of axis.values) {
+            cells.push(<div key={`${axis.prop}-${value}`}>{specimen.render({ ...base, ...(specimen.axisBase?.[axis.prop] ?? {}), [axis.prop]: coerceAxisValue(value) })}</div>);
           }
         }
         for (const state of specimen.states ?? []) {

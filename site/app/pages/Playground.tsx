@@ -4,9 +4,10 @@ import { Button } from '../../../src/ui/button';
 import { Checkbox } from '../../../src/ui/checkbox';
 import { ToggleGroup, ToggleGroupItem } from '../../../src/ui/toggle-group';
 import { specimens } from '../../../src/gallery/specimens';
-import { coerceAxisValue, jsxReference } from '../../../src/gallery/specimen-types';
-import { axesFor } from './SpecimenMatrix';
-import { metaLabelStyle } from './shared';
+import { coerceAxisValue, contractProps, jsxReference } from '../../../src/gallery/specimen-types';
+import { axesFor, surfaceFor } from './SpecimenMatrix';
+import { Code, metaLabelStyle } from './shared';
+import { displayTitle } from '../nav';
 
 /**
  * One live instance with a control per variant axis and a toggle per state.
@@ -14,6 +15,8 @@ import { metaLabelStyle } from './shared';
  * top of any variant. The code reference rewrites as the controls change, so
  * the relationship is read off the label, not inferred from a grid.
  */
+const UNSET = '__unset__';
+
 export function Playground({ id }: { id: string }) {
   const specimen = specimens[id];
   const allAxes = axesFor(id);
@@ -44,12 +47,18 @@ export function Playground({ id }: { id: string }) {
     if (state) Object.assign(shown, state.props);
   }
   const stateCodes = activeStates.map((label) => states.find((s) => s.label === label)?.code).filter(Boolean);
-  const reference = jsxReference(specimen.component, Object.fromEntries(Object.entries(shown).filter(([, v]) => typeof v !== 'object' || v === null)));
+  const reference = jsxReference(specimen.component, contractProps(shown, surfaceFor(id)));
   const dirty = Object.keys(axisValues).length > 0 || activeStates.length > 0;
+  const pageExport = displayTitle(id).replace(/\s+/g, '');
+  const isPart = specimen.component.toLowerCase() !== pageExport.toLowerCase();
 
   return (
     <div style={playgroundStyle} data-playground={id}>
       <div style={stageStyle}>
+        <span style={metaLabelStyle}>
+          Rendering <Code>{specimen.component}</Code>
+          {isPart ? <> as one part of the {displayTitle(id)} composition; the other parts stay fixed</> : null}
+        </span>
         <div style={stageSurfaceStyle} aria-live="polite" aria-atomic="true">
           {specimen.render({ ...base, ...shown })}
         </div>
@@ -70,7 +79,9 @@ export function Playground({ id }: { id: string }) {
 
       <div style={controlsStyle}>
         <div style={controlsHeaderStyle}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>Controls</span>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>
+            Props on <Code>{specimen.component}</Code>
+          </span>
           <Button
             type="button"
             variant="ghost"
@@ -87,7 +98,7 @@ export function Playground({ id }: { id: string }) {
 
         {axes.length ? (
           <div style={groupStyle}>
-            <span style={metaLabelStyle}>Variants: one value per prop</span>
+            <span style={metaLabelStyle}>Variants: one value per prop; not set means the component default</span>
             {axes.map((axis) => (
               <div key={axis.prop} style={controlStyle}>
                 <span style={controlLabelStyle} id={`control-${id}-${axis.prop}`}>
@@ -99,16 +110,23 @@ export function Playground({ id }: { id: string }) {
                   size="sm"
                   className="flex-wrap gap-1"
                   aria-labelledby={`control-${id}-${axis.prop}`}
-                  value={axisValues[axis.prop] ?? ''}
+                  value={axisValues[axis.prop] ?? UNSET}
                   onValueChange={(value: string) =>
                     setAxisValues((prev) => {
                       const next = { ...prev };
-                      if (value) next[axis.prop] = value;
-                      else delete next[axis.prop];
+                      if (value && value !== UNSET) next[axis.prop] = value;
+                      else if (value === UNSET) delete next[axis.prop];
                       return next;
                     })
                   }
                 >
+                  <ToggleGroupItem
+                    value={UNSET}
+                    aria-label={`${axis.prop} not set, component default`}
+                    className="min-w-fit flex-none px-2"
+                  >
+                    not set
+                  </ToggleGroupItem>
                   {axis.values.map((value) => (
                     <ToggleGroupItem key={value} value={value} aria-label={`${axis.prop} ${value}`} className="min-w-fit flex-none px-2">
                       {value}
@@ -122,7 +140,7 @@ export function Playground({ id }: { id: string }) {
 
         {states.length ? (
           <div style={groupStyle}>
-            <span style={metaLabelStyle}>States: layer on any variant</span>
+            <span style={metaLabelStyle}>States: each adds its props on top of the variants above</span>
             {states.map((state) => {
               const on = activeStates.includes(state.label);
               const switchId = `state-${id}-${state.label.replace(/\W+/g, '-').toLowerCase()}`;

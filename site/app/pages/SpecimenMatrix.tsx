@@ -2,27 +2,18 @@ import React from 'react';
 import type { CSSProperties } from 'react';
 import propsSnapshot from '../../../props-snapshot.json';
 import { specimens } from '../../../src/gallery/specimens';
-import { coerceAxisValue, jsxReference } from '../../../src/gallery/specimen-types';
+import { axesFromSurface, coerceAxisValue, jsxReference } from '../../../src/gallery/specimen-types';
 import { Code, NotYetWritten, Table, metaLabelStyle } from './shared';
 
-type PropEntry = { optional: boolean; union: string[] | null };
-type Surface = { surface: { props: Record<string, PropEntry> } };
+type Surface = { surface: { variants: Record<string, string[]>; props: Record<string, { optional: boolean; union: string[] | null }>; native: string[] } };
 
-const AXIS_ORDER = ['variant', 'tone', 'size', 'density', 'state', 'urgency', 'orientation', 'measure', 'weight'];
-const EXCLUDED_AXES = new Set(['as', 'asChild']);
+export function surfaceFor(id: string) {
+  return (propsSnapshot as { components: Record<string, Surface> }).components[id]?.surface;
+}
 
 /** Enumerable props from the contract, in a stable display order. */
 export function axesFor(id: string): { prop: string; values: string[] }[] {
-  const entry = (propsSnapshot as { components: Record<string, Surface> }).components[id];
-  if (!entry) return [];
-  return Object.entries(entry.surface.props)
-    .filter(([name, p]) => Array.isArray(p.union) && p.union.length > 0 && !EXCLUDED_AXES.has(name))
-    .sort(([a], [b]) => {
-      const ia = AXIS_ORDER.indexOf(a);
-      const ib = AXIS_ORDER.indexOf(b);
-      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.localeCompare(b);
-    })
-    .map(([prop, p]) => ({ prop, values: p.union as string[] }));
+  return axesFromSurface(surfaceFor(id));
 }
 
 export function SpecimenMatrix({ id }: { id: string }) {

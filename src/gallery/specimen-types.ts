@@ -49,3 +49,46 @@ export function coerceAxisValue(value: string): string | boolean {
   if (value === 'false') return false;
   return value;
 }
+
+export interface SurfaceLike {
+  variants?: Record<string, string[]>;
+  props?: Record<string, { optional?: boolean; union: string[] | null }>;
+  native?: string[];
+}
+
+const AXIS_ORDER = ['variant', 'tone', 'size', 'density', 'state', 'urgency', 'orientation', 'measure', 'weight'];
+const EXCLUDED_AXES = new Set(['as', 'asChild']);
+
+/**
+ * The enumerable axes of a component from its prop-contract surface. A cva
+ * `variants` entry wins over the prop union of the same name: for a
+ * multi-part component the union merges every part, while `variants` is the
+ * part the specimen renders.
+ */
+export function axesFromSurface(surface: SurfaceLike | undefined): { prop: string; values: string[] }[] {
+  if (!surface) return [];
+  const names = new Set<string>([...Object.keys(surface.variants ?? {}), ...Object.keys(surface.props ?? {})]);
+  const out: { prop: string; values: string[] }[] = [];
+  for (const prop of names) {
+    if (EXCLUDED_AXES.has(prop)) continue;
+    const values = surface.variants?.[prop] ?? surface.props?.[prop]?.union ?? null;
+    if (Array.isArray(values) && values.length > 0) out.push({ prop, values });
+  }
+  return out.sort((a, b) => {
+    const ia = AXIS_ORDER.indexOf(a.prop);
+    const ib = AXIS_ORDER.indexOf(b.prop);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a.prop.localeCompare(b.prop);
+  });
+}
+
+/** Keep only props the contract knows (or ARIA / common native state attributes) for a code reference. */
+export function contractProps(
+  props: Record<string, unknown>,
+  surface: SurfaceLike | undefined,
+): Record<string, unknown> {
+  const known = new Set<string>([...Object.keys(surface?.variants ?? {}), ...Object.keys(surface?.props ?? {})]);
+  const NATIVE = new Set(['disabled', 'checked', 'defaultChecked', 'defaultOpen', 'open', 'pressed', 'defaultPressed', 'readOnly', 'required', 'placeholder', 'indeterminate', 'loading', 'blocked', 'isActive', 'selected', 'value', 'defaultValue']);
+  return Object.fromEntries(
+    Object.entries(props).filter(([k, v]) => (known.has(k) || NATIVE.has(k) || k.startsWith('aria-')) && (typeof v !== 'object' || v === null)),
+  );
+}
