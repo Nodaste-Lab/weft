@@ -1050,12 +1050,99 @@
   ],
   "templates": [
     {
+      "id": "navigation-rail",
+      "kind": "react",
+      "path": "src/templates/navigation-rail.tsx",
+      "fixture": "src/templates/navigation-rail.fixture.ts",
+      "version": "1.0.0",
+      "summary": "Workspace rail — space picker, section navigation with counts, document tree with folders and per-row actions, signed-in profile. React template composed only from Weft primitives; all content arrives through props.",
+      "composes": [
+        "sidebar",
+        "collapsible",
+        "select",
+        "avatar"
+      ],
+      "docs": "docs/brand-package/14-react-templates.md"
+    },
+    {
       "id": "weft-board",
+      "kind": "css",
       "path": "css/weft-templates.css",
       "classPrefix": "weft-board",
       "version": "2.0.0",
       "summary": "Operator action board — filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
       "docs": "docs/brand-package/11-panel-templates.md"
+    }
+  ],
+  "patterns": [
+    {
+      "id": "document-surfaces",
+      "title": "Document surfaces",
+      "summary": "Comments, versions, sharing and the other surfaces around a document: use when, not for, heuristics, pattern and anti-pattern per entry.",
+      "uses": [
+        "avatar",
+        "badge",
+        "button",
+        "card",
+        "chip",
+        "label",
+        "popover",
+        "sheet",
+        "sidebar",
+        "tabs",
+        "toolbar"
+      ],
+      "docs": "docs/brand-package/13-document-surfaces-heuristics.md"
+    },
+    {
+      "id": "empty-states",
+      "title": "Empty states",
+      "summary": "What a surface shows when there is nothing to show: honest empties, first-run, no results, and failure.",
+      "uses": [
+        "empty-state",
+        "callout",
+        "button"
+      ]
+    },
+    {
+      "id": "input-types",
+      "title": "Input types",
+      "summary": "Which input to use for which kind of value, and the rules every input follows.",
+      "uses": [
+        "checkbox",
+        "form",
+        "input",
+        "label",
+        "switch",
+        "textarea"
+      ],
+      "docs": "docs/brand-package/12-input-heuristics.md"
+    },
+    {
+      "id": "status-and-loading",
+      "title": "Status and loading",
+      "summary": "Showing that something is pending, working, done or failed without a colour carrying the whole meaning.",
+      "uses": [
+        "skeleton",
+        "progress",
+        "dot",
+        "badge",
+        "provider-status-badge",
+        "empty-state"
+      ]
+    },
+    {
+      "id": "validation-feedback",
+      "title": "Validation feedback",
+      "summary": "When and where a form tells the user a value is wrong, and how it says so.",
+      "uses": [
+        "input",
+        "textarea",
+        "form",
+        "label",
+        "callout",
+        "alert"
+      ]
     }
   ]
 }

@@ -1,0 +1,5 @@
+/* Site stylesheet: the package CSS plus a Tailwind source for the site's own
+ * tree. css/tailwind.css scans only src/, so classes used under site/app
+ * would otherwise never be generated. */
+@import '../css/index.css';
+@source './app/**/*.{ts,tsx}';

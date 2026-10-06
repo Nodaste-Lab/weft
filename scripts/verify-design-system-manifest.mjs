@@ -131,8 +131,20 @@ function ensureTemplates(templates) {
   compareOrderedList('templates', [...ids].sort(), ids);
   for (const t of templates) {
     const where = `templates entry "${t.id ?? '(missing id)'}"`;
-    for (const field of ['id', 'path', 'classPrefix', 'version', 'summary', 'docs']) {
+    const kind = t.kind ?? 'css';
+    if (!['css', 'react'].includes(kind)) fail(`${where} kind "${kind}" must be "css" or "react".`);
+    // A CSS template is a class prefix in a stylesheet; a React template is a
+    // src/templates composition with a fixture (react-template-contract.node.mjs
+    // gates the rest of its contract).
+    const required = kind === 'react'
+      ? ['id', 'path', 'fixture', 'version', 'summary', 'docs']
+      : ['id', 'path', 'classPrefix', 'version', 'summary', 'docs'];
+    for (const field of required) {
       if (!t[field]) fail(`${where} is missing "${field}".`);
+    }
+    if (kind === 'react' && t.classPrefix) fail(`${where} is a react template and must not carry "classPrefix".`);
+    if (kind === 'react' && t.fixture && !existsSync(join(ROOT, t.fixture))) {
+      fail(`${where} fixture "${t.fixture}" does not exist.`);
     }
     if (t.version && !SEMVER.test(t.version)) {
       fail(`${where} version "${t.version}" is not semver.`);
@@ -153,6 +165,28 @@ function ensureTemplates(templates) {
 }
 
 ensureTemplates(manifest.templates);
+
+// ── patterns ─────────────────────────────────────────────────────────────────
+// Patterns are guidance for a recurring interaction. Each names the primitives
+// it uses (the cross-links the site draws) and, when written, its doc.
+function ensurePatterns(patterns, primitiveIds) {
+  if (!Array.isArray(patterns)) return;
+  const ids = patterns.map((p) => p.id);
+  compareOrderedList('patterns', [...ids].sort(), ids);
+  for (const p of patterns) {
+    const where = `patterns entry "${p.id ?? '(missing id)'}"`;
+    for (const field of ['id', 'title', 'summary', 'uses']) {
+      if (p[field] === undefined || p[field] === '') fail(`${where} is missing "${field}".`);
+    }
+    if (!Array.isArray(p.uses) || p.uses.length === 0) fail(`${where} uses[] must name at least one primitive.`);
+    for (const id of p.uses ?? []) {
+      if (!primitiveIds.includes(id)) fail(`${where} uses unknown primitive "${id}".`);
+    }
+    if (p.docs && !existsSync(join(ROOT, p.docs))) fail(`${where} docs "${p.docs}" does not exist.`);
+  }
+}
+
+ensurePatterns(manifest.patterns, manifest.uiPrimitives.map((entry) => entry.id));
 
 if (process.exitCode) {
   process.exit(process.exitCode);

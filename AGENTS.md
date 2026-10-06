@@ -29,6 +29,8 @@ primitive library. It publishes as **`@nodaste-lab/weft`** to GitHub Packages
 | Panel-builder block vocabulary (`panel-manifest.json`), panel authoring docs/validator | **Heddle** (`src/design-system/panel-manifest.json`, `docs/panel-authoring/`) |
 | The `/design-system` gallery pages | **Heddle** (`src/app/DesignSystemPage.tsx`, `src/design-system/`) |
 | Panel surfaces: WidgetTile, HUDPanel, PanelBlockShell; `--hud-*` transitional aliases | **Heddle** |
+| A React template (a whole surface composed from primitives) | **here** — add `src/templates/<id>.tsx` + `<id>.fixture.ts`, register in `manifest.json` `templates` with `kind: "react"` and `composes[]`, export from `src/index.ts`, render in the gallery Templates section, write the entry in `docs/brand-package/14-react-templates.md`; `npm run test:react-template-contract` gates it |
+| Component documentation (`docs/components/<id>.md`: Purpose, When to use, When not to use, How to use, Heuristics, Content, Accessibility) and pattern entries (`manifest.json` `patterns`, `docs/patterns/<id>.md`) | **here** — the site (`site/`, `npm run site:dev`) renders one page per guideline, token family, component, pattern and template from these; `npm run test:site-docs` gates the headings and registry |
 | A new shared primitive extracted from Heddle app code | **here** — add `src/ui/<id>.tsx`, register in `manifest.json` (ordered), showcase entries need `version`, run `npm run props:write`; then add gallery coverage in Heddle |
 
 Rule of thumb: if two products could want it, it's Weft. If it knows about
@@ -47,6 +49,7 @@ npm run test:props                       # the gate's own unit tests
 node scripts/check-pure-token-file.mjs   # weft.css stays injection-safe
 node scripts/check-raw-colors.mjs        # tokens only outside css/
 npm run build                            # tsup ESM bundle to dist/
+npm run site:dev                         # the design system site (one page per component; see .claude/skills/weft-site)
 npx changeset                            # record a release intent (patch/minor/major)
 npm run release:local -- --publish       # cut the release from main (Actions are off; see Release flow)
 ```

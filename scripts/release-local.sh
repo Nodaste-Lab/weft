@@ -85,7 +85,7 @@ gates() {
   local steps=(
     "npm run verify" "npm run props" "npm run tokens" "npm run test:props"
     "npm run test:css-contract" "npm run test:doctrine" "npm run test:contrast"
-    "npm run test:template-contract" "npm run test:specimens" "npm run test:review-gate"
+    "npm run test:template-contract" "npm run test:react-template-contract" "npm run test:site-docs" "npm run test:specimens" "npm run test:review-gate"
     "node scripts/check-pure-token-file.mjs" "node scripts/check-raw-colors.mjs"
     "npx vitest run" "npm run test:contract" "npm run build" "npm run test:packed"
     "npm run test:parity" "npm run test:reasons" "npm run test:types" "npm run check:exports"

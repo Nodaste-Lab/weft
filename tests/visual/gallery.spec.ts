@@ -28,7 +28,7 @@ const SECTIONS = [
 
 for (const theme of ['light', 'dark', 'compact', 'dense'] as const) {
   test(`gallery key primitives — ${theme}`, async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#/all');
     if (theme === 'dark') {
       await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
     }
