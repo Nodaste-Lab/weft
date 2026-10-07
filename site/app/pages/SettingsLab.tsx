@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '../../../src/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '../../../src/ui/dropdown-menu';
 import { NavigationSpacePicker } from '../../../src/ui/navigation-space-picker';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../../../src/ui/dialog';
+import { PreviewSpaceDialog } from './PreviewSpaceDialog';
 import { TextField } from '../../../src/ui/text-field';
 import { PageTitle } from './shared';
 import { SettingsAgents } from './SettingsAgents';
@@ -30,15 +30,20 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
   const [commentEmails, setCommentEmails] = React.useState(true);
   const [extraSpaces, setExtraSpaces] = React.useState<string[]>([]);
   const [newSpaceOpen, setNewSpaceOpen] = React.useState(false);
-  const [newSpaceName, setNewSpaceName] = React.useState('');
-  const [newSpaceError, setNewSpaceError] = React.useState('');
-  const newSpaceField = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [role, setRole] = React.useState('Owner');
   const [name, setName] = React.useState('Avery Chen');
   const [nameError, setNameError] = React.useState('');
   const nameField = React.useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [savedName, setSavedName] = React.useState('Avery Chen');
   const [appearance, setAppearance] = React.useState('System');
+  const [siteTheme, setSiteTheme] = React.useState(() => document.documentElement.getAttribute('data-theme')?.startsWith('dark') ? 'dark' : 'light');
+  React.useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => setSiteTheme(root.getAttribute('data-theme')?.startsWith('dark') ? 'dark' : 'light'));
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+  const profileNavigation = React.useRef(false);
   const [density, setDensity] = React.useState<string | null>(null);
   React.useEffect(() => {
     if (density === null) return;
@@ -73,9 +78,9 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
         <a href="#/labs/navigation-rail" className="settings-lab-back">← Back to workspace</a>
         <div className="settings-lab-identity"><DropdownMenu>
           <DropdownMenuTrigger asChild><button type="button" className="settings-lab-account-trigger" aria-label={`Account menu for ${savedName}, ${organization}`}><span aria-hidden="true" className="settings-lab-avatar">{savedName.split(' ').map(part => part[0]).slice(0, 2).join('')}</span><span className="settings-lab-account-text"><strong>{savedName}</strong><small>{organization}</small></span><span aria-hidden="true">⌄</span></button></DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="start" className="settings-lab-account-menu">
+          <DropdownMenuContent onCloseAutoFocus={event => { if (profileNavigation.current) { event.preventDefault(); profileNavigation.current = false; heading.current?.focus(); } }} side="bottom" align="start" className="settings-lab-account-menu">
             <DropdownMenuLabel>{savedName}</DropdownMenuLabel>
-            <DropdownMenuItem asChild><a href="#/templates/settings/profile">Profile</a></DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => { profileNavigation.current = true; }} asChild><a href="#/templates/settings/profile">Profile</a></DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Working organization</DropdownMenuLabel>
             <DropdownMenuRadioGroup aria-label="Working organization" value={organization} onValueChange={switchOrganization}>{['Nodaste', 'Example organization'].map(value => <DropdownMenuRadioItem key={value} value={value}>{value}</DropdownMenuRadioItem>)}</DropdownMenuRadioGroup>
@@ -93,10 +98,10 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
       <section aria-labelledby="settings-preview-title" className="settings-lab-main">
         <div className="settings-lab-context">{scoped ? 'Space' : ['organization', 'users', 'organization-connectors'].includes(section) ? 'Organization' : 'Personal'} settings</div>
         <h2 id="settings-preview-title" ref={heading} tabIndex={-1}>{title}</h2>
-        {scoped && <div className="settings-lab-scope"><div className="settings-lab-space-picker"><label htmlFor="settings-space">Selected Space</label><NavigationSpacePicker id="settings-space" label="Selected Space" value={space} spaces={[{id:'Studio',name:'Studio'}, {id:'Private',name:'Private',private:true}, ...extraSpaces.map(name => ({id:name,name}))]} onValueChange={value => { setSpace(value); setStatus(''); }} onAdd={() => { setNewSpaceName(''); setNewSpaceError(''); setNewSpaceOpen(true); }} contentClassName="settings-lab-space-options" /></div><span>{privateSpace ? 'Only you have access' : `${role} access`}</span></div>}
+        {scoped && <div className="settings-lab-scope"><div className="settings-lab-space-picker"><label htmlFor="settings-space">Selected Space</label><NavigationSpacePicker id="settings-space" label="Selected Space" value={space} spaces={[{id:'Studio',name:'Studio'}, {id:'Private',name:'Private',private:true}, ...extraSpaces.map(name => ({id:name,name}))]} onValueChange={value => { setSpace(value); setStatus(''); }} onAdd={() => { setNewSpaceOpen(true); }} contentClassName="settings-lab-space-options" /></div><span>{privateSpace ? 'Only you have access' : `${role} access`}</span></div>}
         {['general', 'profile'].includes(section) && <>
           
-          <form noValidate onSubmit={event => { event.preventDefault(); if (!name.trim()) { setNameError('Enter a display name.'); nameField.current?.focus(); return; } setNameError(''); setSavedName(name.trim()); setStatus('Profile saved for this preview. Refresh resets fictional data.'); }}>
+          <form noValidate onSubmit={event => { event.preventDefault(); if (!name.trim()) { setNameError('Enter a display name.'); nameField.current?.focus(); return; } setNameError(''); setSavedName(name.trim()); nameField.current?.focus(); setStatus('Profile saved for this preview. Refresh resets fictional data.'); }}>
             <TextField className="settings-lab-field" ref={nameField} id="settings-display-name" name="displayName" label="Display name (required)" autoComplete="nickname" value={name} required error={nameError} onBlur={event => { if (event.relatedTarget instanceof HTMLButtonElement && event.relatedTarget.type === 'submit' && event.relatedTarget.form === event.currentTarget.form) return; if (!name.trim()) setNameError('Enter a display name.'); }} onChange={event => { setName(event.target.value); setStatus(''); if (nameError && event.target.value.trim()) setNameError(''); }} />
             <TextField className="settings-lab-field" id="settings-email" name="email" label="Email" type="email" autoComplete="email" value="avery@example.com" readOnly />
             <Button type="submit" disabled={name.trim() === savedName}>Save changes</Button>
@@ -106,10 +111,10 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
           <p className="settings-lab-lede">Choose how your workspace looks and how much information fits on screen.</p>
           <fieldset className="settings-lab-options settings-lab-preference-options"><legend>Color mode</legend>{['System', 'Light', 'Dark'].map(value => <label key={value} className="settings-lab-preference-card">
             <span className="settings-lab-preference-art" aria-hidden="true">{value === 'System' ? <><PreferencePreview theme="light" /><PreferencePreview theme="dark" /></> : <PreferencePreview theme={value.toLowerCase()} />}</span>
-            <span className="settings-lab-preference-caption"><input type="radio" name="settings-appearance" value={value} checked={appearance === value} onChange={() => { setAppearance(value); setStatus(`${value} color mode selected.`); }} /><span><strong>{value}</strong><small>{value === 'System' ? 'Follow your device' : `${value} workspace`}</small></span></span>
+            <span className="settings-lab-preference-caption"><input type="radio" name="settings-appearance" value={value} checked={appearance === value} onChange={() => { setAppearance(value); setStatus(`${value} selected in this preview; the site theme control changes the page.`); }} /><span><strong>{value}</strong><small>{value === 'System' ? 'Follow your device' : `${value} workspace`}</small></span></span>
           </label>)}</fieldset>
           <fieldset className="settings-lab-options settings-lab-preference-options"><legend>Information density</legend>{[['default', 'Default', 'More breathing room'], ['compact', 'Compact', 'Balanced spacing'], ['dense', 'Dense', 'More visible at once']].map(([value, label, description]) => <label key={value} className="settings-lab-preference-card">
-            <span className="settings-lab-preference-art" aria-hidden="true"><PreferencePreview kind="density" density={value} theme={appearance === 'Dark' ? 'dark' : 'light'} /></span>
+            <span className="settings-lab-preference-art" aria-hidden="true"><PreferencePreview kind="density" density={value} theme={appearance === 'System' ? siteTheme : appearance.toLowerCase()} /></span>
             <span className="settings-lab-preference-caption"><input type="radio" name="settings-density" value={value} checked={(density ?? document.documentElement.getAttribute('data-density') ?? 'default') === value} onChange={() => { setDensity(value); setStatus(`${label} density selected.`); }} /><span><strong>{label}</strong><small>{description}</small></span></span>
           </label>)}</fieldset>
         </>}
@@ -133,21 +138,13 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
         {section === 'sharing' && <><p className="settings-lab-lede">Control access to {space}.</p><p className="settings-lab-notice">{privateSpace ? 'Private Spaces cannot be shared.' : 'Only people with access can open this Space.'}</p>{!privateSpace && <Button variant="outline" disabled={!canManage} onClick={() => preview('Change Space sharing')}>Manage sharing</Button>}</>}
         {section === 'exports' && <><p className="settings-lab-lede">Download a copy of the selected Space.</p><div className="settings-lab-line"><div><strong>Space archive</strong><p>Review included content before starting an export.</p></div><Button variant="outline" onClick={() => preview(`Review export for ${space}`)}>Review export</Button></div><h3>Recent exports</h3><p>No exports in this preview.</p></>}
         {section === 'lifecycle' && <><p className="settings-lab-lede">Manage whether {space} stays available.</p>{privateSpace ? <p className="settings-lab-notice">Private Spaces cannot be shared or deleted.</p> : <><div className="settings-lab-line"><div><strong>Archive Space</strong><p>Make this Space read-only. It can be restored later.</p></div><Button variant="outline" disabled={!canManage} onClick={() => preview(`Archive ${space}`)}>Archive Space</Button></div><div className="settings-lab-line"><div><strong>Restore Space</strong><p>Reopen an archived Space.</p></div><Button variant="outline" disabled={!canManage} onClick={() => preview(`Restore ${space}`)}>Restore Space</Button></div><div className="settings-lab-line"><div><strong>Delete Space</strong><p>Production requires an explicit confirmation.</p></div><Button variant="destructive" disabled={!canManage} onClick={() => preview(`Delete ${space}`)}>Delete Space</Button></div></>}</>}
-        {section === 'organization' && <><p className="settings-lab-lede">Choose the Organization you want to work in.</p><div className="settings-lab-field"><label htmlFor="settings-org">Organization</label><select id="settings-org" value={organization} onChange={event => switchOrganization(event.target.value)}><option>Nodaste</option><option>Example organization</option></select></div><p className="settings-lab-notice">Switching must restore an eligible workspace and preserve a clear return destination.</p></>}
+        {section === 'organization' && <><p className="settings-lab-lede">Legacy organization switching preview. Use the account menu above Settings to choose your working organization.</p><div className="settings-lab-field"><label htmlFor="settings-org">Organization</label><select id="settings-org" value={organization} onChange={event => switchOrganization(event.target.value)}><option>Nodaste</option><option>Example organization</option></select></div><p className="settings-lab-notice">Switching must restore an eligible workspace and preserve a clear return destination.</p></>}
         {section === 'users' && !organizationAdmin && <p role="alert">Organization administration is required.</p>}
         {section === 'users' && organizationAdmin && <><p className="settings-lab-lede">Manage Organization accounts separately from Space membership.</p><div className="settings-lab-line"><div><strong>Organization users</strong><p>Named accounts, account status and invitations.</p></div><Button variant="outline" disabled={!organizationAdmin} onClick={() => preview('Invite an Organization user')}>Invite a user</Button></div><p>Organization administration requires its own authority. The preview permission control is a simplified scenario, not an authorization rule.</p></>}
         <p className="settings-lab-status" role="status">{status}</p>
       </section>
     </div>
-    <Dialog open={newSpaceOpen} onOpenChange={setNewSpaceOpen}>
-      <DialogContent className="settings-agent-dialog" onCloseAutoFocus={event => { event.preventDefault(); requestAnimationFrame(() => document.getElementById('settings-space')?.focus()); }}>
-        <DialogTitle>Add new Space</DialogTitle><DialogDescription>Create a Space in this local preview.</DialogDescription>
-        <form noValidate onSubmit={event => { event.preventDefault(); const next = newSpaceName.trim(); if (!next || ['Studio','Private','__weft_add_space__',...extraSpaces].some(existing => existing.toLocaleLowerCase() === next.toLocaleLowerCase())) { setNewSpaceError('Enter a unique Space name.'); newSpaceField.current?.focus(); return; } setExtraSpaces(current => [...current,next]); setSpace(next); setNewSpaceOpen(false); setStatus(`Created Space “${next}” in the local preview only.`); }}>
-          <TextField ref={newSpaceField} label="Space name (required)" required value={newSpaceName} onChange={event => { setNewSpaceName(event.target.value); setNewSpaceError(''); }} error={newSpaceError} description="Use a unique name. Studio, Private and existing names are unavailable." />
-          <div className="settings-agent-actions"><Button type="button" variant="outline" onClick={() => setNewSpaceOpen(false)}>Cancel</Button><Button type="submit">Create Space</Button></div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <PreviewSpaceDialog open={newSpaceOpen} onOpenChange={setNewSpaceOpen} existingNames={extraSpaces} triggerId="settings-space" onCreate={next=>{setExtraSpaces(current=>[...current,next]);setSpace(next);setStatus(`Created Space “${next}” in the local preview only.`);}} />
     <details open className="settings-lab-review"><summary>Design decisions and coverage</summary>
       <h3>Sign-in foundation</h3><p>This fictional account represents Google sign-in. Avalandra configures Google OAuth when the deployment enables it; password sign-in is limited to lab fixtures. The live Settings view must derive the sign-in method from verified session/provider data rather than assume every account uses Google. Broader enterprise SSO is not claimed.</p>
       <h3>Next decision</h3><p>Review General as the default Settings destination. Contextual Space links should open the relevant Space section directly.</p>
