@@ -1,0 +1,10 @@
+// @vitest-environment jsdom
+import * as React from 'react';
+import { render, screen, within, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+import { FieldActionExamples } from '../pages/FieldActionExamples';
+afterEach(cleanup);
+it('validates the attached submit and preserves the typed value',()=>{render(<FieldActionExamples/>);fireEvent.click(screen.getByRole('button',{name:'Create example'}));const field=within(screen.getByRole('heading',{name:'Attached text button'}).closest('article')!).getByRole('textbox',{name:'Project name (required)'});expect(field).toHaveFocus();expect(field).toHaveAttribute('aria-invalid','true');fireEvent.change(field,{target:{value:'Studio'}});fireEvent.click(screen.getByRole('button',{name:'Create example'}));expect(screen.getByText('Created “Studio” in this local example.')).toBeInTheDocument();expect(field).toHaveValue('Studio');});
+it('combines query and filters while clearing only the query',async()=>{render(<FieldActionExamples/>);const field=screen.getByRole('searchbox',{name:'Search filtered example files'});fireEvent.change(field,{target:{value:'Research'}});const trigger=screen.getByRole('button',{name:'Filter example files, 2 file types selected'});fireEvent.click(trigger);expect(trigger).toHaveAttribute('aria-expanded','true');fireEvent.click(screen.getByRole('checkbox',{name:'Text files'}));expect(screen.getByText('No files match. Change the query or filters.')).toBeInTheDocument();fireEvent.keyDown(screen.getByRole('checkbox',{name:'HTML files'}),{key:'Escape'});await waitFor(()=>expect(trigger).toHaveAttribute('aria-expanded','false'));fireEvent.click(screen.getByRole('button',{name:'Clear filtered file search'}));expect(field).toHaveValue('');expect(screen.getByText('1 matching files')).toBeInTheDocument();});
+
+it('offers a named attached icon action',()=>{render(<FieldActionExamples/>);expect(screen.getByRole('button',{name:'Create example project'})).toHaveAttribute('type','submit');});

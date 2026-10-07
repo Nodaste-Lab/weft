@@ -1,8 +1,11 @@
 ---
 related:
+  - text-field
   - input
   - form
   - label
+  - search-field
+  - calendar
 ---
 
 # Textarea
@@ -31,6 +34,10 @@ A multi-line text field. It owns the boundary, the per-density minimum height, g
 5. Attach help and error text through one ordered `aria-describedby` list, error first.
 
 ## Heuristics
+
+- Use the border-cutout label composition for multi-line form fields, with the same clear editable fill as Input. Position the empty label near the first text line at the top, never vertically centered. Keep the label at the outline while focused, filled, or invalid. Use TextField with `multiline` for this shared composition; Textarea remains the bare control.
+- Use Input for one line, SearchField for a query, and date entry for calendar dates. Do not use a textarea as a substitute for a rich document editor.
+
 
 - Height is proportional to the expected text. Three rows for a short note, more for a message; never a one-line textarea.
 - A character limit needs a reason. When there is one, show the remaining count as text that updates, not as a hard stop that eats keystrokes.

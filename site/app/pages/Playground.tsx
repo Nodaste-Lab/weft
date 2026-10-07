@@ -17,7 +17,7 @@ import { displayTitle } from '../nav';
  */
 const UNSET = '__unset__';
 
-export function Playground({ id }: { id: string }) {
+export function Playground({ id, defaults }: { id: string; defaults?: Record<string, unknown> }) {
   const specimen = specimens[id];
   const allAxes = axesFor(id);
   const axes = specimen?.axes ? specimen.axes.map((p) => allAxes.find((a) => a.prop === p)).filter((a): a is { prop: string; values: string[] } => Boolean(a)) : allAxes;
@@ -33,7 +33,7 @@ export function Playground({ id }: { id: string }) {
 
   if (!specimen) return null;
 
-  const base = specimen.base ?? {};
+  const base = {...specimen.base,...defaults};
   const shown: Record<string, unknown> = {};
   for (const axis of axes) {
     const v = axisValues[axis.prop];
@@ -47,19 +47,19 @@ export function Playground({ id }: { id: string }) {
     if (state) Object.assign(shown, state.props);
   }
   const stateCodes = activeStates.map((label) => states.find((s) => s.label === label)?.code).filter(Boolean);
-  const reference = jsxReference(specimen.component, contractProps(shown, surfaceFor(id)));
+  const reference = jsxReference(specimen.component, contractProps(id === 'text-field' ? {...base,...shown} : shown, surfaceFor(id))) + (id === 'text-field' ? '</TextField>' : '');
   const dirty = Object.keys(axisValues).length > 0 || activeStates.length > 0;
   const pageExport = displayTitle(id).replace(/\s+/g, '');
   const isPart = specimen.component.toLowerCase() !== pageExport.toLowerCase();
 
   return (
-    <div style={playgroundStyle} data-playground={id}>
+    <div className="field-playground" style={playgroundStyle} data-playground={id}>
       <div style={stageStyle}>
         <span style={metaLabelStyle}>
           Rendering <Code>{specimen.component}</Code>
           {isPart ? <> as one part of the {displayTitle(id)} composition; the other parts stay fixed</> : null}
         </span>
-        <div style={stageSurfaceStyle} aria-live="polite" aria-atomic="true">
+        <div key={id === 'text-field' ? reference : undefined} style={stageSurfaceStyle} aria-live="polite" aria-atomic="true">
           {specimen.render({ ...base, ...shown })}
         </div>
         <div style={{ display: 'grid', gap: 4 }}>
@@ -140,7 +140,7 @@ export function Playground({ id }: { id: string }) {
 
         {states.length ? (
           <div style={groupStyle}>
-            <span style={metaLabelStyle}>States: each adds its props on top of the variants above</span>
+            <span style={metaLabelStyle}>{id === 'text-field' ? 'States and optional content: select only what the field needs' : 'States: each adds its props on top of the variants above'}</span>
             {states.map((state) => {
               const on = activeStates.includes(state.label);
               const switchId = `state-${id}-${state.label.replace(/\W+/g, '-').toLowerCase()}`;

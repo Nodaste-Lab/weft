@@ -1,0 +1,93 @@
+.input-lab { max-width: 1120px; }
+.input-lab-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--weft-rule); }
+.input-lab-section h2 { margin: 0 0 16px; font-size: 24px; }
+.input-lab-section p { color: var(--weft-muted); font-size: 14px; line-height: 1.6; }
+.input-lab-states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.input-lab label:not(.weft-text-field label) { font-size: 14px; color: var(--weft-ink); }
+.input-lab-states { padding: 24px; background: var(--weft-paper); border: 1px solid var(--weft-rule); }
+.input-lab-states > div { display: grid; align-content: start; gap: 8px; }
+.input-lab small { font-size: 12px; color: var(--weft-muted); line-height: 1.5; }
+.input-lab small.input-lab-error { color: var(--weft-stop); }
+.input-lab form [role="status"] { min-height: 22px; margin: 0; }
+
+/* Lab proposal: clear editable surface, label resting in the border notch. */
+
+.input-system-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; background: var(--weft-paper); padding: 24px; border: 1px solid var(--weft-rule); }
+.input-system-samples > div { display: grid; align-content: start; gap: 8px; }
+.input-lab form.input-system-form { display:grid; max-width:640px; gap:16px; padding:24px; border:1px solid var(--weft-rule); background:var(--weft-paper); }
+.input-system-field { display: grid; gap: 8px; }
+.input-system-field [data-slot="form-message"], .input-system-field [data-slot="form-description"], .input-system-field [data-slot="form-status"] { margin: 0; font-size: 13px; }
+.input-lab .input-system-field [data-slot="form-message"] { color: var(--weft-stop); }
+.input-system-field [data-slot="form-description"] { color: var(--weft-muted); }
+.input-lab form .input-system-field label { margin: 0; }
+.input-system-summary { padding: 16px; border: 1px solid var(--weft-stop); }
+.input-system-summary ul { padding-inline-start: 20px; }
+.input-system-summary a { color: var(--weft-ink); }
+.input-system-confirmation { min-width: 0; border: 1px solid var(--weft-rule); padding: 16px; }
+.input-system-confirmation legend { padding-inline: 6px; font-size: 14px; }
+.input-system-actions { display: flex; gap: 12px; }
+.input-system-address { display: flex; gap: 4px; flex-wrap: wrap; color: var(--weft-muted); font-size: 12px; }
+.input-system-scenario { display: flex; align-items: center; gap: 12px; margin-block: 16px; }
+.input-system-scenario select { min-height: 44px; background: var(--weft-paper); color: var(--weft-ink); border: 1px solid var(--weft-control-border); padding: 8px; }
+.input-system-table { width: 100%; border-collapse: collapse; background: var(--weft-paper); font-size: 14px; }
+.input-system-table th, .input-system-table td { text-align: start; vertical-align: top; padding: 16px; border-bottom: 1px solid var(--weft-rule); line-height: 1.5; }
+.input-system-table th:first-child { width: 28%; }
+
+.input-system-has-prefix .weft-text-field-control > input { padding-inline-start: 80px; }
+.input-system-has-suffix .weft-text-field-control > input { padding-inline-end: 54px; }
+.input-system-prefix, .input-system-suffix { position: absolute; top: 50%; transform:translateY(-50%); color: var(--weft-muted); font-size: 13px; pointer-events: none; }
+.input-system-prefix { inset-inline-start: 12px; visibility: hidden; }
+.input-system-suffix { inset-inline-end: 12px; }
+.input-system-has-prefix input:focus ~ .input-system-prefix, .input-system-has-prefix input:not(:placeholder-shown) ~ .input-system-prefix { visibility: visible; }
+
+/* Native date controls always contain format segments, so their label stays notched. */
+
+.field-matrix-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-block: 20px; }
+.field-matrix-card { min-width: 0; padding: 20px; background: var(--weft-paper); border: 1px solid var(--weft-rule); display: grid; align-content: start; gap: 12px; }
+.field-matrix-card h4 { margin: 0; font-family: var(--weft-font-sans); font-size: 14px; }
+.field-matrix-card button { justify-self: start; }
+
+/* Multiline labels rest beside the first text line, never halfway down the box. */
+
+/* One outer boundary, independently focusable input and actions. */
+.field-action-group { display: flex; align-items: center; min-width: 0; gap: 4px; border: 1px solid var(--weft-control-border); border-radius: var(--weft-radius-card); background: var(--weft-paper); padding: 4px; }
+.field-action-group:focus-within { border-color: var(--weft-blue); }
+.field-action-group[data-invalid="true"] { border-color: var(--weft-stop); }
+.input-lab form.field-action-form { display: grid; gap: 8px; padding: 0; border: 0; max-width: none; }
+.input-lab form.field-action-form button { margin-top: 0; }
+.field-action-query { flex: 1; min-width: 0; }
+.field-action-query input { border: 0; }
+.field-action-search .field-filter-button { flex-shrink: 0; min-width: 40px; min-height: 32px; gap: 4px; }
+.field-filter-options { display: grid; gap: 12px; border: 0; padding: 0; margin-bottom: 16px; }
+.field-filter-options label { display: flex; align-items: center; gap: 8px; min-height: 24px; }
+
+/* Keep the notch mask above the control's border, outline and focus shadow. */
+/* Native date segments and picker share the full field width. */
+
+
+/* Field examples reflow without shrinking the controls or hiding guidance. */
+@media (max-width: 1100px) {
+  .field-playground { grid-template-columns: minmax(0, 1fr) !important; }
+  .field-matrix-grid, .input-system-samples, .input-lab-states { grid-template-columns: minmax(0, 1fr); }
+}
+.input-system-actions, .input-system-scenario { flex-wrap: wrap; }
+.field-matrix-card pre, .input-lab pre { max-width: 100%; overflow-x: auto; }
+.input-lab table, section[aria-label="Control treatment guidance"] table { overflow-wrap: anywhere; }
+
+.field-component-document { min-width: 0; }
+.field-component-document table { width: 100%; table-layout: fixed; overflow-wrap: anywhere; }
+.field-component-document td code { display: inline-block; max-width:100%; overflow-wrap:anywhere; }
+.field-component-document input, .field-component-document textarea, .field-component-document form { min-width:0; max-width:100%; }
+.field-component-document > div:first-child > div > div { flex-wrap:wrap; }
+:root[data-theme^="dark"] .field-component-document a,
+:root[data-theme^="dark"] .field-component-document code { color:var(--weft-ink) !important; }
+.field-component-document pre { max-width:100%; overflow-x:auto; }
+.field-component-document table.weft-table { display:table; }
+.field-component-document article, .field-component-document details { min-width:0; }
+
+.field-component-document code { color:var(--weft-ink) !important; }
+
+.input-system-form > button { justify-self: start; }
+.input-lab table { width: 100%; border-collapse: collapse; text-align: start; }
+.input-lab th, .input-lab td { padding: 12px; border-bottom: 1px solid var(--weft-control-border); vertical-align: top; }
+.input-lab h2, .input-lab h3 { font-family: var(--weft-font-sans); }

@@ -119,3 +119,4 @@ export * from './ui/navigation-rail-layout';
 export * from './templates/workspace-navigation-rail';
 
 export * from './ui/navigation-file-list';
+export * from './ui/text-field';

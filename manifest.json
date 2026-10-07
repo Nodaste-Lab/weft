@@ -477,7 +477,7 @@
       "category": "inputs",
       "summary": "Single-line text input with tokenized focus and error states, plus a chromeless inline variant. Variants: default, inline, underline (tier 2), low (tier 3). Compose size axis: density sets the tier, size=\"sm\" steps within it (native size attribute removed).",
       "showcase": true,
-      "version": "2.0.0"
+      "version": "2.0.1"
     },
     {
       "id": "knowledge-search-result-row.figma",
@@ -1032,12 +1032,20 @@
       "version": "1.0.0"
     },
     {
+      "id": "text-field",
+      "path": "src/ui/text-field.tsx",
+      "category": "inputs",
+      "summary": "Labelled single-line or multiline form field. Cutout by default, contextual underline, helper/error/status wiring and flush attached actions.",
+      "showcase": true,
+      "version": "1.0.1"
+    },
+    {
       "id": "textarea",
       "path": "src/ui/textarea.tsx",
       "category": "inputs",
       "summary": "Multi-line text field with tokenized focus styling.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "1.1.1"
     },
     {
       "id": "tier-group",
