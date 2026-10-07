@@ -675,9 +675,9 @@ def naming_section():
     row('required-marker', 'Required marker',
         '<div class="weft-field">'
         '<label class="weft-field-label" for="nm-required">Retention '
-        '<span class="weft-req">required</span></label>'
+        '<span class="weft-req">(required)</span></label>'
         + control_html('input', 'naming', 'nm-required', required=True) + '</div>',
-        'name "Retention required", required true, and no marker glyph in the name')
+        'name "Retention (required)", required true, and no marker glyph in the name')
 
     rows.append('<div class="cell" id="nm-naming-end">'
                 '<span class="cap">end of section</span>'

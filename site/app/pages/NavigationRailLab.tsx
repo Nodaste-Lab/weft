@@ -1,3 +1,4 @@
+import { NavigationFileList, NavigationFileRename, useNavigationFileInteractions } from "../../../src/ui/navigation-file-list";
 import { PreviewSpaceDialog } from './PreviewSpaceDialog';
 import { NavigationRailLayout } from "../../../src/ui/navigation-rail-layout";
 import { NavigationActions, type NavigationAction } from "../../../src/ui/navigation-actions";
@@ -174,6 +175,7 @@ const atoms = [
 ];
 type IconName = LeadingRailIcon;
 type Config = {
+  spaceName?: string;
   icon: IconName;
   label: string;
   iconSize: string;
@@ -345,7 +347,7 @@ const nestedFiles: SampleNode[] = [
         icon: "folder",
         children: [
           {
-            label: "Navigation examples",
+            label: "Navigation examples — Internationale Zusammenarbeit und Barrierefreiheit",
             signals: 1,
             notifications: 3,
             icon: "html",
@@ -367,7 +369,7 @@ function makeTestFiles(config: Config, longList: boolean): TestFile[] {
     return [
       { id: "root", label: config.row === "File" || config.row === "Folder" ? config.label : "Product direction", icon: config.row === "Folder" ? "folder" : config.icon === "html" ? "html" : "text", signals: config.row === "Folder" ? 0 : Number(config.count), children: config.hasChildren ? convert(nestedFiles, "nested") : undefined },
       { id: "reference", label: "Reference", icon: "html", signals: 1 },
-      ...(longList ? Array.from({ length: 30 }, (_, i) => ({ id: `reference-${i}`, label: `Reference ${i + 1}`, icon: i % 2 ? "text" : "html", signals: 0 })) : []),
+      ...(longList ? Array.from({ length: 30 }, (_, i) => ({ id: `reference-${i}`, label: i === 1 ? "International research — Zusammenfassung der Barrierefreiheitsprüfung und nächste Schritte" : `Reference ${i + 1}`, icon: i % 2 ? "text" : "html", signals: 0 })) : []),
     ] as TestFile[];
 }
 function NestedSample({
@@ -433,8 +435,8 @@ function RowCounters({ config }: { config: Config }) {
   const total = config.row === "Navigation" && config.icon === "signals";
   if (!config.showCount || (config.row !== "File" && !total)) return null;
   return <span className="rail-lab-counters">
-    <NavigationCount count={Number(config.count)} name={total ? "this Space" : config.label} scope={total ? "signals-destination" : "file"} />
-    {total && <NavigationCount count={Number(config.notifications)} name="this Space" scope="signals-destination" kind="notifications" />}
+    <NavigationCount count={Number(config.count)} name={total ? config.spaceName ?? "Studio" : config.label} scope={total ? "signals-destination" : "file"} />
+    {total && <NavigationCount count={Number(config.notifications)} name={config.spaceName ?? "Studio"} scope="signals-destination" kind="notifications" />}
   </span>;
 }
 function DemoRow({
@@ -460,14 +462,16 @@ function DemoRow({
   React.useEffect(() => setRenamed(undefined), [config.label]);
   const titleRef = React.useRef<HTMLButtonElement>(null);
   const rowRef = React.useRef<HTMLDivElement>(null);
-  const longPress = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const consumedLongPress = React.useRef(false);
-  React.useEffect(() => () => clearTimeout(longPress.current), []);
   const descriptionId = React.useId();
   const displayLabel = renamed ?? config.label;
   const returnFocus = () =>
     requestAnimationFrame(() => titleRef.current?.focus());
   const hierarchical = config.row === "File" || config.row === "Folder";
+  const interactions = useNavigationFileInteractions({
+    disabled: !hierarchical || config.disabled, editing,
+    onActions: config.showActions ? () => rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click() : undefined,
+    onRename: config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected" ? () => { setDraft(displayLabel); setEditing(true); } : undefined,
+  });
   return (
     <NavigationRow
       current={config.current}
@@ -477,30 +481,7 @@ function DemoRow({
       density={config.density as "default" | "compact" | "dense"}
       ref={rowRef}
       className="rail-lab-row"
-      onContextMenu={(event) => {
-        if (!hierarchical || config.disabled || editing || !config.showActions) return;
-        event.preventDefault();
-        rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click();
-      }}
-      onKeyDown={(event) => {
-        if (!hierarchical || config.disabled || editing) return;
-        if (event.key === "F2" && config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected") {
-          event.preventDefault(); setDraft(displayLabel); setEditing(true);
-        }
-        if (config.showActions && (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))) {
-          event.preventDefault(); rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click();
-        }
-      }}
-      onClickCapture={(event) => { if (consumedLongPress.current) { event.preventDefault(); event.stopPropagation(); consumedLongPress.current = false; } }}
-      onPointerDown={(event) => {
-        consumedLongPress.current = false;
-        if (event.pointerType !== "touch" || !hierarchical || editing || config.disabled || !config.showActions) return;
-        clearTimeout(longPress.current);
-        longPress.current = setTimeout(() => { rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click(); consumedLongPress.current = true; }, 600);
-      }}
-      onPointerMove={() => clearTimeout(longPress.current)}
-      onPointerUp={() => clearTimeout(longPress.current)}
-      onPointerCancel={() => clearTimeout(longPress.current)}
+      {...interactions}
       data-preview-state={previewState}
       data-current={config.current}
       data-disabled={config.disabled}
@@ -539,31 +520,10 @@ function DemoRow({
         />
       ) : null}
       {editing ? (
-        <Input
-          aria-label="Rename file"
-          disabled={config.disabled}
-          value={draft}
-          autoFocus
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              setEditing(false);
-              returnFocus();
-            }
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (!draft.trim()) {
-                onMessage("Enter a file name before saving.");
-                return;
-              }
-              setEditing(false);
-              setRenamed(draft.trim());
-              onRenamed?.(draft.trim());
-              returnFocus();
-              onMessage(`Preview rename: ${draft}`);
-            }
-          }}
-        />
+        <NavigationFileRename label="Rename file" disabled={config.disabled} value={draft} onChange={setDraft}
+          onCancel={() => { setEditing(false); returnFocus(); }}
+          onInvalid={() => onMessage("Enter a file name before saving.")}
+          onCommit={value => { setEditing(false); setRenamed(value); onRenamed?.(value); returnFocus(); onMessage(`Preview rename: ${value}`); }} />
       ) : (
         <NavigationRowButton
           ref={titleRef}
@@ -585,24 +545,7 @@ function DemoRow({
           : config.row === "Folder"
           ? `Folder${config.locked ? ", locked" : ""}`
           : config.row}{" "}
-        {config.showCount &&
-        (config.row === "File" ||
-          (config.row === "Navigation" && config.icon === "signals"))
-          ? [
-              Number(config.count) > 0
-                ? `${config.count} signals ${
-                    config.row === "File"
-                      ? `for ${displayLabel}`
-                      : "across this Space"
-                  }.`
-                : "",
-              config.row === "Navigation" && Number(config.notifications) > 0
-                ? `${config.notifications} notifications across this Space.`
-                : "",
-            ]
-              .filter(Boolean)
-              .join(" ")
-          : ""}
+
       </span>
       {config.row === "Account" && (
         <Button
@@ -636,8 +579,9 @@ function DemoRow({
   );
 }
 
-export function NavigationRailLab() {
-  const [level, setLevel] = React.useState<Level>("Atoms");
+export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: Level } = {}) {
+  const [level, setLevel] = React.useState<Level>(initialLevel);
+  React.useEffect(() => { setLevel(initialLevel); }, [initialLevel]);
   const [atom, setAtom] = React.useState("icon");
   const [inspectedIcon, setInspectedIcon] =
     React.useState<RailIconName>("text");
@@ -722,6 +666,7 @@ export function NavigationRailLab() {
   const [longList, setLongList] = React.useState(true);
   const spaceTriggerId = React.useId();
   const [space, setSpace] = React.useState("studio");
+  const htmlPromptOrigin = React.useRef<HTMLElement | null>(null);
   const [htmlPromptOpen, setHtmlPromptOpen] = React.useState(false);
   const [htmlCopyStatus, setHtmlCopyStatus] = React.useState("");
   const [newSpaceOpen, setNewSpaceOpen] = React.useState(false);
@@ -752,7 +697,7 @@ export function NavigationRailLab() {
   React.useEffect(() => {
     if (previousSpace.current === space) return;
     spaceFixtures.current[previousSpace.current] = testFiles;
-    const next = spaceFixtures.current[space] ?? (["studio", "private"].includes(space) ? seedFiles : []);
+    const next = spaceFixtures.current[space] ?? (space === "studio" ? seedFiles : []);
     setTestFiles(next); setSelectedFile(next[0]?.id ?? null); previousSpace.current = space;
   }, [space]);
   React.useEffect(() => {
@@ -1051,8 +996,8 @@ export function NavigationRailLab() {
     </div>
   );
   const spaceSelector = <NavigationSpacePicker id={spaceTriggerId} value={space} label="Preview Space" className="rail-lab-space-trigger" contentClassName="rail-lab-space-options"
-    spaces={[{ id: "studio", name: "Studio" }, { id: "private", name: "Private", private: true }, ...extraSpaces.map(name => ({ id: name, name }))].map(option => ({ ...option, signals: flattenFiles(space === option.id ? testFiles : spaceFixtures.current[option.id] ?? (["studio", "private"].includes(option.id) ? seedFiles : [])).reduce((sum, { node }) => sum + (node.signals ?? 0), 0) }))}
-    onValueChange={setSpace} onAdd={() => {  setNewSpaceOpen(true); }} />;
+    spaces={[{ id: "studio", name: "Studio" }, { id: "private", name: "Private", private: true }, ...extraSpaces.map(name => ({ id: name, name }))].map(option => ({ ...option, signals: flattenFiles(space === option.id ? testFiles : spaceFixtures.current[option.id] ?? (option.id === "studio" ? seedFiles : [])).reduce((sum, { node }) => sum + (node.signals ?? 0), 0) }))}
+    onValueChange={setSpace} onAdd={() => { setNewSpaceOpen(true); }} />;
   const htmlPrompt = `Create an HTML file in Avalandra in the Space "${spaceName}". Ask me what the file should contain before creating it. Follow Avalandra's HTML authoring and accessibility requirements, support light and dark themes and responsive layouts, and return a link to the saved file.`;
   const createMenu = config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected" && (
     <DropdownMenu modal={false}>
@@ -1083,7 +1028,7 @@ export function NavigationRailLab() {
         <DropdownMenuItem onSelect={() => beginCreate("text")}>
           <RailIcon purpose="text" size={16} /> Create File
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => { setHtmlCopyStatus(""); setHtmlPromptOpen(true); }}>
+        <DropdownMenuItem onSelect={() => { htmlPromptOrigin.current = createTrigger.current; setHtmlCopyStatus(""); setHtmlPromptOpen(true); }}>
           <RailIcon purpose="html" size={16} /> HTML file — copy agent prompt…
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -1162,7 +1107,7 @@ export function NavigationRailLab() {
       config={
         config.row === "Navigation" && config.icon === "signals"
           ? {
-              ...config,
+              ...config, spaceName,
               count: String(totals.signals),
               notifications: String(totals.notifications),
             }
@@ -1205,7 +1150,7 @@ export function NavigationRailLab() {
       {railSearch}
       <DemoRow
         config={{
-          ...config,
+          ...config, spaceName,
           row: "Navigation",
           label: "Signals",
           icon: "signals",
@@ -1230,7 +1175,7 @@ export function NavigationRailLab() {
             <DemoRow
               key={label}
               config={{
-                ...config,
+                ...config, spaceName,
                 row: "Navigation",
                 label,
                 icon: (["board", "explorer"] as IconName[])[i],
@@ -1265,15 +1210,6 @@ export function NavigationRailLab() {
         aria-label="Preview files"
       >
         {creationForm}
-        <div role="status" className="sr-only">
-          {config.content === "Loading"
-            ? "Loading files"
-            : config.content === "Error"
-            ? "Could not load files. Use Retry."
-            : config.content === "Empty"
-            ? "No files yet"
-            : ""}
-        </div>
 
         {config.content === "Populated" ? (
           <NavigationRailTestTree files={testFiles} space={spaceName} rootExpanded={config.expanded} onRootExpand={(value) => set("expanded", value)} onChange={(files) => {
@@ -1283,7 +1219,7 @@ export function NavigationRailLab() {
             onTransfer={(node, destination, copy) => {
               const destinationKey = destination === "Private" ? "private" : destination === "Studio" ? "studio" : destination;
               const clone = (file: TestFile): TestFile => ({ ...file, id: crypto.randomUUID(), children: file.children?.map(clone) });
-              spaceFixtures.current[destinationKey] = [...(spaceFixtures.current[destinationKey] ?? (["studio", "private"].includes(destinationKey) ? seedFiles : [])), clone(node)];
+              spaceFixtures.current[destinationKey] = [...(spaceFixtures.current[destinationKey] ?? (destinationKey === "studio" ? seedFiles : [])), clone(node)];
               if (!["studio", "private"].includes(destinationKey)) setExtraSpaces((spaces) => spaces.includes(destinationKey) ? spaces : [...spaces, destinationKey]);
             }}
             selected={selectedArea === null ? selectedFile : null}
@@ -1294,7 +1230,7 @@ export function NavigationRailLab() {
               else setMessage(value);
             }}
             renderRow={(file, depth, open, expand, activate, announce, rename) => (
-              <DemoRow config={{ ...config, label: file.label,
+              <DemoRow config={{ ...config, spaceName, label: file.label,
                 row: file.icon === "folder" ? "Folder" : "File", icon: file.icon,
                 depth: String(depth + Number(config.depth)), expanded: open,
                 current: selectedArea === null && selectedFile === file.id && config.current,
@@ -1302,32 +1238,15 @@ export function NavigationRailLab() {
                 listening: file.id === "root" && config.listening,
                 locked: file.id === "root" && config.locked,
               }} expandable={Boolean(file.children?.length)}
-                onExpand={expand} onActivate={activate} onMessage={announce} onRenamed={rename} />
+                onExpand={expand} onActivate={activate} onMessage={(value) => {
+                  if (value.includes("HTML file — copy agent prompt")) htmlPromptOrigin.current = fileRegion.current?.querySelector<HTMLElement>(`[data-file-id="${file.id}"] .rail-lab-actions`) ?? null;
+                  announce(value);
+                }} onRenamed={rename} />
             )} />
           ) : (
-            <div>
-              <p className="rail-lab-empty">
-                {config.content === "Loading"
-                  ? "Loading files…"
-                  : config.content === "Error"
-                  ? "Could not load files."
-                  : "No files yet."}
-                {config.content === "Error" ? (
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      set("content", "Populated");
-                      setMessage(
-                        "Files loaded. Focus returned to the file list."
-                      );
-                      requestAnimationFrame(() => fileRegion.current?.focus());
-                    }}
-                  >
-                    Retry
-                  </Button>
-                ) : null}
-              </p>
-            </div>
+            <NavigationFileList nodes={[]} label="Space files" expandedIds={[]} onExpandedChange={() => {}} renderRow={() => null}
+              state={config.content === "Loading" ? "loading" : config.content === "Error" ? "error" : "empty"}
+              onRetry={() => { set("content", "Populated"); setMessage("Files loaded. Focus returned to the file list."); requestAnimationFrame(() => fileRegion.current?.focus()); }} />
           )}
       </section>
       <footer><NavigationAccount name={config.row === "Account" ? config.label : "Avery Chen"} initials="AC" settingsLabel="Account settings" onAccount={() => navigatePreview("Account opened in the preview.")} onSettings={() => navigatePreview("Settings opened in the preview.")} /></footer>
@@ -1519,7 +1438,7 @@ export function NavigationRailLab() {
                   ) : atom === "actions-menu" ? (
                     <DemoRow
                       config={{
-                        ...config,
+                        ...config, spaceName,
                         row: config.row === "Folder" ? "Folder" : "File",
                         showActions: true,
                       }}
@@ -1542,7 +1461,7 @@ export function NavigationRailLab() {
                   ) : atom === "avatar" ? (
                     <div className="rail-lab-space-identity">
                       {spaceIdentity("Studio")}
-                      {spaceIdentity("Private", true, space === "private" ? totals.signals : flattenFiles(spaceFixtures.current.private ?? seedFiles).reduce((sum, { node }) => sum + (node.signals ?? 0), 0))}
+                      {spaceIdentity("Private", true, space === "private" ? totals.signals : flattenFiles(spaceFixtures.current.private ?? []).reduce((sum, { node }) => sum + (node.signals ?? 0), 0))}
                       <Avatar className="size-7">
                         <AvatarFallback className="rail-lab-account-initials">
                           AC
@@ -1555,7 +1474,7 @@ export function NavigationRailLab() {
                       <p>File: its own positive signals only</p>
                       <DemoRow
                         config={{
-                          ...config,
+                          ...config, spaceName,
                           row: "File",
                           icon: "text",
                           showCount: true,
@@ -1568,7 +1487,7 @@ export function NavigationRailLab() {
                       <p>Signals: both Space totals</p>
                       <DemoRow
                         config={{
-                          ...config,
+                          ...config, spaceName,
                           row: "Navigation",
                           icon: "signals",
                           label: "Signals",
@@ -1834,7 +1753,7 @@ export function NavigationRailLab() {
                 <NestedSample
                   node={{ label: "Example file", icon: "text" }}
                   depth={0}
-                  config={config}
+                  config={{ ...config, spaceName }}
                   onMessage={setMessage}
                 />
               </div>
@@ -1860,7 +1779,7 @@ export function NavigationRailLab() {
                   expandable={false}
                   previewState={String(state)}
                   config={{
-                    ...config,
+                    ...config, spaceName,
                     count:
                       config.row === "Navigation" && config.icon === "signals"
                         ? String(totals.signals)
@@ -2000,7 +1919,7 @@ export function NavigationRailLab() {
       <NavigationRailParity />
       <Dialog open={htmlPromptOpen} onOpenChange={setHtmlPromptOpen}>
         <DialogContent onCloseAutoFocus={(event) => {
-          event.preventDefault(); createTrigger.current?.focus();
+          event.preventDefault(); requestAnimationFrame(() => (htmlPromptOrigin.current?.isConnected ? htmlPromptOrigin.current : createTrigger.current)?.focus());
         }}>
           <DialogTitle>Create an HTML file with your agent</DialogTitle>
           <DialogDescription>Copy this prompt to your agent. This does not create a file directly.</DialogDescription>
@@ -2045,7 +1964,7 @@ export function NavigationRailLab() {
                   key: noteKey,
                   text: note,
                   options: {
-                    ...config,
+                    ...config, spaceName,
                     ...(level === "Atoms" && atom === "icon"
                       ? { inspectedIcon }
                       : {}),

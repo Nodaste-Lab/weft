@@ -2,32 +2,28 @@
 
 ## Purpose
 
-Shared navigation space picker composition.
+Choose the active Space and show where signals await action before switching context.
 
 ## When to use
 
-Compose a workspace navigation rail with the shared navigation tokens and row controls.
+Use at the top of a workspace rail when the application owns Space selection and live counts.
 
 ## When not to use
 
-Do not use this control to own application routing, permissions or server data.
+Do not use as an Organization switcher or a Space management menu; manage those in Settings.
 
 ## How to use
 
-Import NavigationSpacePicker from the package root or src/ui/navigation-space-picker.tsx.
-
-```tsx
-<NavigationSpacePicker label="Space" value="studio" onValueChange={() => {}} spaces={[{ id: "studio", name: "Studio", signals: 3 }]} />
-```
+Supply spaces (id, name, optional initials, private, signals and disabled), value, onValueChange and a required label. onAdd adds an Add new option after all Spaces. Add returns through onAdd without changing the selected Space.
 
 ## Heuristics
 
-Keep names visible and controls aligned. Preserve native destination links.
+Right-align counts before the chevron or selection check. Keep the Space name aligned to the start after the outlined initials circle. Hidden zero counts should not leave a placeholder.
 
 ## Content
 
-Provide names and localized labels from the consuming application. Fixture values are illustrative only.
+Signals count only items awaiting action in that Space. Provide real counts and stable nonempty IDs. Private uses a lock instead of initials.
 
 ## Accessibility
 
-Supply the required accessible labels. Preserve visible keyboard focus, Escape dismissal and focus return. Test keyboard and touch interactions in the consuming application.
+Select supplies combobox/listbox keyboard behavior: Enter/Space or arrows open, arrows/typeahead choose, Enter commits and Escape cancels. Full option names remain accessible when text truncates. Selection returns focus to the trigger. Test localized long labels and disabled Spaces.

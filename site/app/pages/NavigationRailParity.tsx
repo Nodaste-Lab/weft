@@ -65,7 +65,7 @@ export const railParity: {
     status: "Intentional change",
     existing:
       "Badge counts waiting assigned Signals across accessible Spaces; destination resolves an eligible Space and restores its saved lens.",
-    gap: "Confirmed: count only signals awaiting action. Each file shows its own awaiting-action signals, hides zero and shows no notifications. The Signals row totals cover the selected Space, and the Space picker shows each Space’s positive awaiting-action signal count. Studio and Private reuse sample data in this lab; live per-Space counts and action-status filtering remain integration requirements. The signal-count design decision is complete.",
+    gap: "Confirmed: count only signals awaiting action. Each file shows its own awaiting-action signals, hides zero and shows no notifications. The Signals row totals cover the selected Space, and the Space picker shows each Space’s positive awaiting-action signal count. Studio uses sample data and Private starts empty in this lab; live per-Space counts and action-status filtering remain integration requirements. The signal-count design decision is complete.",
     source: "sidebar-navigation.tsx",
   },
   {

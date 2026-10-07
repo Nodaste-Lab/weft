@@ -1,6 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
@@ -77,7 +77,8 @@
     "release:local": "bash scripts/release-local.sh",
     "test:rail-a11y": "node scripts/check-navigation-rail-a11y.mjs",
     "test:rail-workflows": "node scripts/check-navigation-rail-workflows.mjs",
-    "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs"
+    "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs",
+    "test:workspace-navigation": "node scripts/check-workspace-navigation.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

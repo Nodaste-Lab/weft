@@ -5,6 +5,7 @@ export type Section = 'home' | 'guidelines' | 'tokens' | 'components' | 'pattern
 export interface Route {
   section: Section;
   id?: string;
+  level?: 'Rail';
 }
 
 const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all', 'labs'];
@@ -20,7 +21,9 @@ export function parseHash(hash: string): Route {
   const [head, ...rest] = path.split('/');
   const section = SECTIONS.find((s) => s === head);
   if (!section) return { section: 'home' };
-  const id = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  const requestedId = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  if (section === 'templates' && ['navigation-rail', 'workspace-navigation-rail'].includes(requestedId ?? '')) return { section: 'labs', id: 'navigation-rail', level: 'Rail' };
+  const id = requestedId;
   return id ? { section, id } : { section };
 }
 

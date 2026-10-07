@@ -4,6 +4,7 @@ import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 
+import { useInputModality } from "./input-modality";
 import { cn } from "./utils";
 
 function ContextMenu({
@@ -15,6 +16,7 @@ function ContextMenu({
 function ContextMenuTrigger({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
+  useInputModality();
   return (
     <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />
   );

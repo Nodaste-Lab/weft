@@ -2,32 +2,28 @@
 
 ## Purpose
 
-Shared navigation search composition.
+Compose a transparent Search field with an adjacent, independently named Explorer filter.
 
 ## When to use
 
-Compose a workspace navigation rail with the shared navigation tokens and row controls.
+Use in a navigation rail when the application supplies query state, results and filter behavior.
 
 ## When not to use
 
-Do not use this control to own application routing, permissions or server data.
+Do not use as a search engine or assume it fetches content. Full-content search, pagination and result navigation are application responsibilities.
 
 ## How to use
 
-Import NavigationSearch from the package root or src/ui/navigation-search.tsx.
-
-```tsx
-<NavigationSearch label="Search in Studio" placeholder="Search" />
-```
+Accepts SearchField props, including required label, value/onChange, placeholder and onCommit. filter is an optional trailing React node. The forwarded ref addresses the input. toolbarClassName styles the outer toolbar.
 
 ## Heuristics
 
-Keep names visible and controls aligned. Preserve native destination links.
+Use placeholder Search and a scoped label such as Search in Studio. Align the toolbar’s outer edges with the Space picker; keep a visible boundary and keyboard focus without adding a filled background.
 
 ## Content
 
-Provide names and localized labels from the consuming application. Fixture values are illustrative only.
+Provide meaningful result names and ancestor paths in the application. Announce result count changes with a status region. Name the filter separately from Search.
 
 ## Accessibility
 
-Supply the required accessible labels. Preserve visible keyboard focus, Escape dismissal and focus return. Test keyboard and touch interactions in the consuming application.
+SearchField owns the hidden label and Clear search button. Clearing retains input focus and emits a change. Tab reaches the input, Clear when present, then the filter. The application controls Escape behavior and focus after opening a result.

@@ -6,7 +6,7 @@ import { FieldCode, recipeCode } from './FieldExamples';
 
 export function FormExamples() {
   return <section aria-label="Standard form examples" style={{display:'grid',gap:20}}>
-    <p>Form manages shared form state through react-hook-form. TextField supplies the cutout label, control, helper, and error presentation. Pass the controller value, events, ref, and error to TextField; do not wrap it in FormControl or add a second FormLabel.</p>
+    <h2>Standard form examples</h2><p>Form manages shared form state through react-hook-form. TextField supplies the cutout label, control, helper, and error presentation. Pass the controller value, events, ref, and error to TextField; do not wrap it in FormControl or add a second FormLabel.</p>
     <p>These examples use empty starting values and local simulated saves. They do not change Avalandra data.</p>
     <article style={exampleStyle}><h3>Validate and save</h3>
     <ProjectFormExample/>

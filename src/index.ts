@@ -111,7 +111,6 @@ export * from './ui/utils';
 export * from './ui/hud-issue-contract';
 export * from './ui/knowledge-search-categories';
 // React templates (manifest.templates, kind: react).
-export * from './templates/navigation-rail';
 export * from './ui/navigation-actions';
 export * from './ui/navigation-space-picker';
 export * from './ui/navigation-search';
@@ -119,6 +118,7 @@ export * from './ui/navigation-account';
 export * from './ui/navigation-rail-layout';
 export * from './templates/workspace-navigation-rail';
 
+export * from './ui/navigation-file-list';
 export * from './ui/text-field';
 
 export * from './ui/combobox';

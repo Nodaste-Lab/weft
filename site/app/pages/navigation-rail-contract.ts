@@ -41,7 +41,7 @@ export const railDecisions = [
     current:
       "Rail: resizable width, nested files and drawer below 1024px. Released Sidebar: fixed width defaults, collapse behavior and shared mobile breakpoint.",
     recommendation:
-      "Implementation direction: compose a navigation-rail template from shared primitives. Keep resize and the configurable responsive policy in the composition to avoid changing other Sidebar consumers.",
+      "Implementation direction: compose the workspace-navigation-rail template from shared primitives. Keep resize and the configurable responsive policy in the composition to avoid changing other Sidebar consumers.",
   },
   {
     title: "Count badge contrast",

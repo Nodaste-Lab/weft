@@ -44,3 +44,16 @@ it("does not allow keyboard reordering for read-only data", () => {
   fireEvent.keyDown(screen.getByRole("button", { name: "Alpha", exact: true }), { key: "ArrowDown", altKey: true });
   expect(screen.getAllByRole("listitem")[0]).toHaveAttribute("data-file-id", "a");
 });
+it("clears Undo when Space changes and starts removal confirmation on Cancel", () => {
+  const files: TestFile[] = [{ id: "a", label: "Alpha", icon: "text" }];
+  const onChange = vi.fn();
+  const renderRow = (file: TestFile, depth: number, open: boolean, expand: () => void, activate: () => void, message: (value: string) => void) => <button onClick={() => message(`Preview only: Remove subtree… for ${file.label}.`)}>Remove {file.label}</button>;
+  const props = { files, onChange, selected: null, onSelect: vi.fn(), writable: true, onMessage: vi.fn(), onTransfer: vi.fn(), renderRow };
+  const view = render(<NavigationRailTestTree {...props} space="Studio" />);
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Alpha' }));
+  expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+  expect(screen.getByRole('button', { name: 'Undo last tree change' })).toBeVisible();
+  view.rerender(<NavigationRailTestTree {...props} space="Private" files={[]} />);
+  expect(screen.queryByRole('button', { name: 'Undo last tree change' })).toBeNull();
+});

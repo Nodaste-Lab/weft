@@ -63,7 +63,7 @@ A single-line text field. It owns the control itself: the boundary and fill, the
 ## Content
 
 - Label: sentence case, one to three words, no trailing colon. The label is the accessible name, so its case is a naming rule as well as a typographic one.
-- Required: mark the minority. Write the word "required" after the label with a space before it and set the `required` attribute. Never a bare asterisk; never required and optional markers on the same form.
+- Required: mark the minority. Write “(required)” after the label with a space before it and set the `required` attribute. Never a bare asterisk; never required and optional markers on the same form.
 - Placeholder: a format hint ("e.g. northstar"), never the label and never an instruction. It disappears on typing and is not reliably read by screen readers.
 - Help text is optional. Add one short sentence only when the label is insufficient and users need format, constraint, consequence, or contextual guidance. Do not repeat the label. No links in help text.
 - Error: what happened, why, what to try. Copy first, colour second. Never a bare "Invalid".

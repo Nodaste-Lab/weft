@@ -68,6 +68,7 @@ export function ComponentPage({ id }: { id?: string }) {
       <div data-component-example={id}>
         {id === 'label' ? <LabelExamples/> : id === 'form' ? <FormExamples/> : (id === 'input' || id === 'text-field') ? <><TextField label="Display name"/><FieldCode code={'import { TextField } from "@nodaste-lab/weft";\n\n<TextField label="Display name" />'}/><p>Use TextField for labelled forms. Cutout is its default treatment; underline is a contextual alternative. Input is the bare control for specialized compositions.</p></> : (id === 'textarea' || id === 'search-field') ? null : <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />}
       </div>
+      {id === 'calendar' && <FieldCode code={'import * as React from "react";\nimport { Calendar } from "@nodaste-lab/weft";\n\nfunction CalendarExample() {\n  const [date, setDate] = React.useState<Date | undefined>(() => new Date(2026, 2, 15));\n  return <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} className="rounded-md border" />;\n}'}/>}
       {['combobox','multi-select'].includes(id) && <FieldCode code={`import * as React from 'react';
 import { ${id === 'combobox' ? 'Combobox' : 'MultiSelect'} } from '@nodaste-lab/weft';
 
@@ -77,7 +78,6 @@ function Example() {
   return <${id === 'combobox' ? 'Combobox' : 'MultiSelect'} label="${id === 'combobox' ? 'Space' : 'Spaces'}" options={options} value={value} onValueChange={setValue} />;
 }`}/>}
 
-      {id === 'calendar' && <FieldCode code={'import * as React from "react";\nimport { Calendar } from "@nodaste-lab/weft";\n\nfunction CalendarExample() {\n  const [date, setDate] = React.useState<Date | undefined>(() => new Date(2026, 2, 15));\n  return <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} className="rounded-md border" />;\n}'}/>}
 
       {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldFamilyGuide kind={id} />}
 

@@ -30,7 +30,7 @@ import { MultiSelect } from '@nodaste-lab/weft';
 const options = [{ value: 'studio', label: 'Studio' }, { value: 'research', label: 'Research' }, { value: 'archive', label: 'Archive', disabled: true }];
 export function Example() {
   const [value, setValue] = React.useState<string[]>([]);
-  return <MultiSelect label="Space" options={options} value={value} onValueChange={setValue} name="spaces" />;
+  return <MultiSelect label="Spaces" options={options} value={value} onValueChange={setValue} name="spaces" />;
 }
 ```
 

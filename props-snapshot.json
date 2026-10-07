@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.7.0",
+  "designSystemVersion": "0.8.0",
   "components": {
     "accordion": {
       "version": "1.0.0",
@@ -1991,7 +1991,7 @@
       }
     },
     "navigation-actions": {
-      "version": "1.0.0",
+      "version": "1.0.2",
       "surface": {
         "variants": {},
         "props": {
@@ -2036,7 +2036,7 @@
       }
     },
     "navigation-count": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -2067,6 +2067,156 @@
         "native": [
           "span"
         ]
+      }
+    },
+    "navigation-file-list": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "canDrag": {
+            "optional": true,
+            "union": null
+          },
+          "canDrop": {
+            "optional": true,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "editing": {
+            "optional": true,
+            "union": null
+          },
+          "emptyLabel": {
+            "optional": true,
+            "union": null
+          },
+          "errorLabel": {
+            "optional": true,
+            "union": null
+          },
+          "expandedIds": {
+            "optional": false,
+            "union": null
+          },
+          "getChildState": {
+            "optional": true,
+            "union": null
+          },
+          "hasMore": {
+            "optional": true,
+            "union": null
+          },
+          "isContainer": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "loadingLabel": {
+            "optional": true,
+            "union": null
+          },
+          "moreLabel": {
+            "optional": true,
+            "union": null
+          },
+          "nodes": {
+            "optional": false,
+            "union": null
+          },
+          "onActions": {
+            "optional": true,
+            "union": null
+          },
+          "onCancel": {
+            "optional": false,
+            "union": null
+          },
+          "onChange": {
+            "optional": false,
+            "union": null
+          },
+          "onCommit": {
+            "optional": false,
+            "union": null
+          },
+          "onDrop": {
+            "optional": true,
+            "union": null
+          },
+          "onExpandedChange": {
+            "optional": false,
+            "union": null
+          },
+          "onInvalid": {
+            "optional": false,
+            "union": null
+          },
+          "onLoadMore": {
+            "optional": true,
+            "union": null
+          },
+          "onMove": {
+            "optional": true,
+            "union": null
+          },
+          "onRename": {
+            "optional": true,
+            "union": null
+          },
+          "onReorder": {
+            "optional": true,
+            "union": null
+          },
+          "onRetry": {
+            "optional": true,
+            "union": null
+          },
+          "pageSize": {
+            "optional": true,
+            "union": null
+          },
+          "renderRow": {
+            "optional": false,
+            "union": null
+          },
+          "retainedIds": {
+            "optional": true,
+            "union": null
+          },
+          "retryLabel": {
+            "optional": true,
+            "union": null
+          },
+          "selectedId": {
+            "optional": true,
+            "union": null
+          },
+          "state": {
+            "optional": true,
+            "union": [
+              "empty",
+              "error",
+              "loading",
+              "ready"
+            ]
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
       }
     },
     "navigation-icon": {
@@ -2108,7 +2258,7 @@
       }
     },
     "navigation-rail-layout": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -2201,7 +2351,7 @@
       }
     },
     "navigation-row": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -2271,7 +2421,7 @@
       }
     },
     "navigation-space-picker": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -3377,7 +3527,7 @@
       }
     },
     "text-field": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {

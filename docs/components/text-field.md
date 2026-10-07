@@ -45,7 +45,9 @@ The standard labelled form field: cutout by default, contextual underline as an 
 
 ## Content
 
-- Label the purpose, not the control type. Mark required or optional consistently across the form.
+- Label the purpose, not the control type. Keep labels short; put long qualifications in description. Labels stay on one line and truncate visually at narrow widths; the complete accessible name and hover title remain available. Do not put essential instructions only in the label.
+- Mark required or optional consistently across the form. Use “(required)” with native required for individually marked fields, or state that fields are required and mark only optional ones in mostly required forms.
+- Field and attached-action heights follow the current density tier, with extra room for the floating label.
 - Help text is optional. Omit description when the label is sufficient; do not repeat the label or fill space with explanatory copy. Add help for necessary formats, constraints, consequences, or unfamiliar context.
 - Instructions belong in description, not a disappearing placeholder. TextField reserves its placeholder for label positioning.
 - Error text says how to correct the value. Status communicates actual progress or confirmation, never speculative success.

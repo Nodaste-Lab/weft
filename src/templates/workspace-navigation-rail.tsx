@@ -22,6 +22,8 @@ export type WorkspaceNavigationRailProps = {
   spaceLabel: string;
   filesLabel: string;
   filesHref: string;
+  /** ID used by currentDestination for the Files destination. */
+  filesId?: string;
   spacePicker: NavigationSpacePickerProps;
   search: NavigationSearchProps;
   destinations: WorkspaceNavigationDestination[];
@@ -33,20 +35,22 @@ export type WorkspaceNavigationRailProps = {
   children: React.ReactNode;
 };
 /** App owns file data, selection, paging, permissions, routes and mutation. */
-export function WorkspaceNavigationRail({ id, label, spaceLabel, filesLabel, filesHref, spacePicker, search, destinations, currentDestination, files, create, account, layout, children }: WorkspaceNavigationRailProps) {
+export function WorkspaceNavigationRail({ id, label, spaceLabel, filesLabel, filesHref, filesId = "files", spacePicker, search, destinations, currentDestination, files, create, account, layout, children }: WorkspaceNavigationRailProps) {
   const [filesOpen, setFilesOpen] = React.useState(true);
   const current = destinations.find(item => item.id === currentDestination);
   const hasPanel = current?.panel !== undefined;
   React.useEffect(() => { if (!hasPanel) setFilesOpen(true); }, [currentDestination, hasPanel]);
+  const spaceName = spacePicker.spaces.find(space => space.id === spacePicker.value)?.name ?? label;
+  const filesCurrent = currentDestination === filesId;
   const rail = <nav id={id} aria-label={label} className="weft-workspace-navigation">
     <header><label>{spaceLabel}<NavigationSpacePicker {...spacePicker} /></label></header>
     <NavigationSearch {...search} />
     {destinations.map(item => <NavigationRow key={item.id} current={item.id === currentDestination}>
       <NavigationRowLink href={item.href} aria-current={item.id === currentDestination ? 'page' : undefined}><NavigationIcon purpose={item.icon} /><span className="weft-navigation-space-name">{item.label}</span></NavigationRowLink>
-      {item.icon === 'signals' && <NavigationCount count={item.signals ?? 0} name={spacePicker.spaces.find(space => space.id === spacePicker.value)?.name ?? label} scope="signals-destination" />}
-      {item.icon === 'signals' && <NavigationCount count={item.notifications ?? 0} name={item.label} scope="signals-destination" kind="notifications" />}
+      {item.icon === 'signals' && <NavigationCount count={item.signals ?? 0} name={spaceName} scope="signals-destination" />}
+      {item.icon === 'signals' && <NavigationCount count={item.notifications ?? 0} name={spaceName} scope="signals-destination" kind="notifications" />}
     </NavigationRow>)}
-    <NavigationRow><NavigationRowDisclosure name={filesLabel} disabled={hasPanel} expanded={!hasPanel && filesOpen} aria-controls={`${id}-files`} onClick={() => setFilesOpen(!filesOpen)} /><NavigationIcon purpose="file" /><NavigationRowLink href={filesHref}>{filesLabel}</NavigationRowLink>{create}</NavigationRow>
+    <NavigationRow current={filesCurrent}><NavigationRowDisclosure name={filesLabel} disabled={hasPanel} expanded={!hasPanel && filesOpen} aria-controls={`${id}-files`} onClick={() => setFilesOpen(!filesOpen)} /><NavigationIcon purpose="file" /><NavigationRowLink href={filesHref} aria-current={filesCurrent ? "page" : undefined}>{filesLabel}</NavigationRowLink>{create}</NavigationRow>
     <section id={`${id}-files`} aria-label={filesLabel} hidden={hasPanel || !filesOpen} className="weft-workspace-navigation-files">{files}</section>
     {hasPanel && <section className="weft-workspace-navigation-files" aria-label={current.label}>{current.panel}</section>}
     <NavigationAccount {...account} />

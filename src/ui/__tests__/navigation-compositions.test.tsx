@@ -24,6 +24,12 @@ describe('Workspace navigation compositions', () => {
    fireEvent.click(screen.getByRole('button', { name: 'Actions for Research' }));
    fireEvent.click(await screen.findByRole('menuitem', { name: 'More' }));
    await waitFor(() => expect(screen.getByRole('menuitem', { name: 'Back' })).toHaveFocus());
+   expect(screen.getByRole('menu')).toHaveAccessibleName('File actions: More');
+   fireEvent.click(screen.getByRole('menuitem', { name: 'Back' }));
+   await waitFor(() => expect(screen.getByRole('menuitem', { name: 'More' })).toHaveFocus());
+   expect(screen.getByRole('menuitem', { name: 'More' })).toHaveAttribute('aria-haspopup', 'menu');
+   expect(screen.getByRole('menu')).toHaveAccessibleName('File actions');
+   fireEvent.click(screen.getByRole('menuitem', { name: 'More' }));
    fireEvent.click(screen.getByRole('menuitem', { name: 'Copy link' }));
    expect(select).toHaveBeenCalledOnce();
  });
@@ -65,6 +71,9 @@ describe('Workspace navigation compositions', () => {
    expect(screen.getByRole('link', { name: 'Files' })).toHaveAttribute('href', '/files');
    rerender(<WorkspaceNavigationRail {...props} currentDestination="signals" />);
    expect(screen.getByRole('link', { name: 'Research' })).toBeVisible();
+   rerender(<WorkspaceNavigationRail {...props} currentDestination="files" />);
+   expect(screen.getByRole('link', { name: 'Files' })).toHaveAttribute('aria-current', 'page');
+   expect(screen.getByRole('link', { name: 'Files' }).closest('.weft-navigation-row')).toHaveAttribute('data-current', 'true');
    await expectA11yClean(container);
  });
 });

@@ -86,3 +86,8 @@
 .field-component-document article, .field-component-document details { min-width:0; }
 
 .field-component-document code { color:var(--weft-ink) !important; }
+
+.input-system-form > button { justify-self: start; }
+.input-lab table { width: 100%; border-collapse: collapse; text-align: start; }
+.input-lab th, .input-lab td { padding: 12px; border-bottom: 1px solid var(--weft-control-border); vertical-align: top; }
+.input-lab h2, .input-lab h3 { font-family: var(--weft-font-sans); }

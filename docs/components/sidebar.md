@@ -30,7 +30,8 @@ A persistent rail for app-level navigation. It owns the rail chrome (provider, h
 4. A per-row action is `SidebarMenuAction` with `showOnHover`; give it an accessible name that includes the row title.
 5. A count is `SidebarMenuBadge`; nesting is `SidebarMenuSub` with `SidebarMenuSubButton`, wrapped in `collapsible` when the parent expands.
 
-The `navigation-rail` template shows all of this composed.
+For a complete workspace rail, use the `workspace-navigation-rail` template
+and its navigation-specific controls.
 
 ## Heuristics
 

@@ -37,11 +37,11 @@ export function FieldExamples({kind}:{kind:string}) {
    {title:'Confirmed result',props:{status:'This example was confirmed.',defaultValue:filled}},
  ];
  return <section className="input-lab" aria-label="Field examples with code">
-   <h3>{search?'Search states':'Treatments and states'}</h3>
+   <h2>{search?'Search states':'Treatments and states'}</h2>
    <p>Each example includes the code that produces it. Tab or click to inspect focus, and hover to inspect hover. Feedback examples show supplied states; your application owns validation and asynchronous checks.</p>
    <div className="field-matrix-grid">{cases.filter(item=>!search||!['Pending check','Confirmed result','Error with durable help'].includes(item.title)).map(({title,props})=>{
      const example={...base,...props};
-     return <article className="field-matrix-card" key={title}><h4>{search&&title==='Empty · default cutout'?'Empty search':title}</h4>
+     return <article className="field-matrix-card" key={title}><h3>{search&&title==='Empty · default cutout'?'Empty search':title}</h3>
        {search?<SearchField label={`Search documents, ${title}`} clearLabel={`Clear search, ${title}`} defaultValue={title.startsWith('Empty')?'':'Research'} disabled={props.disabled} readOnly={props.readOnly} aria-invalid={!!props.error||undefined}/>:<TextField {...example}/>}
        <FieldCode code={search?`import { SearchField } from '@nodaste-lab/weft';\n\n<SearchField label=${JSON.stringify(`Search documents, ${title}`)} clearLabel=${JSON.stringify(`Clear search, ${title}`)} defaultValue=${JSON.stringify(title.startsWith('Empty')?'':'Research')}${props.disabled?' disabled':''}${props.readOnly?' readOnly':''}${props.error?' aria-invalid':''} />`:fieldCode(example)}/>
      </article>;

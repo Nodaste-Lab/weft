@@ -1,3 +1,4 @@
+import { NavigationFileList } from '../../ui/navigation-file-list';
 import { NavigationActions } from '../../ui/navigation-actions';
 import { NavigationSpacePicker } from '../../ui/navigation-space-picker';
 import { NavigationSearch } from '../../ui/navigation-search';
@@ -21,6 +22,10 @@ export const navigationSpecimens: Record<string, Specimen> = {
 'navigation-search': { component: 'NavigationSearch', module: 'navigation-search', axes: [], base: {}, states: [{ label: 'Default', props: {}, code: "<NavigationSearch label=\"Search in Studio\" placeholder=\"Search\" />" }], render: () => <NavigationSearch label="Search in Studio" placeholder="Search" /> },
 'navigation-account': { component: 'NavigationAccount', module: 'navigation-account', axes: [], base: {}, states: [{ label: 'Default', props: {}, code: "<NavigationAccount name=\"Avery Chen\" initials=\"AC\" settingsLabel=\"Account settings\" settingsHref=\"#settings\" />" }], render: () => <NavigationAccount name="Avery Chen" initials="AC" settingsLabel="Account settings" settingsHref="#settings" /> },
 'navigation-rail-layout': { component: 'NavigationRailLayout', module: 'navigation-rail-layout', axes: [], base: {}, states: [{ label: 'Default', props: {}, code: "<NavigationRailLayout railId=\"layout-example\" label=\"Navigation\" openLabel=\"Open navigation\" resizeLabel=\"Resize navigation\" description=\"Browse destinations\" rail={<nav id=\"layout-example\" aria-label=\"Example navigation\">Files</nav>}><p>Workspace</p></NavigationRailLayout>" }], render: () => <NavigationRailLayout railId="layout-example" label="Navigation" openLabel="Open navigation" resizeLabel="Resize navigation" description="Browse destinations" rail={<nav id="layout-example" aria-label="Example navigation">Files</nav>}><p>Workspace</p></NavigationRailLayout> },
+  'navigation-file-list': {
+    component: 'NavigationFileList', module: 'navigation-file-list', axes: [],
+    render: () => <NavigationFileList nodes={[{id:'example',label:'Example file'}]} label="Example files" expandedIds={[]} onExpandedChange={() => {}} renderRow={node => <NavigationRow><NavigationRowLink href="#example">{node.label}</NavigationRowLink></NavigationRow>} />,
+  },
   'navigation-count': {
     component: 'NavigationCount', module: 'navigation-count', axes: [],
     base: { count: 3, name: 'Research', scope: 'file' },

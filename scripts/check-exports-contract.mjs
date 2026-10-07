@@ -15,6 +15,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Every specifier a consumer uses today. Add here when adding an export.
 const SPECIFIERS = [
+  '@nodaste-lab/weft/src/ui/navigation-file-list.tsx',
   '@nodaste-lab/weft/tokens.css',
   '@nodaste-lab/weft/theme.css',
   '@nodaste-lab/weft/components.css',
@@ -44,7 +45,6 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/src/ui/navigation-icon.tsx',
   '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
-  '@nodaste-lab/weft/src/templates/navigation-rail.tsx',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
   // built entry ("." resolves via dist)

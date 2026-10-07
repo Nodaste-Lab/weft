@@ -33,6 +33,11 @@ describe('Navigation foundations', () => {
     expect(screen.getByRole('img', { name: '3 signals awaiting action for Research' })).toBeVisible();
     expect(screen.getByRole('img', { name: '5 total notifications in Studio' })).toBeVisible();
   });
+  it('uses singular signal and notification labels', () => {
+    render(<><NavigationCount count={1} name="Research" scope="file" /><NavigationCount count={1} name="Studio" scope="signals-destination" kind="notifications" /></>);
+    expect(screen.getByRole('img', { name: '1 signal awaiting action for Research' })).toBeVisible();
+    expect(screen.getByRole('img', { name: '1 total notification in Studio' })).toBeVisible();
+  });
   it('suppresses unsupported statuses and keeps base glyphs decorative', () => {
     const { rerender, container } = render(<NavigationItemIcon purpose="folder" listening locked />);
     expect(screen.queryByRole('img', { name: 'Listening' })).toBeNull();
