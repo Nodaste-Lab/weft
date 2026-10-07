@@ -42,7 +42,7 @@ The field family around a control: label, control slot, description, error messa
 - Ids are element-tracked. A description, message or status id is listed only while that element is mounted, so nothing points at nothing.
 - A `stop` status does not make the field invalid. Whether a failed check becomes an error stays with the consumer's error machinery.
 - Nothing here blocks progression. A helper that decides when you may submit is a form library, and fights the one in use.
-- Mark the minority: the word "required" in the label plus the `required` attribute, or "optional", never both.
+- Mark the minority: plain text "(required)" in the label plus the `required` attribute, or "(optional)", never both. No colour, no asterisk; on a mostly required form, state that fields are required and mark only the optional ones.
 
 ## Content
 

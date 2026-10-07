@@ -667,11 +667,11 @@ Five controls ship in Weft v1: `.weft-input` (single-line text), `.weft-textarea
 
 #### Field wrapper
 
-Every input sits inside a `.weft-field` that stacks label + control + hint vertically. Labels are mono **sentence case** (`--weft-font-mono` at 12px, 0.01em, muted) — see *How a control gets its name* below for why the case is a naming rule rather than a typographic one. A required field carries the word `required` in a `.weft-req` span coloured `--weft-stop` **and the `required` attribute**; a bare asterisk lands in the accessible name as punctuation while leaving `required` false. Error hints reuse `.weft-field-hint` with `.is-error`, and are associated by id.
+Every input sits inside a `.weft-field` that stacks label + control + hint vertically. Labels are mono **sentence case** (`--weft-font-mono` at 12px, 0.01em, muted) — see *How a control gets its name* below for why the case is a naming rule rather than a typographic one. A required field carries the plain text `(required)` in a `.weft-req` span, in the label's own colour (the span is a hook, not a style; owner ruling 2026-10-07) **and the `required` attribute**; a bare asterisk lands in the accessible name as punctuation while leaving `required` false. Error hints reuse `.weft-field-hint` with `.is-error`, and are associated by id.
 
 ```html
 <div class="weft-field">
-  <label class="weft-field-label" for="email">Email <span class="weft-req">required</span></label>
+  <label class="weft-field-label" for="email">Email <span class="weft-req">(required)</span></label>
   <input class="weft-input" id="email" type="email" required
          aria-invalid="true" aria-describedby="email-error email-hint" />
   <span class="weft-field-hint is-error" id="email-error">Needs a full address.</span>
@@ -679,7 +679,7 @@ Every input sits inside a `.weft-field` that stacks label + control + hint verti
 </div>
 ```
 
-Note the space before the `.weft-req` span: the accessible name concatenates the label's text nodes, so without it the name is "Emailrequired".
+Note the space before the `.weft-req` span: the accessible name concatenates the label's text nodes, so without it the name is "Email(required)".
 
 - `.weft-input` takes `height: var(--weft-control-h)` with no vertical padding, so the declared tier governs at every density — 44px marketing, 36px compact, 34px dense. It used to reach the tier through `min-height` while padding plus line-height pushed past it, which missed the tier by 2.4px at marketing and 7.6px at compact; only dense fitted, and only because its `pad-y` had been hand-tuned. Measured at every tier by `tests/contract/input-geometry.spec.ts`.
 
@@ -845,7 +845,7 @@ control.
 **The required marker is real text plus the attribute** (heuristic 7, and it marks the minority — never both). A bare `*` lands inside the accessible name as punctuation while `required` stays false; the observed name was "RETENTION\*" with `required` false. Write the word, keep the space before it — the name concatenates text nodes, so without it you get "Retentionrequired" — and set the attribute:
 
 ```html
-<label class="weft-field-label" for="retention">Retention <span class="weft-req">required</span></label>
+<label class="weft-field-label" for="retention">Retention <span class="weft-req">(required)</span></label>
 <input class="weft-input" id="retention" required />
 ```
 
