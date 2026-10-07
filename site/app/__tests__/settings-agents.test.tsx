@@ -31,3 +31,14 @@ it('opens setup directly from Edit and confirms permanent deactivation',async()=
  await waitFor(()=>expect(screen.getByRole('button',{name:'Connect your agent'})).toHaveFocus());
  expect(screen.queryByRole('button',{name:/Reactivate/})).toBeNull();
 });
+it('rejects duplicate names and focuses setup on direct Edit',()=>{
+ render(<SettingsAgents/>);
+ fireEvent.click(screen.getByRole('button',{name:'Edit Avery’s Codex'}));
+ expect(screen.getByRole('heading',{name:'Connect your agent',level:2})).toHaveFocus();
+ fireEvent.click(screen.getByRole('button',{name:'Done'}));
+ fireEvent.click(screen.getByRole('button',{name:'Connect your agent'}));
+ const field=screen.getByLabelText('Display name (required)');
+ fireEvent.change(field,{target:{value:'  AVERY’S CODEX  '}});fireEvent.submit(field.closest('form')!);
+ expect(field).toHaveFocus();expect(field).toHaveAttribute('aria-invalid','true');
+ expect(field).toHaveAccessibleDescription(expect.stringContaining('Enter a unique agent name.'));
+});

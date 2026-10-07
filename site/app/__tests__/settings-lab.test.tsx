@@ -126,3 +126,16 @@ it('uses the rail picker and creates a uniquely named local Space', () => {
  expect(screen.getByRole('combobox',{name:'Selected Space'})).toHaveTextContent('Research');
  expect(screen.getByRole('status')).toHaveTextContent('local preview only');
 });
+it('retains a useful focus target after saving and resolves System density samples', async () => {
+ render(<SettingsLab/>);
+ const field=screen.getByLabelText('Display name (required)');
+ fireEvent.change(field,{target:{value:'Jordan Q'}});
+ const save=screen.getByRole('button',{name:'Save changes'});save.focus();fireEvent.click(save);
+ expect(field).toHaveFocus();expect(save).toBeDisabled();
+ document.documentElement.setAttribute('data-theme','dark');
+ await new Promise(resolve=>setTimeout(resolve,0));
+ const previews=document.querySelectorAll<HTMLIFrameElement>('.settings-lab-preference-preview--density');
+ expect(previews).toHaveLength(3);
+ previews.forEach(frame=>expect(frame.srcdoc).toContain('data-theme="dark"'));
+ document.documentElement.removeAttribute('data-theme');
+});
