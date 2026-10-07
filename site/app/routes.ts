@@ -20,7 +20,8 @@ export function parseHash(hash: string): Route {
   const [head, ...rest] = path.split('/');
   const section = SECTIONS.find((s) => s === head);
   if (!section) return { section: 'home' };
-  const id = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  const requestedId = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  const id = section === 'templates' && requestedId === 'navigation-rail' ? 'workspace-navigation-rail' : requestedId;
   return id ? { section, id } : { section };
 }
 

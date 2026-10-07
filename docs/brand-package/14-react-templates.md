@@ -39,48 +39,12 @@ React template. A surface that must also work there needs the CSS form in
 
 ---
 
-## `navigation-rail` — workspace rail
-
-**Use when** an app has a persistent left rail with a workspace or space
-picker, a short section navigation, a document tree and the signed-in
-profile. Avalandra's rail and DocT's workspace rail are this shape.
-
-**Not for** a single flat list of links (use `sidebar` directly), or a
-collapsible-to-icons rail (set `collapsible="icon"` on `sidebar` yourself; the
-template is offcanvas).
-
-**Composition.** `sidebar` (provider, header, groups, menu rows, menu action
-with `showOnHover`, menu badge, sub-menu for nested rows, footer, rail),
-`collapsible` for folders, `select` for the space picker, `avatar` for the
-profile.
-
-**Opening the rail.** The rail is off-canvas. The main column carries a `SidebarTrigger` named by `labels.toggle`, so a narrow viewport (where the rail is a closed sheet) and a keyboard user both have a route to it; the edge `SidebarRail`, named by `labels.rail`, is the pointer affordance on wide viewports. The two names differ: two controls never share an accessible name.
-
-**Data shape.** `spaces` + `currentSpaceId`; `navigation` rows with optional
-`count` and `isActive`; `tree` of `folder` / `document` nodes; `profile`; and
-`labels` for every accessible name (group labels, picker, create, per-row
-actions). Icons for navigation rows come in through the row (`icon`); folder
-and document icons are the template's.
-
-**Heuristics.**
-
-- A row is one colour. Folder and document titles share the foreground;
-  active state is the sidebar accent fill, not a text colour. Link blue on a
-  rail row says "link", not "document".
-- Row actions appear on hover and on focus-within, with an accessible name
-  that includes the row title.
-- Group labels are sentence case, sans.
-- Counts are a `SidebarMenuBadge`, right-aligned, not a styled span.
-
-**Open.** `SidebarMenuAction` measures 18×18 under compact density; the touch
-floor is 24 (`--weft-touch-target`). That is a `sidebar` component fix, not a
-template override; tracked on the Sidebar fixes branch.
-
 ## `workspace-navigation-rail` — Workspace navigation rail
 
-`workspace-navigation-rail` exports `WorkspaceNavigationRail`. This additive
-composition is the migration target for Avalandra; the original
-`navigation-rail` contract remains available to existing consumers.
+`workspace-navigation-rail` exports `WorkspaceNavigationRail`. This
+composition is the migration target for Avalandra. It replaces the removed
+`navigation-rail` template; migrate imports and supply the application-owned
+file tree and routing through this template’s props.
 
 It composes NavigationSpacePicker, NavigationSearch, NavigationRow,
 NavigationIcon, NavigationCount, NavigationAccount and NavigationRailLayout.

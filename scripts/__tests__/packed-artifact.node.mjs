@@ -64,8 +64,6 @@ const CONTRACT_FILES = [
   // resolves.
   'src/ui/button.tsx',
   'src/ui/utils.ts',
-  'src/templates/navigation-rail.tsx',
-  'src/templates/navigation-rail.fixture.ts',
   'src/gallery/DesignSystemUiGallery.tsx',
   'src/test-support/ds-assert.ts',
   // The built entry that "." resolves to.

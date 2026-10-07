@@ -43,7 +43,7 @@ export function TemplatePage({ id }: { id?: string }) {
           </>
         }
       />
-      {id === 'navigation-rail' ? <p><a href="#/labs/navigation-rail">Explore the navigation rail from atoms to the complete rail →</a></p> : null}
+      {id === 'workspace-navigation-rail' ? <p><a href="#/labs/navigation-rail">Explore the navigation rail from atoms to the complete rail →</a></p> : null}
       {kind === 'react' ? (
         <>
           <SectionHeading id="example">Example</SectionHeading>

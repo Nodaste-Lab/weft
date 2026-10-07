@@ -13,16 +13,6 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
 import designSystemManifest from '../../manifest.json';
-import { NavigationRail } from '../templates/navigation-rail';
-import {
-  navigationRailCurrentSpaceId,
-  navigationRailLabels,
-  navigationRailNavigation,
-  navigationRailProfile,
-  navigationRailSpaces,
-  navigationRailTree,
-  navigationRailTreeLabel,
-} from '../templates/navigation-rail.fixture';
 import {
   Accordion,
   AccordionContent,
@@ -3076,34 +3066,9 @@ function TemplatesSection() {
 /** The live example for one react template, without the card chrome; the site's template pages use it. */
 export function TemplateExample({ id }: { id: string }) {
   if (id === 'workspace-navigation-rail') return <WorkspaceNavigationDemo />;
-  if (id === 'navigation-rail') return <NavigationRailTemplateDemo />;
   return null;
 }
 
-function NavigationRailTemplateDemo() {
-  const [spaceId, setSpaceId] = React.useState(navigationRailCurrentSpaceId);
-  return (
-    // `Sidebar` renders position:fixed; the transform makes this wrapper the
-    // containing block so the rail resolves to this frame, as in the sidebar card.
-    <div className="flex h-[420px] w-full overflow-hidden rounded-md border [transform:translateZ(0)]">
-      <NavigationRail
-        spaces={navigationRailSpaces}
-        currentSpaceId={spaceId}
-        onSpaceChange={setSpaceId}
-        navigation={navigationRailNavigation}
-        treeLabel={navigationRailTreeLabel}
-        tree={navigationRailTree}
-        onCreate={() => undefined}
-        onNodeAction={() => undefined}
-        profile={navigationRailProfile}
-        labels={navigationRailLabels}
-        className="min-h-0 h-full"
-      >
-        <div className="text-muted-foreground p-3 text-xs">Main column beside the rail.</div>
-      </NavigationRail>
-    </div>
-  );
-}
 
 const composesListStyle: CSSProperties = {
   margin: 0,

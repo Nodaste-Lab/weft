@@ -14,6 +14,7 @@ describe('routes', () => {
     expect(parseHash('#/')).toEqual({ section: 'home' });
     expect(parseHash('#/components/button')).toEqual({ section: 'components', id: 'button' });
     expect(parseHash('#/tokens/color/')).toEqual({ section: 'tokens', id: 'color' });
+    expect(parseHash('#/templates/navigation-rail')).toEqual({ section: 'templates', id: 'workspace-navigation-rail' });
     expect(parseHash('#/labs/navigation-rail')).toEqual({ section: 'labs', id: 'navigation-rail' });
     expect(parseHash('#/labs/unknown')).toEqual({ section: 'labs', id: 'unknown' });
     expect(parseHash('#/nope')).toEqual({ section: 'home' });
