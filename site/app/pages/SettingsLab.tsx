@@ -56,7 +56,7 @@ export function SettingsLab({ path = 'settings' }: { path?: string }) {
   const [status, setStatus] = React.useState('');
   const [note, setNote] = React.useState('');
   const heading = React.useRef<HTMLHeadingElement>(null);
-  const previous = React.useRef<string | null>(null);
+  const previous = React.useRef(section);
   React.useEffect(() => {
     if (previous.current !== section) { heading.current?.focus(); setStatus(''); previous.current = section; }
   }, [section]);

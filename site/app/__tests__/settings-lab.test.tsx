@@ -6,7 +6,7 @@ import { SettingsLab } from '../pages/SettingsLab';
 afterEach(() => { cleanup(); document.documentElement.removeAttribute('data-density'); });
 it('marks section links and focuses the new section while keeping the return link', () => {
  const { rerender } = render(<SettingsLab path="settings/profile" />);
- expect(screen.getByRole('heading',{name:'Profile',exact:true})).toHaveFocus();
+ expect(screen.getByRole('heading',{name:'Profile',exact:true})).not.toHaveFocus();
  expect(screen.getByRole('link', { name: 'General', exact: true })).toHaveAttribute('aria-current','page');
  expect(screen.getByRole('link', { name: /Back to workspace/ })).toHaveAttribute('href','#/labs/navigation-rail');
  rerender(<SettingsLab path="settings/members" />);
@@ -27,7 +27,7 @@ it('shows private-Space restrictions and preserves a truthful local save', () =>
 
 it('does not silently render Profile for an unknown section', () => {
  render(<SettingsLab path="settings/not-real" />);
- expect(screen.getByRole('heading',{name:'Settings section not found'})).toHaveFocus();
+ expect(screen.getByRole('heading',{name:'Settings section not found'})).not.toHaveFocus();
  expect(screen.queryByLabelText('Display name (required)')).toBeNull();
 });
 
@@ -69,7 +69,7 @@ it('uses shared cutout fields and recovers from an empty profile name', () => {
 
 it('opens General with local preferences and separates Organization administration from Space permission', () => {
  render(<SettingsLab/>);
- expect(screen.getByRole('heading',{name:'General',exact:true})).toHaveFocus();
+ expect(screen.getByRole('heading',{name:'General',exact:true})).not.toHaveFocus();
  expect(screen.getByText('Sign-in method',{exact:true})).toBeVisible();
  expect(screen.getByText('Google',{exact:true})).toBeVisible();
  expect(screen.getByText('Sign out ends your Avalandra session in this browser.')).toBeVisible();
@@ -138,4 +138,15 @@ it('retains a useful focus target after saving and resolves System density sampl
  expect(previews).toHaveLength(3);
  previews.forEach(frame=>expect(frame.srcdoc).toContain('data-theme="dark"'));
  document.documentElement.removeAttribute('data-theme');
+});
+
+it('preserves entry focus and focuses headings only after a section change', () => {
+ const skip=document.createElement('a');skip.href='#main';skip.textContent='Skip to content';document.body.append(skip);skip.focus();
+ const {rerender}=render(<SettingsLab path="settings/general"/>);
+ expect(skip).toHaveFocus();
+ fireEvent.click(screen.getByLabelText('Email notifications'));
+ skip.focus();rerender(<SettingsLab path="settings/general"/>);expect(skip).toHaveFocus();
+ rerender(<SettingsLab path="settings/space"/>);
+ expect(screen.getByRole('heading',{name:'Space settings',exact:true})).toHaveFocus();
+ skip.remove();
 });
