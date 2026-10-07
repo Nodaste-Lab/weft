@@ -17,7 +17,7 @@ try {
  await standalone.close();
  const page = await browser.newPage({ viewport: { width: 1490, height: 1091 } });
  for (const theme of ['light', 'dark']) for (const [density, height] of [['default',44],['compact',36],['dense',28]]) {
-  await page.goto(`${base}/#/templates/workspace-navigation-rail`);
+  await page.goto(`${base}/#/all`);
   await page.evaluate(({ theme, density }) => { document.documentElement.setAttribute('data-theme', theme); document.documentElement.setAttribute('data-density', density); }, { theme, density });
   const nav = page.locator('#workspace-example');
   await expect(nav).toBeVisible();
@@ -38,8 +38,8 @@ try {
   if(result.violations.length)throw new Error(JSON.stringify(result.violations)); scans++;
  }
  await page.setViewportSize({width:390,height:844});
- await page.goto(`${base}/#/templates/workspace-navigation-rail`);
- await page.getByRole('button',{name:'Open navigation',exact:true}).click();
+ await page.goto(`${base}/#/all`);
+ await page.locator('[data-template-id=workspace-navigation-rail]').getByRole('button',{name:'Open navigation',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();
  const nav=page.locator('#workspace-example');
  await expect(nav.getByRole('link',{name:'Signals',exact:true})).toHaveAttribute('aria-current','page');
@@ -47,6 +47,6 @@ try {
  await page.addScriptTag({content:axe.source});
  const result=await page.evaluate(()=>axe.run(document.querySelector('[role=dialog]')));
  if(result.violations.length)throw new Error(JSON.stringify(result.violations));scans++;
- await page.keyboard.press('Escape'); await expect(page.getByRole('button',{name:'Open navigation',exact:true})).toBeFocused();
+ await page.keyboard.press('Escape'); await expect(page.locator('[data-template-id=workspace-navigation-rail]').getByRole('button',{name:'Open navigation',exact:true})).toBeFocused();
  console.log(`PASS workspace template: ${scans} axe scans, inline icon/text geometry at all densities, Chrome Space identity alignment, native current links and narrow drawer focus return.`);
 } finally { await browser.close(); }

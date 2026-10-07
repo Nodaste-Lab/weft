@@ -46,6 +46,12 @@ composition is the migration target for Avalandra. It replaces the removed
 `navigation-rail` template; migrate imports and supply the application-owned
 file tree and routing through this template’s props.
 
+The canonical interactive template standard is the navigation rail lab at
+`#/labs/navigation-rail`: tokens, atoms, rows, full rail, accessibility
+requirements and Avalandra functionality coverage. Template gallery links
+open that same experience. The all-components gallery retains a small
+package composition fixture for regression checks.
+
 It composes NavigationSpacePicker, NavigationSearch, NavigationRow,
 NavigationIcon, NavigationCount, NavigationAccount and NavigationRailLayout.
 Supply destinations in the order Signals, Kanban board. Search's filter slot
