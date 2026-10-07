@@ -1,3 +1,4 @@
+import { SelectionLoadingExample } from './SelectionLoadingExample';
 import React from 'react';
 import propsSnapshot from '../../../props-snapshot.json';
 import { DesignSystemUiGallery } from '../../../src/gallery/DesignSystemUiGallery';
@@ -67,10 +68,20 @@ export function ComponentPage({ id }: { id?: string }) {
       <div data-component-example={id}>
         {id === 'label' ? <LabelExamples/> : id === 'form' ? <FormExamples/> : (id === 'input' || id === 'text-field') ? <><TextField label="Display name"/><FieldCode code={'import { TextField } from "@nodaste-lab/weft";\n\n<TextField label="Display name" />'}/><p>Use TextField for labelled forms. Cutout is its default treatment; underline is a contextual alternative. Input is the bare control for specialized compositions.</p></> : (id === 'textarea' || id === 'search-field') ? null : <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />}
       </div>
+      {['combobox','multi-select'].includes(id) && <FieldCode code={`import * as React from 'react';
+import { ${id === 'combobox' ? 'Combobox' : 'MultiSelect'} } from '@nodaste-lab/weft';
+
+const options = [{value:'studio',label:'Studio'}, {value:'research',label:'Research'}, {value:'archive',label:'Archive',disabled:true}];
+function Example() {
+  const [value,setValue] = React.useState<${id === 'combobox' ? 'string | null' : 'string[]'}>(${id === 'combobox' ? 'null' : '[]'});
+  return <${id === 'combobox' ? 'Combobox' : 'MultiSelect'} label="${id === 'combobox' ? 'Space' : 'Spaces'}" options={options} value={value} onValueChange={setValue} />;
+}`}/>}
+
       {id === 'calendar' && <FieldCode code={'import * as React from "react";\nimport { Calendar } from "@nodaste-lab/weft";\n\nfunction CalendarExample() {\n  const [date, setDate] = React.useState<Date | undefined>(() => new Date(2026, 2, 15));\n  return <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} className="rounded-md border" />;\n}'}/>}
 
       {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldFamilyGuide kind={id} />}
 
+      {['combobox','multi-select'].includes(id) && <SelectionLoadingExample multiple={id === 'multi-select'}/>}
       <SectionHeading id="variants-and-states">Variants and states</SectionHeading>
       {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldExamples kind={id} />}
       {id === 'form' && <><h3>Custom field status playground</h3><FormStatusRecipe/></>}
@@ -82,7 +93,7 @@ export function ComponentPage({ id }: { id?: string }) {
         <ControlUsageGuide multiline={id === 'textarea'}/>
         <Playground id={id === 'textarea' ? 'textarea' : 'input'}/>
       </> : <Playground id={id} />}
-      {['input','text-field','textarea','search-field','calendar','form'].includes(id) ? <section aria-label="Control variants and states">
+      {['input','text-field','textarea','search-field','calendar','form','combobox','multi-select'].includes(id) ? <section aria-label="Control variants and states">
         <h3>Control variants and states</h3>
         <SpecimenMatrix id={id}/>
       </section> : <Collapsible style={{ display: 'grid', gap: 12, marginTop: 16 }}>

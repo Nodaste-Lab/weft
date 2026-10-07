@@ -575,6 +575,71 @@
         "native": []
       }
     },
+    "combobox": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "clearable": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "emptyMessage": {
+            "optional": true,
+            "union": null
+          },
+          "error": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "loading": {
+            "optional": true,
+            "union": null
+          },
+          "name": {
+            "optional": true,
+            "union": null
+          },
+          "onValueChange": {
+            "optional": false,
+            "union": null
+          },
+          "options": {
+            "optional": false,
+            "union": null
+          },
+          "placeholder": {
+            "optional": true,
+            "union": null
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
     "command": {
       "version": "1.0.0",
       "surface": {
@@ -1829,6 +1894,67 @@
         "native": [
           "button"
         ]
+      }
+    },
+    "multi-select": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "emptyMessage": {
+            "optional": true,
+            "union": null
+          },
+          "error": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "loading": {
+            "optional": true,
+            "union": null
+          },
+          "name": {
+            "optional": true,
+            "union": null
+          },
+          "onValueChange": {
+            "optional": false,
+            "union": null
+          },
+          "options": {
+            "optional": false,
+            "union": null
+          },
+          "placeholder": {
+            "optional": true,
+            "union": null
+          },
+          "value": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
       }
     },
     "navigation-account": {

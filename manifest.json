@@ -186,6 +186,14 @@
       "version": "1.0.0"
     },
     {
+      "id": "combobox",
+      "path": "src/ui/combobox.tsx",
+      "category": "inputs",
+      "summary": "Searchable single selection with a cutout label.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "command-category-tag.figma",
       "path": "src/ui/command-category-tag.figma.tsx",
       "category": "code-connect",
@@ -569,6 +577,14 @@
       "path": "src/ui/mode-only-toggle.tsx",
       "category": "toggles",
       "summary": "Compact “use only in this mode” switch + label for vault paths, API keys, and transcription scope.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "multi-select",
+      "path": "src/ui/multi-select.tsx",
+      "category": "inputs",
+      "summary": "Searchable multiple selection with native checked states.",
       "showcase": true,
       "version": "1.0.0"
     },

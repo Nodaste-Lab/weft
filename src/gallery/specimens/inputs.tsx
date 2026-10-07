@@ -1,3 +1,5 @@
+import { Combobox } from '../../ui/combobox';
+import { MultiSelect } from '../../ui/multi-select';
 import * as React from 'react';
 import { Checkbox } from '../../ui/checkbox';
 import { Calendar } from '../../ui/calendar';
@@ -27,8 +29,20 @@ function LabelSpecimen({ children, disabled, ...p }: React.ComponentProps<typeof
   );
 }
 
+
+const selectionOptions = [{ value: 'studio', label: 'Studio' }, { value: 'research', label: 'Research' }, { value: 'archive', label: 'Archive', disabled: true }];
+export function SelectionSpecimen({ multiple = false, ...p }: P & {multiple?:boolean}) {
+ const [single, setSingle] = React.useState<string|null>((p.value as string|null) ?? null);
+ const [many, setMany] = React.useState<string[]>(Array.isArray(p.value) ? p.value as string[] : []);
+ React.useEffect(()=>{setSingle(typeof p.value === 'string' ? p.value : null);setMany(Array.isArray(p.value) ? p.value as string[] : []);},[p.value]);
+ return multiple ? <MultiSelect label="Spaces" options={selectionOptions} {...p} value={many} onValueChange={setMany}/> : <Combobox label="Space" options={selectionOptions} {...p} value={single} onValueChange={setSingle}/>;
+}
+
 /** Specimens for the inputs category. One entry per component id; see ../specimen-types.ts. */
 export const inputsSpecimens: Record<string, Specimen> = {
+'combobox': {component:'Combobox',module:'combobox',axes:[],states:[{"label": "Selected", "props": {"value": "studio"}, "code": "<Combobox label=\"Space\" options={options} value={\"studio\"} onValueChange={setValue} />"}, {"label": "Disabled", "props": {"disabled": true}, "code": "<Combobox label=\"Space\" options={options} value={value} onValueChange={setValue} disabled={true} />"}, {"label": "Error with help", "props": {"error": "Choose a Space.", "description": "Only accessible Spaces are listed."}, "code": "<Combobox label=\"Space\" options={options} value={value} onValueChange={setValue} error={\"Choose a Space.\"} description={\"Only accessible Spaces are listed.\"} />"}, {"label": "Loading", "props": {"loading": true}, "code": "<Combobox label=\"Space\" options={options} value={value} onValueChange={setValue} loading={true} />"}, {"label": "No options", "props": {"options": []}, "code": "<Combobox label=\"Space\" options={[]} value={value} onValueChange={setValue} />"}],render:(p:P)=><SelectionSpecimen {...p} multiple={false}/>},
+'multi-select': {component:'MultiSelect',module:'multi-select',axes:[],states:[{"label": "Selected", "props": {"value": ["studio"]}, "code": "<MultiSelect label=\"Space\" options={options} value={[\"studio\"]} onValueChange={setValue} />"}, {"label": "Disabled", "props": {"disabled": true}, "code": "<MultiSelect label=\"Space\" options={options} value={value} onValueChange={setValue} disabled={true} />"}, {"label": "Error with help", "props": {"error": "Choose a Space.", "description": "Only accessible Spaces are listed."}, "code": "<MultiSelect label=\"Space\" options={options} value={value} onValueChange={setValue} error={\"Choose a Space.\"} description={\"Only accessible Spaces are listed.\"} />"}, {"label": "Loading", "props": {"loading": true}, "code": "<MultiSelect label=\"Space\" options={options} value={value} onValueChange={setValue} loading={true} />"}, {"label": "No options", "props": {"options": []}, "code": "<MultiSelect label=\"Space\" options={[]} value={value} onValueChange={setValue} />"}],render:(p:P)=><SelectionSpecimen {...p} multiple={true}/>},
+
   'text-field': {
     component: 'TextField', module: 'text-field', axes: ['treatment'],
     base: {label:'Display name'},
