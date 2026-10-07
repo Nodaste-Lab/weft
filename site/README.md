@@ -60,6 +60,8 @@ A new component also needs: a manifest entry (ordered), an export in `src/index.
 ## Navigation rail accessibility
 
 The lab includes an expandable **Accessibility requirements and verification**
-guide. Run `npm run test:rail-a11y` against the site on port 5180, or pass
+guide. Run `npm run test:rail-a11y` against the site on port 5179, or pass
 `-- --url http://127.0.0.1:5179/#/labs/navigation-rail` for the default site port.
 See [audit, evidence and human acceptance checklist](../docs/audits/navigation-rail-accessibility.md).
+
+`npm run test:rail-workflows -- --url http://127.0.0.1:PORT/#/labs/navigation-rail` and `npm run test:workspace-navigation -- --url http://127.0.0.1:PORT` support an existing server on another port. The workspace-template check covers exported controls as well as the lab.

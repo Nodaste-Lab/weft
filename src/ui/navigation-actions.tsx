@@ -1,4 +1,5 @@
 import * as React from "react";
+import { navigationNarrowQuery } from "./navigation-rail-layout";
 import { Button } from "./button";
 import { NavigationIcon } from "./navigation-icon";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "./dropdown-menu";
@@ -28,16 +29,24 @@ export function NavigationActions({ name, items, caption, disabled, compact, tri
   const [path, setPath] = React.useState<string[]>([]);
   const trigger = React.useRef<HTMLButtonElement>(null);
   const menuId = React.useId();
+  const returningTo = React.useRef<string | null>(null);
   const changeOpen = (next: boolean) => {
     if (next) {
-      setNarrow(compact ?? (Boolean(trigger.current?.closest('[data-navigation-drawer], .rail-lab-drawer')) || Boolean(window.matchMedia?.('(max-width: 1023px)').matches)));
+      setNarrow(compact ?? (Boolean(trigger.current?.closest('[data-navigation-drawer]')) || Boolean(window.matchMedia?.(navigationNarrowQuery).matches)));
+      returningTo.current = null;
       setPath([]);
     }
     setOpen(next);
   };
   React.useEffect(() => {
     if (!open || !narrow) return;
-    const frame = requestAnimationFrame(() => document.getElementById(menuId)?.querySelector<HTMLElement>(path.length ? '[data-navigation-back]' : '[role="menuitem"]:not([data-disabled])')?.focus());
+    const frame = requestAnimationFrame(() => {
+      const menu = document.getElementById(menuId);
+      const origin = returningTo.current;
+      const item = origin ? Array.from(menu?.querySelectorAll<HTMLElement>('[data-navigation-action]') ?? []).find(node => node.dataset.navigationAction === origin) : null;
+      (item ?? menu?.querySelector<HTMLElement>(path.length ? '[data-navigation-back]' : '[role="menuitem"]:not([data-disabled])'))?.focus();
+      returningTo.current = null;
+    });
     return () => cancelAnimationFrame(frame);
   }, [open, narrow, path, menuId]);
   let level = items;
@@ -53,12 +62,12 @@ export function NavigationActions({ name, items, caption, disabled, compact, tri
     <DropdownMenuItem key={item.id} disabled={item.disabled} onSelect={item.onSelect}>{item.label}</DropdownMenuItem>);
   return <DropdownMenu open={open} onOpenChange={changeOpen} modal={narrow}>
     <DropdownMenuTrigger asChild><Button ref={trigger} type="button" variant="ghost" size="icon" className={triggerClassName} disabled={disabled} aria-label={`Actions for ${name}`} onClick={event => { if (event.detail === 0) changeOpen(true); }}><NavigationIcon purpose="actions" /></Button></DropdownMenuTrigger>
-    <DropdownMenuContent id={menuId} className={`weft-navigation-actions-menu ${contentClassName ?? ""}`} aria-label={menuLabel}>
+    <DropdownMenuContent id={menuId} className={`weft-navigation-actions-menu ${contentClassName ?? ""}`} aria-labelledby={undefined} aria-label={narrow ? `${menuLabel}: ${heading}` : menuLabel}>
       <DropdownMenuLabel>{name}{caption}</DropdownMenuLabel>
       {narrow ? <>
-        {path.length > 0 && <DropdownMenuItem data-navigation-back="" onSelect={event => { event.preventDefault(); setPath(path.slice(0, -1)); }}>{backLabel}</DropdownMenuItem>}
+        {path.length > 0 && <DropdownMenuItem data-navigation-back="" onSelect={event => { event.preventDefault(); returningTo.current = path.at(-1) ?? null; setPath(path.slice(0, -1)); }}>{backLabel}</DropdownMenuItem>}
         <DropdownMenuLabel>{heading}</DropdownMenuLabel>
-        {level.map(item => <DropdownMenuItem key={item.id} disabled={item.disabled} onSelect={event => {
+        {level.map(item => <DropdownMenuItem key={item.id} data-navigation-action={item.id} aria-haspopup={item.children ? "menu" : undefined} disabled={item.disabled} onSelect={event => {
           if (item.children) { event.preventDefault(); setPath([...path, item.id]); } else item.onSelect?.();
         }}>{item.label}{item.children && <span aria-hidden="true"> →</span>}</DropdownMenuItem>)}
       </> : desktop(items)}

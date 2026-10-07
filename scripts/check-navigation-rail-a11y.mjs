@@ -7,7 +7,7 @@ import { dirname } from "node:path";
 const args = process.argv.slice(2);
 const option = (name, fallback) =>
   args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
-const url = option("--url", "http://127.0.0.1:5180/#/labs/navigation-rail");
+const url = option("--url", "http://127.0.0.1:5179/#/labs/navigation-rail");
 const output = option(
   "--output",
   "/tmp/weft-navigation-rail-accessibility.json"

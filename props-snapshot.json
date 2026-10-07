@@ -1865,7 +1865,7 @@
       }
     },
     "navigation-actions": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -1910,7 +1910,7 @@
       }
     },
     "navigation-count": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -1982,7 +1982,7 @@
       }
     },
     "navigation-rail-layout": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -2075,7 +2075,7 @@
       }
     },
     "navigation-row": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -2145,7 +2145,7 @@
       }
     },
     "navigation-space-picker": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "surface": {
         "variants": {},
         "props": {

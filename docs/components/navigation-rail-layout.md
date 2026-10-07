@@ -2,34 +2,28 @@
 
 ## Purpose
 
-Shared navigation rail layout composition.
+Keep a resizable desktop rail and workspace beside each other, replacing the rail with a modal drawer on narrow screens.
 
 ## When to use
 
-Compose a workspace navigation rail with the shared navigation tokens and row controls.
+Use around an application-owned rail when persistent desktop sizing and responsive keyboard behavior are required.
 
 ## When not to use
 
-Do not use this control to own application routing, permissions or server data.
+Do not use to own file data, routes or preference synchronization across accounts. Do not store drawer geometry as the desktop width.
 
 ## How to use
 
-Import NavigationRailLayout from the package root or src/ui/navigation-rail-layout.tsx.
-
-```tsx
-<NavigationRailLayout railId="layout-example" label="Navigation" openLabel="Open navigation" resizeLabel="Resize navigation" description="Browse destinations" rail={<nav id="layout-example" aria-label="Example navigation">Files</nav>}><p>Workspace</p></NavigationRailLayout>
-```
+Provide rail, children, railId, label, openLabel, resizeLabel and description. width/onWidthChange control sizing; otherwise defaultWidth initializes state and optional storageKey restores a local preference. mode is auto, desktop or drawer. open/onOpenChange can control the drawer. Bounds default to 200–720px, defaultWidth to 280px.
 
 ## Heuristics
 
-Keep names visible and controls aligned. Preserve native destination links.
+Container constraints clamp only rendered width. The user’s preference is changed by resizing, not by moving to a smaller screen. Explicit modes bypass responsive media listeners. The shared navigationNarrowQuery defaults to below 1024px.
 
 ## Content
 
-Provide names and localized labels from the consuming application. Fixture values are illustrative only.
+Use labels that identify this navigation region. Supply a description of the drawer’s purpose. The application may close the controlled drawer after destination activation.
 
 ## Accessibility
 
-Supply the required accessible labels. Preserve visible keyboard focus, Escape dismissal and focus return. Test keyboard and touch interactions in the consuming application.
-
-`width`/`onWidthChange` provide controlled sizing. Otherwise `defaultWidth` initializes local state and an optional `storageKey` restores the user's saved desktop preference. Blocked storage does not prevent navigation. The displayed width is clamped to the host's available width without changing the saved preference. Default bounds are 200–720px; preserve application bounds deliberately. Home/End reach bounds, arrows move 16px, Shift+arrows 64px. Narrow mode below 1024px uses Sheet, never writes a drawer width, and restores focus to its trigger. `mode` permits explicit previews. The application may close the controlled drawer after destination activation.
+The named vertical separator supports 16px arrows, 64px Shift+arrows and Home/End. Pointer resizing captures the primary pointer. The drawer traps focus, closes on Escape and restores its trigger. Storage failures do not block navigation. Test resizing, refresh, narrow transitions, zoom, forced colors and nested overlays.

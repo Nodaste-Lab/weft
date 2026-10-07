@@ -11,7 +11,7 @@ states; they cannot verify all assistive technology or production behavior.
 
 ## Find the guide
 
-Open `http://127.0.0.1:5180/#/labs/navigation-rail` and expand
+Open `http://127.0.0.1:5179/#/labs/navigation-rail` and expand
 **Accessibility requirements and verification** near the top. It includes the
 keyboard reference, composition requirements and acceptance work still needed.
 
@@ -20,7 +20,7 @@ keyboard reference, composition requirements and acceptance work still needed.
 From this checkout, start the dedicated site:
 
 ```sh
-npm run site:dev -- --port 5180
+npm run site:dev
 ```
 
 In another terminal:
@@ -28,7 +28,7 @@ In another terminal:
 ```sh
 npm run test:rail-a11y
 # For another dedicated site port or a saved evidence file:
-npm run test:rail-a11y -- --url http://127.0.0.1:5180/#/labs/navigation-rail --output /tmp/weft-navigation-rail-accessibility.json
+npm run test:rail-a11y -- --url http://127.0.0.1:5179/#/labs/navigation-rail --output /tmp/weft-navigation-rail-accessibility.json
 npx vitest run site/app/__tests__/navigation-rail-lab.test.tsx site/app/__tests__/routes.test.ts
 npm run site:build
 node scripts/check-raw-colors.mjs

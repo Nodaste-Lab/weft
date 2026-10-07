@@ -1213,7 +1213,7 @@ html,
   align-items: center;
   gap: var(--weft-navigation-gap);
   min-height: var(--weft-navigation-row-h);
-  padding: 2px var(--weft-navigation-inset);
+  padding: 0 var(--weft-navigation-inset);
   color: var(--weft-navigation-fg);
   font-family: var(--weft-font-sans);
 }
@@ -1224,15 +1224,20 @@ html,
 .weft-navigation-row:not([data-disabled="true"]):hover { background: var(--weft-control-fill-static); }
 .weft-navigation-row:not([data-disabled="true"]):active { background: var(--weft-rule); }
 .weft-navigation-label {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--weft-navigation-gap);
   flex: 1;
   min-width: 24px;
-  min-height: 24px;
-  padding: 4px 0;
+  min-height: var(--weft-navigation-target);
+  padding: 2px 0;
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
   font-size: 13px;
+  line-height: 20px;
   text-align: start;
   text-decoration: none;
   overflow: hidden;
@@ -1327,3 +1332,11 @@ html,
 .weft-navigation-layout { height: 100%; }
 
 .weft-navigation-account .weft-navigation-space-avatar { width: 28px; height: 28px; flex-basis: 28px; font-size: 11px; }
+
+/* Radix ItemText adds a native span around custom identity content. Explicit
+   width and start alignment prevent Chromium from centering the Space name. */
+.weft-navigation-space-trigger [data-slot="select-value"] { flex: 1 1 0; min-width: 0; text-align: start; }
+.weft-navigation-space-trigger [data-slot="select-value"] > span { display: flex; flex: 1 1 0; min-width: 0; width: 100%; text-align: start; }
+.weft-navigation-space-trigger .weft-navigation-space-identity { text-align: start; }
+.weft-navigation-label > svg { flex-shrink: 0; }
+.weft-navigation-label > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

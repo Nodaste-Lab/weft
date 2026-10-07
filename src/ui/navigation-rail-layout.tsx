@@ -2,6 +2,8 @@ import * as React from "react";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./sheet";
 import { Button } from "./button";
 import { NavigationIcon } from "./navigation-icon";
+export const navigationNarrowQuery = "(max-width: 1023px)";
+
 export type NavigationRailLayoutProps = {
   rail: React.ReactNode;
   children: React.ReactNode;
@@ -39,12 +41,13 @@ export function NavigationRailLayout({ rail, children, railId, label, openLabel,
     try { const saved = window.localStorage.getItem(storageKey); if (saved !== null && Number.isFinite(Number(saved))) setPreferred(clamp(Number(saved))); } catch { /* Storage can be unavailable. */ }
   }, [storageKey, minWidth, maxWidth]);
   React.useEffect(() => {
-    const media = window.matchMedia?.('(max-width: 1023px)');
+    if (mode !== "auto") return;
+    const media = window.matchMedia?.(navigationNarrowQuery);
     if (!media) return;
     const update = () => { setSmall(media.matches); changeOpen(false); };
     setSmall(media.matches); media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
-  }, []);
+  }, [mode]);
   const drawer = mode === 'drawer' || (mode === 'auto' && small);
   React.useEffect(() => {
     const element = host.current;

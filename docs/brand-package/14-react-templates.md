@@ -86,7 +86,9 @@ It composes NavigationSpacePicker, NavigationSearch, NavigationRow,
 NavigationIcon, NavigationCount, NavigationAccount and NavigationRailLayout.
 Supply destinations in the order Signals, Kanban board. Search's filter slot
 holds Explorer category navigation. Supply real destination URLs, the current
-destination ID, and the application's file tree in `files`. Files remain
+destination ID, and the application's file tree in `files`. `filesId` defaults
+to `"files"`; use that ID as `currentDestination` when Documents is active so
+the Files link receives `aria-current="page"`. Files remain
 visible while Signals or Kanban is current. A future destination with `panel`
 replaces the Files panel; its Files link returns to the document destination.
 

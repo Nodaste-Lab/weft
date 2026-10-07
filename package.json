@@ -77,7 +77,8 @@
     "release:local": "bash scripts/release-local.sh",
     "test:rail-a11y": "node scripts/check-navigation-rail-a11y.mjs",
     "test:rail-workflows": "node scripts/check-navigation-rail-workflows.mjs",
-    "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs"
+    "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs",
+    "test:workspace-navigation": "node scripts/check-workspace-navigation.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

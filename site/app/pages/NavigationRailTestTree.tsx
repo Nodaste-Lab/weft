@@ -39,12 +39,14 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
   const [target, setTarget] = React.useState("");
   const [placement, setPlacement] = React.useState("inside");
   const [error, setError] = React.useState("");
-  const [undo, setUndo] = React.useState<TestFile[] | null>(null);
+  const [undo, setUndo] = React.useState<{ files: TestFile[]; focusId: string; space: string } | null>(null);
   const [retainedFocus, setRetainedFocus] = React.useState<string | null>(null);
   const [dragging, setDragging] = React.useState<string | null>(null);
   const pendingFocus = React.useRef<string | null>(null);
   const dialogFile = React.useRef<string | null>(null);
   const [limits, setLimits] = React.useState<Record<string, number>>({});
+  const cancelButton = React.useRef<HTMLButtonElement>(null);
+  React.useEffect(() => { setUndo(null); setDialog(null); setRetainedFocus(null); setLimits({}); }, [space]);
   const origin = React.useRef<HTMLElement | null>(null);
   const host = React.useRef<HTMLDivElement>(null);
   const flat = flattenFiles(files);
@@ -56,9 +58,9 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
   }, [selected, files]);
   const active = flat.find(({ node }) => node.id === dialog?.id)?.node;
   const refocus = (id: string) => requestAnimationFrame(() => host.current?.querySelector<HTMLButtonElement>(`[data-file-id="${id}"] .rail-lab-title`)?.focus());
-  function commit(next: TestFile[], message: string, focusId: string) {
+  function commit(next: TestFile[], message: string, focusId: string, undoFocusId = focusId) {
     pendingFocus.current = focusId; setRetainedFocus(focusId);
-    setUndo(files); onChange(next); onMessage(`${message} Local test data only.`); refocus(focusId);
+    setUndo({ files, focusId: undoFocusId, space }); onChange(next); onMessage(`${message} Local test data only.`); refocus(focusId);
   }
   function move(id: string, destination: string, before?: string) {
     const source = flat.find(({ node }) => node.id === id)?.node;
@@ -101,22 +103,22 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
       // The destination belongs to a separate fixture Space; never imply a server transfer.
       if (target === space) { setError("Choose a different Space."); return; }
       onTransfer(active, target || "Private", dialog.action.startsWith("Copy"));
-      onMessage(`${dialog.action.startsWith("Copy") ? "Copied" : "Moved"} ${active.label} to ${target || "Private"} in the transfer preview. No Avalandra data changed.`);
-      if (dialog.action.startsWith("Move")) commit(removeFile(files, active.id), `Removed ${active.label} from this Space after the preview transfer.`, files.find((node) => node.id !== active.id)?.id ?? "");
+      onMessage(`${dialog.action.startsWith("Copy") ? "Copied" : "Moved"} ${active.label} to ${target || "Private"} in the transfer preview, added at the end of Files in ${target || "Private"}. No Avalandra data changed.`);
+      if (dialog.action.startsWith("Move")) commit(removeFile(files, active.id), `Removed ${active.label} from this Space after the preview transfer.`, files.find((node) => node.id !== active.id)?.id ?? "", active.id);
     } else if (dialog.action.startsWith("Remove")) {
-      commit(removeFile(files, active.id), `Removed ${active.label} and its children. Undo is available.`, files.find((node) => node.id !== active.id)?.id ?? "");
+      commit(removeFile(files, active.id), `Removed ${active.label} and its children. Undo is available.`, files.find((node) => node.id !== active.id)?.id ?? "", active.id);
     } else if (dialog.action.startsWith("Duplicate")) {
       const clone = (file: TestFile): TestFile => ({ ...file, id: crypto.randomUUID(), children: file.children?.map(clone) });
       const copy = { ...clone(active), label: `${active.label} copy` };
       const parent = flat.find(({ node }) => node.children?.some((child) => child.id === active.id))?.node.id ?? "";
-      commit(insertFile(files, copy, parent), `Duplicated ${active.label}.`, copy.id);
+      commit(insertFile(files, copy, parent), `Duplicated ${active.label}.`, copy.id, active.id);
     } else {
       if (!name.trim()) { setError("Enter a name."); return; }
       if (active.children?.some((child) => child.label.toLocaleLowerCase() === name.trim().toLocaleLowerCase())) { setError("A child with that name already exists."); return; }
       const node: TestFile = { id: crypto.randomUUID(), label: name.trim(), icon: dialog.action === "New Folder" ? "folder" : "text" };
       setCollapsed((items) => items.filter((item) => item !== active.id));
       if (active.id === "root") onRootExpand?.(true);
-      commit(insertFile(files, node, active.id), `Created ${node.label} in ${active.label}.`, node.id);
+      commit(insertFile(files, node, active.id), `Created ${node.label} in ${active.label}, at the end of its child files.`, node.id, active.id);
     }
     close();
   }
@@ -149,10 +151,10 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
     {nodes.length > (limits[nodes[0]?.id ?? "root"] ?? 20) && <div role="listitem"><Button variant="ghost" onClick={() => setLimits((current) => ({ ...current, [nodes[0]?.id ?? "root"]: (current[nodes[0]?.id ?? "root"] ?? 20) + 20 }))}>Show more files</Button></div>}
   </div>;
   return <div ref={host}>
-    {undo && <Button variant="ghost" onClick={() => { onChange(undo); setUndo(null); setRetainedFocus(undo[0]?.id ?? null); refocus(undo[0]?.id ?? ""); onMessage("Last tree change undone."); }}>Undo last tree change</Button>}
+    {undo && undo.space === space && <Button variant="ghost" onClick={() => { onChange(undo.files); setUndo(null); setRetainedFocus(undo.focusId); refocus(undo.focusId); onMessage("Last tree change undone."); }}>Undo last tree change</Button>}
     {list(files, 0)}
     <Dialog open={Boolean(dialog)} onOpenChange={(open) => { if (!open) close(); }}>
-      <DialogContent onCloseAutoFocus={(event) => {
+      <DialogContent onOpenAutoFocus={(event) => { if (dialog?.action.startsWith("Remove")) { event.preventDefault(); cancelButton.current?.focus(); } }} onCloseAutoFocus={(event) => {
         event.preventDefault();
         const committed = pendingFocus.current;
         const opener = origin.current;
@@ -178,7 +180,7 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
           {/^(Move to Space|Copy to Space)/.test(dialog?.action ?? "") && <label className="rail-lab-field">Destination Space<select className="weft-select" value={target} onChange={(event) => setTarget(event.target.value)}>{space !== "Studio" && <option value="Studio">Studio (fictional destination)</option>}{space !== "Private" && <option value="Private">Private (fictional destination)</option>}{space !== "Research" && <option value="Research">Research (fictional destination)</option>}</select></label>}
           {dialog?.action.startsWith("Remove") && <p>This removes the entire subtree from the local preview. You can undo it.</p>}
           {error && <p role="alert">{error}</p>}
-          <Button type="submit" variant="outline">Confirm</Button><Button type="button" variant="ghost" onClick={close}>Cancel</Button>
+          <Button type="submit" variant="outline">Confirm</Button><Button ref={cancelButton} type="button" variant="ghost" onClick={close}>Cancel</Button>
         </form>
       </DialogContent>
     </Dialog>

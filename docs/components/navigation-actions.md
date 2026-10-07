@@ -2,34 +2,28 @@
 
 ## Purpose
 
-Shared navigation actions composition.
+Render one action model as cascading desktop menus or compact panels with Back.
 
 ## When to use
 
-Compose a workspace navigation rail with the shared navigation tokens and row controls.
+Use for a file or folder’s permission-filtered actions, including context-menu and keyboard entry points.
 
 ## When not to use
 
-Do not use this control to own application routing, permissions or server data.
+Do not put application permissions or mutations inside this composition. Do not use menu visibility as proof that a service is connected.
 
 ## How to use
 
-Import NavigationActions from the package root or src/ui/navigation-actions.tsx.
-
-```tsx
-<NavigationActions name="Research" items={[{ id: "more", label: "More", children: [{ id: "copy", label: "Copy link", onSelect: () => {} }] }]} />
-```
+Provide name and items with stable id, label, disabled, onSelect and optional children. compact explicitly selects the panel presentation; otherwise the shared drawer hook and narrow query determine it. caption, menuLabel, backLabel and trigger/content classes customize presentation.
 
 ## Heuristics
 
-Keep names visible and controls aligned. Preserve native destination links.
+Filter unavailable actions before rendering; use disabled actions only when their availability is useful context. Right-click, long-press and Shift+F10 should invoke the same trigger as the ellipsis. Keep F2 rename and keyboard reorder on the consuming row.
 
 ## Content
 
-Provide names and localized labels from the consuming application. Fixture values are illustrative only.
+Use action verbs and meaningful group names. Actions on a subtree should say so. Destructive actions should open a confirmation with a safe initial focus target.
 
 ## Accessibility
 
-Supply the required accessible labels. Preserve visible keyboard focus, Escape dismissal and focus return. Test keyboard and touch interactions in the consuming application.
-
-Action items have stable IDs, labels, optional disabled states and callbacks; groups carry children. Pass the same model to desktop and compact layouts so capabilities cannot drift. `compact` explicitly selects one-panel navigation; automatic detection recognizes the shared drawer and small viewport. Right-click, long-press, Shift+F10 and ContextMenu entry points should activate the same named trigger; F2 rename belongs to the consuming row. Do not include Move up/down in the action model: provide keyboard reorder and a touch placement alternative in the file tree.
+Radix supplies desktop menu keyboard navigation. Compact groups expose aria-haspopup, the current panel name is announced, entering a group focuses Back, and Back restores focus to the originating group. Escape dismisses and restores trigger focus. The package uses its own data-navigation-drawer hook, not application CSS selectors.

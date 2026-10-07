@@ -2,32 +2,28 @@
 
 ## Purpose
 
-Shared navigation account composition.
+Show the signed-in person and an explicit Settings destination at the bottom of a workspace rail. Email is intentionally absent to protect personal data during screen sharing and usability testing.
 
 ## When to use
 
-Compose a workspace navigation rail with the shared navigation tokens and row controls.
+Use for a persistent account footer with a name, initials and a Settings link or action.
 
 ## When not to use
 
-Do not use this control to own application routing, permissions or server data.
+Do not use for a profile editor, Organization switcher or an identity list. Those belong in Settings.
 
 ## How to use
 
-Import NavigationAccount from the package root or src/ui/navigation-account.tsx.
-
-```tsx
-<NavigationAccount name="Avery Chen" initials="AC" settingsLabel="Account settings" settingsHref="#settings" />
-```
+Provide name, initials and settingsLabel. Prefer settingsHref for a routed Settings page; onSettings supports an application-owned overlay. onAccount optionally makes the identity an action. Without onSettings or a URL, Settings is disabled.
 
 ## Heuristics
 
-Keep names visible and controls aligned. Preserve native destination links.
+Keep the account footer outside the scrolling Files region. Preserve the visible name at narrow widths and avoid identifying people with colors.
 
 ## Content
 
-Provide names and localized labels from the consuming application. Fixture values are illustrative only.
+Use the person’s display name and short initials; never pass email as the name or settingsLabel. Localize the Settings label.
 
 ## Accessibility
 
-Supply the required accessible labels. Preserve visible keyboard focus, Escape dismissal and focus return. Test keyboard and touch interactions in the consuming application.
+Native links support new tabs and browser history. Icon-only Settings has a required accessible name. The initials are decorative because the display name already identifies the person. Keyboard focus follows normal Tab order.

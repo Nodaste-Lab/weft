@@ -344,7 +344,7 @@ const nestedFiles: SampleNode[] = [
         icon: "folder",
         children: [
           {
-            label: "Navigation examples",
+            label: "Navigation examples — Internationale Zusammenarbeit und Barrierefreiheit",
             signals: 1,
             notifications: 3,
             icon: "html",
@@ -366,7 +366,7 @@ function makeTestFiles(config: Config, longList: boolean): TestFile[] {
     return [
       { id: "root", label: config.row === "File" || config.row === "Folder" ? config.label : "Product direction", icon: config.row === "Folder" ? "folder" : config.icon === "html" ? "html" : "text", signals: config.row === "Folder" ? 0 : Number(config.count), children: config.hasChildren ? convert(nestedFiles, "nested") : undefined },
       { id: "reference", label: "Reference", icon: "html", signals: 1 },
-      ...(longList ? Array.from({ length: 30 }, (_, i) => ({ id: `reference-${i}`, label: `Reference ${i + 1}`, icon: i % 2 ? "text" : "html", signals: 0 })) : []),
+      ...(longList ? Array.from({ length: 30 }, (_, i) => ({ id: `reference-${i}`, label: i === 1 ? "International research — Zusammenfassung der Barrierefreiheitsprüfung und nächste Schritte" : `Reference ${i + 1}`, icon: i % 2 ? "text" : "html", signals: 0 })) : []),
     ] as TestFile[];
 }
 function NestedSample({
@@ -539,6 +539,7 @@ function DemoRow({
       ) : null}
       {editing ? (
         <Input
+          onFocus={(event) => event.target.select()}
           aria-label="Rename file"
           disabled={config.disabled}
           value={draft}
@@ -584,24 +585,7 @@ function DemoRow({
           : config.row === "Folder"
           ? `Folder${config.locked ? ", locked" : ""}`
           : config.row}{" "}
-        {config.showCount &&
-        (config.row === "File" ||
-          (config.row === "Navigation" && config.icon === "signals"))
-          ? [
-              Number(config.count) > 0
-                ? `${config.count} signals ${
-                    config.row === "File"
-                      ? `for ${displayLabel}`
-                      : "across this Space"
-                  }.`
-                : "",
-              config.row === "Navigation" && Number(config.notifications) > 0
-                ? `${config.notifications} notifications across this Space.`
-                : "",
-            ]
-              .filter(Boolean)
-              .join(" ")
-          : ""}
+
       </span>
       {config.row === "Account" && (
         <Button
@@ -721,6 +705,7 @@ export function NavigationRailLab() {
   const [longList, setLongList] = React.useState(true);
   const spaceTriggerId = React.useId();
   const [space, setSpace] = React.useState("studio");
+  const htmlPromptOrigin = React.useRef<HTMLElement | null>(null);
   const [htmlPromptOpen, setHtmlPromptOpen] = React.useState(false);
   const [htmlCopyStatus, setHtmlCopyStatus] = React.useState("");
   const [newSpaceOpen, setNewSpaceOpen] = React.useState(false);
@@ -752,7 +737,7 @@ export function NavigationRailLab() {
   React.useEffect(() => {
     if (previousSpace.current === space) return;
     spaceFixtures.current[previousSpace.current] = testFiles;
-    const next = spaceFixtures.current[space] ?? (["studio", "private"].includes(space) ? seedFiles : []);
+    const next = spaceFixtures.current[space] ?? (space === "studio" ? seedFiles : []);
     setTestFiles(next); setSelectedFile(next[0]?.id ?? null); previousSpace.current = space;
   }, [space]);
   React.useEffect(() => {
@@ -1051,7 +1036,7 @@ export function NavigationRailLab() {
     </div>
   );
   const spaceSelector = <NavigationSpacePicker id={spaceTriggerId} value={space} label="Preview Space" className="rail-lab-space-trigger" contentClassName="rail-lab-space-options"
-    spaces={[{ id: "studio", name: "Studio" }, { id: "private", name: "Private", private: true }, ...extraSpaces.map(name => ({ id: name, name }))].map(option => ({ ...option, signals: flattenFiles(space === option.id ? testFiles : spaceFixtures.current[option.id] ?? (["studio", "private"].includes(option.id) ? seedFiles : [])).reduce((sum, { node }) => sum + (node.signals ?? 0), 0) }))}
+    spaces={[{ id: "studio", name: "Studio" }, { id: "private", name: "Private", private: true }, ...extraSpaces.map(name => ({ id: name, name }))].map(option => ({ ...option, signals: flattenFiles(space === option.id ? testFiles : spaceFixtures.current[option.id] ?? (option.id === "studio" ? seedFiles : [])).reduce((sum, { node }) => sum + (node.signals ?? 0), 0) }))}
     onValueChange={setSpace} onAdd={() => { setNewSpaceName(""); setNewSpaceOpen(true); }} />;
   const htmlPrompt = `Create an HTML file in Avalandra in the Space "${spaceName}". Ask me what the file should contain before creating it. Follow Avalandra's HTML authoring and accessibility requirements, support light and dark themes and responsive layouts, and return a link to the saved file.`;
   const createMenu = config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected" && (
@@ -1083,7 +1068,7 @@ export function NavigationRailLab() {
         <DropdownMenuItem onSelect={() => beginCreate("text")}>
           <RailIcon purpose="text" size={16} /> Create File
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => { setHtmlCopyStatus(""); setHtmlPromptOpen(true); }}>
+        <DropdownMenuItem onSelect={() => { htmlPromptOrigin.current = createTrigger.current; setHtmlCopyStatus(""); setHtmlPromptOpen(true); }}>
           <RailIcon purpose="html" size={16} /> HTML file — copy agent prompt…
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -1283,7 +1268,7 @@ export function NavigationRailLab() {
             onTransfer={(node, destination, copy) => {
               const destinationKey = destination === "Private" ? "private" : destination === "Studio" ? "studio" : destination;
               const clone = (file: TestFile): TestFile => ({ ...file, id: crypto.randomUUID(), children: file.children?.map(clone) });
-              spaceFixtures.current[destinationKey] = [...(spaceFixtures.current[destinationKey] ?? (["studio", "private"].includes(destinationKey) ? seedFiles : [])), clone(node)];
+              spaceFixtures.current[destinationKey] = [...(spaceFixtures.current[destinationKey] ?? (destinationKey === "studio" ? seedFiles : [])), clone(node)];
               if (!["studio", "private"].includes(destinationKey)) setExtraSpaces((spaces) => spaces.includes(destinationKey) ? spaces : [...spaces, destinationKey]);
             }}
             selected={selectedArea === null ? selectedFile : null}
@@ -1302,7 +1287,10 @@ export function NavigationRailLab() {
                 listening: file.id === "root" && config.listening,
                 locked: file.id === "root" && config.locked,
               }} expandable={Boolean(file.children?.length)}
-                onExpand={expand} onActivate={activate} onMessage={announce} onRenamed={rename} />
+                onExpand={expand} onActivate={activate} onMessage={(value) => {
+                  if (value.includes("HTML file — copy agent prompt")) htmlPromptOrigin.current = fileRegion.current?.querySelector<HTMLElement>(`[data-file-id="${file.id}"] .rail-lab-actions`) ?? null;
+                  announce(value);
+                }} onRenamed={rename} />
             )} />
           ) : (
             <div>
@@ -1542,7 +1530,7 @@ export function NavigationRailLab() {
                   ) : atom === "avatar" ? (
                     <div className="rail-lab-space-identity">
                       {spaceIdentity("Studio")}
-                      {spaceIdentity("Private", true, space === "private" ? totals.signals : flattenFiles(spaceFixtures.current.private ?? seedFiles).reduce((sum, { node }) => sum + (node.signals ?? 0), 0))}
+                      {spaceIdentity("Private", true, space === "private" ? totals.signals : flattenFiles(spaceFixtures.current.private ?? []).reduce((sum, { node }) => sum + (node.signals ?? 0), 0))}
                       <Avatar className="size-7">
                         <AvatarFallback className="rail-lab-account-initials">
                           AC
@@ -2000,7 +1988,7 @@ export function NavigationRailLab() {
       <NavigationRailParity />
       <Dialog open={htmlPromptOpen} onOpenChange={setHtmlPromptOpen}>
         <DialogContent onCloseAutoFocus={(event) => {
-          event.preventDefault(); createTrigger.current?.focus();
+          event.preventDefault(); requestAnimationFrame(() => (htmlPromptOrigin.current?.isConnected ? htmlPromptOrigin.current : createTrigger.current)?.focus());
         }}>
           <DialogTitle>Create an HTML file with your agent</DialogTitle>
           <DialogDescription>Copy this prompt to your agent. This does not create a file directly.</DialogDescription>
