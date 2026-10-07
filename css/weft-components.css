@@ -293,26 +293,22 @@ html,
   letter-spacing: 0.01em;
   color: var(--weft-muted);
 }
-/* Heuristic 7 marks the minority, and decision 4 fixed what the marker IS: real
- * text plus the `required` attribute, never a bare glyph. A `*` alone landed
+/* Heuristic 7 marks the minority. Decision 4 fixed that the marker is real
+ * text plus the `required` attribute, never a bare glyph: a `*` alone landed
  * inside the accessible name as punctuation while `required` stayed false —
- * observed name "RETENTION*", required false. The word carries meaning wherever
- * the name is read, and the attribute carries the state.
+ * observed name "RETENTION*", required false. The owner ruling of 2026-10-07
+ * fixed the text: plain "(required)" inside the label, in the label's own
+ * colour, with no colour or size of its own. The `.weft-req` span stays as the
+ * hook the specimen checks read; it carries no style.
  *
- *   <label class="weft-field-label" for="x">Retention <span class="weft-req">required</span></label>
+ *   <label class="weft-field-label" for="x">Retention <span class="weft-req">(required)</span></label>
  *   <input class="weft-input" id="x" required />
  *
  * The literal space before the span is load-bearing. Accessible-name
  * computation concatenates the label's text nodes, and without it the name
- * comes out "Retentionrequired" — one word, which is not what decision 4
- * settled and not what anyone would want read out.
+ * comes out "Retention(required)" — one word, which is not what anyone would
+ * want read out.
  */
-.weft-field-label .weft-req {
-  color: var(--weft-stop);
-  margin-left: 3px;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-}
 .weft-field-hint { font-size: 13px; color: var(--weft-muted); line-height: 1.4; }
 /* Async pending/result presentation (amendment A4, in force): the consumer
  * supplies the state and the words; these classes only present them. Pending
