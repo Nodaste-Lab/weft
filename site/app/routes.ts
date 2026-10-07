@@ -1,13 +1,14 @@
 import React from 'react';
 
-export type Section = 'home' | 'guidelines' | 'tokens' | 'components' | 'patterns' | 'templates' | 'all';
+export type Section = 'home' | 'guidelines' | 'tokens' | 'components' | 'patterns' | 'templates' | 'all' | 'labs';
 
 export interface Route {
   section: Section;
   id?: string;
+  level?: 'Rail';
 }
 
-const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all'];
+const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all', 'labs'];
 
 /** True for an app route (`#/…`); false for a plain fragment such as `#main`, which the browser owns. */
 export function isRouteHash(hash: string): boolean {
@@ -20,7 +21,9 @@ export function parseHash(hash: string): Route {
   const [head, ...rest] = path.split('/');
   const section = SECTIONS.find((s) => s === head);
   if (!section) return { section: 'home' };
-  const id = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  const requestedId = rest.length ? decodeURIComponent(rest.join('/')) : undefined;
+  if (section === 'templates' && ['navigation-rail', 'workspace-navigation-rail'].includes(requestedId ?? '')) return { section: 'labs', id: 'navigation-rail', level: 'Rail' };
+  const id = requestedId;
   return id ? { section, id } : { section };
 }
 

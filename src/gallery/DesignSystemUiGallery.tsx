@@ -1,18 +1,19 @@
+import { NavigationFileList, type NavigationFileNode } from '../ui/navigation-file-list';
+import { NavigationActions } from '../ui/navigation-actions';
+import { NavigationSpacePicker } from '../ui/navigation-space-picker';
+import { NavigationSearch } from '../ui/navigation-search';
+import { NavigationAccount } from '../ui/navigation-account';
+import { NavigationRailLayout } from '../ui/navigation-rail-layout';
+import { WorkspaceNavigationRail } from '../templates/workspace-navigation-rail';
+import { workspaceNavigationSpaces, workspaceNavigationDestinations } from '../templates/workspace-navigation-rail.fixture';
+import { NavigationRow, NavigationRowLink, NavigationRowDisclosure } from '../ui/navigation-row';
+import { NavigationCount } from '../ui/navigation-count';
+import { NavigationIcon, NavigationItemIcon } from '../ui/navigation-icon';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { AlertTriangle, Bold, GripVerticalIcon, Info, Link2, Moon, Sparkles } from 'lucide-react';
 import designSystemManifest from '../../manifest.json';
-import { NavigationRail } from '../templates/navigation-rail';
-import {
-  navigationRailCurrentSpaceId,
-  navigationRailLabels,
-  navigationRailNavigation,
-  navigationRailProfile,
-  navigationRailSpaces,
-  navigationRailTree,
-  navigationRailTreeLabel,
-} from '../templates/navigation-rail.fixture';
 import {
   Accordion,
   AccordionContent,
@@ -298,7 +299,16 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'menubar',
   'metric-tile',
   'mode-only-toggle',
+  'navigation-count',
+  'navigation-file-list',
+  'navigation-icon',
   'navigation-menu',
+  'navigation-actions',
+  'navigation-space-picker',
+  'navigation-search',
+  'navigation-account',
+  'navigation-rail-layout',
+  'navigation-row',
   'pagination',
   'panel-block-shell',
   'panel-header',
@@ -1953,6 +1963,27 @@ export function DesignSystemUiGallery({
         </div>
       </PrimitiveCard>
 
+      <PrimitiveCard id="navigation-actions" title="navigation actions" summary="Shared workspace navigation control."><NavigationActions name="Research" items={[{ id: "more", label: "More", children: [{ id: "copy", label: "Copy link", onSelect: () => {} }] }]} /></PrimitiveCard>
+      <PrimitiveCard id="navigation-space-picker" title="navigation space picker" summary="Shared workspace navigation control."><NavigationSpacePicker label="Space" value="studio" onValueChange={() => {}} spaces={[{ id: "studio", name: "Studio", signals: 3 }]} /></PrimitiveCard>
+      <PrimitiveCard id="navigation-search" title="navigation search" summary="Shared workspace navigation control."><NavigationSearch label="Search in Studio" placeholder="Search" /></PrimitiveCard>
+      <PrimitiveCard id="navigation-account" title="navigation account" summary="Shared workspace navigation control."><NavigationAccount name="Avery Chen" initials="AC" settingsLabel="Account settings" settingsHref="#settings" /></PrimitiveCard>
+      <PrimitiveCard id="navigation-file-list" title="navigation file list" summary="Nested application-owned files with shared structure and states."><NavigationFileListDemo /></PrimitiveCard>
+      <PrimitiveCard id="navigation-rail-layout" title="navigation rail layout" summary="Shared workspace navigation control."><NavigationRailLayout railId="layout-example" label="Navigation" openLabel="Open navigation" resizeLabel="Resize navigation" description="Browse destinations" rail={<nav id="layout-example" aria-label="Example navigation">Files</nav>}><p>Workspace</p></NavigationRailLayout></PrimitiveCard>
+      <PrimitiveCard id="navigation-count" title="Navigation count" summary="Awaiting-action signals with explicit scope.">
+        <NavigationCount count={3} name="Product direction" scope="file" />
+      </PrimitiveCard>
+      <PrimitiveCard id="navigation-icon" title="Navigation icon" summary="Choose the semantic purpose, never a glyph shape.">
+        <NavigationIcon purpose="board" /><NavigationItemIcon purpose="text" listening locked />
+      </PrimitiveCard>
+      <PrimitiveCard id="navigation-row" title="Navigation row" summary="Disclosure and native destination remain separate controls.">
+        <NavigationRow density="compact" current hierarchical>
+          <NavigationRowDisclosure name="Product direction" expanded={false} />
+          <NavigationItemIcon purpose="text" />
+          <NavigationRowLink href="#navigation-row" aria-current="page">Product direction</NavigationRowLink>
+          <NavigationCount count={3} name="Product direction" scope="file" />
+        </NavigationRow>
+      </PrimitiveCard>
+
       <PrimitiveCard
         id="navigation-menu"
         title="Navigation Menu"
@@ -3037,34 +3068,10 @@ function TemplatesSection() {
 
 /** The live example for one react template, without the card chrome; the site's template pages use it. */
 export function TemplateExample({ id }: { id: string }) {
-  if (id === 'navigation-rail') return <NavigationRailTemplateDemo />;
+  if (id === 'workspace-navigation-rail') return <WorkspaceNavigationDemo />;
   return null;
 }
 
-function NavigationRailTemplateDemo() {
-  const [spaceId, setSpaceId] = React.useState(navigationRailCurrentSpaceId);
-  return (
-    // `Sidebar` renders position:fixed; the transform makes this wrapper the
-    // containing block so the rail resolves to this frame, as in the sidebar card.
-    <div className="flex h-[420px] w-full overflow-hidden rounded-md border [transform:translateZ(0)]">
-      <NavigationRail
-        spaces={navigationRailSpaces}
-        currentSpaceId={spaceId}
-        onSpaceChange={setSpaceId}
-        navigation={navigationRailNavigation}
-        treeLabel={navigationRailTreeLabel}
-        tree={navigationRailTree}
-        onCreate={() => undefined}
-        onNodeAction={() => undefined}
-        profile={navigationRailProfile}
-        labels={navigationRailLabels}
-        className="min-h-0 h-full"
-      >
-        <div className="text-muted-foreground p-3 text-xs">Main column beside the rail.</div>
-      </NavigationRail>
-    </div>
-  );
-}
 
 const composesListStyle: CSSProperties = {
   margin: 0,
@@ -3228,3 +3235,25 @@ const codeStyle: CSSProperties = {
   borderRadius: 'var(--radius-xs)',
   padding: '1px 5px',
 };
+
+function WorkspaceNavigationDemo() {
+ const [space, setSpace] = React.useState('studio');
+ return <div style={{height: 560}}><WorkspaceNavigationRail id="workspace-example" label="Space navigation" spaceLabel="Space" filesLabel="Files" filesHref="#files"
+ spacePicker={{ spaces: workspaceNavigationSpaces, value: space, onValueChange: setSpace, label: 'Space' }}
+ search={{ label: 'Search in selected Space', placeholder: 'Search' }} destinations={workspaceNavigationDestinations} currentDestination="signals"
+ files={<NavigationFileList nodes={[{id:'research',label:'Research notes'}]} label="Space files" expandedIds={[]} onExpandedChange={()=>{}}
+  renderRow={node => <NavigationRow><NavigationRowLink href="#research"><NavigationIcon purpose="text" /><span>{node.label}</span></NavigationRowLink><NavigationCount count={3} scope="file" name={node.label} /></NavigationRow>} />}
+ account={{ name: 'Avery Chen', initials: 'AC', settingsLabel: 'Account settings', settingsHref: '#settings' }}
+ layout={{ openLabel: 'Open navigation', resizeLabel: 'Resize navigation', description: 'Browse files and destinations', storageKey: 'weft:gallery:workspace-width' }}><p>Application workspace</p></WorkspaceNavigationRail></div>;
+}
+
+function NavigationFileListDemo() {
+ const [expanded, setExpanded] = React.useState<string[]>(['research']);
+ const nodes: NavigationFileNode[] = [{ id: 'research', label: 'Research', children: [{id:'notes',label:'Interview notes'}] }, { id:'reference',label:'Reference'}];
+ return <NavigationFileList nodes={nodes} label="Example files" expandedIds={expanded}
+  onExpandedChange={(id, open) => setExpanded(ids => open ? [...ids,id] : ids.filter(value => value !== id))}
+  renderRow={(node, {depth, expanded, expandable, toggle}) => <NavigationRow hierarchical depth={depth}>
+   {expandable ? <NavigationRowDisclosure name={node.label} expanded={expanded} onClick={toggle} /> : <span style={{width:'var(--weft-navigation-target)'}} />}
+   <NavigationIcon purpose="text" /><NavigationRowLink href={`#example-${node.id}`}><span>{node.label}</span></NavigationRowLink>
+  </NavigationRow>} />;
+}

@@ -1,6 +1,6 @@
 {
   "name": "@nodaste-lab/weft",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "license": "UNLICENSED",
   "description": "Weft design system: --weft-* tokens, framework-agnostic weft-* component classes, and the shadcn-based React primitive library shared across Nodaste products.",
@@ -52,6 +52,7 @@
     "changeset": "changeset",
     "site:dates": "node scripts/component-dates.mjs",
     "site:dev": "npm run site:dates && vite --config site/vite.config.ts",
+    "weft:site:open": "npm run site:dev -- --open",
     "site:build": "npm run site:dates && vite build --config site/vite.config.ts",
     "site:preview": "vite preview --config site/vite.config.ts",
     "test:visual": "npm run site:build && WEFT_VISUAL=1 playwright test --project=visual",
@@ -73,7 +74,11 @@
     "test:react-template-contract": "node --test scripts/__tests__/react-template-contract.node.mjs",
     "test:site-docs": "node --test scripts/__tests__/site-docs-contract.node.mjs",
     "test:review-gate": "node --test scripts/__tests__/extract-constraints.node.mjs scripts/__tests__/review-gate.node.mjs scripts/__tests__/release-local.node.mjs",
-    "release:local": "bash scripts/release-local.sh"
+    "release:local": "bash scripts/release-local.sh",
+    "test:rail-a11y": "node scripts/check-navigation-rail-a11y.mjs",
+    "test:rail-workflows": "node scripts/check-navigation-rail-workflows.mjs",
+    "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs",
+    "test:workspace-navigation": "node scripts/check-workspace-navigation.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",
@@ -130,23 +135,24 @@
     "tw-animate-css": "1.3.8"
   },
   "devDependencies": {
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.3",
     "@babel/parser": "^7.29.3",
     "@changesets/cli": "^2.29.3",
+    "@playwright/test": "^1.61.1",
+    "@tailwindcss/vite": "4.1.12",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/jest-axe": "^3.5.9",
     "@vitejs/plugin-react": "4.7.0",
+    "axe-core": "4.14.0",
     "jest-axe": "^10.0.0",
     "jsdom": "^28.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "vitest": "^4.0.18",
-    "vite": "6.4.3",
-    "@playwright/test": "^1.61.1",
     "tailwindcss": "4.1.12",
-    "@tailwindcss/vite": "4.1.12"
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "vite": "6.4.3",
+    "vitest": "^4.0.18"
   },
   "overrides": {
     "tsup": {

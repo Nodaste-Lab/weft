@@ -15,6 +15,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Every specifier a consumer uses today. Add here when adding an export.
 const SPECIFIERS = [
+  '@nodaste-lab/weft/src/ui/navigation-file-list.tsx',
   '@nodaste-lab/weft/tokens.css',
   '@nodaste-lab/weft/theme.css',
   '@nodaste-lab/weft/components.css',
@@ -30,9 +31,17 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-actions.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-space-picker.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-search.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-account.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-rail-layout.tsx',
+  '@nodaste-lab/weft/src/templates/workspace-navigation-rail.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-row.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-count.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-icon.tsx',
   '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
-  '@nodaste-lab/weft/src/templates/navigation-rail.tsx',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
   // built entry ("." resolves via dist)

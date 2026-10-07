@@ -7,6 +7,7 @@ import { GuidelinesPage } from './pages/GuidelinesPage';
 import { HomePage } from './pages/HomePage';
 import { PatternPage } from './pages/PatternPage';
 import { TemplatePage } from './pages/TemplatePage';
+import { NavigationRailLab } from './pages/NavigationRailLab';
 import { TokensPage } from './pages/TokensPage';
 
 export function App() {
@@ -27,6 +28,9 @@ export function App() {
       break;
     case 'templates':
       page = <TemplatePage id={route.id} />;
+      break;
+    case 'labs':
+      page = route.id === 'navigation-rail' ? <NavigationRailLab initialLevel={route.level} /> : <div><h1>{route.id ? 'Lab not found' : 'Labs'}</h1><a href="#/labs/navigation-rail">Navigation rail lab</a></div>;
       break;
     case 'all':
       // Full width, no rail: the visual baselines capture the one-page gallery

@@ -171,3 +171,18 @@ test('the fixed tokens are declared once in :root and overridden nowhere (mode-i
   assert.equal(base['--weft-fixed-ink'], base['--weft-ink'],
     '--weft-fixed-ink is the light-mode --weft-ink, held across themes');
 });
+
+test('navigation density is independent of generic rows', () => {
+  const blocks = extractTokenBlocks(weft);
+  const base = blocks[':root, :root[data-palette="weft"]'];
+  assert.equal(base['--weft-navigation-row-h'], '44px');
+  assert.equal(base['--weft-row-h'], '48px');
+  for (const [density, navigation, generic] of [['compact', '36px', '32px'], ['dense', '28px', '30px']]) {
+    const block = blocks[`:root[data-density="${density}"]`];
+    assert.equal(block['--weft-navigation-row-h'], navigation);
+    assert.equal(block['--weft-row-h'], generic);
+    assert.equal(block['--weft-navigation-target'], '24px');
+  }
+  assert.equal(base['--weft-navigation-indent'], '8px');
+  assert.match(base['--weft-navigation-fg'], /var\(--weft-ink\) 40%/);
+});

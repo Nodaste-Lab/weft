@@ -18,21 +18,26 @@ function ThemeToggle() {
 }
 
 export function Layout({ route, children }: { route: Route; children: ReactNode }) {
+  const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
+  React.useEffect(() => setMobileNavOpen(false), [route.section, route.id]);
   const nav = React.useMemo(() => buildNav(), []);
   const componentGroups = nav.filter((g) => g.section === 'components');
   const componentCount = componentGroups.reduce((n, g) => n + g.items.length, 0);
   const documented = componentGroups.reduce((n, g) => n + g.items.filter((i) => (i.written ?? 0) > 0).length, 0);
 
   return (
-    <div style={shellStyle}>
+    <div className="weft-site-shell" style={shellStyle}>
       <a className="weft-sr-only weft-sr-only-focusable" href="#main">
         Skip to content
       </a>
-      <nav aria-label="Design system" style={navStyle}>
+      <button className="weft-site-mobile-menu weft-btn weft-btn--secondary" aria-expanded={mobileNavOpen} aria-controls="weft-site-nav" onClick={() => setMobileNavOpen(!mobileNavOpen)}>Weft site menu</button>
+      <nav id="weft-site-nav" className="weft-site-nav" data-mobile-open={mobileNavOpen} aria-label="Design system" style={navStyle}>
         <a href={hrefFor('home')} style={brandStyle} aria-current={route.section === 'home' ? 'page' : undefined}>
           Weft <span style={brandVersionStyle}>v{manifest.designSystemVersion}</span>
         </a>
         <div style={navScrollStyle}>
+          <div style={levelHeadingStyle}>Labs</div>
+          <a href="#/labs/navigation-rail" style={linkStyle} aria-current={route.section === 'labs' && route.id === 'navigation-rail' ? 'page' : undefined}>Navigation rail lab</a>
           {nav.map((group, index) => {
             const isFirstComponentGroup = group.section === 'components' && nav.findIndex((g) => g.section === 'components') === index;
             return (
@@ -97,7 +102,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
           <span style={crumbStyle}>{crumb(route)}</span>
           <ThemeToggle />
         </header>
-        <main id="main" tabIndex={-1} style={mainStyle}>
+        <main className="weft-site-main" id="main" tabIndex={-1} style={mainStyle}>
           {children}
         </main>
       </div>
@@ -114,6 +119,7 @@ function crumb(route: Route): string {
     patterns: 'Patterns',
     templates: 'Templates',
     all: 'Reference',
+    labs: route.id === 'navigation-rail' ? 'Navigation rail lab' : 'Labs',
   };
   return labels[route.section] ?? '';
 }

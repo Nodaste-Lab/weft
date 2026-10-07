@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.6.0",
+  "designSystemVersion": "0.7.0",
   "blocks": {
     ":root, :root[data-palette=\"weft\"]": {
       "--weft-blue": "#2563ff",
@@ -74,6 +74,12 @@
       "--weft-search-pad-end": "36px",
       "--weft-stack-gap": "16px",
       "--weft-row-h": "48px",
+      "--weft-navigation-row-h": "44px",
+      "--weft-navigation-target": "44px",
+      "--weft-navigation-gap": "4px",
+      "--weft-navigation-inset": "4px",
+      "--weft-navigation-indent": "8px",
+      "--weft-navigation-fg": "color-mix(in srgb, var(--weft-ink) 40%, var(--weft-muted))",
       "--weft-section-pad-y": "110px",
       "--weft-section-pad-y-sm": "80px",
       "--weft-touch-target": "44px",
@@ -212,6 +218,8 @@
       "--weft-control-text": "14px",
       "--weft-stack-gap": "12px",
       "--weft-row-h": "32px",
+      "--weft-navigation-row-h": "36px",
+      "--weft-navigation-target": "24px",
       "--weft-section-pad-y": "32px",
       "--weft-section-pad-y-sm": "24px",
       "--weft-touch-target": "24px"
@@ -228,6 +236,8 @@
       "--weft-control-text": "13px",
       "--weft-stack-gap": "10px",
       "--weft-row-h": "30px",
+      "--weft-navigation-row-h": "28px",
+      "--weft-navigation-target": "24px",
       "--weft-section-pad-y": "28px",
       "--weft-section-pad-y-sm": "20px",
       "--weft-touch-target": "24px"
