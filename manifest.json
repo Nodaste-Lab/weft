@@ -1037,7 +1037,7 @@
       "category": "inputs",
       "summary": "Labelled single-line or multiline form field. Cutout by default, contextual underline, helper/error/status wiring and flush attached actions.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "id": "textarea",

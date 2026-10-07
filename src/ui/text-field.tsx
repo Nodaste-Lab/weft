@@ -45,7 +45,7 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       <div className="weft-text-field-group">
         <div className="weft-text-field-control">
           {multiline?<Textarea state={props.disabled ? 'disabled' : readOnly ? 'readonly' : undefined} {...control} rows={rows} ref={ref as React.Ref<HTMLTextAreaElement>}/>:<Input state={props.disabled ? 'disabled' : readOnly ? 'readonly' : undefined} {...control} type={type} min={min} max={max} ref={ref as React.Ref<HTMLInputElement>}/>}
-          <label htmlFor={id}>{label}</label>
+          <label htmlFor={id} title={label}>{label}</label>
         </div>
         {!multiline&&action&&<div className="weft-text-field-action">{action}</div>}
       </div>

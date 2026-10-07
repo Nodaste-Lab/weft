@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useForm, type Control, type FieldErrors } from 'react-hook-form';
+import { TextField } from '../../../src/ui/text-field';
 import { Input } from '../../../src/ui/input';
 import { Textarea } from '../../../src/ui/textarea';
 import { Button } from '../../../src/ui/button';
@@ -73,9 +74,9 @@ export function InputSystemExamples() {
       <h2 id="input-compositions-heading">Helper text and feedback</h2>
       <p>Instructions stay visible when an error appears. Required fields validate after leaving the field or submitting; corrections are checked while editing.</p>
       <div className="input-system-samples">
-        <div><div className="input-lab-cutout"><Input id="helper-only" placeholder=" " /><label htmlFor="helper-only">Team name (optional)</label></div><small>Helper text is optional; labels always remain.</small></div>
-        <div><div className="input-lab-cutout"><Input id="helper-format" placeholder=" " aria-describedby="helper-format-help" /><label htmlFor="helper-format">Reference code</label></div><small id="helper-format-help">Use the code from your invitation.<br />Example: TEAM-2048.</small></div>
-        <div><div className="input-lab-cutout"><Input id="helper-error" placeholder=" " defaultValue="x" state="error" aria-describedby="helper-error-message helper-error-help" /><label htmlFor="helper-error">Project code</label></div><small id="helper-error-message" className="input-lab-error">Use at least three characters.</small><small id="helper-error-help">This code identifies your project in exports.</small></div>
+        <TextField label="Team name (optional)" />
+        <TextField label="Reference code" description="Use the code from your invitation. Example: TEAM-2048." />
+        <TextField label="Project code" defaultValue="x" error="Use at least three characters." description="This code identifies your project in exports." />
       </div>
     </section>
     <section className="input-lab-section" aria-labelledby="input-system-heading">
@@ -108,6 +109,6 @@ export function InputSystemExamples() {
       <tr><td>Agent credentials</td><td>Separate secrets from ordinary text. Reveal/copy controls need explicit labels; never reuse real tokens in this lab or log their values.</td></tr>
       <tr><td>Delete, transfer, or elevated access</td><td>Name the target and consequence, require deliberate confirmation where needed, preserve existing authorization rules.</td></tr>
       <tr><td>Search and filters</td><td>Use the existing SearchField and selection primitives. Search is not a required form field and should not display validation errors for an empty query.</td></tr>
-    </tbody></table><p>These are local interaction fixtures. Production validation, authorization, asynchronous services, and account persistence remain Avalandra responsibilities. Cutout composition is still lab-local pending contract and package work.</p></section>
+    </tbody></table><p>These are local interaction fixtures. Production validation, authorization, asynchronous services, and account persistence remain Avalandra responsibilities. Use the shared TextField composition for labelled form fields.</p></section>
   </>;
 }

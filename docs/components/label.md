@@ -47,7 +47,7 @@ The visible caption for one form control. It owns the text and its association w
 
 - One to three words. No trailing colon, no full stop.
 - Sentence case on every app surface. The mono face at compact density, the sans face at marketing.
-- The required marker is the word "required" in the stop colour, after a space. Not an asterisk.
+- Use plain text “(required)” inside the label when marking individual required fields; set the native required attribute too. Do not rely on colour or an asterisk. In mostly required forms, state that fields are required and mark only optional fields.
 - Instructions belong in help text, not in the label.
 
 ## Accessibility
