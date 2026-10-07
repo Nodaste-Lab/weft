@@ -8,6 +8,7 @@ import { HomePage } from './pages/HomePage';
 import { PatternPage } from './pages/PatternPage';
 import { TemplatePage } from './pages/TemplatePage';
 import { InputLab } from './pages/InputLab';
+import { SettingsLab } from './pages/SettingsLab';
 import { NavigationRailLab } from './pages/NavigationRailLab';
 import { TokensPage } from './pages/TokensPage';
 
@@ -28,10 +29,10 @@ export function App() {
       page = <PatternPage id={route.id} />;
       break;
     case 'templates':
-      page = <TemplatePage id={route.id} />;
+      page = route.id === 'settings' || route.id?.startsWith('settings/') ? <SettingsLab path={route.id} /> : <TemplatePage id={route.id} />;
       break;
     case 'labs':
-      page = route.id === 'inputs' ? <InputLab /> : route.id === 'navigation-rail' ? <NavigationRailLab initialLevel={route.level} /> : <div><h1>{route.id ? 'Lab not found' : 'Labs'}</h1><a href="#/labs/navigation-rail">Navigation rail lab</a></div>;
+      page = route.id === 'inputs' ? <InputLab /> : (route.id === 'settings' || route.id?.startsWith('settings/')) ? <SettingsLab path={route.id} /> : route.id === 'navigation-rail' ? <NavigationRailLab initialLevel={route.level} /> : <div><h1>{route.id ? 'Lab not found' : 'Labs'}</h1><a href="#/labs/navigation-rail">Navigation rail lab</a></div>;
       break;
     case 'all':
       // Full width, no rail: the visual baselines capture the one-page gallery

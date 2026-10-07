@@ -60,7 +60,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
                 )}
                 <ul style={listStyle}>
                   {group.items.map((item) => {
-                    const current = route.section === item.section && route.id === item.id;
+                    const current = item.id === 'settings' && item.section === 'templates' ? (route.section === 'templates' || route.section === 'labs') && (route.id === 'settings' || route.id?.startsWith('settings/')) : route.section === item.section && route.id === item.id;
                     return (
                       <li key={item.id}>
                         <a

@@ -1326,6 +1326,7 @@ html,
 }
 
 /* Workspace navigation compositions. */
+.weft-navigation-space-trigger { text-align: start; }
 .weft-navigation-space-trigger [data-slot="select-value"],
 .weft-navigation-space-options [data-slot="select-item"] > span:last-child { flex: 1; min-width: 0; }
 .weft-navigation-space-identity { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }

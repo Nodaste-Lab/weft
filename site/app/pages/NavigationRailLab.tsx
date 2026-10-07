@@ -1,4 +1,5 @@
 import { NavigationFileList, NavigationFileRename, useNavigationFileInteractions } from "../../../src/ui/navigation-file-list";
+import { PreviewSpaceDialog } from './PreviewSpaceDialog';
 import { NavigationRailLayout } from "../../../src/ui/navigation-rail-layout";
 import { NavigationActions, type NavigationAction } from "../../../src/ui/navigation-actions";
 import { NavigationSpacePicker } from "../../../src/ui/navigation-space-picker";
@@ -669,7 +670,6 @@ export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: L
   const [htmlPromptOpen, setHtmlPromptOpen] = React.useState(false);
   const [htmlCopyStatus, setHtmlCopyStatus] = React.useState("");
   const [newSpaceOpen, setNewSpaceOpen] = React.useState(false);
-  const [newSpaceName, setNewSpaceName] = React.useState("");
   const [extraSpaces, setExtraSpaces] = React.useState<string[]>([]);
   const spaceName =
     space === "studio" ? "Studio" : space === "private" ? "Private" : space;
@@ -997,7 +997,7 @@ export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: L
   );
   const spaceSelector = <NavigationSpacePicker id={spaceTriggerId} value={space} label="Preview Space" className="rail-lab-space-trigger" contentClassName="rail-lab-space-options"
     spaces={[{ id: "studio", name: "Studio" }, { id: "private", name: "Private", private: true }, ...extraSpaces.map(name => ({ id: name, name }))].map(option => ({ ...option, signals: flattenFiles(space === option.id ? testFiles : spaceFixtures.current[option.id] ?? (option.id === "studio" ? seedFiles : [])).reduce((sum, { node }) => sum + (node.signals ?? 0), 0) }))}
-    onValueChange={setSpace} onAdd={() => { setNewSpaceName(""); setNewSpaceOpen(true); }} />;
+    onValueChange={setSpace} onAdd={() => { setNewSpaceOpen(true); }} />;
   const htmlPrompt = `Create an HTML file in Avalandra in the Space "${spaceName}". Ask me what the file should contain before creating it. Follow Avalandra's HTML authoring and accessibility requirements, support light and dark themes and responsive layouts, and return a link to the saved file.`;
   const createMenu = config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected" && (
     <DropdownMenu modal={false}>
@@ -1937,68 +1937,7 @@ export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: L
           <p role="status">{htmlCopyStatus}</p>
         </DialogContent>
       </Dialog>
-      <Dialog open={newSpaceOpen} onOpenChange={setNewSpaceOpen}>
-        <DialogContent
-          onCloseAutoFocus={(event) => {
-            event.preventDefault();
-            requestAnimationFrame(() =>
-              document.getElementById(spaceTriggerId)?.focus()
-            );
-          }}
-        >
-          <DialogTitle>Add new Space</DialogTitle>
-          <DialogDescription>
-            Create a Space in this local preview.
-          </DialogDescription>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              const name = newSpaceName.trim();
-              if (!name) return;
-              if (
-                !["Studio", "Private", "__add-space", ...extraSpaces].some(
-                  (existing) =>
-                    existing.toLocaleLowerCase() === name.toLocaleLowerCase()
-                )
-              ) {
-                setExtraSpaces((names) => [...names, name]);
-                setSpace(name);
-                setNewSpaceOpen(false);
-                setMessage(
-                  `Created Space “${name}” in the local preview only.`
-                );
-              }
-            }}
-          >
-            <label>
-              Space name
-              <Input
-                value={newSpaceName}
-                aria-describedby="rail-lab-space-name-help"
-                onChange={(event) => setNewSpaceName(event.target.value)}
-                required
-              />
-            </label>
-            <p id="rail-lab-space-name-help">
-              Use a unique Space name. Studio, Private and existing names are
-              unavailable.
-            </p>
-            <Button
-              type="submit"
-              disabled={
-                !newSpaceName.trim() ||
-                ["Studio", "Private", "__add-space", ...extraSpaces].some(
-                  (name) =>
-                    name.toLocaleLowerCase() ===
-                    newSpaceName.trim().toLocaleLowerCase()
-                )
-              }
-            >
-              Create Space
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <PreviewSpaceDialog open={newSpaceOpen} onOpenChange={setNewSpaceOpen} existingNames={extraSpaces} triggerId={spaceTriggerId} onCreate={name=>{setExtraSpaces(names=>[...names,name]);setSpace(name);setMessage(`Created Space “${name}” in the local preview only.`);}} />
       <p role="status" className="rail-lab-status">
         {message}
       </p>
