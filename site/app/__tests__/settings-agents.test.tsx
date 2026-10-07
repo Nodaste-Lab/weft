@@ -42,3 +42,11 @@ it('rejects duplicate names and focuses setup on direct Edit',()=>{
  expect(field).toHaveFocus();expect(field).toHaveAttribute('aria-invalid','true');
  expect(field).toHaveAccessibleDescription(expect.stringContaining('Enter a unique agent name.'));
 });
+
+it('keeps a name-only agent visibly unconnected after setup closes',()=>{
+ render(<SettingsAgents/>);fireEvent.click(screen.getByRole('button',{name:'Connect your agent'}));
+ const field=screen.getByLabelText('Display name (required)');fireEvent.change(field,{target:{value:'Jordan’s Codex'}});fireEvent.submit(field.closest('form')!);
+ fireEvent.click(screen.getByRole('button',{name:'Done'}));
+ expect(screen.getByRole('row',{name:/Jordan’s Codex/})).toHaveTextContent('Not connected');
+ expect(screen.getByRole('row',{name:/Avery’s Codex/})).toHaveTextContent('Active');
+});

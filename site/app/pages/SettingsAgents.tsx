@@ -5,9 +5,9 @@ import { Button } from '../../../src/ui/button';
 import { TextField } from '../../../src/ui/text-field';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../../src/ui/dialog';
 
-type Agent = {id:string; name:string};
+type Agent = {id:string; name:string; status:'Active'|'Not connected'};
 export function SettingsAgents() {
-  const [agents,setAgents]=React.useState<Agent[]>([{id:'fixture-agent',name:'Avery’s Codex'}]);
+  const [agents,setAgents]=React.useState<Agent[]>([{id:'fixture-agent',name:'Avery’s Codex',status:'Active'}]);
   const [step,setStep]=React.useState<'name'|'setup'|null>(null);
   const [name,setName]=React.useState('');
   const [error,setError]=React.useState('');
@@ -23,13 +23,13 @@ export function SettingsAgents() {
   return <div className="settings-agents">
     {agents.length ? <table className="settings-agent-table"><caption className="weft-sr-only">Your agents</caption><thead><tr><th scope="col">Name</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead><tbody>{agents.map(agent=><tr key={agent.id}>
       <td><div className="settings-agent-name"><span className="settings-lab-avatar" aria-hidden="true">{agent.name.trim().split(/\s+/).slice(0,2).map(word=>Array.from(word)[0]).join('').toLocaleUpperCase()}</span><strong>{agent.name}</strong></div></td>
-      <td><span className="settings-agent-status">Active</span></td>
+      <td><span className="settings-agent-status">{agent.status}</span></td>
       <td><div className="settings-agent-actions"><Button variant="link" className="settings-agent-deactivate" onClick={event=>{deactivateTrigger.current=event.currentTarget;setDeactivating(agent);}} aria-haspopup="dialog" aria-label={`Deactivate ${agent.name}`}>Deactivate</Button><Button variant="outline" aria-haspopup="dialog" aria-label={`Edit ${agent.name}`} onClick={event=>{setupTrigger.current=event.currentTarget;setStatus('');setSelected(agent);setStep('setup');}}>Edit</Button></div></td>
     </tr>)}</tbody></table> : <p>No agents yet.</p>}
     <div className="settings-agent-connect"><h3>Connect your agent</h3><p>Give your existing AI tool access to Avalandra using your permissions.</p><Button ref={connectRef} aria-haspopup="dialog" onClick={event=>{setupTrigger.current=event.currentTarget;setName('');setError('');setStatus('');setStep('name');}}>Connect your agent</Button></div>
     <Dialog open={step!==null} onOpenChange={open=>{if(!open)setStep(null);}}><DialogContent className="settings-agent-dialog" onOpenAutoFocus={event=>{if(step==='setup'){event.preventDefault();setupHeading.current?.focus();}}} onCloseAutoFocus={event=>{event.preventDefault();(setupTrigger.current?.isConnected ? setupTrigger.current : connectRef.current)?.focus();}}>
       <DialogHeader><DialogTitle ref={setupHeading} tabIndex={-1}>{step==='name'?'Name your agent':'Connect your agent'}</DialogTitle><DialogDescription>{step==='name'?'This helps you trace work done by your agent.':`Connection setup for ${selected?.name ?? 'your agent'}.`}</DialogDescription></DialogHeader>
-      {step==='name'?<form noValidate onSubmit={event=>{event.preventDefault();if(!name.trim()){setError('Enter a name for your agent.');nameRef.current?.focus();return;}if(agents.some(agent=>agent.name.trim().toLocaleLowerCase()===name.trim().toLocaleLowerCase())){setError('Enter a unique agent name.');nameRef.current?.focus();return;}const agent={id:crypto.randomUUID(),name:name.trim()};setAgents(current=>[...current,agent]);setSelected(agent);setStep('setup');setStatus('Agent identity added to this local preview. No tool has been connected.');}}>
+      {step==='name'?<form noValidate onSubmit={event=>{event.preventDefault();if(!name.trim()){setError('Enter a name for your agent.');nameRef.current?.focus();return;}if(agents.some(agent=>agent.name.trim().toLocaleLowerCase()===name.trim().toLocaleLowerCase())){setError('Enter a unique agent name.');nameRef.current?.focus();return;}const agent:Agent={id:crypto.randomUUID(),name:name.trim(),status:'Not connected'};setAgents(current=>[...current,agent]);setSelected(agent);setStep('setup');setStatus('Agent identity added to this local preview. No tool has been connected.');}}>
         <TextField ref={nameRef} label="Display name (required)" value={name} required autoComplete="off" error={error} onChange={event=>{setName(event.target.value);if(error&&event.target.value.trim())setError('');}} description="Recommendation: [Your Name] + [AI Tool]. Example: Alex’s Codex. This name appears in Settings and beside comments and changes your agent makes."/>
         <DialogFooter><Button type="button" variant="outline" onClick={()=>setStep(null)}>Cancel</Button><Button type="submit">Next</Button></DialogFooter>
       </form>:<>
