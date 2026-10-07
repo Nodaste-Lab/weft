@@ -1,3 +1,4 @@
+import { SelectionSpecimen } from './specimens/inputs';
 import { NavigationFileList, type NavigationFileNode } from '../ui/navigation-file-list';
 import { NavigationActions } from '../ui/navigation-actions';
 import { NavigationSpacePicker } from '../ui/navigation-space-picker';
@@ -327,6 +328,8 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'section-block',
   'section-item',
   'select',
+  'combobox',
+  'multi-select',
   'separator',
   'settings-module-shell',
   'sheet',
@@ -2298,6 +2301,10 @@ export function DesignSystemUiGallery({
         </ul>
       </PrimitiveCard>
 
+      <PrimitiveCard id="combobox" title="Combobox" summary="Searchable known-value selection with a cutout label."><SelectionSpecimen multiple={false}/></PrimitiveCard>
+
+      <PrimitiveCard id="multi-select" title="MultiSelect" summary="Searchable known-value selection with a cutout label."><SelectionSpecimen multiple={true}/></PrimitiveCard>
+
       <PrimitiveCard
         id="select"
         title="Select"
@@ -2984,7 +2991,7 @@ function PrimitiveCard({
           Owner docs
         </a>
       </div>
-      <div style={exampleSurfaceStyle}>{children}</div>
+      <div style={id === "combobox" || id === "multi-select" ? {...exampleSurfaceStyle, background: "var(--weft-paper)"} : exampleSurfaceStyle}>{children}</div>
     </section>
   );
 }

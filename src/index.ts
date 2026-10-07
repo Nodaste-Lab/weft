@@ -120,3 +120,6 @@ export * from './templates/workspace-navigation-rail';
 
 export * from './ui/navigation-file-list';
 export * from './ui/text-field';
+
+export * from './ui/combobox';
+export * from './ui/multi-select';

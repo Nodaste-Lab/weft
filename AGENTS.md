@@ -16,6 +16,10 @@ primitive library. It publishes as **`@nodaste-lab/weft`** to GitHub Packages
 - **doct** — adoption planned (see `docs/adr/` when it lands); its Tailwind v4
   pipeline maps onto `css/weft.css`
 
+## Selection color
+
+Do not use gray as a selection or active-option highlight. Use the theme accent token, with a check, indicator, or other non-color cue for committed selection. Reserve neutral fills for neutral surfaces and unavailable/read-only treatments.
+
 ## Does my change belong here or in Heddle?
 
 | Change | Repo |

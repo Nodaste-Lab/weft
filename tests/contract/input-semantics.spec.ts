@@ -250,7 +250,7 @@ test.describe('the required marker', () => {
     // space between them.
     const problems: string[] = [];
     if (name.includes('*')) problems.push('the marker glyph is in the name');
-    if (!/retention\s+required/i.test(name)) problems.push('the marker is not a separate word');
+    if (!/retention\s+\(?required\)?/i.test(name)) problems.push('the marker is not a separate word');
     await measure({
       key: 'naming/required-marker/name-carries-no-marker-glyph',
       shortfall: problems.length,

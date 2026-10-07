@@ -21,9 +21,9 @@ One value from a list that opens on demand. It owns the trigger (styled as a fie
 ## When not to use
 
 - Two to six options. Use `radio-group`; every option is visible and nobody has to open anything.
-- More than one choice. Use a list of `checkbox`.
+- More than one choice. Use a visible list of `checkbox`, or `multi-select` when search is needed.
 - Options that are actions, not values. Use `dropdown-menu`.
-- A list long enough that people need to type to find things. Use `command` inside a `popover`.
+- A list long enough that people need to type to find things. Use `combobox`.
 
 ## How to use
 

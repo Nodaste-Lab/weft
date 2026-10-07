@@ -1430,6 +1430,65 @@ html,
 .weft-text-field[data-readonly] .weft-text-field-control > label { top: 0; transform: translateY(-50%); font-size: 12px; padding-inline: 4px; margin-inline-start: -4px; background: var(--weft-paper); }
 .weft-text-field-readonly-note { color: var(--weft-muted); font-family: var(--weft-font-sans); font-size: 12px; line-height: 1.5; }
 
+/* Searchable single and multiple choice fields. */
+.weft-selection-field { display: grid; gap: 8px; width: 100%; color: var(--weft-ink); font: 14px/1.5 var(--weft-font-sans); }
+.weft-selection-control { position: relative; padding-top: 6px; }
+.weft-selection-control > label { position: absolute; top: 0; inset-inline-start: 10px; z-index: 1; padding-inline: 4px; font-size: 12px; line-height: 1; background: var(--weft-paper); color: var(--weft-muted); }
+.weft-selection-control > button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 54px; padding: 12px; border: 1px solid var(--weft-control-border); border-radius: var(--weft-radius-card); background: var(--weft-paper); color: var(--weft-ink); text-align: start; font: inherit; }
+.weft-selection-control > button > svg { flex-shrink: 0; }
+.weft-selection-control > button:focus-visible, .weft-selection-popup button:focus-visible, .weft-selection-choice:has(input:focus-visible) { outline: 2px solid var(--weft-focus-ring-color); outline-offset: 2px; }
+.weft-selection-control > button:disabled { opacity: .5; cursor: not-allowed; border-style: dashed; }
+.weft-selection-field[data-invalid] .weft-selection-control > button { border-color: var(--weft-stop); }
+.weft-selection-popup { width: var(--radix-popover-trigger-width); min-width: min(280px, var(--radix-popover-content-available-width)); max-width: var(--radix-popover-content-available-width); max-height: var(--radix-popover-content-available-height); overflow-y: auto; padding: 8px; background: var(--weft-paper); color: var(--weft-ink); font: 14px/1.5 var(--weft-font-sans); }
+.weft-selection-popup [data-slot="command"] { background: var(--weft-paper); color: var(--weft-ink); }
+.weft-selection-popup [data-slot="command-item"] { min-height: 44px; color: var(--weft-ink); }
+.weft-selection-popup [data-slot="command-item"][data-selected="true"] { background: color-mix(in srgb, var(--weft-blue) 12%, var(--weft-paper)); }
+.weft-selection-option-copy { display: grid; gap: 2px; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.weft-selection-option-copy small, .weft-selection-help { color: var(--weft-muted); font-size: 13px; }
+.weft-selection-help, .weft-selection-error { margin: 0; }
+.weft-selection-error { color: var(--weft-stop); }
+.weft-selection-choices { margin: 8px 0; padding: 0; border: 0; }
+.weft-selection-choice { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px; }
+.weft-selection-choice:has(input:disabled) { opacity: .5; }
+.weft-selection-choice input { accent-color: var(--weft-blue); }
+.weft-selection-actions { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--weft-rule); padding-top: 8px; }
+.weft-selection-actions button, .weft-selection-action { min-height: 44px; padding: 8px 12px; font: inherit; border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card); color: var(--weft-ink); background: var(--weft-paper); }
+
+.weft-selection-actions button:disabled, .weft-selection-action:disabled { opacity: .5; cursor: not-allowed; border-style: dashed; }
+/* cmdk selection follows keyboard focus; the check and aria-current mark the committed value. */
+.weft-selection-popup [data-slot="command-item"][data-selected="true"] { outline: 1px solid var(--weft-blue); outline-offset: -1px; }
+.weft-selection-popup [data-slot="command-item"][data-current] { font-weight: 600; }
+.weft-selection-control > button > span:not(.weft-sr-only) { min-width: 0; overflow-wrap: anywhere; }
+.weft-selection-popup [data-slot="input"], .weft-selection-popup [data-slot="command-input"] { color: var(--weft-ink); }
+/* Leave room for the search text and its outer focus outline inside Command's clipping boundary. */
+.weft-selection-popup [data-slot="command-input-wrapper"] { box-sizing: border-box; height: auto; min-height: 56px; flex-shrink: 0; padding-block: 6px; }
+.weft-selection-popup [data-slot="command-input"] { box-sizing: border-box; height: 44px; padding-block: 8px; }
+
+.weft-selection-choice:has(input:checked) { background: color-mix(in srgb, var(--weft-blue) 12%, var(--weft-paper)); }
+
+/* Loading communicates activity, not a fabricated percentage or completion estimate. */
+.weft-selection-loading { min-height: 132px; padding: 16px 12px; box-sizing: border-box; }
+.weft-selection-loading > [role="status"] { display: flex; align-items: flex-start; gap: 10px; }
+.weft-selection-loading-title { margin: 0 0 4px; font-weight: 600; }
+.weft-selection-loading-spinner { color: var(--weft-blue); flex-shrink: 0; animation: weft-selection-spin 1s linear infinite; }
+.weft-selection-loading-lines { display: grid; gap: 8px; margin: 16px 0 0 30px; }
+.weft-selection-loading-lines > span { display: block; height: 4px; width: 72%; border-radius: var(--weft-radius-pill); background: color-mix(in srgb, var(--weft-blue) 16%, var(--weft-paper)); animation: weft-selection-breathe 1.6s ease-in-out infinite; }
+.weft-selection-loading-lines > span:nth-child(2) { width: 53%; animation-delay: 120ms; }
+.weft-selection-loading-lines > span:nth-child(3) { width: 63%; animation-delay: 240ms; }
+@keyframes weft-selection-spin { to { transform: rotate(360deg); } }
+@keyframes weft-selection-breathe { 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) {
+  .weft-selection-loading-spinner, .weft-selection-loading-lines > span { animation: none; }
+}
+@media (forced-colors: active) {
+  .weft-selection-loading-lines > span { background: CanvasText; }
+}
+
+.weft-selection-loading-compact { min-height: 24px; padding: 0; }
+.weft-selection-loading-compact .weft-selection-loading-title { margin: 0; color: var(--weft-muted); font-size: 13px; font-weight: 400; }
+
+/* Separate the result summary from the search focus ring and align it with option copy. */
+.weft-selection-popup .weft-selection-count { margin: 12px 0 8px; padding-inline: 31px 8px; line-height: 1.5; }
 /* The notch bridges the surrounding paper and the static control material. */
 .weft-text-field[data-readonly] .weft-text-field-control > label,
 .weft-text-field-control > :disabled:not(:placeholder-shown) + label { background: linear-gradient(to bottom, var(--weft-paper) 50%, var(--weft-control-fill-static) 50%); }
