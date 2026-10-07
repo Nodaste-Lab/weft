@@ -12,6 +12,10 @@ import { railPreviewTokens } from "../pages/navigation-rail-contract";
 import { readFileSync } from "node:fs";
 
 describe("NavigationRailLab", () => {
+  it("opens the complete rail for template entry points", () => {
+    render(<NavigationRailLab initialLevel="Rail" />);
+    expect(screen.getByRole("heading", { name: "Combine the rows into the complete rail" })).toBeVisible();
+  });
   it("shares density geometry between foundations, atoms, rows and rail", () => {
     const { container } = render(<NavigationRailLab />);
     fireEvent.click(screen.getByRole("button", { name: /3\s*Rows/ }));
@@ -86,11 +90,11 @@ describe("NavigationRailLab", () => {
     fireEvent.change(screen.getByRole("combobox", { name: "Row example" }), {
       target: { value: "Signals" },
     });
-    expect(screen.getAllByLabelText("11 signals awaiting action in this Space").length).toBeGreaterThan(
+    expect(screen.getAllByLabelText("11 signals awaiting action in Studio").length).toBeGreaterThan(
       0
     );
     expect(
-      screen.getAllByLabelText("30 total notifications in this Space").length
+      screen.getAllByLabelText("30 total notifications in Studio").length
     ).toBeGreaterThan(0);
     expect(
       screen.queryByRole("button", { name: "Actions for Signals" })
@@ -125,10 +129,10 @@ describe("NavigationRailLab", () => {
       row("Research notes").queryByLabelText("3 notifications for this file")
     ).not.toBeInTheDocument();
     expect(
-      row("Signals").getByLabelText("11 signals awaiting action in this Space")
+      row("Signals").getByLabelText("11 signals awaiting action in Studio")
     ).toBeInTheDocument();
     expect(
-      row("Signals").getByLabelText("30 total notifications in this Space")
+      row("Signals").getByLabelText("30 total notifications in Studio")
     ).toBeInTheDocument();
     for (const name of [
       "Files",
@@ -143,10 +147,10 @@ describe("NavigationRailLab", () => {
       screen.getByRole("button", { name: "Collapse Product direction" })
     );
     expect(
-      row("Signals").getByLabelText("11 signals awaiting action in this Space")
+      row("Signals").getByLabelText("11 signals awaiting action in Studio")
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("checkbox", { name: "Count badges" }));
-    expect(screen.queryByLabelText("11 signals awaiting action in this Space")).not.toBeInTheDocument();
+    expect(row("Signals").queryByLabelText("11 signals awaiting action in Studio")).not.toBeInTheDocument();
   });
   it("keeps navigation presets outside the file tree", () => {
     render(<NavigationRailLab />);

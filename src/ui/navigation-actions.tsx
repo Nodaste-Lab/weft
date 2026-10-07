@@ -62,7 +62,7 @@ export function NavigationActions({ name, items, caption, disabled, compact, tri
     <DropdownMenuItem key={item.id} disabled={item.disabled} onSelect={item.onSelect}>{item.label}</DropdownMenuItem>);
   return <DropdownMenu open={open} onOpenChange={changeOpen} modal={narrow}>
     <DropdownMenuTrigger asChild><Button ref={trigger} type="button" variant="ghost" size="icon" className={triggerClassName} disabled={disabled} aria-label={`Actions for ${name}`} onClick={event => { if (event.detail === 0) changeOpen(true); }}><NavigationIcon purpose="actions" /></Button></DropdownMenuTrigger>
-    <DropdownMenuContent id={menuId} className={`weft-navigation-actions-menu ${contentClassName ?? ""}`} aria-labelledby={undefined} aria-label={narrow ? `${menuLabel}: ${heading}` : menuLabel}>
+    <DropdownMenuContent id={menuId} className={`weft-navigation-actions-menu ${contentClassName ?? ""}`} aria-labelledby={undefined} aria-label={narrow && path.length > 0 ? `${menuLabel}: ${heading}` : menuLabel}>
       <DropdownMenuLabel>{name}{caption}</DropdownMenuLabel>
       {narrow ? <>
         {path.length > 0 && <DropdownMenuItem data-navigation-back="" onSelect={event => { event.preventDefault(); returningTo.current = path.at(-1) ?? null; setPath(path.slice(0, -1)); }}>{backLabel}</DropdownMenuItem>}

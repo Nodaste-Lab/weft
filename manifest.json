@@ -586,7 +586,7 @@
       "category": "navigation",
       "summary": "Shared file actions with desktop submenus and accessible compact Back panels.",
       "showcase": true,
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     {
       "id": "navigation-count",

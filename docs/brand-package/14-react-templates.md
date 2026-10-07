@@ -49,7 +49,13 @@ file tree and routing through this template’s props.
 The canonical interactive template standard is the navigation rail lab at
 `#/labs/navigation-rail`: tokens, atoms, rows, full rail, accessibility
 requirements and Avalandra functionality coverage. Template gallery links
-open that same experience. The all-components gallery retains a small
+open that same experience at the complete Rail level. The lab is site-only
+reference code, not an importable package export. The package currently ships
+the frame and controls with an app-owned `files` slot. A reusable file-list
+composition (nesting, paging/async states, drag presentation, rename and
+action entry points) is an outstanding migration scope decision; naming
+the lab canonical does not mark that package work complete.
+The all-components gallery retains a small
 package composition fixture for regression checks.
 
 It composes NavigationSpacePicker, NavigationSearch, NavigationRow,

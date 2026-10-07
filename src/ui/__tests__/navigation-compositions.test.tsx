@@ -28,6 +28,7 @@ describe('Workspace navigation compositions', () => {
    fireEvent.click(screen.getByRole('menuitem', { name: 'Back' }));
    await waitFor(() => expect(screen.getByRole('menuitem', { name: 'More' })).toHaveFocus());
    expect(screen.getByRole('menuitem', { name: 'More' })).toHaveAttribute('aria-haspopup', 'menu');
+   expect(screen.getByRole('menu')).toHaveAccessibleName('File actions');
    fireEvent.click(screen.getByRole('menuitem', { name: 'More' }));
    fireEvent.click(screen.getByRole('menuitem', { name: 'Copy link' }));
    expect(select).toHaveBeenCalledOnce();

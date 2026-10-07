@@ -173,6 +173,7 @@ const atoms = [
 ];
 type IconName = LeadingRailIcon;
 type Config = {
+  spaceName?: string;
   icon: IconName;
   label: string;
   iconSize: string;
@@ -432,8 +433,8 @@ function RowCounters({ config }: { config: Config }) {
   const total = config.row === "Navigation" && config.icon === "signals";
   if (!config.showCount || (config.row !== "File" && !total)) return null;
   return <span className="rail-lab-counters">
-    <NavigationCount count={Number(config.count)} name={total ? "this Space" : config.label} scope={total ? "signals-destination" : "file"} />
-    {total && <NavigationCount count={Number(config.notifications)} name="this Space" scope="signals-destination" kind="notifications" />}
+    <NavigationCount count={Number(config.count)} name={total ? config.spaceName ?? "Studio" : config.label} scope={total ? "signals-destination" : "file"} />
+    {total && <NavigationCount count={Number(config.notifications)} name={config.spaceName ?? "Studio"} scope="signals-destination" kind="notifications" />}
   </span>;
 }
 function DemoRow({
@@ -619,8 +620,9 @@ function DemoRow({
   );
 }
 
-export function NavigationRailLab() {
-  const [level, setLevel] = React.useState<Level>("Atoms");
+export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: Level } = {}) {
+  const [level, setLevel] = React.useState<Level>(initialLevel);
+  React.useEffect(() => { setLevel(initialLevel); }, [initialLevel]);
   const [atom, setAtom] = React.useState("icon");
   const [inspectedIcon, setInspectedIcon] =
     React.useState<RailIconName>("text");
@@ -1147,7 +1149,7 @@ export function NavigationRailLab() {
       config={
         config.row === "Navigation" && config.icon === "signals"
           ? {
-              ...config,
+              ...config, spaceName,
               count: String(totals.signals),
               notifications: String(totals.notifications),
             }
@@ -1190,7 +1192,7 @@ export function NavigationRailLab() {
       {railSearch}
       <DemoRow
         config={{
-          ...config,
+          ...config, spaceName,
           row: "Navigation",
           label: "Signals",
           icon: "signals",
@@ -1215,7 +1217,7 @@ export function NavigationRailLab() {
             <DemoRow
               key={label}
               config={{
-                ...config,
+                ...config, spaceName,
                 row: "Navigation",
                 label,
                 icon: (["board", "explorer"] as IconName[])[i],
@@ -1279,7 +1281,7 @@ export function NavigationRailLab() {
               else setMessage(value);
             }}
             renderRow={(file, depth, open, expand, activate, announce, rename) => (
-              <DemoRow config={{ ...config, label: file.label,
+              <DemoRow config={{ ...config, spaceName, label: file.label,
                 row: file.icon === "folder" ? "Folder" : "File", icon: file.icon,
                 depth: String(depth + Number(config.depth)), expanded: open,
                 current: selectedArea === null && selectedFile === file.id && config.current,
@@ -1507,7 +1509,7 @@ export function NavigationRailLab() {
                   ) : atom === "actions-menu" ? (
                     <DemoRow
                       config={{
-                        ...config,
+                        ...config, spaceName,
                         row: config.row === "Folder" ? "Folder" : "File",
                         showActions: true,
                       }}
@@ -1543,7 +1545,7 @@ export function NavigationRailLab() {
                       <p>File: its own positive signals only</p>
                       <DemoRow
                         config={{
-                          ...config,
+                          ...config, spaceName,
                           row: "File",
                           icon: "text",
                           showCount: true,
@@ -1556,7 +1558,7 @@ export function NavigationRailLab() {
                       <p>Signals: both Space totals</p>
                       <DemoRow
                         config={{
-                          ...config,
+                          ...config, spaceName,
                           row: "Navigation",
                           icon: "signals",
                           label: "Signals",
@@ -1822,7 +1824,7 @@ export function NavigationRailLab() {
                 <NestedSample
                   node={{ label: "Example file", icon: "text" }}
                   depth={0}
-                  config={config}
+                  config={{ ...config, spaceName }}
                   onMessage={setMessage}
                 />
               </div>
@@ -1848,7 +1850,7 @@ export function NavigationRailLab() {
                   expandable={false}
                   previewState={String(state)}
                   config={{
-                    ...config,
+                    ...config, spaceName,
                     count:
                       config.row === "Navigation" && config.icon === "signals"
                         ? String(totals.signals)
@@ -2094,7 +2096,7 @@ export function NavigationRailLab() {
                   key: noteKey,
                   text: note,
                   options: {
-                    ...config,
+                    ...config, spaceName,
                     ...(level === "Atoms" && atom === "icon"
                       ? { inspectedIcon }
                       : {}),
