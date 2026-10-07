@@ -1,5 +1,77 @@
 # @nodaste-lab/weft
 
+## 0.8.0
+
+### Minor Changes
+
+- d6db875: The design system site is navigable. One page per guideline, token family,
+  component, pattern and template, with a left rail organised by Weft's levels
+  (tokens, components, patterns, templates) and a Guidelines section from the
+  brand package. A component page is: example, Purpose, When to use, When not
+  to use, How to use, Heuristics, Content, Accessibility, API (from the props
+  snapshot), Related (components, and the patterns and templates that use it).
+  The source of each component page is `docs/components/<id>.md` with those
+  fixed headings; a missing file or section shows "Not yet written" and the rail
+  counts written sections per component. `manifest.json` gains a `patterns`
+  registry (id, title, summary, `uses[]` naming primitives, optional `docs`),
+  checked by `verify`; five patterns are registered, two with written guidance
+  (input types, document surfaces). `npm run test:site-docs` gates the doc
+  headings, `related[]`, pattern docs and template register entries, and runs
+  in the release and review batteries. The one-page gallery stays at `#/all`
+  at its previous geometry for the visual baselines. First written component
+  doc: `sidebar`. No token, class or component prop change.
+
+  Every component page also shows every variant and every state, each cell
+  labelled with the JSX that produces it and the import line above: a
+  specimen per component (`src/gallery/specimens/<category>.tsx`, 100 of 100) says how to render one instance; the site lays out each enumerable
+  prop from `props-snapshot.json` as a row, the specimen's states as another,
+  and the first two axes as a grid. `src/gallery/__tests__/specimens.test.tsx`
+  renders every cell with an axe pass. All 100 components have their seven
+  documentation sections written.
+
+- c576c0d: Add TextField as the standard labelled form composition with default cutout and contextual underline treatments, multiline/date entry, helper/error/status associations, flush attached actions, and distinct read-only material with a visible state cue. Keep Input and Textarea available as bare building blocks.
+- 9c13b48: Add NavigationFileList, NavigationFileRename and useNavigationFileInteractions for importable nested navigation structure, paging/async states, retained rows, drag presentation, keyboard reorder requests and alternate action entry points. The rail lab now consumes these shared controls; applications retain ownership of data, permissions, routing, mutations, announcements and Undo recovery.
+- 1400819: Add navigation-specific sizing and foreground tokens, semantic icons and scoped awaiting-action counts, navigation-list rows with separate native links and disclosures, shared action menus with compact Back panels, a Space picker, transparent search/filter toolbar, private account footer and persistent-width responsive layout. Add the workspace-navigation-rail template with an app-owned file-tree slot and adopt shared controls in the lab. Preserve existing Sidebar, Avatar, Badge and generic row contracts. Application services and Avalandra integration remain separate work.
+- b03418d: Add React template registry support alongside CSS templates: kind, fixture and composition metadata, gallery coverage, and composition-only, token-only, fixture and barrel contract checks. Document the template conventions in the React template register. The current workspace composition is WorkspaceNavigationRail; the obsolete NavigationRail example has been removed.
+
+### Patch Changes
+
+- c576c0d: Remove the gray fill from editable Input and Textarea defaults in React and plain CSS. Keep disabled and read-only treatments distinct and consistent across React and CSS, including resting-tier modifiers.
+- 12bb37f: Document surfaces heuristics (docs and a doctrine test only). A new
+  `docs/brand-package/13-document-surfaces-heuristics.md` gives every W3
+  document-surface entry (weft#28–#49) its use cases, heuristics, pattern and
+  anti-pattern, with five foundations — the three channels as ruled (colour is
+  semantic only, never a person), casing on app surfaces, honest empties, one
+  panel at a time, keyboard / focus / touch — and eleven cross-cutting
+  anti-patterns from the DocT epic pass and the accessibility floor. AGENTS.md
+  gains an eight-rule "Document surfaces" section pointing at it. Rulings
+  recorded in place: `09-app-primitives` § Three channels and § Identity colour
+  and `04-design-system` Identity colour now state the 2026-09-06 semantic-colour
+  ruling (W4 does not ship the identity subsystem); the composer hints read the
+  2026-09-05 strings. The doctrine contract gains D10, asserting the new
+  document's structure. No token, class, prop or manifest change.
+- 66a1fe7: Correct TextField label masks, dark text contrast and density sizing. Standardize helper examples and required markers, and clarify related field patterns with accessible headings and browser CSS regression coverage.
+- 4927b83: Fix the focus ring on select, dropdown-menu and context-menu popups. The global
+  unlayered `:where(...):focus-visible` ring in `css/weft-components.css`
+  outranked the layered utilities those primitives use for their own states, so
+  the listbox, menu and every active option painted the heavy ring during mouse
+  use. Popup parts now show only their `focus:bg-accent` fill, and keyboard focus
+  on the trigger still paints the ring.
+
+  Radix returns focus to a popup's trigger by script on close, which the browser
+  treats as keyboard focus even after a mouse choice. The select, dropdown-menu
+  and context-menu triggers now start a tiny modality tracker
+  (`src/ui/input-modality.ts`) that sets `data-weft-input-modality` on `<html>`
+  (`pointer` after a press, `keyboard` after a navigation key; lone modifiers,
+  Cmd/Ctrl/Alt chords and Escape do not count). While it reads `pointer`, those
+  triggers, links and buttons inside a context-menu trigger, and the
+  `focus-visible:border-ring` border on the select trigger and on a Button used
+  as a dropdown-menu or context-menu trigger show their resting look.
+
+  Consumers that already carry a workaround can delete it. CSS-only consumers
+  (injected panel iframes) never run the tracker, so the attribute stays unset and
+  behavior there is unchanged.
+
 ## 0.6.0
 
 ### Minor Changes
