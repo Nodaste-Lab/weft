@@ -7,6 +7,18 @@ share one visual language.
 
 Published as **`@nodaste-lab/weft`** on GitHub Packages (private to the org).
 
+## Open the design system site
+
+```sh
+npm run weft:site:open
+```
+
+Opens **http://127.0.0.1:5179/#/** with guidelines, tokens, components,
+patterns and templates. Requires installed dependencies (see Install below).
+Use `npm run site:dev` when opening the URL in an editor’s browser panel.
+If the site is already running, open the URL directly.
+See [site/README.md](site/README.md) for routes and maintenance instructions.
+
 ## Install
 
 ```sh

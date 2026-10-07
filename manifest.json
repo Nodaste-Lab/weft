@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.6.0",
+  "designSystemVersion": "0.7.0",
   "tokens": {
     "theme": "css/theme.css",
     "tailwind": "css/tailwind.css"
@@ -573,10 +573,74 @@
       "version": "1.0.0"
     },
     {
+      "id": "navigation-account",
+      "path": "src/ui/navigation-account.tsx",
+      "category": "navigation",
+      "summary": "Shared navigation account composition.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-actions",
+      "path": "src/ui/navigation-actions.tsx",
+      "category": "navigation",
+      "summary": "Shared navigation actions composition.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-count",
+      "path": "src/ui/navigation-count.tsx",
+      "category": "navigation",
+      "summary": "Awaiting-action signal counts with file/Space scope; notifications restricted to the Signals destination.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-icon",
+      "path": "src/ui/navigation-icon.tsx",
+      "category": "navigation",
+      "summary": "Semantic navigation icons and item status sub-icons, including outlined Kanban.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "navigation-menu",
       "path": "src/ui/navigation-menu.tsx",
       "category": "navigation",
       "summary": "Navigation menu with viewport and animated content.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-rail-layout",
+      "path": "src/ui/navigation-rail-layout.tsx",
+      "category": "navigation",
+      "summary": "Shared navigation rail layout composition.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-row",
+      "path": "src/ui/navigation-row.tsx",
+      "category": "navigation",
+      "summary": "Nested navigation-list row with separate disclosure, native destination link and action button controls.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-search",
+      "path": "src/ui/navigation-search.tsx",
+      "category": "navigation",
+      "summary": "Shared navigation search composition.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
+      "id": "navigation-space-picker",
+      "path": "src/ui/navigation-space-picker.tsx",
+      "category": "navigation",
+      "summary": "Shared navigation space picker composition.",
       "showcase": true,
       "version": "1.0.0"
     },
@@ -1072,6 +1136,24 @@
       "version": "2.0.0",
       "summary": "Operator action board — filter rail + priority-tiered action list, with a compact panel variant and item drawer. Plain-CSS whole-surface template. v2 deletes board-local duplicates of canonical components (D4-D15); use weft-tier-group, weft-dot, weft-toggle-group, weft-panel-header, weft-input, weft-btn from weft-components.css.",
       "docs": "docs/brand-package/11-panel-templates.md"
+    },
+    {
+      "id": "workspace-navigation-rail",
+      "kind": "react",
+      "path": "src/templates/workspace-navigation-rail.tsx",
+      "fixture": "src/templates/workspace-navigation-rail.fixture.ts",
+      "version": "1.0.0",
+      "summary": "Responsive workspace navigation with persistent width, scoped signals and app-owned file tree.",
+      "docs": "docs/brand-package/14-react-templates.md",
+      "composes": [
+        "navigation-space-picker",
+        "navigation-search",
+        "navigation-account",
+        "navigation-rail-layout",
+        "navigation-row",
+        "navigation-icon",
+        "navigation-count"
+      ]
     }
   ],
   "patterns": [

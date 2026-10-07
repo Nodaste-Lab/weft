@@ -75,3 +75,36 @@ and document icons are the template's.
 **Open.** `SidebarMenuAction` measures 18×18 under compact density; the touch
 floor is 24 (`--weft-touch-target`). That is a `sidebar` component fix, not a
 template override; tracked on the Sidebar fixes branch.
+
+## `workspace-navigation-rail` — Workspace navigation rail
+
+`workspace-navigation-rail` exports `WorkspaceNavigationRail`. This additive
+composition is the migration target for Avalandra; the original
+`navigation-rail` contract remains available to existing consumers.
+
+It composes NavigationSpacePicker, NavigationSearch, NavigationRow,
+NavigationIcon, NavigationCount, NavigationAccount and NavigationRailLayout.
+Supply destinations in the order Signals, Kanban board. Search's filter slot
+holds Explorer category navigation. Supply real destination URLs, the current
+destination ID, and the application's file tree in `files`. Files remain
+visible while Signals or Kanban is current. A future destination with `panel`
+replaces the Files panel; its Files link returns to the document destination.
+
+The template owns presentation and disclosure only. Avalandra owns permission
+filtering, capability gating, routing/history, remembered file and Signals lens,
+per-Space awaiting-action counts, file paging/loading, stale-response protection,
+context actions and drag/drop. Preserve these during integration; a rendered
+menu or fixture is not evidence that a live service works.
+
+Desktop width defaults to 280px, supports 200–720px, arrow steps of 16px,
+Shift+arrow steps of 64px and Home/End. `storageKey` opts into local persistence;
+a controlled `width` must be restored by the application. Available container
+width clamps the rendered rail without overwriting the user's preference.
+Below 1024px the rail uses a modal drawer with Escape, focus trapping and focus
+return. The account accepts no email; place email in Settings.
+
+Acceptance: verify real links with screen-reader link navigation, new-tab and
+Back/Forward behavior; selected destinations use `aria-current="page"`. Verify
+keyboard resize and refresh restoration, narrow drawer focus return, independent
+file disclosure/opening, and a file tree that retains the active/focused row
+while paging. Automated checks supplement a manual NVDA/VoiceOver and touch pass.

@@ -1,0 +1,3328 @@
+{
+  "date": "2026-10-07T01:20:21.687Z",
+  "url": "http://127.0.0.1:5180/#/labs/navigation-rail",
+  "scanner": "axe-core 4.14.0",
+  "browser": "149.0.7827.55",
+  "scans": [
+    {
+      "name": "Accessibility documentation",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "light / Tokens",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "light / Atom SearchWeft SearchField",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "light / Atom IconSemantic RailIcon registry",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "light / icon semantics catalog",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "light / Atom LabelWeft type tokens",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "light / Atom DisclosureCustom control in Avalandra",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "light / Atom Action buttonWeft Button, with local sizing",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "light / Atom Count badgeWeft Badge",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "light / Atom AvatarWeft Avatar with rail identity sizing",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "light / Atom Space selectorWeft Select",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "light / Atom Create menuWeft DropdownMenu + Button + Input",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "light / Atom Row actions menuWeft DropdownMenu composition",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "light / Atom Settings buttonWeft icon Button + settings icon",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "light / Atom DividerWeft border token",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "light / Rows / default / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "light / Rail / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "light / Rows / compact / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "light / Rail / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "light / Rows / dense / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "light / Rail / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "light / file menu / Writable",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:ree\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:ref:\""
+            },
+            {
+              "target": [
+                "#radix-\\:rib\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:ria:\""
+            },
+            {
+              "target": [
+                "#radix-\\:rie\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:rid:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "light / file menu / Read-only",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:ree\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:ref:\""
+            },
+            {
+              "target": [
+                "#radix-\\:ril\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:rik:\""
+            }
+          ],
+          "nodeCount": 2
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "light / file menu / Connector protected",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:ree\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:ref:\""
+            },
+            {
+              "target": [
+                "#radix-\\:riq\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:rip:\""
+            }
+          ],
+          "nodeCount": 2
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "light / file menu / Capabilities available",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:ree\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:ref:\""
+            },
+            {
+              "target": [
+                "#radix-\\:rj3\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:rj2:\""
+            },
+            {
+              "target": [
+                "#radix-\\:rj7\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:rj6:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "light / Empty",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "light / Loading",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "light / Error",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "dark / Tokens",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / Atom SearchWeft SearchField",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "dark / Atom IconSemantic RailIcon registry",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / icon semantics catalog",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "dark / Atom LabelWeft type tokens",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "dark / Atom DisclosureCustom control in Avalandra",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 246
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "dark / Atom Action buttonWeft Button, with local sizing",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "dark / Atom Count badgeWeft Badge",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / Atom AvatarWeft Avatar with rail identity sizing",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / Atom Space selectorWeft Select",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / Atom Create menuWeft DropdownMenu + Button + Input",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "dark / Atom Row actions menuWeft DropdownMenu composition",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 30
+    },
+    {
+      "name": "dark / Atom Settings buttonWeft icon Button + settings icon",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 29
+    },
+    {
+      "name": "dark / Atom DividerWeft border token",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 244
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "dark / Rows / default / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "dark / Rail / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "dark / Rows / compact / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "dark / Rail / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "dark / Rows / dense / both status icons",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 251
+        }
+      ],
+      "passedRules": 32
+    },
+    {
+      "name": "dark / Rail / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "dark / file menu / Writable",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r15b\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r15c:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r198\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r197:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r19b\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r19a:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "dark / file menu / Read-only",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r15b\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r15c:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r19i\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r19h:\""
+            }
+          ],
+          "nodeCount": 2
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "dark / file menu / Connector protected",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r15b\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r15c:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r19n\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r19m:\""
+            }
+          ],
+          "nodeCount": 2
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "dark / file menu / Capabilities available",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r15b\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r15c:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1a0\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r19v:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1a4\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1a3:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "dark / Empty",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "dark / Loading",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "dark / Error",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 31
+    },
+    {
+      "name": "Space Explorer filter categories",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r153\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r154:\""
+            }
+          ],
+          "nodeCount": 1
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "File name search results",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "File name search empty result",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "Move submenu",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r1ac\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1ad:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1eq\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1ep:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1et\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1es:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "Working status submenu",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r1ac\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1ad:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fb\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fa:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fe\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fd:\""
+            }
+          ],
+          "nodeCount": 4
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "More submenu",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r1ac\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1ad:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fb\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fa:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fe\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fd:\""
+            }
+          ],
+          "nodeCount": 5
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "Version history nested submenu",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-valid-attr-value",
+          "impact": "critical",
+          "help": "ARIA attributes must conform to valid values",
+          "nodes": [
+            {
+              "target": [
+                "#radix-\\:r1ac\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1ad:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fb\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fa:\""
+            },
+            {
+              "target": [
+                "#radix-\\:r1fe\\:"
+              ],
+              "summary": "Fix all of the following:\n  Unable to determine if aria-controls referenced ID exists on the page while using aria-haspopup: aria-controls=\"radix-:r1fd:\""
+            }
+          ],
+          "nodeCount": 5
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 34
+    },
+    {
+      "name": "Add Space dialog",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 24
+    },
+    {
+      "name": "Inline file creation",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 253
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "Auto drawer / 320 × 710 / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 320 × 710 / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 320 × 710 / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 390 × 844 / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 390 × 844 / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 390 × 844 / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-field:nth-child(4) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 10
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 800 × 600 / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "ul:nth-child(4) > li:nth-child(10) > a > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/09-app-primitives\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/10-language-index\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 264
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 800 × 600 / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "ul:nth-child(4) > li:nth-child(10) > a > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/09-app-primitives\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/10-language-index\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 264
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 800 × 600 / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "ul:nth-child(4) > li:nth-child(10) > a > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/09-app-primitives\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "a[href=\"#/guidelines/10-language-index\"] > span"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 264
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 320 × 320 / default",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab > h2"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 11
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 320 × 320 / compact",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-preview-content > p:nth-child(3)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 11
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Auto drawer / 320 × 320 / dense",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "aria-hidden-focus",
+          "impact": "serious",
+          "help": "ARIA hidden element must not be focusable or contain focusable elements",
+          "nodes": [
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(1)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "#root"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            },
+            {
+              "target": [
+                "span[data-radix-focus-guard=\"\"][data-aria-hidden=\"true\"][aria-hidden=\"true\"]:nth-child(6)"
+              ],
+              "summary": "Fix all of the following:\n  Check that focusable elements are not tabbable in the current state"
+            }
+          ],
+          "nodeCount": 3
+        },
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".rail-lab-preview-content > p:nth-child(3)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(1) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            },
+            {
+              "target": [
+                ".rail-lab-controls:nth-child(1) > .rail-lab-field:nth-child(2) > select"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background image"
+            }
+          ],
+          "nodeCount": 11
+        }
+      ],
+      "passedRules": 28
+    },
+    {
+      "name": "Expanded functionality audit and decision feedback",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 254
+        }
+      ],
+      "passedRules": 33
+    },
+    {
+      "name": "Forced colors and reduced motion",
+      "violations": [],
+      "needsReview": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(1)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "div:nth-child(7) > span:nth-child(2)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            },
+            {
+              "target": [
+                "#weft-site-nav > div > div:nth-child(8)"
+              ],
+              "summary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
+            }
+          ],
+          "nodeCount": 256
+        }
+      ],
+      "passedRules": 33
+    }
+  ],
+  "checks": [
+    "light / default: desktop target geometry at least 24px",
+    "light / compact: desktop target geometry at least 24px",
+    "light / dense: desktop target geometry at least 24px",
+    "dark / default: desktop target geometry at least 24px",
+    "dark / compact: desktop target geometry at least 24px",
+    "dark / dense: desktop target geometry at least 24px",
+    "Space picker / search toolbar edges align; Explorer filter menu exposes category navigation",
+    "File-name search results, no matches and Escape clearing",
+    "Tab reaches actions hidden at rest; focus reveals actions; file states have an accessible description",
+    "Rename autofocus, blank-name rejection, Escape cancellation and focus return",
+    "Lazy Move submenu mounts its controlled ID, opens with Right, returns focus with Left",
+    "Working status, More and nested Version history keyboard paths",
+    "Resize works without dragging: Home, End, ArrowRight, range alternative",
+    "Space picker, Add Space dialog and file creation operate from the keyboard",
+    "Feedback save updates live status and export downloads without a runtime error",
+    "Retry restores focus to the loaded file region and updates live status",
+    "Drawer 320×710 / default: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 320×710 / compact: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 320×710 / dense: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 390×844 / default: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 390×844 / compact: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 390×844 / dense: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 800×600 / default: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 800×600 / compact: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 800×600 / dense: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 320×320 / default: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 320×320 / compact: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Drawer 320×320 / dense: no page overflow, focus contained, Escape closes and restores focus, minimum target geometry",
+    "Forced-color mode preserves current marker and keyboard row outline; reduced motion enabled"
+  ],
+  "contrast": [
+    {
+      "name": "light / Rows / default",
+      "samples": 37,
+      "minimum": 5.5020736965672725,
+      "failures": []
+    },
+    {
+      "name": "light / Rail / default",
+      "samples": 44,
+      "minimum": 5.2303694033024675,
+      "failures": []
+    },
+    {
+      "name": "light / Rows / compact",
+      "samples": 37,
+      "minimum": 5.5020736965672725,
+      "failures": []
+    },
+    {
+      "name": "light / Rail / compact",
+      "samples": 44,
+      "minimum": 5.2303694033024675,
+      "failures": []
+    },
+    {
+      "name": "light / Rows / dense",
+      "samples": 37,
+      "minimum": 5.5020736965672725,
+      "failures": []
+    },
+    {
+      "name": "light / Rail / dense",
+      "samples": 44,
+      "minimum": 5.2303694033024675,
+      "failures": []
+    },
+    {
+      "name": "dark / Rows / default",
+      "samples": 37,
+      "minimum": 5.668415367722361,
+      "failures": []
+    },
+    {
+      "name": "dark / Rail / default",
+      "samples": 44,
+      "minimum": 5.838358756871371,
+      "failures": []
+    },
+    {
+      "name": "dark / Rows / compact",
+      "samples": 37,
+      "minimum": 5.668415367722361,
+      "failures": []
+    },
+    {
+      "name": "dark / Rail / compact",
+      "samples": 44,
+      "minimum": 5.838358756871371,
+      "failures": []
+    },
+    {
+      "name": "dark / Rows / dense",
+      "samples": 37,
+      "minimum": 5.668415367722361,
+      "failures": []
+    },
+    {
+      "name": "dark / Rail / dense",
+      "samples": 44,
+      "minimum": 5.838358756871371,
+      "failures": []
+    }
+  ],
+  "errors": []
+}

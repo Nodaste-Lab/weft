@@ -3,3 +3,12 @@
  * would otherwise never be generated. */
 @import '../css/index.css';
 @source './app/**/*.{ts,tsx}';
+
+.weft-site-mobile-menu { display: none; }
+@media (max-width: 767px) {
+  .weft-site-shell { grid-template-columns: minmax(0, 1fr) !important; }
+  .weft-site-mobile-menu { display: block; margin: 12px; }
+  .weft-site-nav { position: static !important; height: min(60dvh, 540px) !important; }
+  .weft-site-nav[data-mobile-open="false"] { display: none !important; }
+  .weft-site-main { padding: 16px !important; }
+}

@@ -9,6 +9,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   root: here,
   plugins: [tailwindcss(), react()],
+  server: { host: '127.0.0.1', port: 5179, strictPort: true },
   build: {
     outDir: resolve(here, '..', 'dist-site'),
     emptyOutDir: true,

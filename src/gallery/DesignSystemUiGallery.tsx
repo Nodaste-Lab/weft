@@ -1,3 +1,13 @@
+import { NavigationActions } from '../ui/navigation-actions';
+import { NavigationSpacePicker } from '../ui/navigation-space-picker';
+import { NavigationSearch } from '../ui/navigation-search';
+import { NavigationAccount } from '../ui/navigation-account';
+import { NavigationRailLayout } from '../ui/navigation-rail-layout';
+import { WorkspaceNavigationRail } from '../templates/workspace-navigation-rail';
+import { workspaceNavigationSpaces, workspaceNavigationDestinations } from '../templates/workspace-navigation-rail.fixture';
+import { NavigationRow, NavigationRowLink, NavigationRowDisclosure } from '../ui/navigation-row';
+import { NavigationCount } from '../ui/navigation-count';
+import { NavigationIcon, NavigationItemIcon } from '../ui/navigation-icon';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
@@ -298,7 +308,15 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'menubar',
   'metric-tile',
   'mode-only-toggle',
+  'navigation-count',
+  'navigation-icon',
   'navigation-menu',
+  'navigation-actions',
+  'navigation-space-picker',
+  'navigation-search',
+  'navigation-account',
+  'navigation-rail-layout',
+  'navigation-row',
   'pagination',
   'panel-block-shell',
   'panel-header',
@@ -1953,6 +1971,26 @@ export function DesignSystemUiGallery({
         </div>
       </PrimitiveCard>
 
+      <PrimitiveCard id="navigation-actions" title="navigation actions" summary="Shared workspace navigation control."><NavigationActions name="Research" items={[{ id: "more", label: "More", children: [{ id: "copy", label: "Copy link", onSelect: () => {} }] }]} /></PrimitiveCard>
+      <PrimitiveCard id="navigation-space-picker" title="navigation space picker" summary="Shared workspace navigation control."><NavigationSpacePicker label="Space" value="studio" onValueChange={() => {}} spaces={[{ id: "studio", name: "Studio", signals: 3 }]} /></PrimitiveCard>
+      <PrimitiveCard id="navigation-search" title="navigation search" summary="Shared workspace navigation control."><NavigationSearch label="Search in Studio" placeholder="Search" /></PrimitiveCard>
+      <PrimitiveCard id="navigation-account" title="navigation account" summary="Shared workspace navigation control."><NavigationAccount name="Avery Chen" initials="AC" settingsLabel="Account settings" settingsHref="#settings" /></PrimitiveCard>
+      <PrimitiveCard id="navigation-rail-layout" title="navigation rail layout" summary="Shared workspace navigation control."><NavigationRailLayout railId="layout-example" label="Navigation" openLabel="Open navigation" resizeLabel="Resize navigation" description="Browse destinations" rail={<nav id="layout-example" aria-label="Example navigation">Files</nav>}><p>Workspace</p></NavigationRailLayout></PrimitiveCard>
+      <PrimitiveCard id="navigation-count" title="Navigation count" summary="Awaiting-action signals with explicit scope.">
+        <NavigationCount count={3} name="Product direction" scope="file" />
+      </PrimitiveCard>
+      <PrimitiveCard id="navigation-icon" title="Navigation icon" summary="Choose the semantic purpose, never a glyph shape.">
+        <NavigationIcon purpose="board" /><NavigationItemIcon purpose="text" listening locked />
+      </PrimitiveCard>
+      <PrimitiveCard id="navigation-row" title="Navigation row" summary="Disclosure and native destination remain separate controls.">
+        <NavigationRow density="compact" current hierarchical>
+          <NavigationRowDisclosure name="Product direction" expanded={false} />
+          <NavigationItemIcon purpose="text" />
+          <NavigationRowLink href="#navigation-row" aria-current="page">Product direction</NavigationRowLink>
+          <NavigationCount count={3} name="Product direction" scope="file" />
+        </NavigationRow>
+      </PrimitiveCard>
+
       <PrimitiveCard
         id="navigation-menu"
         title="Navigation Menu"
@@ -3037,6 +3075,7 @@ function TemplatesSection() {
 
 /** The live example for one react template, without the card chrome; the site's template pages use it. */
 export function TemplateExample({ id }: { id: string }) {
+  if (id === 'workspace-navigation-rail') return <WorkspaceNavigationDemo />;
   if (id === 'navigation-rail') return <NavigationRailTemplateDemo />;
   return null;
 }
@@ -3228,3 +3267,13 @@ const codeStyle: CSSProperties = {
   borderRadius: 'var(--radius-xs)',
   padding: '1px 5px',
 };
+
+function WorkspaceNavigationDemo() {
+ const [space, setSpace] = React.useState('studio');
+ return <div style={{height: 560}}><WorkspaceNavigationRail id="workspace-example" label="Space navigation" spaceLabel="Space" filesLabel="Files" filesHref="#files"
+ spacePicker={{ spaces: workspaceNavigationSpaces, value: space, onValueChange: setSpace, label: 'Space' }}
+ search={{ label: 'Search in selected Space', placeholder: 'Search' }} destinations={workspaceNavigationDestinations} currentDestination="signals"
+ files={<NavigationRow><NavigationRowLink href="#research"><NavigationIcon purpose="text" />Research notes</NavigationRowLink><NavigationCount count={3} scope="file" name="Research notes" /></NavigationRow>}
+ account={{ name: 'Avery Chen', initials: 'AC', settingsLabel: 'Account settings', settingsHref: '#settings' }}
+ layout={{ openLabel: 'Open navigation', resizeLabel: 'Resize navigation', description: 'Browse files and destinations', storageKey: 'weft:gallery:workspace-width' }}><p>Application workspace</p></WorkspaceNavigationRail></div>;
+}

@@ -1,13 +1,13 @@
 import React from 'react';
 
-export type Section = 'home' | 'guidelines' | 'tokens' | 'components' | 'patterns' | 'templates' | 'all';
+export type Section = 'home' | 'guidelines' | 'tokens' | 'components' | 'patterns' | 'templates' | 'all' | 'labs';
 
 export interface Route {
   section: Section;
   id?: string;
 }
 
-const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all'];
+const SECTIONS: readonly Section[] = ['home', 'guidelines', 'tokens', 'components', 'patterns', 'templates', 'all', 'labs'];
 
 /** True for an app route (`#/…`); false for a plain fragment such as `#main`, which the browser owns. */
 export function isRouteHash(hash: string): boolean {

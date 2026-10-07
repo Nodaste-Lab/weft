@@ -1,5 +1,5 @@
 {
-  "designSystemVersion": "0.6.0",
+  "designSystemVersion": "0.7.0",
   "components": {
     "accordion": {
       "version": "1.0.0",
@@ -1831,6 +1831,143 @@
         ]
       }
     },
+    "navigation-account": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "initials": {
+            "optional": false,
+            "union": null
+          },
+          "name": {
+            "optional": false,
+            "union": null
+          },
+          "onAccount": {
+            "optional": true,
+            "union": null
+          },
+          "onSettings": {
+            "optional": true,
+            "union": null
+          },
+          "settingsHref": {
+            "optional": true,
+            "union": null
+          },
+          "settingsLabel": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "navigation-actions": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "backLabel": {
+            "optional": true,
+            "union": null
+          },
+          "caption": {
+            "optional": true,
+            "union": null
+          },
+          "compact": {
+            "optional": true,
+            "union": null
+          },
+          "contentClassName": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "items": {
+            "optional": false,
+            "union": null
+          },
+          "menuLabel": {
+            "optional": true,
+            "union": null
+          },
+          "name": {
+            "optional": false,
+            "union": null
+          },
+          "triggerClassName": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "navigation-count": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "count": {
+            "optional": false,
+            "union": null
+          },
+          "kind": {
+            "optional": true,
+            "union": [
+              "notifications",
+              "signals"
+            ]
+          },
+          "name": {
+            "optional": false,
+            "union": null
+          },
+          "scope": {
+            "optional": false,
+            "union": [
+              "file",
+              "signals-destination",
+              "space"
+            ]
+          }
+        },
+        "native": [
+          "span"
+        ]
+      }
+    },
+    "navigation-icon": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "listening": {
+            "optional": true,
+            "union": null
+          },
+          "locked": {
+            "optional": true,
+            "union": null
+          },
+          "purpose": {
+            "optional": false,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
     "navigation-menu": {
       "version": "1.0.0",
       "surface": {
@@ -1838,6 +1975,222 @@
         "props": {
           "viewport": {
             "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "navigation-rail-layout": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "defaultWidth": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": false,
+            "union": null
+          },
+          "drawerClassName": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "maxWidth": {
+            "optional": true,
+            "union": null
+          },
+          "minWidth": {
+            "optional": true,
+            "union": null
+          },
+          "mode": {
+            "optional": true,
+            "union": [
+              "auto",
+              "desktop",
+              "drawer"
+            ]
+          },
+          "onAvailableWidthChange": {
+            "optional": true,
+            "union": null
+          },
+          "onOpenChange": {
+            "optional": true,
+            "union": null
+          },
+          "onWidthChange": {
+            "optional": true,
+            "union": null
+          },
+          "open": {
+            "optional": true,
+            "union": null
+          },
+          "openLabel": {
+            "optional": false,
+            "union": null
+          },
+          "rail": {
+            "optional": false,
+            "union": null
+          },
+          "railId": {
+            "optional": false,
+            "union": null
+          },
+          "resizeLabel": {
+            "optional": false,
+            "union": null
+          },
+          "storageKey": {
+            "optional": true,
+            "union": null
+          },
+          "style": {
+            "optional": true,
+            "union": null
+          },
+          "width": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "navigation-row": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "current": {
+            "optional": true,
+            "union": null
+          },
+          "density": {
+            "optional": true,
+            "union": [
+              "compact",
+              "default",
+              "dense"
+            ]
+          },
+          "depth": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "expanded": {
+            "optional": false,
+            "union": null
+          },
+          "hierarchical": {
+            "optional": true,
+            "union": null
+          },
+          "href": {
+            "optional": false,
+            "union": null
+          },
+          "name": {
+            "optional": false,
+            "union": null
+          },
+          "touch": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": [
+          "a",
+          "button",
+          "div"
+        ]
+      }
+    },
+    "navigation-search": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "filter": {
+            "optional": true,
+            "union": null
+          },
+          "toolbarClassName": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
+    "navigation-space-picker": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "addLabel": {
+            "optional": true,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "contentClassName": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "onAdd": {
+            "optional": true,
+            "union": null
+          },
+          "onValueChange": {
+            "optional": false,
+            "union": null
+          },
+          "space": {
+            "optional": false,
+            "union": null
+          },
+          "spaces": {
+            "optional": false,
+            "union": null
+          },
+          "value": {
+            "optional": false,
             "union": null
           }
         },
