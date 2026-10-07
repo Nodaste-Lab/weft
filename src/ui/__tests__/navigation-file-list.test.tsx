@@ -28,6 +28,19 @@ describe('NavigationFileList', () => {
   rerender(<NavigationFileList {...base} nodes={[]} hasMore={()=>true} onLoadMore={more} />);
   fireEvent.click(screen.getByRole('button',{name:'Show more files'}));expect(more).toHaveBeenCalledWith(null);
  });
+ it('defaults unloaded remote children to loading until the consumer confirms an empty result', () => {
+  const parent={id:'remote',label:'Remote',hasChildren:true};
+  const {rerender}=render(<NavigationFileList {...base} nodes={[parent]} expandedIds={['remote']} />);
+  expect(screen.getByRole('status')).toHaveTextContent('Loading files');
+  expect(screen.queryByText('No files yet.')).not.toBeInTheDocument();
+  rerender(<NavigationFileList {...base} nodes={[{...parent,children:[]}]} expandedIds={['remote']} />);
+  expect(screen.getByRole('status')).toHaveTextContent('Loading files');
+  rerender(<NavigationFileList {...base} nodes={[parent]} expandedIds={['remote']} getChildState={()=>'empty'} />);
+  expect(screen.getByRole('status')).toHaveTextContent('No files yet.');
+  rerender(<NavigationFileList {...base} nodes={[{...parent,children:[{id:'loaded',label:'Loaded file'}]}]} expandedIds={['remote']} />);
+  expect(screen.getByRole('button',{name:'Loaded file'})).toBeInTheDocument();
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+ });
  it('sends nested reorder once and does not intercept editing or normal keys', () => {
   const reorder=vi.fn(),move=vi.fn();const nodes=[{id:'parent',label:'Parent',children:[{id:'child',label:'Child'}]}];
   render(<NavigationFileList {...base} nodes={nodes} expandedIds={['parent']} onReorder={reorder} onMove={move} />);

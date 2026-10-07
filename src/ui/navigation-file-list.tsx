@@ -88,7 +88,7 @@ export function NavigationFileList<T extends NavigationFileNode & { children?: T
             if (onMove && event.key.toLowerCase() === "m") { event.preventDefault(); event.stopPropagation(); onMove(node); }
           }}>
           {renderRow(node, { depth, expanded, expandable, toggle: () => onExpandedChange(node.id, !expanded) })}
-          {expanded && expandable ? list(children(node), node, depth + 1, getChildState?.(node) ?? "ready") : null}
+          {expanded && expandable ? list(children(node), node, depth + 1, getChildState?.(node) ?? (node.hasChildren && !children(node).length ? "loading" : "ready")) : null}
         </li>;
       })}
       {more && <li role="listitem" className="weft-navigation-file-page"><Button type="button" variant="ghost" onClick={() => { if (items.length > limit) setLimits(current => ({ ...current, [key]: limit + localPage })); else onLoadMore?.(parent); }}>{moreLabel}</Button></li>}
