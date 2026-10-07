@@ -15,6 +15,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Every specifier a consumer uses today. Add here when adding an export.
 const SPECIFIERS = [
+  '@nodaste-lab/weft/src/ui/navigation-file-list.tsx',
   '@nodaste-lab/weft/tokens.css',
   '@nodaste-lab/weft/theme.css',
   '@nodaste-lab/weft/components.css',

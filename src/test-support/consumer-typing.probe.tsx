@@ -119,3 +119,14 @@ export function FormStatusConsumer() {
     </>
   );
 }
+
+// The file-list renderer and mutation callbacks preserve a consumer's node fields.
+import { NavigationFileList, type NavigationFileNode } from '../ui/navigation-file-list';
+interface ProductFile extends NavigationFileNode { href: string; permission: 'read' | 'write'; children?: ProductFile[]; }
+export function FileListConsumerProbe({ nodes }: { nodes: ProductFile[] }) {
+  return <NavigationFileList nodes={nodes} label="Files" expandedIds={[]} onExpandedChange={() => {}}
+    canDrag={node => node.permission === 'write'}
+    canDrop={(source, target) => source.permission === 'write' && target.permission === 'write'}
+    onDrop={(source, target) => { const ids: string[] = [source.href, target.href]; void ids; }}
+    renderRow={(node, context) => <a href={node.href} data-depth={context.depth}>{node.label}</a>} />;
+}

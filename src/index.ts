@@ -117,3 +117,5 @@ export * from './ui/navigation-search';
 export * from './ui/navigation-account';
 export * from './ui/navigation-rail-layout';
 export * from './templates/workspace-navigation-rail';
+
+export * from './ui/navigation-file-list';

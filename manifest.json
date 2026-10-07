@@ -597,6 +597,14 @@
       "version": "1.0.1"
     },
     {
+      "id": "navigation-file-list",
+      "path": "src/ui/navigation-file-list.tsx",
+      "category": "navigation",
+      "summary": "Reusable nested file lists, paging and async states, drag presentation, rename and alternate action entry points; application-owned data and permissions.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "navigation-icon",
       "path": "src/ui/navigation-icon.tsx",
       "category": "navigation",

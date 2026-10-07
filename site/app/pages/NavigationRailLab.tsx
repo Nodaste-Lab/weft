@@ -1,3 +1,4 @@
+import { NavigationFileList, NavigationFileRename, useNavigationFileInteractions } from "../../../src/ui/navigation-file-list";
 import { NavigationRailLayout } from "../../../src/ui/navigation-rail-layout";
 import { NavigationActions, type NavigationAction } from "../../../src/ui/navigation-actions";
 import { NavigationSpacePicker } from "../../../src/ui/navigation-space-picker";
@@ -460,14 +461,16 @@ function DemoRow({
   React.useEffect(() => setRenamed(undefined), [config.label]);
   const titleRef = React.useRef<HTMLButtonElement>(null);
   const rowRef = React.useRef<HTMLDivElement>(null);
-  const longPress = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const consumedLongPress = React.useRef(false);
-  React.useEffect(() => () => clearTimeout(longPress.current), []);
   const descriptionId = React.useId();
   const displayLabel = renamed ?? config.label;
   const returnFocus = () =>
     requestAnimationFrame(() => titleRef.current?.focus());
   const hierarchical = config.row === "File" || config.row === "Folder";
+  const interactions = useNavigationFileInteractions({
+    disabled: !hierarchical || config.disabled, editing,
+    onActions: config.showActions ? () => rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click() : undefined,
+    onRename: config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected" ? () => { setDraft(displayLabel); setEditing(true); } : undefined,
+  });
   return (
     <NavigationRow
       current={config.current}
@@ -477,30 +480,7 @@ function DemoRow({
       density={config.density as "default" | "compact" | "dense"}
       ref={rowRef}
       className="rail-lab-row"
-      onContextMenu={(event) => {
-        if (!hierarchical || config.disabled || editing || !config.showActions) return;
-        event.preventDefault();
-        rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click();
-      }}
-      onKeyDown={(event) => {
-        if (!hierarchical || config.disabled || editing) return;
-        if (event.key === "F2" && config.menuScenario !== "Read-only" && config.menuScenario !== "Connector protected") {
-          event.preventDefault(); setDraft(displayLabel); setEditing(true);
-        }
-        if (config.showActions && (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))) {
-          event.preventDefault(); rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click();
-        }
-      }}
-      onClickCapture={(event) => { if (consumedLongPress.current) { event.preventDefault(); event.stopPropagation(); consumedLongPress.current = false; } }}
-      onPointerDown={(event) => {
-        consumedLongPress.current = false;
-        if (event.pointerType !== "touch" || !hierarchical || editing || config.disabled || !config.showActions) return;
-        clearTimeout(longPress.current);
-        longPress.current = setTimeout(() => { rowRef.current?.querySelector<HTMLButtonElement>(".rail-lab-actions")?.click(); consumedLongPress.current = true; }, 600);
-      }}
-      onPointerMove={() => clearTimeout(longPress.current)}
-      onPointerUp={() => clearTimeout(longPress.current)}
-      onPointerCancel={() => clearTimeout(longPress.current)}
+      {...interactions}
       data-preview-state={previewState}
       data-current={config.current}
       data-disabled={config.disabled}
@@ -539,32 +519,10 @@ function DemoRow({
         />
       ) : null}
       {editing ? (
-        <Input
-          onFocus={(event) => event.target.select()}
-          aria-label="Rename file"
-          disabled={config.disabled}
-          value={draft}
-          autoFocus
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              setEditing(false);
-              returnFocus();
-            }
-            if (e.key === "Enter") {
-              e.preventDefault();
-              if (!draft.trim()) {
-                onMessage("Enter a file name before saving.");
-                return;
-              }
-              setEditing(false);
-              setRenamed(draft.trim());
-              onRenamed?.(draft.trim());
-              returnFocus();
-              onMessage(`Preview rename: ${draft}`);
-            }
-          }}
-        />
+        <NavigationFileRename label="Rename file" disabled={config.disabled} value={draft} onChange={setDraft}
+          onCancel={() => { setEditing(false); returnFocus(); }}
+          onInvalid={() => onMessage("Enter a file name before saving.")}
+          onCommit={value => { setEditing(false); setRenamed(value); onRenamed?.(value); returnFocus(); onMessage(`Preview rename: ${value}`); }} />
       ) : (
         <NavigationRowButton
           ref={titleRef}
@@ -1252,15 +1210,6 @@ export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: L
         aria-label="Preview files"
       >
         {creationForm}
-        <div role="status" className="sr-only">
-          {config.content === "Loading"
-            ? "Loading files"
-            : config.content === "Error"
-            ? "Could not load files. Use Retry."
-            : config.content === "Empty"
-            ? "No files yet"
-            : ""}
-        </div>
 
         {config.content === "Populated" ? (
           <NavigationRailTestTree files={testFiles} space={spaceName} rootExpanded={config.expanded} onRootExpand={(value) => set("expanded", value)} onChange={(files) => {
@@ -1295,29 +1244,9 @@ export function NavigationRailLab({ initialLevel = "Atoms" }: { initialLevel?: L
                 }} onRenamed={rename} />
             )} />
           ) : (
-            <div>
-              <p className="rail-lab-empty">
-                {config.content === "Loading"
-                  ? "Loading files…"
-                  : config.content === "Error"
-                  ? "Could not load files."
-                  : "No files yet."}
-                {config.content === "Error" ? (
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      set("content", "Populated");
-                      setMessage(
-                        "Files loaded. Focus returned to the file list."
-                      );
-                      requestAnimationFrame(() => fileRegion.current?.focus());
-                    }}
-                  >
-                    Retry
-                  </Button>
-                ) : null}
-              </p>
-            </div>
+            <NavigationFileList nodes={[]} label="Space files" expandedIds={[]} onExpandedChange={() => {}} renderRow={() => null}
+              state={config.content === "Loading" ? "loading" : config.content === "Error" ? "error" : "empty"}
+              onRetry={() => { set("content", "Populated"); setMessage("Files loaded. Focus returned to the file list."); requestAnimationFrame(() => fileRegion.current?.focus()); }} />
           )}
       </section>
       <footer><NavigationAccount name={config.row === "Account" ? config.label : "Avery Chen"} initials="AC" settingsLabel="Account settings" onAccount={() => navigatePreview("Account opened in the preview.")} onSettings={() => navigatePreview("Settings opened in the preview.")} /></footer>

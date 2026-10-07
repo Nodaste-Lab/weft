@@ -63,6 +63,7 @@ const CONTRACT_FILES = [
   // The deep-import surface, sampled at the entries the exports contract also
   // resolves.
   'src/ui/button.tsx',
+  'src/ui/navigation-file-list.tsx',
   'src/ui/utils.ts',
   'src/gallery/DesignSystemUiGallery.tsx',
   'src/test-support/ds-assert.ts',

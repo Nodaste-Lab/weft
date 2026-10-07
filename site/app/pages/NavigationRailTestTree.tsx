@@ -1,4 +1,5 @@
 import React from "react";
+import { NavigationFileList } from "../../../src/ui/navigation-file-list";
 import { Button } from "../../../src/ui/button";
 import { Input } from "../../../src/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "../../../src/ui/dialog";
@@ -41,12 +42,10 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
   const [error, setError] = React.useState("");
   const [undo, setUndo] = React.useState<{ files: TestFile[]; focusId: string; space: string } | null>(null);
   const [retainedFocus, setRetainedFocus] = React.useState<string | null>(null);
-  const [dragging, setDragging] = React.useState<string | null>(null);
   const pendingFocus = React.useRef<string | null>(null);
   const dialogFile = React.useRef<string | null>(null);
-  const [limits, setLimits] = React.useState<Record<string, number>>({});
   const cancelButton = React.useRef<HTMLButtonElement>(null);
-  React.useEffect(() => { setUndo(null); setDialog(null); setRetainedFocus(null); setLimits({}); }, [space]);
+  React.useEffect(() => { setUndo(null); setDialog(null); setRetainedFocus(null); }, [space]);
   const origin = React.useRef<HTMLElement | null>(null);
   const host = React.useRef<HTMLDivElement>(null);
   const flat = flattenFiles(files);
@@ -122,37 +121,24 @@ export function NavigationRailTestTree({ files, space = "Studio", onChange, sele
     }
     close();
   }
-  const list = (nodes: TestFile[], depth: number) => <div role="list" aria-label={depth === 0 ? "Space files" : undefined}>
-    {nodes.filter((file, index) => index < (limits[nodes[0]?.id ?? "root"] ?? 20) || file.id === selected || file.id === retainedFocus || (Boolean(file.children?.length) && !collapsed.includes(file.id)) || flattenFiles(file.children ?? []).some(({ node }) => node.id === selected || node.id === retainedFocus)).map((file) => {
-      const open = file.id === "root" ? rootExpanded : !collapsed.includes(file.id);
-      const toggle = () => file.id === "root" && onRootExpand ? onRootExpand(!open) : setCollapsed((items) => open ? [...items, file.id] : items.filter((id) => id !== file.id));
-      return <div role="listitem" key={file.id} data-file-id={file.id}
-        draggable={writable}
-        onDragStart={(event) => { event.stopPropagation(); setDragging(file.id); event.dataTransfer.setData("text/plain", file.id); event.dataTransfer.effectAllowed = "move"; }}
-        onDragEnd={() => setDragging(null)}
-        onDragOver={(event) => { if (writable && dragging && dragging !== file.id) { event.preventDefault(); event.stopPropagation(); event.dataTransfer.dropEffect = "move"; } }}
-        onDrop={(event) => { event.preventDefault(); event.stopPropagation(); if (writable && dragging) {
-          const parent = flat.find(({ node }) => node.children?.some((child) => child.id === file.id))?.node.id ?? "";
-          move(dragging, event.shiftKey || file.icon !== "folder" ? parent : file.id, event.shiftKey || file.icon !== "folder" ? file.id : undefined); setDragging(null);
-        } }}
-        onKeyDown={(event) => {
-          if (!writable || (event.target as HTMLElement).closest("input,textarea,[role=menu]")) return;
-          if (event.altKey && !event.ctrlKey && ["ArrowUp", "ArrowDown"].includes(event.key)) { event.preventDefault(); event.stopPropagation(); step(file.id, event.key === "ArrowUp" ? -1 : 1); }
-          if (event.altKey && event.key.toLowerCase() === "m") { event.preventDefault(); event.stopPropagation(); action(file.id, `Preview only: Move within this Space… for ${file.label}.`); }
-        }}>
-        {renderRow(file, depth, open,
-          toggle,
-          () => { if (file.icon === "folder") toggle(); else onSelect(file.id); },
-          (message) => action(file.id, message),
-          (label) => { onChange(updateFile(files, file.id, (node) => ({ ...node, label }))); onMessage(`Renamed to ${label}.`); })}
-        {open && file.children?.length ? list(file.children, depth + 1) : null}
-      </div>;
-    })}
-    {nodes.length > (limits[nodes[0]?.id ?? "root"] ?? 20) && <div role="listitem"><Button variant="ghost" onClick={() => setLimits((current) => ({ ...current, [nodes[0]?.id ?? "root"]: (current[nodes[0]?.id ?? "root"] ?? 20) + 20 }))}>Show more files</Button></div>}
-  </div>;
   return <div ref={host}>
     {undo && undo.space === space && <Button variant="ghost" onClick={() => { onChange(undo.files); setUndo(null); setRetainedFocus(undo.focusId); refocus(undo.focusId); onMessage("Last tree change undone."); }}>Undo last tree change</Button>}
-    {list(files, 0)}
+    <NavigationFileList key={space} nodes={files} label="Space files" pageSize={20}
+      expandedIds={flat.filter(({ node }) => node.id === "root" ? rootExpanded : !collapsed.includes(node.id)).map(({ node }) => node.id)}
+      onExpandedChange={(id, open) => id === "root" && onRootExpand ? onRootExpand(open) : setCollapsed(items => open ? items.filter(value => value !== id) : [...items, id])}
+      selectedId={selected} retainedIds={[retainedFocus, dialogFile.current].filter((id): id is string => Boolean(id))}
+      canDrag={() => writable} isContainer={file => file.icon === "folder"}
+      onDrop={(source, target, placement) => {
+        const parent = flat.find(({ node }) => node.children?.some(child => child.id === target.id))?.node.id ?? "";
+        move(source.id, placement === "inside" ? target.id : parent, placement === "before" ? target.id : undefined);
+      }}
+      onReorder={writable ? (file, direction) => { step(file.id, direction); } : undefined}
+      onMove={writable ? file => action(file.id, `Preview only: Move within this Space… for ${file.label}.`) : undefined}
+      renderRow={(file, { depth, expanded, toggle }) => renderRow(file, depth, expanded, toggle,
+        () => { if (file.icon === "folder") toggle(); else onSelect(file.id); },
+        message => action(file.id, message),
+        label => { onChange(updateFile(files, file.id, node => ({ ...node, label }))); onMessage(`Renamed to ${label}.`); })}
+    />
     <Dialog open={Boolean(dialog)} onOpenChange={(open) => { if (!open) close(); }}>
       <DialogContent onOpenAutoFocus={(event) => { if (dialog?.action.startsWith("Remove")) { event.preventDefault(); cancelButton.current?.focus(); } }} onCloseAutoFocus={(event) => {
         event.preventDefault();

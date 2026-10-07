@@ -51,10 +51,13 @@ The canonical interactive template standard is the navigation rail lab at
 requirements and Avalandra functionality coverage. Template gallery links
 open that same experience at the complete Rail level. The lab is site-only
 reference code, not an importable package export. The package currently ships
-the frame and controls with an app-owned `files` slot. A reusable file-list
-composition (nesting, paging/async states, drag presentation, rename and
-action entry points) is an outstanding migration scope decision; naming
-the lab canonical does not mark that package work complete.
+the frame and controls with a `files` slot. Supply NavigationFileList in that
+slot for shared nested structure, depth, paging and async states, retained
+rows, drag presentation and reorder requests. NavigationFileRename and
+useNavigationFileInteractions provide rename and alternate action entry
+points. These are package exports used by the lab; the fixture mutation
+store, dialogs and Undo data stay in the consumer. Avalandra must wire real
+data, permissions, routes, loading and mutation callbacks before cutover.
 The all-components gallery retains a small
 package composition fixture for regression checks.
 
@@ -62,7 +65,7 @@ It composes NavigationSpacePicker, NavigationSearch, NavigationRow,
 NavigationIcon, NavigationCount, NavigationAccount and NavigationRailLayout.
 Supply destinations in the order Signals, Kanban board. Search's filter slot
 holds Explorer category navigation. Supply real destination URLs, the current
-destination ID, and the application's file tree in `files`. `filesId` defaults
+destination ID, and NavigationFileList with the application's nodes in `files`. `filesId` defaults
 to `"files"`; use that ID as `currentDestination` when Documents is active so
 the Files link receives `aria-current="page"`. Files remain
 visible while Signals or Kanban is current. A future destination with `panel`
