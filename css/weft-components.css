@@ -1372,7 +1372,7 @@ html,
 .weft-selection-control > label { position: absolute; top: 0; inset-inline-start: 10px; z-index: 1; padding-inline: 4px; font-size: 12px; line-height: 1; background: var(--weft-paper); color: var(--weft-muted); }
 .weft-selection-control > button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 54px; padding: 12px; border: 1px solid var(--weft-control-border); border-radius: var(--weft-radius-card); background: var(--weft-paper); color: var(--weft-ink); text-align: start; font: inherit; }
 .weft-selection-control > button > svg { flex-shrink: 0; }
-.weft-selection-control > button:focus-visible, .weft-selection-popup button:focus-visible, .weft-selection-choice:has(input:focus-visible) { outline: 2px solid var(--weft-blue); outline-offset: 2px; }
+.weft-selection-control > button:focus-visible, .weft-selection-popup button:focus-visible, .weft-selection-choice:has(input:focus-visible) { outline: 2px solid var(--weft-focus-ring-color); outline-offset: 2px; }
 .weft-selection-control > button:disabled { opacity: .5; cursor: not-allowed; border-style: dashed; }
 .weft-selection-field[data-invalid] .weft-selection-control > button { border-color: var(--weft-stop); }
 .weft-selection-popup { width: var(--radix-popover-trigger-width); min-width: min(280px, var(--radix-popover-content-available-width)); max-width: var(--radix-popover-content-available-width); max-height: var(--radix-popover-content-available-height); overflow-y: auto; padding: 8px; background: var(--weft-paper); color: var(--weft-ink); font: 14px/1.5 var(--weft-font-sans); }

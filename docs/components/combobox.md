@@ -53,3 +53,5 @@ Use a noun label and recognizable option names. Optional descriptions distinguis
 ## Accessibility
 
 The visible label names the trigger. Error and help IDs are associated in that order. The popup restores focus on dismissal. Search receives focus; Arrow keys navigate results and Enter selects. The checked mark identifies the committed value separately from the highlighted result. Disabled options cannot be selected. Hidden named inputs submit committed IDs; disabled fields are excluded. Test keyboard and screen-reader behavior in the consuming form, including validation focus and asynchronous updates.
+
+Search matches a case-insensitive substring of the option label, description or supplied keywords; opaque value IDs are excluded. With no query, an empty catalog says “No options available.”; a query with no results says “No matching options.”. A supplied `emptyMessage` overrides both. Arrow Down opens the closed picker. Disabling an open picker closes it; enabling it does not reopen it. Loading feedback measures the whole request, including time spent opening and closing the picker.

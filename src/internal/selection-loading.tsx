@@ -2,18 +2,23 @@
 import * as React from "react";
 import { LoaderCircle } from "lucide-react";
 
-/** Delay the indicator, never the results. Compact status is used while the picker is closed. */
-export function SelectionLoading({ active, compact = false }: { active: boolean; compact?: boolean }) {
+/** One loading clock per field, shared by its open and closed presentations. */
+export function useSelectionLoading(active: boolean) {
   const [visible, setVisible] = React.useState(false);
   const [extended, setExtended] = React.useState(false);
   React.useEffect(() => {
-    setVisible(false);
-    setExtended(false);
+    setVisible(false); setExtended(false);
     if (!active) return;
     const reveal = setTimeout(() => setVisible(true), 200);
     const explain = setTimeout(() => setExtended(true), 10000);
     return () => { clearTimeout(reveal); clearTimeout(explain); };
   }, [active]);
+  return { visible: active && visible, extended: active && extended };
+}
+/** Delay the indicator, never the results. */
+export function SelectionLoading({ active, compact = false, state }: { active: boolean; compact?: boolean; state?: ReturnType<typeof useSelectionLoading> }) {
+  const local = useSelectionLoading(active && !state);
+  const { visible, extended } = state ?? local;
   if (!active || (compact && !visible)) return null;
   return <div className={`weft-selection-loading${compact ? " weft-selection-loading-compact" : ""}`} data-visible={visible || undefined}>
     <div role="status" aria-atomic="true">

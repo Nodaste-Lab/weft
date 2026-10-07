@@ -191,7 +191,7 @@
       "category": "inputs",
       "summary": "Searchable single selection with a cutout label.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "id": "command-category-tag.figma",
@@ -586,7 +586,7 @@
       "category": "inputs",
       "summary": "Searchable multiple selection with native checked states.",
       "showcase": true,
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "id": "navigation-account",
