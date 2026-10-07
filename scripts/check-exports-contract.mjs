@@ -30,6 +30,7 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',
+  '@nodaste-lab/weft/src/ui/text-field.tsx',
   '@nodaste-lab/weft/src/ui/navigation-actions.tsx',
   '@nodaste-lab/weft/src/ui/navigation-space-picker.tsx',
   '@nodaste-lab/weft/src/ui/navigation-search.tsx',

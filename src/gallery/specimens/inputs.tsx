@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { Checkbox } from '../../ui/checkbox';
 import { Calendar } from '../../ui/calendar';
+import { TextField } from '../../ui/text-field';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { SearchField } from '../../ui/search-field';
@@ -18,15 +20,27 @@ const DAY = new Date(2026, 2, 15);
 function LabelSpecimen({ children, disabled, ...p }: React.ComponentProps<typeof Label> & { disabled?: boolean }) {
   const id = React.useId();
   return (
-    <div className="flex flex-col gap-2" style={{ width: 220 }}>
+    <div className="flex items-center gap-2" style={{ width: 220, minHeight: 44 }}>
+      <Checkbox id={id} disabled={disabled} className="peer"/>
       <Label htmlFor={id} {...p}>{children}</Label>
-      <Input id={id} placeholder="e.g. northstar" state={disabled ? 'disabled' : undefined} className="peer" />
     </div>
   );
 }
 
 /** Specimens for the inputs category. One entry per component id; see ../specimen-types.ts. */
 export const inputsSpecimens: Record<string, Specimen> = {
+  'text-field': {
+    component: 'TextField', module: 'text-field', axes: ['treatment'],
+    base: {label:'Display name'},
+    states: [
+      {label:'With help text',props:{description:'The name others see in your workspace.'},code:'<TextField label="Display name" description="The name others see in your workspace." />',note:'Optional: add help only when it provides useful context beyond the label.'},
+      {label:'Filled',props:{defaultValue:'Avery Chen'},code:'<TextField label="Display name" defaultValue="Avery Chen" />'},
+      {label:'Error',props:{error:'Enter a display name.'},code:'<TextField label="Display name" error="Enter a display name." />'},
+      {label:'Disabled',props:{disabled:true},code:'<TextField label="Display name" disabled />'},
+      {label:'Read only',props:{readOnly:true,defaultValue:'Avery Chen'},code:'<TextField label="Display name" defaultValue="Avery Chen" readOnly />'},
+      {label:'Pending',props:{pending:true,status:'Checking this example…'},code:'<TextField label="Display name" pending status="Checking this example…" />'},
+    ], render:(p:P)=><TextField {...(p as React.ComponentProps<typeof TextField>)}/>,
+  },
   input: {
     component: 'Input',
     module: 'input',
@@ -76,10 +90,10 @@ export const inputsSpecimens: Record<string, Specimen> = {
   label: {
     component: 'Label',
     module: 'label',
-    base: { children: 'Player handle' },
+    base: { children: 'Email notifications' },
     states: [
-      { label: 'Paired with a control', props: {}, code: '<Label htmlFor="handle">Player handle</Label><Input id="handle" />', note: 'htmlFor and the control id match, so clicking the label focuses the field.' },
-      { label: 'Disabled control', props: { disabled: true }, code: '<Label htmlFor="handle" /><Input id="handle" state="disabled" className="peer" />', note: 'The label dims through peer-disabled when the control it names is disabled.' },
+      { label: 'Paired with a control', props: {}, code: '<Checkbox id="notifications"/><Label htmlFor="notifications">Email notifications</Label>', note: 'htmlFor and the control id match, so clicking the label toggles the checkbox.' },
+      { label: 'Disabled control', props: { disabled: true }, code: '<Checkbox id="notifications" disabled className="peer"/><Label htmlFor="notifications">Email notifications</Label>', note: 'The label dims through peer-disabled when the control it names is disabled.' },
     ],
     render: ({ children, ...p }: P) => <LabelSpecimen {...(p as React.ComponentProps<typeof LabelSpecimen>)}>{children as React.ReactNode}</LabelSpecimen>,
   },

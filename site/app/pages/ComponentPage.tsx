@@ -6,6 +6,14 @@ import { categoryLabels, displayTitle, patternsUsing, primitiveById, primitives,
 import { hrefFor } from '../routes';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../../src/ui/collapsible';
 import { Button } from '../../../src/ui/button';
+import { FormExamples, FormStatusRecipe } from './FormExamples';
+import { FieldActionExamples } from './FieldActionExamples';
+import { FieldExamples, FieldCode } from './FieldExamples';
+import { Label } from '../../../src/ui/label';
+import { Checkbox } from '../../../src/ui/checkbox';
+import { Switch } from '../../../src/ui/switch';
+import { TextField } from '../../../src/ui/text-field';
+import { FieldFamilyGuide, ControlUsageGuide } from './FieldFamilyGuide';
 import { Playground } from './Playground';
 import { SpecimenMatrix } from './SpecimenMatrix';
 import { Code, LastEdited, LinkList, Markdown, NotYetWritten, PageTitle, SectionHeading, Table, tagStyle } from './shared';
@@ -41,7 +49,7 @@ export function ComponentPage({ id }: { id?: string }) {
   const usedInTemplates = templatesUsing(id);
 
   return (
-    <div>
+    <div className={["input", "text-field", "textarea", "search-field", "calendar", "form", "label"].includes(id) ? "field-component-document" : undefined}>
       <PageTitle
         eyebrow={categoryLabels[primitive.category] ?? primitive.category}
         title={displayTitle(id)}
@@ -57,21 +65,33 @@ export function ComponentPage({ id }: { id?: string }) {
 
       <SectionHeading id="example">Example</SectionHeading>
       <div data-component-example={id}>
-        <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />
+        {id === 'label' ? <LabelExamples/> : id === 'form' ? <FormExamples/> : (id === 'input' || id === 'text-field') ? <><TextField label="Display name"/><FieldCode code={'import { TextField } from "@nodaste-lab/weft";\n\n<TextField label="Display name" />'}/><p>Use TextField for labelled forms. Cutout is its default treatment; underline is a contextual alternative. Input is the bare control for specialized compositions.</p></> : (id === 'textarea' || id === 'search-field') ? null : <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />}
       </div>
+      {id === 'calendar' && <FieldCode code={'import * as React from "react";\nimport { Calendar } from "@nodaste-lab/weft";\n\nfunction CalendarExample() {\n  const [date, setDate] = React.useState<Date | undefined>(() => new Date(2026, 2, 15));\n  return <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} className="rounded-md border" />;\n}'}/>}
+
+      {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldFamilyGuide kind={id} />}
 
       <SectionHeading id="variants-and-states">Variants and states</SectionHeading>
-      <Playground id={id} />
-      <Collapsible style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+      {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldExamples kind={id} />}
+      {id === 'form' && <><h3>Custom field status playground</h3><FormStatusRecipe/></>}
+      {(id === 'input' || id === 'text-field' || id === 'search-field') && <FieldActionExamples />}
+      {(id === 'input' || id === 'textarea' || id === 'text-field') ? <>
+        <h3>TextField playground</h3>
+        <p>These properties belong to the labelled form field, including its default cutout treatment.</p>
+        <Playground key={id} id="text-field" defaults={id === 'textarea' ? {multiline:true,label:'Description'} : undefined}/>
+        <ControlUsageGuide multiline={id === 'textarea'}/>
+        <Playground id={id === 'textarea' ? 'textarea' : 'input'}/>
+      </> : <Playground id={id} />}
+      {['input','text-field','textarea','search-field','calendar','form'].includes(id) ? <section aria-label="Control variants and states">
+        <h3>Control variants and states</h3>
+        <SpecimenMatrix id={id}/>
+      </section> : <Collapsible style={{ display: 'grid', gap: 12, marginTop: 16 }}>
         <CollapsibleTrigger asChild>
-          <Button type="button" variant="outline" size="sm" style={{ justifySelf: 'start' }}>
-            All variants and states at once
-          </Button>
+          <Button type="button" variant="outline" size="sm" style={{ justifySelf: 'start' }}>Control variants and states</Button>
         </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SpecimenMatrix id={id} />
-        </CollapsibleContent>
-      </Collapsible>
+        <CollapsibleContent><SpecimenMatrix id={id}/></CollapsibleContent>
+      </Collapsible>}
+
 
       {COMPONENT_DOC_SECTIONS.map((heading) => (
         <React.Fragment key={heading}>
@@ -129,4 +149,17 @@ function ApiTables({ api }: { api: Surface }) {
       ) : null}
     </div>
   );
+}
+
+function LabelExamples() {
+ const checkboxId=React.useId();
+ const switchId=React.useId();
+ return <section aria-label="Label examples" style={{display:'grid',gap:20}}>
+   <p>Label names an individual control and connects its text to that control. Use it beside checkboxes and switches, or in custom compositions. TextField already includes its label; do not add another one.</p>
+   <div style={{display:'flex',alignItems:'center',gap:12,minHeight:44}}><Checkbox id={checkboxId}/><Label htmlFor={checkboxId}>Email notifications</Label></div>
+   <FieldCode code={`import { Checkbox, Label } from '@nodaste-lab/weft';\n\n<Checkbox id="notifications" />\n<Label htmlFor="notifications">Email notifications</Label>`}/>
+   <div style={{display:'flex',alignItems:'center',gap:12,minHeight:44}}><Switch id={switchId}/><Label htmlFor={switchId}>Weekly summary</Label></div>
+   <FieldCode code={`import { Switch, Label } from '@nodaste-lab/weft';\n\n<Switch id="summary" />\n<Label htmlFor="summary">Weekly summary</Label>`}/>
+   <p>Use FormLabel inside a custom FormItem composition. Use fieldset and legend to name a group. Labels are associated control names, not headings or helper text.</p>
+ </section>;
 }

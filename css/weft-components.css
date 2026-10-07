@@ -349,6 +349,8 @@ html,
     border-color var(--weft-dur-fast) var(--weft-ease-out),
     background-color var(--weft-dur-fast) var(--weft-ease-out);
 }
+/* Editable inputs inherit their surface; static-state fills remain below. */
+.weft-input, .weft-textarea { background-color: transparent; }
 .weft-input::placeholder, .weft-textarea::placeholder { color: var(--weft-muted); }
 /* Hover deepens from a boundary that already clears the floor. It used to go to
  * --weft-rule-strong, which at 1.90:1 is now WEAKER than rest — hover would have
@@ -1327,3 +1329,38 @@ html,
 .weft-navigation-layout { height: 100%; }
 
 .weft-navigation-account .weft-navigation-space-avatar { width: 28px; height: 28px; flex-basis: 28px; font-size: 11px; }
+
+/* Static states retain their material after resting-tier modifiers. */
+.weft-input:disabled, .weft-input[readonly],
+.weft-textarea:disabled, .weft-textarea[readonly] {
+  background-color: var(--weft-control-fill-static);
+}
+
+/* Labelled form composition. Cutout is the default; underline is contextual. */
+.weft-text-field { display: grid; gap: 8px; min-width: 0; }
+.weft-text-field-group { display: flex; align-items: stretch; min-width: 0; margin-top: 10px; border: 1px solid var(--weft-control-border); border-radius: var(--weft-radius-card); background: var(--weft-paper); }
+.weft-text-field-group:focus-within { border-color: var(--weft-blue); }
+.weft-text-field-control { position: relative; isolation: isolate; flex: 1; min-width: 0; }
+.weft-text-field-control > input, .weft-text-field-control > textarea { position: relative; z-index: 0; width: 100%; min-height: 54px; height: 54px; border: 0; border-radius: inherit; padding: 16px 12px 8px; }
+.weft-text-field .weft-text-field-control > label { margin: 0; position: absolute; z-index: 1; inset-inline-start: 12px; top: 50%; transform: translateY(-50%); max-width: calc(100% - 24px); line-height: 1.3; font-family: var(--weft-font-sans); font-size: 14px; color: var(--weft-muted); cursor: text; }
+.weft-text-field-control > :focus + label, .weft-text-field-control > :not(:placeholder-shown) + label, .weft-text-field[data-invalid] label, .weft-text-field[data-date] label { top: 0; font-size: 12px; padding-inline: 4px; margin-inline-start: -4px; background: var(--weft-paper); }
+.weft-text-field[data-multiline] textarea { height: auto; min-height: 120px; padding-top: 20px; resize: vertical; }
+.weft-text-field[data-multiline] label { top: 20px; transform: none; }
+.weft-text-field[data-multiline] :focus + label, .weft-text-field[data-multiline] :not(:placeholder-shown) + label, .weft-text-field[data-multiline][data-invalid] label { top: 0; transform: translateY(-50%); }
+.weft-text-field[data-date] input { display: block; padding-block: 12px; }
+.weft-text-field[data-invalid] .weft-text-field-group { border-color: var(--weft-stop); }
+.weft-text-field-error { color: var(--weft-stop); font-size: 13px; line-height: 1.5; }
+.weft-text-field-help { color: var(--weft-muted); font-size: 13px; line-height: 1.5; }
+.weft-text-field-action { display: flex; flex-shrink: 0; max-width: 45%; min-width: 44px; border-inline-start: 1px solid var(--weft-control-border); }
+.weft-text-field-action > button { max-width: 100%; white-space: normal; height: 100%; min-height: 54px; margin: 0; border: 0; border-radius: 0; border-start-end-radius: var(--weft-radius-card); border-end-end-radius: var(--weft-radius-card); }
+.weft-text-field[data-treatment="underline"] .weft-text-field-group { border-width: 0 0 1px; border-radius: 0; background: transparent; }
+.weft-text-field[data-treatment="underline"] label { top: 0; font-size: 12px; background: var(--weft-paper); padding-inline: 4px; margin-inline-start: -4px; }
+.weft-text-field[data-treatment="underline"][data-multiline] label { transform: translateY(-50%); }
+.weft-text-field:has(:disabled) .weft-text-field-group { border-style: dashed; }
+
+/* Read-only stays readable/selectable; the cue does not rely on fill alone. */
+.weft-text-field[data-readonly] .weft-text-field-group,
+.weft-text-field[data-readonly] .weft-text-field-control > input,
+.weft-text-field[data-readonly] .weft-text-field-control > textarea { background-color: var(--weft-control-fill-static); }
+.weft-text-field[data-readonly] .weft-text-field-control > label { top: 0; transform: translateY(-50%); font-size: 12px; padding-inline: 4px; margin-inline-start: -4px; background: var(--weft-paper); }
+.weft-text-field-readonly-note { color: var(--weft-muted); font-family: var(--weft-font-sans); font-size: 12px; line-height: 1.5; }

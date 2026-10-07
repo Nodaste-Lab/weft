@@ -48,7 +48,7 @@ export function SpecimenMatrix({ id }: { id: string }) {
 
   return (
     <div style={{ display: 'grid', gap: 20 }}>
-      <pre style={importStyle}>{importLine}</pre>
+      <pre tabIndex={0} style={importStyle}>{importLine}</pre>
 
       {axes.map((axis) => (
         <div key={axis.prop} style={{ display: 'grid', gap: 8 }}>

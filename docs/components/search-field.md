@@ -4,6 +4,8 @@ related:
   - command
   - label
   - empty-state
+  - textarea
+  - calendar
 ---
 
 # Search field
@@ -32,6 +34,15 @@ Search as a stated pattern rather than an `input` with a type attribute. It owns
 5. Use `size="sm"` in a rail or a dense toolbar.
 
 ## Heuristics
+
+### Attached actions
+
+- Use one shared boundary for an input and an action operating on that value. Give each interactive part its own keyboard focus indication; do not make the entire group one click target.
+- A submit button uses `type="submit"` inside its form. Reveal, clear, and filter buttons use `type="button"` and must not submit it. Keep label, helper, and error associations on the input itself.
+- Inset search filters occupy their own trailing slot after the query and clear control. Reserve space for all controls; query text, clear, and filters must not overlap. Use a named filter button with expanded state and a keyboard-operable panel; Escape returns focus to the trigger.
+- Display the active filter state and expose matching/no-result feedback. Clearing a query retains filters; resetting filters retains the query. An empty result is not a validation error.
+- Do not add a trailing action to a textarea if it obscures text or the resize affordance. These are composed examples, not new Input or SearchField props.
+
 
 - The clear is a real `button type="button"`, so it can never submit the form around it.
 - Clearing is the user's own action. It writes through the native setter and fires one input event, so controlled and uncontrolled consumers see the same single change.

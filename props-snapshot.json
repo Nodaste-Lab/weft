@@ -1546,7 +1546,7 @@
       }
     },
     "input": {
-      "version": "2.0.0",
+      "version": "2.0.1",
       "surface": {
         "variants": {},
         "props": {
@@ -3250,8 +3250,131 @@
         ]
       }
     },
+    "text-field": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "action": {
+            "optional": true,
+            "union": null
+          },
+          "autoComplete": {
+            "optional": true,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "defaultValue": {
+            "optional": true,
+            "union": null
+          },
+          "description": {
+            "optional": true,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "error": {
+            "optional": true,
+            "union": null
+          },
+          "id": {
+            "optional": true,
+            "union": null
+          },
+          "inputMode": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "max": {
+            "optional": true,
+            "union": null
+          },
+          "maxLength": {
+            "optional": true,
+            "union": null
+          },
+          "min": {
+            "optional": true,
+            "union": null
+          },
+          "multiline": {
+            "optional": true,
+            "union": null
+          },
+          "name": {
+            "optional": true,
+            "union": null
+          },
+          "onBlur": {
+            "optional": true,
+            "union": null
+          },
+          "onChange": {
+            "optional": true,
+            "union": null
+          },
+          "onKeyDown": {
+            "optional": true,
+            "union": null
+          },
+          "pending": {
+            "optional": true,
+            "union": null
+          },
+          "readOnly": {
+            "optional": true,
+            "union": null
+          },
+          "required": {
+            "optional": true,
+            "union": null
+          },
+          "rows": {
+            "optional": true,
+            "union": null
+          },
+          "status": {
+            "optional": true,
+            "union": null
+          },
+          "treatment": {
+            "optional": true,
+            "union": [
+              "cutout",
+              "underline"
+            ]
+          },
+          "type": {
+            "optional": true,
+            "union": [
+              "date",
+              "email",
+              "password",
+              "tel",
+              "text",
+              "url"
+            ]
+          },
+          "value": {
+            "optional": true,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
     "textarea": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "surface": {
         "variants": {},
         "props": {

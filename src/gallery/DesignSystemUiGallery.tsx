@@ -127,6 +127,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '../ui/hover-card';
+import { TextField } from '../ui/text-field';
 import { Input } from '../ui/input';
 import { SearchField } from '../ui/search-field';
 import { Label } from '../ui/label';
@@ -353,6 +354,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'table',
   'tabs',
   'text-content',
+  'text-field',
   'textarea',
   'tier-group',
   'toggle-group',
@@ -920,6 +922,10 @@ export function DesignSystemUiGallery({
         </div>
       </PrimitiveCard>
 
+      <PrimitiveCard id="text-field" title="TextField" summary="Labelled form field, cutout by default.">
+        <TextField label="Display name"/>
+      </PrimitiveCard>
+
       <PrimitiveCard
         id="calendar"
         title="Calendar"
@@ -1264,17 +1270,8 @@ export function DesignSystemUiGallery({
             <FormField
               control={form.control}
               name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs">Arc title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" {...field} />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    Shown in session headers when set.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <TextField {...field} label="Arc title" error={fieldState.error?.message} />
               )}
             />
             <Button type="submit" size="sm">
@@ -1762,9 +1759,9 @@ export function DesignSystemUiGallery({
         title="Label"
         summary="Accessible caption paired with inputs and custom controls."
       >
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="ds-label-only">Player handle</Label>
-          <Input id="ds-label-only" placeholder="e.g. northstar" className="max-w-xs" />
+        <div className="flex items-center gap-2" style={{minHeight:44}}>
+          <Checkbox id="ds-label-only"/>
+          <Label htmlFor="ds-label-only">Email notifications</Label>
         </div>
       </PrimitiveCard>
 
