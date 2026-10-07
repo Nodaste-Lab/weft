@@ -4,6 +4,8 @@ related:
   - popover
   - button
   - form
+  - textarea
+  - search-field
 ---
 
 # Calendar
@@ -33,6 +35,11 @@ A month grid for choosing a date, several dates or a range. It owns the month ca
 5. Override `classNames` for layout only. The state styles are the primitive's.
 
 ## Heuristics
+
+- For one uncomplicated calendar date, prefer an associated label and native `Input type="date"`. Keep the cutout label fixed at the border because the browser renders date segments even while empty. Its opaque surface mask must paint above the border and focus indicator. Keep the native picker icon at the trailing edge using full-width native control layout; do not crowd it against the date segments.
+- The native control uses browser locale presentation and a date-only value. Do not parse it as a timestamp or invent a timezone. Date/time constraints and errors belong to the application.
+- Use Calendar when nearby days, ranges, or scheduling context matter. A custom popup composition must preserve typed entry, keyboard operation, and focus recovery; Calendar alone is not a complete DateInput component.
+
 
 - Open on the month that matters: the selection if there is one, otherwise today.
 - Today is a fill so the grid has an anchor; selected is the primary fill with on-primary text, so the two never look alike.

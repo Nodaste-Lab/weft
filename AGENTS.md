@@ -221,3 +221,14 @@ the Figma pages and the `assets/document-view-screenshots` branch of
   react-day-picker's peer cap at 18 is a warning, not a breakage.
 - Dark High Contrast / `--chart-*` / `--sidebar-*` token coverage gaps are
   documented in the doct adoption ADR when it lands.
+
+## Inputs and forms
+
+For input or form work, read `docs/components/text-field.md`,
+`docs/components/input.md`,
+`docs/components/form.md`, and the relevant control documentation before editing.
+Their field decisions, composition rules, and implementation/review requirements
+are acceptance criteria for Weft examples and shared compositions. Preserve
+consumer-owned validation and authorization; do not add Avalandra services to
+Weft. The Input lab demonstrates the rules but does not replace the published
+component contracts.

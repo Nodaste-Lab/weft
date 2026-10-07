@@ -1,5 +1,6 @@
 ---
 related:
+  - text-field
   - input
   - form
   - checkbox
@@ -15,7 +16,8 @@ The visible caption for one form control. It owns the text and its association w
 
 ## When to use
 
-- Every `input`, `textarea`, `select` trigger, `checkbox`, `switch`, `radio-group` item and `slider`.
+- Naming individual checkbox, switch, radio, slider, and custom selection controls.
+- Custom text-control compositions that provide their own layout. TextField already includes its associated label.
 - A caption that must be hidden visually but is still the name. Keep a real label and hide it with the screen-reader-only style.
 
 ## When not to use
@@ -23,13 +25,14 @@ The visible caption for one form control. It owns the text and its association w
 - Naming a group of controls. Use a `fieldset` with a `legend`; a label names one control.
 - A section signifier above a block. Use `eyebrow-label`.
 - Help text or an error. Use `FormDescription` and `FormMessage` in `form`.
-- Inside a `form` field. Use `FormLabel`, which sets `htmlFor` and the error colour for you.
+- Adding a second label to TextField. Its `label` prop owns the visible and accessible name.
+- A custom FormItem composition. Use FormLabel, which sets the control association and error colour.
 
 ## How to use
 
 1. Render `Label` with `htmlFor` equal to the control's `id`, or wrap the control in it. Either associates the two.
 2. Put the required marker inside the label as text, with a space before it, and set `required` on the control.
-3. Place the label above a text control, and to the right of a `checkbox`, `switch` or radio item.
+3. Place the label beside a checkbox, switch, or radio item. For standard text forms use TextField and its cutout label. A custom text composition follows the chosen cutout or contextual underline layout; Label does not dictate its position.
 4. For a disabled `checkbox` or `switch`, render the label as the next sibling; both controls set `peer`, so the label dims with the control.
 
 ## Heuristics
