@@ -26,7 +26,8 @@ type Template = { id: string; kind?: string; summary: string; composes?: string[
 export const primitives: Primitive[] = (manifest.uiPrimitives as Primitive[]).filter((p) => !p.id.endsWith('.figma'));
 export const primitiveById = new Map(primitives.map((p) => [p.id, p]));
 export const patterns: Pattern[] = ((manifest as { patterns?: Pattern[] }).patterns ?? []);
-export const templates: Template[] = manifest.templates as Template[];
+// Settings is a site preview, not yet a published package template.
+export const templates: Template[] = [...manifest.templates as Template[], { id: 'settings', kind: 'prototype', summary: 'Full-page Settings preview with fictional data; integration work remains.', docs: '', version: '0.0.0' }];
 
 export const categoryLabels: Record<string, string> = {
   actions: 'Actions',
