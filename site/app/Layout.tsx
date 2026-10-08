@@ -42,6 +42,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
           <div style={levelHeadingStyle}>Labs</div>
           <a href="#/labs/navigation-rail" style={linkStyle} aria-current={route.section === 'labs' && route.id === 'navigation-rail' ? 'page' : undefined}>Navigation rail lab</a>
           <a href="#/labs/inputs" style={linkStyle} aria-current={route.section === 'labs' && route.id === 'inputs' ? 'page' : undefined}>Input lab</a>
+          <a href="#/labs/html-documents" style={linkStyle} aria-current={route.section === 'labs' && route.id === 'html-documents' ? 'page' : undefined}>HTML authoring lab</a>
           {nav.map((group, index) => {
             const isFirstComponentGroup = group.section === 'components' && nav.findIndex((g) => g.section === 'components') === index;
             return (

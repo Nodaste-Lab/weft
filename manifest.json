@@ -264,6 +264,14 @@
       "version": "1.0.0"
     },
     {
+      "id": "document-content",
+      "path": "src/ui/document-content.tsx",
+      "category": "layout",
+      "summary": "Shared authored-document atoms, molecules and organisms, with static HTML parity.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "dot",
       "path": "src/ui/dot.tsx",
       "category": "data-display",

@@ -20,6 +20,7 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/theme.css',
   '@nodaste-lab/weft/components.css',
   '@nodaste-lab/weft/templates.css',
+  '@nodaste-lab/weft/html-document-components.json',
   '@nodaste-lab/weft/fonts.css',
   '@nodaste-lab/weft/index.css',
   '@nodaste-lab/weft/tailwind.css',

@@ -1,3 +1,4 @@
+import { DocumentFinding, DocumentText } from '../../ui/document-content';
 import { FileHeaderExample, FileHeaderStateExample } from '../FileHeaderExample';
 import * as React from 'react';
 import { FileText, Inbox, Plus, Sparkles } from 'lucide-react';
@@ -78,6 +79,7 @@ const TRANSCRIPT_FOOTER = (
 
 /** Specimens for the layout category. One entry per component id; see ../specimen-types.ts. */
 export const layoutSpecimens: Record<string, Specimen> = {
+ 'document-content': {component:'DocumentFinding',module:'document-content',axes:[],base:{},states:[{label:'Finding',props:{},code:'<DocumentFinding headingId="finding" heading="Document hierarchy"><DocumentText>Shared content.</DocumentText></DocumentFinding>'}],render:()=> <DocumentFinding headingId="specimen-doc-finding" heading="Document hierarchy"><DocumentText>Shared content.</DocumentText></DocumentFinding>},
  'file-shell-controls': {component:'FileShellPanels',module:'file-shell-controls',axes:[],base:{},states:[{label:'Controlled workspace',props:{},code:'<FileShellPanels panels={panels} active={active} onActiveChange={setActive} label="File side controls">{content}</FileShellPanels>'}],render:()=> <FileHeaderExample workspaceOnly populated/>},
  'file-header': {component:'FileHeader',module:'file-header',axes:['saveState'],base:{title:'Product direction',fileTypeLabel:'Document'},states:[
  {label:'Inline rename',props:{editableExample:true},code:'<FileHeader title={title} fileTypeLabel="Document" onRename={setTitle} />'},

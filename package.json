@@ -35,7 +35,8 @@
     "./props-snapshot.json": "./props-snapshot.json",
     "./tokens-snapshot.json": "./tokens-snapshot.json",
     "./src/*": "./src/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./html-document-components.json": "./tooling/html-document-components.json"
   },
   "sideEffects": [
     "*.css"
@@ -79,7 +80,9 @@
     "test:rail-workflows": "node scripts/check-navigation-rail-workflows.mjs",
     "test:navigation-foundations": "node scripts/check-navigation-foundations.mjs",
     "test:workspace-navigation": "node scripts/check-workspace-navigation.mjs",
-    "test:file-shell-workflows": "node scripts/check-file-shell-workflows.mjs"
+    "test:file-shell-workflows": "node scripts/check-file-shell-workflows.mjs",
+    "test:html-documents": "node scripts/check-html-documents.mjs",
+    "specimen:html-documents": "node scripts/generate-html-documents.mjs"
   },
   "peerDependencies": {
     "react": "^18.3.1 || ^19",

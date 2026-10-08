@@ -1,0 +1,216 @@
+{
+  "version": "1.0.0",
+  "stylesheet": "@nodaste-lab/weft/components.css",
+  "components": [
+    {
+      "id": "canvas",
+      "export": "DocumentCanvas",
+      "level": "organisms",
+      "composes": []
+    },
+    {
+      "id": "heading",
+      "export": "DocumentHeading",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "text",
+      "export": "DocumentText",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "label",
+      "export": "DocumentLabel",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "link",
+      "export": "DocumentLink",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "number",
+      "export": "DocumentReference",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "divider",
+      "export": "DocumentDivider",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "caption",
+      "export": "DocumentCaption",
+      "level": "molecules",
+      "composes": [
+        "text"
+      ]
+    },
+    {
+      "id": "evidence",
+      "export": "DocumentEvidence",
+      "level": "molecules",
+      "composes": [
+        "text",
+        "link"
+      ]
+    },
+    {
+      "id": "fact",
+      "export": "DocumentFact",
+      "level": "molecules",
+      "composes": [
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "prompt",
+      "export": "DocumentPrompt",
+      "level": "molecules",
+      "composes": [
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "header",
+      "export": "DocumentHeader",
+      "level": "molecules",
+      "composes": [
+        "heading",
+        "text"
+      ]
+    },
+    {
+      "id": "figure",
+      "export": "DocumentFigure",
+      "level": "organisms",
+      "composes": [
+        "caption"
+      ]
+    },
+    {
+      "id": "finding",
+      "export": "DocumentFinding",
+      "level": "organisms",
+      "composes": [
+        "heading",
+        "number",
+        "fact",
+        "text",
+        "prompt"
+      ]
+    },
+    {
+      "id": "columns",
+      "export": "DocumentComparison",
+      "level": "organisms",
+      "composes": []
+    },
+    {
+      "id": "table",
+      "export": "DocumentTable",
+      "level": "organisms",
+      "composes": [
+        "caption",
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "disclosure",
+      "export": "DocumentDisclosure",
+      "level": "organisms",
+      "composes": [
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "code",
+      "export": "DocumentCode",
+      "level": "atoms",
+      "composes": []
+    },
+    {
+      "id": "list",
+      "export": "DocumentList",
+      "level": "molecules",
+      "composes": []
+    },
+    {
+      "id": "status",
+      "export": "DocumentStatus",
+      "level": "molecules",
+      "composes": [
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "callout",
+      "export": "DocumentCallout",
+      "level": "molecules",
+      "composes": [
+        "label",
+        "text"
+      ]
+    },
+    {
+      "id": "code-block",
+      "export": "DocumentCodeBlock",
+      "level": "molecules",
+      "composes": [
+        "code"
+      ]
+    },
+    {
+      "id": "section",
+      "export": "DocumentSection",
+      "level": "organisms",
+      "composes": [
+        "heading",
+        "text"
+      ]
+    }
+  ],
+  "reactModule": "@nodaste-lab/weft",
+  "compositionMeaning": "Example composition dependencies; children and slots are explicitly supplied by the author.",
+  "authoringRules": [
+    {
+      "title": "Choose clear flow representations",
+      "description": "Use labeled flowcharts, connected cards, ordered steps or other accessible visual representations for processes and relationships. Use ASCII or text-art diagrams only when the user explicitly asks for them."
+    },
+    {
+      "title": "Compose freely",
+      "description": "Choose the structure, layout and visual treatment that suit your content. Combine native HTML, custom CSS and Weft as needed. The examples are starting points, not a required format."
+    },
+    {
+      "title": "Use Weft where it helps",
+      "description": "Reach for existing Weft components, typography, spacing and semantic colors when they serve your purpose. Custom compositions are welcome."
+    },
+    {
+      "title": "Keep content readable",
+      "description": "Maintain contrast between text and its background in light and dark themes. Use labels as well as color to communicate meaning."
+    },
+    {
+      "title": "Keep motion comfortable",
+      "description": "Prefer stationary content. Respect reduced-motion preferences and avoid flashing or unnecessary movement."
+    },
+    {
+      "title": "Make content accessible",
+      "description": "Use meaningful headings and links, image alternatives, table headers, keyboard access and visible focus. Keep content readable on narrow screens and when zoomed."
+    },
+    {
+      "title": "Confirm exceptions",
+      "description": "Before overriding contrast, motion or basic accessibility safeguards, explain the specific exception and its impact and obtain explicit user confirmation. Confirmation applies only to that exception."
+    }
+  ]
+}

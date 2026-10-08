@@ -774,6 +774,106 @@
         ]
       }
     },
+    "document-content": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "alt": {
+            "optional": false,
+            "union": null
+          },
+          "caption": {
+            "optional": false,
+            "union": null
+          },
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "heading": {
+            "optional": false,
+            "union": null
+          },
+          "headingId": {
+            "optional": false,
+            "union": null
+          },
+          "headingLevel": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "level": {
+            "optional": false,
+            "union": null
+          },
+          "ordered": {
+            "optional": true,
+            "union": null
+          },
+          "reference": {
+            "optional": true,
+            "union": null
+          },
+          "size": {
+            "optional": true,
+            "union": [
+              "body",
+              "caption",
+              "lede"
+            ]
+          },
+          "src": {
+            "optional": false,
+            "union": null
+          },
+          "summary": {
+            "optional": false,
+            "union": null
+          },
+          "title": {
+            "optional": false,
+            "union": null
+          },
+          "titleId": {
+            "optional": false,
+            "union": null
+          },
+          "tone": {
+            "optional": true,
+            "union": [
+              "default",
+              "muted"
+            ]
+          }
+        },
+        "native": [
+          "a",
+          "article",
+          "aside",
+          "blockquote",
+          "code",
+          "details",
+          "div",
+          "figcaption",
+          "figure",
+          "hr",
+          "p",
+          "pre",
+          "section",
+          "span",
+          "table"
+        ]
+      }
+    },
     "dot": {
       "version": "1.0.0",
       "surface": {
