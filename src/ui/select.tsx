@@ -113,8 +113,11 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  description,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+}: React.ComponentProps<typeof SelectPrimitive.Item> & { description?: React.ReactNode }) {
+  const descriptionId = React.useId();
+  const hasDescription = description !== undefined && description !== null && description !== false;
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -123,13 +126,17 @@ function SelectItem({
         className,
       )}
       {...props}
+      aria-describedby={[props["aria-describedby"], hasDescription ? descriptionId : undefined].filter(Boolean).join(" ") || undefined}
     >
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      {hasDescription ? <span className="weft-select-option-copy">
+        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+        <small id={descriptionId}>{description}</small>
+      </span> : <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>}
     </SelectPrimitive.Item>
   );
 }

@@ -30,6 +30,29 @@ function LabelSpecimen({ children, disabled, ...p }: React.ComponentProps<typeof
 }
 
 
+/** Demonstrates public Select + shared selection-field classes, not a new API. */
+export function SelectFieldSpecimen({ error, description, status, required, disabled, optionDescriptions, ...props }: P) {
+  const id = React.useId();
+  const describedBy = [error && `${id}-error`, status && `${id}-status`, description && `${id}-help`].filter(Boolean).join(' ') || undefined;
+  return <div className="weft-selection-field" data-invalid={!!error || undefined}>
+    <Select name="keyType" defaultValue="personal" required={!!required} disabled={!!disabled}>
+      <div className="weft-selection-control">
+        <label htmlFor={id}>Key type{required ? ' (required)' : ''}</label>
+        <SelectTrigger {...props} id={id} aria-describedby={describedBy} state={error ? 'error' : disabled ? 'disabled' : props.state as 'default' | undefined}>
+          <SelectValue placeholder="Choose a key type" />
+        </SelectTrigger>
+      </div>
+      <SelectContent>
+        <SelectItem value="personal">Personal API key</SelectItem>
+        <SelectItem value="workspace" description={optionDescriptions ? "Shared with your workspace" : undefined}>Workspace API key</SelectItem>
+      </SelectContent>
+    </Select>
+    {!!error && <p id={`${id}-error`} className="weft-selection-error">{String(error)}</p>}
+    {!!status && <p id={`${id}-status`} className="weft-selection-help">{String(status)}</p>}
+    {!!description && <p id={`${id}-help`} className="weft-selection-help">{String(description)}</p>}
+  </div>;
+}
+
 const selectionOptions = [{ value: 'studio', label: 'Studio' }, { value: 'research', label: 'Research' }, { value: 'archive', label: 'Archive', disabled: true }];
 export function SelectionSpecimen({ multiple = false, ...p }: P & {multiple?:boolean}) {
  const [single, setSingle] = React.useState<string|null>((p.value as string|null) ?? null);
@@ -76,18 +99,15 @@ export const inputsSpecimens: Record<string, Specimen> = {
   select: {
     component: 'SelectTrigger',
     module: 'select',
-    base: { 'aria-label': 'Range' },
-    render: (p: P) => (
-      <Select defaultValue="7d">
-        <SelectTrigger {...(p as React.ComponentProps<typeof SelectTrigger>)}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="7d">Last 7 days</SelectItem>
-          <SelectItem value="30d">Last 30 days</SelectItem>
-        </SelectContent>
-      </Select>
-    ),
+    states: [
+      { label: 'Cutout', props: {}, code: 'See the complete Select composition in How to use.' },
+      { label: 'Option descriptions', props: { optionDescriptions: true }, code: '<SelectItem value="workspace" description="Shared with your workspace">Workspace API key</SelectItem>' },
+      { label: 'Required', props: { required: true }, code: '<Select required name="keyType">…</Select>' },
+      { label: 'Disabled', props: { disabled: true }, code: '<Select disabled>…</Select>' },
+      { label: 'Error and help', props: { error: 'Choose an available key type.', description: 'Choose the scope of the supplied credential.' }, code: '<SelectTrigger state="error" aria-describedby="key-error key-help">…</SelectTrigger>' },
+      { label: 'Status', props: { status: 'Saving selection.' }, code: '<SelectTrigger aria-describedby="key-status">…</SelectTrigger>' },
+    ],
+    render: (p: P) => <SelectFieldSpecimen {...p} />,
   },
   calendar: {
     component: 'Calendar',
