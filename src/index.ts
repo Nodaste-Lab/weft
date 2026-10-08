@@ -123,3 +123,12 @@ export * from './ui/text-field';
 
 export * from './ui/combobox';
 export * from './ui/multi-select';
+
+export * from './ui/file-header';
+
+export { fileShellIcons, type FileShellIconPurpose } from "./semantics/file-shell-icons";
+
+export * from './ui/navigation-file-list';
+
+export * from './ui/file-shell-controls';
+export * from './templates/file-shell';

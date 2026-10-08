@@ -47,7 +47,8 @@ export function Playground({ id, defaults }: { id: string; defaults?: Record<str
     if (state) Object.assign(shown, state.props);
   }
   const stateCodes = activeStates.map((label) => states.find((s) => s.label === label)?.code).filter(Boolean);
-  const reference = jsxReference(specimen.component, contractProps(id === 'text-field' ? {...base,...shown} : shown, surfaceFor(id))) + (id === 'text-field' ? '</TextField>' : '');
+  const generatedReference = jsxReference(specimen.component, contractProps((id === 'text-field' || id === 'file-header') ? {...base,...shown} : shown, surfaceFor(id))) + (id === 'text-field' ? '</TextField>' : '');
+  const reference = id === 'file-header' ? generatedReference.replace(/>$/, '') + (shown.failRename && !shown.readOnlyExample ? ' onRename={async () => { throw new Error("Demo failure"); }} />' : shown.editableExample && !shown.readOnlyExample ? ' onRename={setTitle} />' : ' />') : generatedReference;
   const dirty = Object.keys(axisValues).length > 0 || activeStates.length > 0;
   const pageExport = displayTitle(id).replace(/\s+/g, '');
   const isPart = specimen.component.toLowerCase() !== pageExport.toLowerCase();

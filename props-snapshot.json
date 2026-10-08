@@ -930,6 +930,170 @@
         ]
       }
     },
+    "file-header": {
+      "version": "1.1.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "actions": {
+            "optional": true,
+            "union": null
+          },
+          "className": {
+            "optional": true,
+            "union": null
+          },
+          "context": {
+            "optional": true,
+            "union": null
+          },
+          "fileId": {
+            "optional": true,
+            "union": null
+          },
+          "fileKind": {
+            "optional": true,
+            "union": [
+              "document",
+              "htmlFile",
+              "image",
+              "presentation",
+              "spreadsheet"
+            ]
+          },
+          "fileTypeLabel": {
+            "optional": false,
+            "union": null
+          },
+          "headingLevel": {
+            "optional": true,
+            "union": null
+          },
+          "icon": {
+            "optional": true,
+            "union": null
+          },
+          "onRename": {
+            "optional": true,
+            "union": null
+          },
+          "saveState": {
+            "optional": true,
+            "union": [
+              "error",
+              "offline",
+              "saved",
+              "saving"
+            ]
+          },
+          "statusMessage": {
+            "optional": true,
+            "union": null
+          },
+          "title": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": [
+          "header"
+        ]
+      }
+    },
+    "file-shell-controls": {
+      "version": "1.0.0",
+      "surface": {
+        "variants": {},
+        "props": {
+          "active": {
+            "optional": false,
+            "union": null
+          },
+          "canRestore": {
+            "optional": false,
+            "union": null
+          },
+          "canSave": {
+            "optional": false,
+            "union": null
+          },
+          "children": {
+            "optional": false,
+            "union": null
+          },
+          "commands": {
+            "optional": false,
+            "union": null
+          },
+          "disabled": {
+            "optional": true,
+            "union": null
+          },
+          "error": {
+            "optional": true,
+            "union": null
+          },
+          "label": {
+            "optional": false,
+            "union": null
+          },
+          "mode": {
+            "optional": false,
+            "union": null
+          },
+          "onActiveChange": {
+            "optional": false,
+            "union": null
+          },
+          "onModeChange": {
+            "optional": false,
+            "union": null
+          },
+          "onRestore": {
+            "optional": true,
+            "union": null
+          },
+          "onRetry": {
+            "optional": true,
+            "union": null
+          },
+          "onSave": {
+            "optional": true,
+            "union": null
+          },
+          "panels": {
+            "optional": false,
+            "union": null
+          },
+          "participants": {
+            "optional": false,
+            "union": null
+          },
+          "revisions": {
+            "optional": false,
+            "union": null
+          },
+          "rows": {
+            "optional": false,
+            "union": null
+          },
+          "state": {
+            "optional": false,
+            "union": [
+              "denied",
+              "error",
+              "loading",
+              "ready"
+            ]
+          },
+          "versions": {
+            "optional": false,
+            "union": null
+          }
+        },
+        "native": []
+      }
+    },
     "follow-up-block": {
       "version": "1.0.0",
       "surface": {
@@ -1991,7 +2155,7 @@
       }
     },
     "navigation-actions": {
-      "version": "1.0.2",
+      "version": "1.1.0",
       "surface": {
         "variants": {},
         "props": {

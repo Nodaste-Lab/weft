@@ -21,7 +21,7 @@ export interface NavGroup {
 
 type Primitive = { id: string; category: string; summary: string; version?: string; showcase?: boolean };
 type Pattern = { id: string; title: string; summary: string; uses: string[]; docs?: string };
-type Template = { id: string; kind?: string; summary: string; composes?: string[]; docs: string; version: string };
+type Template = { id: string; title?: string; kind?: string; summary: string; composes?: string[]; docs: string; version: string };
 
 export const primitives: Primitive[] = (manifest.uiPrimitives as Primitive[]).filter((p) => !p.id.endsWith('.figma'));
 export const primitiveById = new Map(primitives.map((p) => [p.id, p]));
@@ -151,7 +151,7 @@ export function buildNav(): NavGroup[] {
     id: 'templates',
     label: 'Templates',
     section: 'templates',
-    items: templates.map((t) => ({ id: t.id, label: displayTitle(t.id), section: 'templates' })),
+    items: templates.map((t) => ({ id: t.id, label: t.title ?? displayTitle(t.id), section: 'templates' })),
   });
   return groups;
 }

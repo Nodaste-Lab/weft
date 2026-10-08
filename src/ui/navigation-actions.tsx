@@ -1,11 +1,13 @@
 import * as React from "react";
 import { navigationNarrowQuery } from "./navigation-rail-layout";
+import { ActionLabel } from "../semantics/navigation-action-label";
 import { Button } from "./button";
 import { NavigationIcon } from "./navigation-icon";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "./dropdown-menu";
 
 export type NavigationAction = {
   id: string;
+  iconPurpose?: import("../semantics/file-shell-icons").FileShellIconPurpose;
   label: string;
   disabled?: boolean;
   onSelect?: () => void;
@@ -58,8 +60,8 @@ export function NavigationActions({ name, items, caption, disabled, compact, tri
     level = group.children;
   }
   const desktop = (entries: NavigationAction[]): React.ReactNode => entries.map(item => item.children ?
-    <DropdownMenuSub key={item.id}><DropdownMenuSubTrigger disabled={item.disabled}>{item.label}</DropdownMenuSubTrigger><DropdownMenuSubContent className={`weft-navigation-actions-menu ${contentClassName ?? ""}`}>{desktop(item.children)}</DropdownMenuSubContent></DropdownMenuSub> :
-    <DropdownMenuItem key={item.id} disabled={item.disabled} onSelect={item.onSelect}>{item.label}</DropdownMenuItem>);
+    <DropdownMenuSub key={item.id}><DropdownMenuSubTrigger disabled={item.disabled}><ActionLabel label={item.label} purpose={item.iconPurpose}/></DropdownMenuSubTrigger><DropdownMenuSubContent className={`weft-navigation-actions-menu ${contentClassName ?? ""}`}>{desktop(item.children)}</DropdownMenuSubContent></DropdownMenuSub> :
+    <DropdownMenuItem key={item.id} disabled={item.disabled} onSelect={item.onSelect}><ActionLabel label={item.label} purpose={item.iconPurpose}/></DropdownMenuItem>);
   return <DropdownMenu open={open} onOpenChange={changeOpen} modal={narrow}>
     <DropdownMenuTrigger asChild><Button ref={trigger} type="button" variant="ghost" size="icon" className={triggerClassName} disabled={disabled} aria-label={`Actions for ${name}`} onClick={event => { if (event.detail === 0) changeOpen(true); }}><NavigationIcon purpose="actions" /></Button></DropdownMenuTrigger>
     <DropdownMenuContent id={menuId} className={`weft-navigation-actions-menu ${contentClassName ?? ""}`} aria-labelledby={undefined} aria-label={narrow && path.length > 0 ? `${menuLabel}: ${heading}` : menuLabel}>
@@ -69,7 +71,7 @@ export function NavigationActions({ name, items, caption, disabled, compact, tri
         <DropdownMenuLabel>{heading}</DropdownMenuLabel>
         {level.map(item => <DropdownMenuItem key={item.id} data-navigation-action={item.id} aria-haspopup={item.children ? "menu" : undefined} disabled={item.disabled} onSelect={event => {
           if (item.children) { event.preventDefault(); setPath([...path, item.id]); } else item.onSelect?.();
-        }}>{item.label}{item.children && <span aria-hidden="true"> →</span>}</DropdownMenuItem>)}
+        }}><ActionLabel label={item.label} purpose={item.iconPurpose}/>{item.children && <span aria-hidden="true"> →</span>}</DropdownMenuItem>)}
       </> : desktop(items)}
     </DropdownMenuContent>
   </DropdownMenu>;
