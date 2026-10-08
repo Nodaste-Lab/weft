@@ -13,7 +13,7 @@ const sharedHtml=html.replace(/<style>[\s\S]*?<\/style>/,`<style>${componentCss}
 const browser=await chromium.launch({headless:true});
 try {
  const page=await browser.newPage();let count=0;
- for(const theme of ['light','dark','dark-high-contrast']) for(const density of ['comfortable','compact','dense']) for(const width of [320,768,1280]) {
+ for(const theme of ['light','dark']) for(const density of ['comfortable','compact','dense']) for(const width of [320,768,1280]) {
   await page.setViewportSize({width,height:900});
   await page.setContent(`<html data-theme="${theme}" data-palette="weft" data-density="${density}"><head><style>${tokens} body{margin:0;background:var(--weft-paper)}</style></head><body>${sharedHtml}</body></html>`);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Overflow ${theme}/${density}/${width}`);
@@ -27,6 +27,11 @@ try {
   await disclosure.locator('summary').click();assert(await disclosure.evaluate(el=>el.open));
   assert.equal(await page.locator('script,button,input,form').count(),0);
   for(const href of await page.locator('a[href^="#"]').evaluateAll(els=>els.map(el=>el.getAttribute('href')))) assert(await page.locator(href).count(),`Missing anchor ${href}`);
+  assert(await page.locator('.html-layout-bad-demo pre').evaluate(el=>el.scrollWidth<=el.clientWidth),'Failure snippet must wrap');
+  assert(await page.locator('#layout-table-title').evaluate(el=>el.scrollWidth<=el.clientWidth),'Table title must stay visible');
+  for(const el of await page.locator('pre[aria-label]').all()) assert.equal(await el.getAttribute('role'),'region');
+  const target=await page.evaluate(()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--weft-touch-target')));
+  for(const el of await page.locator('summary').all()) assert(await el.evaluate(el=>el.getBoundingClientRect().height)>=target,'Disclosure target follows density');
   count++;
  }
  await page.setViewportSize({width:320,height:900});

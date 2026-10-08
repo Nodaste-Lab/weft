@@ -15,7 +15,7 @@ try {
  const canonical=readFileSync(join(root,'css/weft-components.css'),'utf8').split('/* Authored document components — shared atoms through organisms. */')[1];
  if(!canonical)throw new Error('Shared document CSS marker missing.');
  const mapping={
-  '--weft-radius-card':'var(--ava-radius, 4px)', '--weft-touch-target':'24px',
+  '--weft-radius-card':'var(--ava-radius, 4px)', '--weft-touch-target':'44px',
   '--weft-space-1':'4px','--weft-space-2':'8px','--weft-space-3':'12px','--weft-space-4':'16px','--weft-space-5':'24px','--weft-space-6':'32px',
   '--weft-ink':'var(--ava-fg, CanvasText)', '--weft-muted':'var(--ava-muted, GrayText)',
   '--weft-paper':'var(--ava-surface, Canvas)', '--weft-rule':'var(--ava-rule, GrayText)',

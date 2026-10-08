@@ -153,7 +153,6 @@ export function buildNav(): NavGroup[] {
     section: 'templates',
     items: templates.map((t) => ({ id: t.id, label: t.title ?? displayTitle(t.id), section: 'templates' })),
   });
-  groups.push({ id: 'html-documents', label: 'HTML documents', section: 'labs', items: [{id:'html-documents', label:'Content components', section:'labs'}] });
   return groups;
 }
 

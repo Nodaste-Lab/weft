@@ -45,7 +45,7 @@ export function DocumentCanvas({className,...props}:DocumentCanvasProps){return 
 export type DocumentCodeProps = React.ComponentPropsWithoutRef<'code'>;
 export function DocumentCode({className,...props}:DocumentCodeProps){return <code {...props} className={cn('weft-doc-code',className)}/>;}
 export type DocumentCodeBlockProps = React.ComponentPropsWithoutRef<'pre'> & {label:string};
-export function DocumentCodeBlock({label,children,className,...props}:DocumentCodeBlockProps){return <pre {...props} aria-label={label} tabIndex={0} className={cn('weft-doc-code-block',className)}><DocumentCode>{children}</DocumentCode></pre>;}
+export function DocumentCodeBlock({label,children,className,...props}:DocumentCodeBlockProps){return <pre {...props} role="region" aria-label={label} tabIndex={0} className={cn('weft-doc-code-block',className)}><DocumentCode>{children}</DocumentCode></pre>;}
 export type DocumentListProps = React.HTMLAttributes<HTMLOListElement | HTMLUListElement> & {ordered?:boolean};
 export function DocumentList({ordered=false,className,...props}:DocumentListProps){return ordered?<ol {...props} className={cn('weft-doc-list',className)}/>:<ul {...props} className={cn('weft-doc-list',className)}/>;}
 export type DocumentStatusProps = React.ComponentPropsWithoutRef<'p'> & {label:string};

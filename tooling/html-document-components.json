@@ -3,6 +3,12 @@
   "stylesheet": "@nodaste-lab/weft/components.css",
   "components": [
     {
+      "id": "canvas",
+      "export": "DocumentCanvas",
+      "level": "organisms",
+      "composes": []
+    },
+    {
       "id": "heading",
       "export": "DocumentHeading",
       "level": "atoms",

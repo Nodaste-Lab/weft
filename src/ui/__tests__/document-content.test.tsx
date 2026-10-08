@@ -31,3 +31,8 @@ it('keeps ordered steps, code and authored status accessible',async()=>{
  expect(screen.getByLabelText('Example configuration')).toHaveAttribute('tabindex','0');
  expect(screen.queryByRole('alert')).toBeNull();await expectA11yClean(container);
 });
+
+it('exposes a named keyboard-scrollable code region',()=>{
+ render(<D.DocumentCodeBlock label="Configuration">title: Example</D.DocumentCodeBlock>);
+ expect(screen.getByRole('region',{name:'Configuration'})).toHaveAttribute('tabindex','0');
+});

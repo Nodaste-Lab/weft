@@ -1674,3 +1674,5 @@ html,
 .weft-doc-callout > :last-child { margin-block-end: 0; }
 .weft-doc-section { margin-block: var(--weft-space-5); }
 .weft-doc-section > :first-child { margin-block-start: 0; }
+
+.weft-doc-list { padding-inline-start: 1.5em; }
