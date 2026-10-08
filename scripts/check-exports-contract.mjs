@@ -48,7 +48,6 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/src/ui/navigation-icon.tsx',
   '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
-  '@nodaste-lab/weft/src/templates/navigation-rail.tsx',
   '@nodaste-lab/weft/src/templates/file-shell.tsx',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
