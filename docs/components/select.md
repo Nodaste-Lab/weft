@@ -20,7 +20,7 @@ One value from a list that opens on demand. It owns the trigger (styled as a fie
 
 ## When not to use
 
-- Two to six options. Use `radio-group`; every option is visible and nobody has to open anything.
+- Two to six options normally use `radio-group` so every option is visible. A compact form or an explicit policy dropdown can use Select for a short known set; it does not need search.
 - More than one choice. Use a visible list of `checkbox`, or `multi-select` when search is needed.
 - Options that are actions, not values. Use `dropdown-menu`.
 - A list long enough that people need to type to find things. Use `combobox`.
@@ -32,6 +32,44 @@ One value from a list that opens on demand. It owns the trigger (styled as a fie
 3. Set `placeholder` on `SelectValue` for the empty state. It is a hint, not an option.
 4. Set `size="sm"` on the trigger to step down within the current density, and `state` to `error` or `disabled`. There is no read-only select; use `disabled`.
 5. Mark an unavailable option `disabled` on `SelectItem`. It renders struck through and dimmed.
+
+
+### Cutout field composition
+
+Use the existing public selection-field classes with Select for standard form presentation. No new component or search input is needed. Import `@nodaste-lab/weft/index.css` (or the equivalent ordered CSS bundle). The label stays cut out even when empty; the trigger follows density and `size`. The editable fill is clear. Bare Select remains suitable for a custom labelled contextual control; Combobox is for finding an option by search.
+
+```tsx
+const id = React.useId();
+const describedBy = [
+  error && `${id}-error`, status && `${id}-status`, description && `${id}-help`,
+].filter(Boolean).join(' ') || undefined;
+
+<div className="weft-selection-field" data-invalid={!!error || undefined}>
+  <Select name="keyType" value={value} onValueChange={setValue}
+    required={required} disabled={disabled}>
+    <div className="weft-selection-control">
+      <label htmlFor={id}>Key type{required ? ' (required)' : ''}</label>
+      <SelectTrigger id={id} state={error ? 'error' : undefined}
+        aria-describedby={describedBy}>
+        <SelectValue placeholder="Choose a key type" />
+      </SelectTrigger>
+    </div>
+    <SelectContent>
+      <SelectItem value="personal">Personal API key</SelectItem>
+      <SelectItem value="workspace">Workspace API key</SelectItem>
+    </SelectContent>
+  </Select>
+  {error && <p id={`${id}-error`} className="weft-selection-error">{error}</p>}
+  {status && <p id={`${id}-status`} className="weft-selection-help">{status}</p>}
+  {description && <p id={`${id}-help`} className="weft-selection-help">{description}</p>}
+</div>
+```
+
+The surrounding component supplies `value`, `setValue`, `required`, `disabled`, `error`, `status` and `description`. Use `defaultValue` instead for an uncontrolled Select. `name`, `required` and `disabled` belong on Select, which supplies native form participation; the trigger receives the id and feedback references. Omit absent feedback entirely. Status does not automatically announce saving; the application owns announcements and validation. With react-hook-form, use FormControl around SelectTrigger and FormLabel in the same selection-control wrapper, with FormMessage, FormStatus and FormDescription after it; do not add a second label or competing ids.
+
+Preserve SelectGroup/SelectLabel for grouped options. Secondary option copy can be rendered inside SelectItem; set `textValue` to the concise option label for typeahead. Keep essential unavailable-option explanations in associated help and mark the option disabled. Do not encode permission checks in the field.
+
+Migration: replace an external field label wrapper with the selection-field and selection-control wrappers above. Retain the real Select options, values and save handler. Do not place Select inside a wrapping HTML label: its portal and hidden form control need a separate label targeting the trigger. Do not copy TextField CSS or add a search input for two known values.
 
 ## Heuristics
 

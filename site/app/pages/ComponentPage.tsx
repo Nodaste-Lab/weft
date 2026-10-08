@@ -1,3 +1,4 @@
+import { SelectFieldSpecimen } from '../../../src/gallery/specimens/inputs';
 import fileHeaderExampleSource from '../../../src/gallery/FileHeaderExample.tsx?raw';
 import { SelectionLoadingExample } from './SelectionLoadingExample';
 import React from 'react';
@@ -70,6 +71,10 @@ export function ComponentPage({ id }: { id?: string }) {
         {id === 'label' ? <LabelExamples/> : id === 'form' ? <FormExamples/> : (id === 'input' || id === 'text-field') ? <><TextField label="Display name"/><FieldCode code={'import { TextField } from "@nodaste-lab/weft";\n\n<TextField label="Display name" />'}/><p>Use TextField for labelled forms. Cutout is its default treatment; underline is a contextual alternative. Input is the bare control for specialized compositions.</p></> : (id === 'textarea' || id === 'search-field') ? null : <DesignSystemUiGallery ids={[id]} showCategoryLinks={false} showTemplates={false} />}
       </div>
       {id === 'calendar' && <FieldCode code={'import * as React from "react";\nimport { Calendar } from "@nodaste-lab/weft";\n\nfunction CalendarExample() {\n  const [date, setDate] = React.useState<Date | undefined>(() => new Date(2026, 2, 15));\n  return <Calendar mode="single" selected={date} onSelect={setDate} defaultMonth={date} className="rounded-md border" />;\n}'}/>}
+      {id === 'select' && <section aria-label="Cutout Select field" style={{ background: 'var(--weft-paper)', padding: 16 }}>
+        <h3>Cutout field composition</h3>
+        <SelectFieldSpecimen />
+      </section>}
       {['combobox','multi-select'].includes(id) && <FieldCode code={`import * as React from 'react';
 import { ${id === 'combobox' ? 'Combobox' : 'MultiSelect'} } from '@nodaste-lab/weft';
 

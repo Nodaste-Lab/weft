@@ -1607,3 +1607,15 @@ html,
 
 .weft-file-presence > ul[data-stacked="true"] li+li { margin-inline-start:-22px; }
 .weft-file-person:hover, .weft-file-person:focus { z-index:2; }
+
+/* Opt-in cutout composition for the existing non-searchable Select trigger.
+ * Keep the bare trigger contract unchanged and follow the field density. */
+.weft-selection-control > [data-slot="select-trigger"] {
+  height: calc(var(--weft-control-h) + 10px);
+  min-height: calc(var(--weft-control-h) + 10px);
+  background: transparent;
+}
+.weft-selection-control > [data-slot="select-trigger"][data-size="sm"] {
+  height: calc(var(--weft-control-h-sm) + 10px);
+  min-height: calc(var(--weft-control-h-sm) + 10px);
+}
