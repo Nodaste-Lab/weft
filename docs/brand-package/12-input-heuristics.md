@@ -124,7 +124,7 @@ Error copy follows the three-part pattern: what happened, why, what to try.
 
 > **Amendment A5 makes the composition explicit** when a field carries both help and error text.
 
-## 11. Size floors hold at every tier **[SC 2.5.8 Target Size (Minimum), Level AA]** + **[C]**
+## 11. Historical sizing rule (superseded by A10) **[SC 2.5.8 Target Size (Minimum), Level AA]** + **[C]**
 
 Quiet does not mean small. **The two floors in this rule come from different places and must not be cited as one.**
 
@@ -152,7 +152,7 @@ Add to this list rather than quietly filling it in.
 
 Decisions taken against these rules during weft#16. Each states what supersedes what, and why. The rules above are left as written so the reasoning stays readable.
 
-### A1 · Rule 11 — 24px is the control floor; 44px is a separate clearance convention
+### A1 · Historical, superseded by A10 — 24px is the control floor; 44px is a separate clearance convention
 
 **Supersedes** the original second bullet of rule 11 (a 44px minimum control height and a 16px type minimum).
 
@@ -249,8 +249,18 @@ Pending is the same list plus `aria-busy="true"` on the control — and both hal
 
 ---
 
+### A10 · Accessibility sizing correction (October 7, 2026)
+
+Supersedes rule 11 and A1's universal 24px wording and 44px centre-clearance
+convention. Use the [current accessibility baseline](05-accessibility.md#current-shared-baseline-october-7-2026)
+for AA minimums and exceptions, preferred 44×44 touch areas, and legible,
+enlargeable text. Earlier measurements and A1 remain historical evidence, not
+acceptance criteria for new work. This documentation correction changes no CSS.
+The A6 reason vocabulary remains an evaluation item; it is not a new primitive
+prop or a newly approved reason set.
+
 ## Open
 
 - **Whether the reasons in A6 are the right set.** That list is the whole rule: it is the only thing standing between quiet-by-default and every surface opting out. It has been challenged once, successfully — `sequence` joined the original four by owner call (2026-08-11, module version 2) — which is the route: an owner call on the record and a version bump, never a string quietly added.
 
-Amendments A1 through A9 are settled. Add to this list rather than resolving it silently.
+A10 supersedes A1 and rule 11 sizing; A6 remains under evaluation. Other amendments retain their scope. Add to this list rather than resolving it silently.

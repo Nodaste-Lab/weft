@@ -59,3 +59,20 @@ The action control. It owns the variant axis (default, destructive, outline, sec
 - Decorative icons inside the button need `aria-hidden="true"`; the component only sets this on its own spinner.
 - Heights: default 36px, `sm` 32px, `dense` 34px, `icon` 36px, `lg` 40px. All clear the 24px floor (`--weft-touch-target`, WCAG 2.5.8 target size).
 - The spinner animation and the colour transitions collapse under the global `prefers-reduced-motion` rule (WCAG 2.3.3).
+
+### Agreed interaction guidance and implementation gap
+
+Selection and execution are different roles. A File shell panel or annotation-mode
+selector uses accent tint, icon and outline with a non-color state cue, without
+solid primary-action fill. The board-specific “filled only when blocked on the
+reader” rule does not replace this component's general action hierarchy. Conflicting
+historical page-wide primary/casing rules require scoped reconciliation before
+broader enforcement.
+
+Pending work should suppress duplicate execution while preserving the person's
+focus and useful label. The native-disabled loading behavior described above is
+an existing implementation gap (historical lead #84), not evidence this guidance
+has been implemented. Do not move focus merely to compensate for every pending
+operation. Destructive confirmation explains the actual consequence and only
+promises reversibility when the host provides it. Hover treatment must remain
+readable. Follow the [shared accessibility baseline](../brand-package/05-accessibility.md#current-shared-baseline-october-7-2026).

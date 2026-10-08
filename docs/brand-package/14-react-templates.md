@@ -89,3 +89,53 @@ Back/Forward behavior; selected destinations use `aria-current="page"`. Verify
 keyboard resize and refresh restoration, narrow drawer focus return, independent
 file disclosure/opening, and a file tree that retains the active/focused row
 while paging. Automated checks supplement a manual NVDA/VoiceOver and touch pass.
+
+## File shell design checkpoint
+
+The [October 7 handoff](https://nodaste.hub.avalandra.com/d/5d211467-739b-4221-a87c-68e9a8d30ad3)
+records a File shell reference on a separate working branch. At the incorporation
+baseline `f954982`, main does not register a File shell template. This section
+records agreed composition guidance, not an importable API or a release claim.
+
+Inspect Tokens/foundations, Atoms, Assemblies and Complete shell as decomposition
+levels inside a template. Keep matching semantic controls and meaningful states
+across them. This does not replace the site taxonomy Tokens, Components, Templates
+and Patterns. The shell demonstrates HTML, Document, Spreadsheet, Presentation
+and Image around content placeholders. Shared contracts live in
+[document surfaces](13-document-surfaces-heuristics.md#shared-file-shell-inspector),
+[semantic icons](../components/navigation-icon.md#shared-file-shell-symbols) and
+[accessibility](05-accessibility.md#current-shared-baseline-october-7-2026).
+
+Label gallery examples as fictional data and local state. They demonstrate
+presentation and interaction; they are not functioning integrated Avalandra
+files. Adoption requires host adapters for editors/renderers, real file identity,
+routes, capabilities derived from authorization, durable rename/save/restore,
+comments/listeners, verified presence, revision/approval evidence and HTML
+annotation anchoring. Bind asynchronous requests to stable file identity so an
+old result cannot update a different file. Success follows host success, not
+optimistic fixture state. Read denial suppresses content; revoking an active
+panel clears selection rather than reopening it automatically if access returns.
+These presentation capabilities introduce no new permission model.
+
+Keep documentation examples, playground, variant/state matrices, API from the
+props snapshot, accessibility and related patterns tied to their authoritative
+sources. Derive dates from git. Preserve “Not yet written” sections and unverified
+integration gaps honestly. Component/template checks do not establish host
+integration, package release or accessibility conformance. Product routes,
+Signals meanings, document-kind convergence and archive/purge are outside this
+reusable contract.
+
+### Navigation reconciliation
+
+The current workspace-navigation-rail entry above supersedes the removed
+navigation-rail inventory and historical product destination lists in the guide.
+Document links, disclosure controls and inert rows have distinct roles: a file
+may both open and have children, so preserve independent opening and disclosure
+rather than turning its link into a folder. Render row actions only with working
+handlers; reveal them on hover, focus-within and menu-open, with object-specific
+names. Counts align right; omit known zero without converting unknown to zero.
+Keep semantic file identity consistent, group labels readable, the account area
+outside tree scrolling, and distinct names for main-column and edge-rail toggles.
+The left destination rail's selection differs from the right inspector selector.
+Actual destinations, A/B placement and remembered product views remain host
+choices; this transfer does not settle Kanban or hierarchy.

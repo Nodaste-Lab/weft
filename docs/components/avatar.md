@@ -49,3 +49,17 @@ A circular image standing for a person, an agent or an entity, with a fallback t
 - Fallback initials are read as text. When the name is adjacent, pass `aria-hidden` on the fallback so a screen reader does not hear "DM Dana Moore".
 - The component is not interactive and takes no focus. When an avatar triggers a `hover-card` or a menu, the trigger is a button with the person's name as its accessible name and meets the 24px `--weft-touch-target` floor; the 24px size is exactly the floor, with no margin.
 - Nothing about a person is encoded in colour, so there is nothing to lose with colour removed (WCAG 1.4.1 use of colour).
+
+### Identity and presence assemblies
+
+An identity row groups avatar and verified name, readable status and labelled
+actions. Narrow layouts wrap names and actions into labelled rows rather than
+causing horizontal overflow. Account status, file-session membership and verified
+editing activity are separate facts. Do not infer Editing or Idle from membership.
+
+In the File shell, five or more verified participants render as three overlapping
+avatars plus a +remaining control exposing the full roster. Roster explanations
+are neutral and identify human/agent kind; “In this file session · Editing
+activity unknown” is truthful when activity is unavailable. Omit presence when
+verified participants are unavailable. The host supplies evidence. This is
+assembly guidance; Avatar itself gains no presence service or prop.

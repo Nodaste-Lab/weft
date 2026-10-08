@@ -22,7 +22,7 @@ The standard labelled form field: cutout by default, contextual underline as an 
 ## When not to use
 
 - Queries: use SearchField and its own clear action.
-- In-place title editing: use Input in the inline rename pattern with Save, Cancel, and focus recovery.
+- In-place title editing: use Input in the [single-line title rename pattern](../brand-package/13-document-surfaces-heuristics.md#file-title-rename).
 - Rich document content: use the application's editor.
 
 ## How to use

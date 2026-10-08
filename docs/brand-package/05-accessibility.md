@@ -8,6 +8,53 @@ updated: 2026-04-21
 
 # 05 · Accessibility Assessment
 
+## Current shared baseline (October 7, 2026)
+
+This section is the current accessibility reference for shared patterns. The dated
+website audit below preserves observations and remediation history; it does not
+establish current product conformance.
+
+Follow [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and the relevant
+[ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/) for the control's role.
+Prefer interactive areas of 44×44 CSS pixels, especially for touch. The AA
+[Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
+criterion uses 24×24 CSS pixels with spacing, equivalent, inline, user-agent and
+essential exceptions. Evaluate the actual hit area and adjacent targets, not the
+glyph size. There is no universal 44px centre-to-centre rule. Density does not
+exempt a control from accessibility requirements. Text follows its role and
+density, supports enlargement and remains legible; there is no universal 16px
+minimum. Existing token dimensions are implementation values, not a conformance
+claim.
+
+Quiet pointer interaction, keyboard focus, selection and editing express different
+facts. Pointer interaction need not leave an unnecessary keyboard-style ring;
+[keyboard focus remains visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html).
+A menu or listbox may use its active-item highlight as the focus indicator when
+that state is identifiable. Persistent selection survives focus moving elsewhere
+and uses a non-color cue. Editing exposes a boundary and caret without an extra
+editing badge or selection wash. Invalid work remains available for correction.
+Focus must remain reachable and unobscured by sticky chrome; mark the element that
+actually scrolls.
+
+Choose keyboard behavior by role: toolbar arrow navigation, listbox options,
+radio single-choice and independent toggle buttons are different models. Do not
+apply one chip or toolbar keyboard model to every grouped control. Hover actions
+also appear on focus; consequential or unfamiliar utilities retain visible labels.
+A meaningful accessible name alone does not explain an ambiguous icon to sighted
+users. Skip links name their destination; products supply destination-specific
+wording.
+
+Expose changing status following
+[Status Messages](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html).
+An associated description or `aria-busy` exposes state but does not guarantee a
+live announcement. Use a suitable status or alert region for meaningful updates,
+without announcing each progress tick. Say “announced” only after assistive-
+technology observation; tree inspection and component tests establish narrower
+facts. Verify assembled keyboard, screen-reader and touch behavior in the host.
+
+Decision rationale: [Accessibility baseline](https://nodaste.hub.avalandra.com/d/a8d17cfe-fcf6-41f0-9a44-f7eb210424f6).
+
+
 A WCAG 2.1 audit of the Heddle landing page and the Weft design system, light mode and dark. Findings are prioritized by severity at the bottom — start there if you only have ten minutes.
 
 The system has a strong baseline: real semantic HTML, a clean heading hierarchy, language declared, decorative backdrop properly hidden from assistive tech. The failures are concentrated in three places: the on-blue text scale, the absence of focus styles, and the motion + text-sizing contracts that haven't been written yet.

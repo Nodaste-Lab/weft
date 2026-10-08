@@ -61,3 +61,15 @@ A list of actions that opens from a trigger. It owns the trigger binding, the po
 - Disabled items carry `aria-disabled` and are skipped by the arrow keys. The WAI-ARIA menu pattern lets disabled items stay focusable; the primitive does not.
 - Items are 32px tall at the default padding, above the 24px floor (`--weft-touch-target`, WCAG 2.5.8 target size).
 - Open and close animations collapse under the global `prefers-reduced-motion` rule (WCAG 2.3.3).
+
+### Shared file actions and panel handoff
+
+File actions in navigation and a File shell reuse the same grouped action
+composition, meaningful [semantic icons](navigation-icon.md#shared-file-shell-symbols)
+beside labels, nested choices and narrow/touch drilldown. Do not replace that
+composition with an unrelated flat list or a lone “File operations” placeholder.
+When an action opens a panel, reveal it even if another panel is active and move
+focus into it. Menu dismissal must not reclaim focus from that destination.
+The usual return-to-trigger rule applies when no new destination takes focus.
+The host supplies available actions and handlers; a rendered item proves no
+mutation or permission check.

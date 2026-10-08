@@ -57,3 +57,14 @@ A modal frame for a task that needs the person's whole attention and then return
 - The built-in close control has the visually hidden name "Close" and no visible label. Open: it draws at 16×16 with no padding, under the 24px `--weft-touch-target` floor (WCAG 2.5.8); pad it through `className` on a project wrapper until the primitive is fixed.
 - Open and close animate opacity and scale over 200ms. Under `prefers-reduced-motion: reduce` the consumer's global override collapses them; the component does not.
 - The dialog takes focus, so it needs no live region. Status that changes while it is open (a save failing) belongs in a `callout` inside the body.
+
+### Modal and inspector boundaries
+
+Keep actions reachable at short viewport heights and under text enlargement;
+verify internal scrolling rather than assuming the width cap does this. Earlier
+sheet measurements are historical examples, not universal dialog dimensions.
+Modal tasks retain modal focus containment and dismissal appropriate to potential
+data loss. The non-modal File shell inspector's rail-based close is a scoped
+[composition contract](../brand-package/13-document-surfaces-heuristics.md#shared-file-shell-inspector);
+it does not remove ordinary dialog close controls. Reduced motion retains a
+legible state. See the [shared accessibility baseline](../brand-package/05-accessibility.md#current-shared-baseline-october-7-2026).

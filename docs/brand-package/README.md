@@ -68,3 +68,28 @@ For the full token list and component catalog, see [[04-design-system]].
 - [[Heddle Naming Clearance and Brand Risk Report - 2026-03-25]]
 - [[Heddle AI Status Follow-up - 2026-03-25]]
 - Decision Log `D-022` — Historical package-naming decision for Heddle (CCore + HUD + DocT)
+
+## Shared UX contracts and ownership
+
+Reusable guidance identified in the October 7 UX Living Guide consolidation is
+maintained in these existing homes:
+
+- [Accessibility](05-accessibility.md#current-shared-baseline-october-7-2026): target sizing, modality, focus, role-specific keyboard behavior and evidence.
+- [Form inputs](04-design-system.md#form-inputs), [TextField](../components/text-field.md) and [input provenance](12-input-heuristics.md): tiers, boundaries, validation and ordered descriptions. [Title rename](13-document-surfaces-heuristics.md#file-title-rename) is a distinct single-line pattern.
+- [Button](../components/button.md), [Dropdown menu](../components/dropdown-menu.md), [Chip](../components/chip.md) and [Dialog](../components/dialog.md): actions, grouping, selection and overlay boundaries.
+- [Avatar](../components/avatar.md#identity-and-presence-assemblies) and [document surfaces](13-document-surfaces-heuristics.md): identity/presence, metadata, inspector, comments and history.
+- [Progress](../components/progress.md#waiting-and-refresh-boundaries) and [Empty state](../components/empty-state.md): truthful waiting, errors, empties and refresh.
+- [Navigation icon](../components/navigation-icon.md#shared-file-shell-symbols) and [React templates](14-react-templates.md): shared semantic mapping, navigation and composition/adoption boundaries.
+
+Weft owns reusable tokens, component contracts, patterns, semantic mappings and
+templates. Avalandra owns data meanings, routes, authorization and integration.
+The UX Living Guide retains rationale, decision history, scoped examples and
+links. Link authoritative requirements rather than maintaining copies. Preserve
+source detail until the replacement is available and verified. Implemented
+changes are referenced by PRs and commits; issues track work and decision records
+preserve rationale. The guide's agent-feedback page instructs agents and does not
+establish a team-wide feedback agreement.
+
+The [existing incorporation handoff](https://nodaste.hub.avalandra.com/d/5d211467-739b-4221-a87c-68e9a8d30ad3)
+records the transfer and concrete open work. The [future-work index](https://nodaste.hub.avalandra.com/d/9ee95228-9884-4613-bd23-a4e5b7f0a0ba)
+retains product decisions and evaluation leads. Neither is a duplicate specification.

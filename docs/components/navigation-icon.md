@@ -49,3 +49,36 @@ Base glyphs are decorative aria-hidden images; owners provide accessible names. 
 | expand | Reveal the children of a collapsed Files group, file or folder. | Opening the file, moving an item or indicating its file type. |
 | collapse | Hide the children of an expanded Files group, file or folder. | Download, navigation or indicating its file type. |
 | navigation | Open the responsive Space navigation drawer. | File actions, reordering or account settings. |
+
+### Shared File shell symbols
+
+This purpose-keyed design mapping applies across equivalent navigation, header,
+menu and template controls. It records agreed artwork, not new exported purpose
+values or proof of implementation. Existing API purposes remain those documented
+above. Use a full type/action name on the owning control; hide redundant artwork.
+
+| Purpose | Symbol |
+| --- | --- |
+| Text Document | AlignLeft |
+| HTML | PanelTop |
+| Spreadsheet | Sheet |
+| Presentation | Presentation |
+| Image | Image |
+| Files collection | FileText |
+| Select element | SquareDashedMousePointer |
+| Drop pin | Crosshair with center point |
+| Working status | Kanban |
+| Review | ClipboardCheck |
+| File info | Info |
+| Version history | History |
+| Comments panel | Speech bubble |
+
+Drop pin is a coordinate anchor, not a geographic marker; its HTML annotation
+cursor matches its artwork. Review denotes review work, not certification.
+Broader comment/anchor symbols remain unresolved. Lucide is the visual reference,
+not an exclusive asset source: custom icons match line weight (2px reference),
+round caps/joins, optical size, padding and state treatment. Do not substitute
+approximate emoji or font characters. The historical 2.2px agent-state exception
+needs verification rather than being accepted as a settled exception.
+
+Rationale: [Icon rulings](https://nodaste.hub.avalandra.com/d/fe9d8dc9-c0b5-4a51-94f8-eeaeb8328273).

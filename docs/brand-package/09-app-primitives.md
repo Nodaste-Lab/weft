@@ -31,7 +31,7 @@ Weft was specified for marketing-shell density: generous whitespace, oversize se
 
 **Readable font wins for dense UI.** Inter Tight is the working face in compact surfaces. Fraunces remains the editorial voice for primary page titles only. JetBrains Mono remains for labels, IDs, and code. Display-scale Fraunces (Display/Hero, Display/Display) almost never appears in app surfaces.
 
-**Accessibility floor holds.** WCAG 2.5.8 AA touch target (24×24) is the floor in compact mode — never below. Where a control compacts below 36px tall, expand the touch wrap. WCAG 2.5.5 AAA (44×44) remains the recommended target for primary forms and stays the default in marketing density.
+**Accessibility across density.** Follow the [current shared baseline](05-accessibility.md#current-shared-baseline-october-7-2026) for target minimums and exceptions, preferred touch sizing and legible text. Density is not an exemption. Historical dimensions below describe implementation or earlier proposals, not newly verified conformance.
 
 **Maintain the technology.** Heddle ships React + shadcn + Radix + lucide-react + react-day-picker + react-resizable-panels. This doc describes how to **re-skin** those primitives with `var(--weft-*)`. Don't replace working primitives with custom Weft components.
 

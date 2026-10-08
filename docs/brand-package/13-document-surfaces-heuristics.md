@@ -9,6 +9,16 @@ scope: App primitives → Document surfaces
 
 *Companion to [[09-app-primitives]] § Document surfaces (W3) and the owner rulings that followed it in the DocT plan *Port the designed document view into DocT with every feature honest* (https://doct.nodaste.com/d/mL10IjAsSsC8oKN3hc0UVg). The definitions say what each surface is; this says when to reach for it, what to check, and what not to do. Where a later ruling supersedes the W3 text, the ruling wins and is marked.*
 
+## October 7 scope correction
+
+The current shared [accessibility baseline](05-accessibility.md#current-shared-baseline-october-7-2026)
+supersedes blanket target-floor and overlay-focus wording below. Modal and
+non-modal interactions follow their own roles. The File shell sections below
+supersede older W3 panel order, bottom-bar item limits and blanket click-to-comment
+behavior within that composition. Board routes, Signals meanings, document kinds
+and permissions remain product choices; historic W3 examples do not settle them.
+Older anchor shapes are scoped examples, not a universal symbol mapping.
+
 ## How to read an entry
 
 Each entry has the same five parts. **Use when** is the situation that calls for it. **Not for** is the nearest situation that looks similar and is not. **Heuristics** are checks a reviewer can apply from a screenshot or a click. **Pattern** is the shape that works. **Anti-pattern** is the shape that was tried, or is tempting, and fails — most of these were caught in the epic and are recorded in the plan log.
@@ -269,3 +279,66 @@ These are the ones that survived every unit test and were caught only by running
 - [[05-copy-guidance]] § When caps — the casing ruling verbatim.
 - [[04-design-system]] Tokens — the fixed tokens (`--weft-fixed-ink`, `--weft-fixed-cream`) the composer, toolbar and tooltip grounds read.
 - [[12-input-heuristics]] — the same five-part shape applied to form inputs; the two documents are read together when a document surface carries a field.
+
+## Shared File shell inspector
+
+Agreed design guidance from the [October 7 incorporation handoff](https://nodaste.hub.avalandra.com/d/5d211467-739b-4221-a87c-68e9a8d30ad3).
+The template's availability and host boundary are recorded in the
+[template register](14-react-templates.md#file-shell-design-checkpoint).
+
+The far-right rail orders Comments, Working status, Review, File info, Version
+history. Each selects a view in one shared panel. Do not duplicate header
+Details/Review controls, inspector tabs, Close buttons or body titles. Activating
+the selected icon again or pressing Escape closes the inspector. Opening or
+switching moves focus into the selected panel; closing restores its rail trigger.
+A menu opening a panel yields focus to it. Selection uses accent tint, icon and
+outline, without a left marker or solid primary-action fill. This is a non-modal
+inspector contract, not a replacement for modal dialog dismissal.
+
+Use the [semantic mapping](../components/navigation-icon.md#shared-file-shell-symbols)
+for every layer. Review in the rail opens a view; Mark reviewed is an explicit
+action inside that view. Comments shows a supplied total, never unread or listener
+progress. Omit a known-zero badge; unknown is not zero. Save feedback, working
+status, review and approval remain separate. Queue color and ownership fill are
+separate listener channels, not unread indicators. Broader Signals state semantics
+remain product work.
+
+## File-title rename
+
+A title is single-line: click or Enter/Space starts editing; Enter saves and
+restores title focus; blur saves without stealing focus from the next control;
+Escape cancels immediately and restores title focus. No pencil or separate
+Save/Cancel buttons. The input has a meaningful label such as “Document title”;
+its value is not its only name. Pending suppresses duplicates. IME composition
+never commits. Failure retains the draft with error and retry. A read-only title
+is a plain heading. This differs from multiline InlineEditListRow, where Enter
+inserts a newline and Escape follows that component's discard contract.
+
+## File information and history assemblies
+
+File info uses aligned label/value rows with row-header semantics and one sans
+panel heading. Show unknown facts as —; omit inapplicable rows. Do not invent
+approval evidence or default missing totals to zero. The host defines field
+meaning and availability. Present current versus approved revision distinctly;
+a later revision makes older approval visibly stale.
+
+Rail and menu open the same History view. Saved snapshots, optionally labelled,
+are distinct from revision lineage and standing/lifecycle. Present supplied
+creator/time and current/canonical markers. Confirm restore; the host operation
+creates a new current revision and preserves prior history. Save and restore
+require distinct loading, empty, denied, pending, failure and retry presentation.
+This includes HTML history presentation without approving a visual HTML diff.
+Do not let old mobile item limits drop history; mobile composition still needs
+host acceptance. Presence assembly lives in [Avatar](../components/avatar.md#identity-and-presence-assemblies).
+
+## HTML annotation boundary
+
+The File shell Select element and Drop pin modes use the same controls and state
+at every decomposition level. Cursor artwork matches its mode. Scope annotation
+hit testing to HTML content; links retain navigation and copying text remains
+possible. Existing text-selection toolbar, composer, thread and listener entries
+retain their specific roles; they are not interchangeable with annotation modes.
+A visible Resolve action belongs on a thread. The host supplies durable anchors,
+coordinate transforms, thread storage, listener behavior and permission checks.
+Do not infer those integrations from a local preview. Comment/anchor symbols
+outside the scoped File shell mapping remain open.

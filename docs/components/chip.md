@@ -53,3 +53,11 @@ A compact tag the user can remove, and optionally toggle. It owns the tone (none
 - Both buttons are at least 24×24 (`min-h-6 min-w-6`), the `--weft-touch-target` floor, and show the global focus ring on `:focus-visible`.
 - Tab reaches each button in turn; there is no arrow-key roving across a group of chips. After a removal, the consumer moves focus to the next chip or to the strip's add control so focus is not lost (WCAG 2.4.3 focus order).
 - Tone text sits on a tinted fill of the same token; check contrast on dark palettes before adding new tones.
+
+### Group semantics
+
+Independent on/off filters use toggles. Mutually exclusive choices use radio
+semantics and the corresponding keyboard model; removable tags and toolbars have
+their own interaction contracts. The component's current sibling-button behavior
+above is not a claim that every grouped assembly implements those models. Keep
+status vocabulary and visual meaning consistent across equivalent surfaces.
