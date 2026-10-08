@@ -1619,3 +1619,7 @@ html,
   height: calc(var(--weft-control-h-sm) + 10px);
   min-height: calc(var(--weft-control-h-sm) + 10px);
 }
+
+/* Option details stay outside ItemText so the trigger keeps the concise label. */
+[data-slot="select-item"] > .weft-select-option-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
+.weft-select-option-copy > small { color: var(--weft-muted); font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; }

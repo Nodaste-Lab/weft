@@ -31,7 +31,7 @@ function LabelSpecimen({ children, disabled, ...p }: React.ComponentProps<typeof
 
 
 /** Demonstrates public Select + shared selection-field classes, not a new API. */
-export function SelectFieldSpecimen({ error, description, status, required, disabled, ...props }: P) {
+export function SelectFieldSpecimen({ error, description, status, required, disabled, optionDescriptions, ...props }: P) {
   const id = React.useId();
   const describedBy = [error && `${id}-error`, status && `${id}-status`, description && `${id}-help`].filter(Boolean).join(' ') || undefined;
   return <div className="weft-selection-field" data-invalid={!!error || undefined}>
@@ -44,7 +44,7 @@ export function SelectFieldSpecimen({ error, description, status, required, disa
       </div>
       <SelectContent>
         <SelectItem value="personal">Personal API key</SelectItem>
-        <SelectItem value="workspace">Workspace API key</SelectItem>
+        <SelectItem value="workspace" description={optionDescriptions ? "Shared with your workspace" : undefined}>Workspace API key</SelectItem>
       </SelectContent>
     </Select>
     {!!error && <p id={`${id}-error`} className="weft-selection-error">{String(error)}</p>}
@@ -101,6 +101,7 @@ export const inputsSpecimens: Record<string, Specimen> = {
     module: 'select',
     states: [
       { label: 'Cutout', props: {}, code: 'See the complete Select composition in How to use.' },
+      { label: 'Option descriptions', props: { optionDescriptions: true }, code: '<SelectItem value="workspace" description="Shared with your workspace">Workspace API key</SelectItem>' },
       { label: 'Required', props: { required: true }, code: '<Select required name="keyType">…</Select>' },
       { label: 'Disabled', props: { disabled: true }, code: '<Select disabled>…</Select>' },
       { label: 'Error and help', props: { error: 'Choose an available key type.', description: 'Choose the scope of the supplied credential.' }, code: '<SelectTrigger state="error" aria-describedby="key-error key-help">…</SelectTrigger>' },

@@ -130,3 +130,8 @@ export function FileListConsumerProbe({ nodes }: { nodes: ProductFile[] }) {
     onDrop={(source, target) => { const ids: string[] = [source.href, target.href]; void ids; }}
     renderRow={(node, context) => <a href={node.href} data-depth={context.depth}>{node.label}</a>} />;
 }
+
+// Select descriptions are option metadata, not selected-value children.
+import { SelectItem } from '../ui/select';
+const describedSelectOption = <SelectItem value="workspace" description={<span>Shared with your workspace</span>} aria-describedby="policy-help">Workspace API key</SelectItem>;
+void describedSelectOption;

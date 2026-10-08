@@ -867,7 +867,7 @@
       "category": "inputs",
       "summary": "Composable select menu with trigger, content, and items.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "id": "separator",
