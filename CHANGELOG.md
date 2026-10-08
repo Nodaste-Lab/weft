@@ -1,5 +1,20 @@
 # @nodaste-lab/weft
 
+## 0.9.0
+
+### Minor Changes
+
+- f954982: Add searchable single and multiple selection fields with cutout labels, accessible feedback, and usage guidance.
+
+  Fix selection search naming, committed-choice reopening, keyboard and clear-focus behavior, disable/re-enable state, shared loading timing, empty feedback, and theme focus rings.
+
+- fdb5583: Add a controlled FileShell React template and file-shell-controls primitives for exclusive panels, semantic annotation modes/cursors, verified presence, formatting commands, metadata and saved-version history. Add FileHeader with async inline rename and semantic fileKind, and explicit NavigationAction icon purposes. Align header/navigation file-type icons and retain the existing navigation-file-list contract. Includes capability/state fixtures and Avalandra handoff guidance; services and authorization remain consumer-owned.
+
+### Patch Changes
+
+- badc44f: Required marker is plain text. The plain-CSS field pattern marks a required field with "(required)" inside the label in the label's own colour, plus the native `required` attribute (owner ruling 2026-10-07). The `.weft-field-label .weft-req` stop-colour rule is removed from `css/weft-components.css`; the span stays as an unstyled hook. Form, brand-package and specimen docs say the same thing.
+- 054c4e5: Align Space picker names to the start edge instead of inheriting browser button centering.
+
 ## 0.8.0
 
 ### Minor Changes
