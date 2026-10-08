@@ -132,3 +132,5 @@ export * from './ui/navigation-file-list';
 
 export * from './ui/file-shell-controls';
 export * from './templates/file-shell';
+
+export * from './ui/document-content';

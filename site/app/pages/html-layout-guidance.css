@@ -1,0 +1,45 @@
+.html-layout-guide { padding: 0; }
+.html-layout-example { margin-block: 2rem; }
+.html-layout-pair { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 1rem; margin-block: 1rem; }
+.html-layout-pair > section { min-width: 0; padding: 1rem; border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card); }
+.html-layout-pair > section > h3 { margin-block-start: 0; }
+.html-layout-callout { color: var(--weft-ink); background: var(--weft-fill-soft); padding: 1rem; border-inline-start: 3px solid var(--weft-blue); }
+.html-layout-note { font-size: .875rem; margin-block-start: 1rem; }
+.html-layout-state-row { display:flex; flex-wrap:wrap; gap:.75rem; }
+.html-layout-state-row > span { padding:.25rem .5rem; border:1px solid var(--weft-rule); border-radius:var(--weft-radius-card); }
+.html-layout-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); gap:.75rem; align-items:stretch; }
+.html-layout-cards > section { min-width:0; padding:1rem; border:1px solid var(--weft-rule); background:var(--weft-fill-soft); }
+.html-layout-cards h4 { margin-block:.75rem; }
+.html-layout-marker { display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; border:1px solid var(--weft-link); border-radius:50%; font-weight:600; }
+.html-layout-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr)); gap:.75rem; }
+.html-layout-metrics > * { display:flex; flex-direction:column; gap:.5rem; padding:1rem; border:1px solid var(--weft-rule); }
+.html-layout-metrics strong { font-size:2rem; }
+.html-layout-panel { padding:.75rem; border:1px solid var(--weft-rule); border-radius:var(--weft-radius-card); }
+.html-layout-panel summary { cursor:pointer; }
+.html-layout-guide pre:focus-visible { outline:2px solid var(--weft-link); outline-offset:3px; }
+
+.html-layout-bad-demo { min-width:0; margin-block:1rem; padding:1rem; border:1px dashed var(--weft-rule); }
+.html-layout-yellow-swatch { height:2rem; background:var(--weft-mark); border:1px solid var(--weft-rule); }
+.html-layout-color-only { display:flex; gap:1rem; }
+.html-layout-color-only span { width:1.5rem; height:1.5rem; background:var(--weft-blue); }
+.html-layout-color-only span:nth-child(2) { background:var(--weft-danger); }
+.html-layout-color-only span:nth-child(3) { background:var(--weft-mark); }
+.html-layout-fixed-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.25rem; }
+.html-layout-fixed-cards > div { height:5rem; overflow:hidden; padding:.25rem; border:1px solid var(--weft-rule); }
+.html-layout-unlabeled-metrics { display:flex; gap:2rem; font-size:2rem; }
+.html-layout-clipped-code { white-space:nowrap; overflow:hidden; font-family:var(--weft-font-mono); }
+.html-layout-image-pair { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr)); gap:1rem; }
+.html-layout-image-pair figure { min-width:0; margin:0; }
+.html-layout-image-pair figcaption { font-size:.875rem; margin-block:.5rem; }
+.html-layout-wireframe { padding:1rem; border:1px solid var(--weft-rule); background:var(--weft-fill-soft); }
+.html-layout-wireframe span, .html-layout-wireframe label { display:block; margin-block-end:.5rem; }
+.html-layout-wireframe > div { padding:.5rem; border:1px solid var(--weft-rule); }
+.html-layout-table-scroll { max-width:100%; overflow-x:auto; }
+.html-layout-table-scroll table { min-width:32rem; width:100%; border-collapse:collapse; }
+.html-layout-table-scroll th, .html-layout-table-scroll td { padding:.75rem; border:1px solid var(--weft-rule); text-align:start; }
+.html-layout-table-scroll caption { text-align:start; margin-block-end:.75rem; }
+.html-layout-table-scroll:focus-visible, .html-layout-section-links a:focus-visible { outline:2px solid var(--weft-link); outline-offset:3px; }
+.html-layout-flow li { margin-block:1rem; }
+.html-layout-change { padding:1rem; border-inline-start:3px solid var(--weft-link); background:var(--weft-fill-soft); }
+.html-layout-section-links { display:flex; flex-wrap:wrap; gap:1rem; }
+.html-layout-guide section[id] { scroll-margin-block-start:2rem; }

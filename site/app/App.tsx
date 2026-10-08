@@ -1,3 +1,4 @@
+import { HtmlDocumentComponents } from './pages/HtmlDocumentComponents';
 import React from 'react';
 import { Layout } from './Layout';
 import { useRoute } from './routes';
@@ -32,7 +33,7 @@ export function App() {
       page = route.id === 'settings' || route.id?.startsWith('settings/') ? <SettingsLab path={route.id} /> : <TemplatePage id={route.id} />;
       break;
     case 'labs':
-      page = route.id === 'inputs' ? <InputLab /> : (route.id === 'settings' || route.id?.startsWith('settings/')) ? <SettingsLab path={route.id} /> : route.id === 'navigation-rail' ? <NavigationRailLab initialLevel={route.level} /> : <div><h1>{route.id ? 'Lab not found' : 'Labs'}</h1><a href="#/labs/navigation-rail">Navigation rail lab</a></div>;
+      page = route.id === 'html-documents' ? <HtmlDocumentComponents /> : route.id === 'inputs' ? <InputLab /> : (route.id === 'settings' || route.id?.startsWith('settings/')) ? <SettingsLab path={route.id} /> : route.id === 'navigation-rail' ? <NavigationRailLab initialLevel={route.level} /> : <div><h1>{route.id ? 'Lab not found' : 'Labs'}</h1><a href="#/labs/navigation-rail">Navigation rail lab</a></div>;
       break;
     case 'all':
       // Full width, no rail: the visual baselines capture the one-page gallery

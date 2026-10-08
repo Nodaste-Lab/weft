@@ -1607,3 +1607,70 @@ html,
 
 .weft-file-presence > ul[data-stacked="true"] li+li { margin-inline-start:-22px; }
 .weft-file-person:hover, .weft-file-person:focus { z-index:2; }
+
+/* Authored document components — shared atoms through organisms. */
+.weft-doc { max-width: 1120px; min-width: 0; margin-inline: auto; padding: clamp(var(--weft-space-4), 3vw, var(--weft-space-6)); color: var(--weft-ink); font: 400 1rem/1.6 var(--weft-font-sans); overflow-wrap: anywhere; }
+.weft-doc *, .weft-doc *::before, .weft-doc *::after { box-sizing: border-box; }
+.weft-doc :is(h1,h2,h3,h4) { font-family: var(--weft-font-serif); line-height: 1.25; scroll-margin-block-start: var(--weft-space-4); }
+.weft-doc h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-block: 0 var(--weft-space-4); }
+.weft-doc h2 { font-size: 1.5rem; margin-block: var(--weft-space-6) var(--weft-space-3); }
+.weft-doc h3 { font-size: 1.25rem; margin-block: var(--weft-space-5) var(--weft-space-3); }
+.weft-doc p { margin-block: 0 var(--weft-space-4); }
+.weft-doc :is(ul,ol) { padding-inline-start: 1.5em; margin-block: 0 var(--weft-space-4); }
+.weft-doc ul { list-style: disc; }
+.weft-doc ol { list-style: decimal; }
+.weft-doc li + li { margin-block-start: var(--weft-space-2); }
+.weft-doc a { color: var(--weft-link); text-decoration: underline; text-underline-offset: .2em; }
+.weft-doc a:focus-visible, .weft-doc summary:focus-visible, .weft-doc-table:focus-visible { outline: 2px solid var(--weft-link); outline-offset: 3px; }
+.weft-doc :is(code,pre), .weft-doc-number { font-family: var(--weft-font-mono); }
+.weft-doc pre { overflow: auto; max-width: 100%; padding: var(--weft-space-4); background: var(--weft-fill-soft); }
+.weft-doc-lede { font-size: 1.125rem; }
+.weft-doc-evidence { color: var(--weft-muted); font-size: .875rem; }
+.weft-doc-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--weft-space-5); align-items: start; margin-block: var(--weft-space-5); }
+.weft-doc-columns > * { min-width: 0; }
+.weft-doc-columns > section > :first-child { margin-block-start: 0; }
+.weft-doc-figure { margin: 0; min-width: 0; }
+.weft-doc-figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--weft-rule); }
+.weft-doc-figure figcaption { margin-block-start: var(--weft-space-3); color: var(--weft-muted); font-size: .875rem; }
+.weft-doc-finding { margin-block: var(--weft-space-5); padding: clamp(var(--weft-space-4), 3vw, var(--weft-space-5)); border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card); background: var(--weft-paper); }
+.weft-doc-finding > :first-child { margin-block-start: 0; }
+.weft-doc-finding > :last-child { margin-block-end: 0; }
+.weft-doc-number { font-weight: 600; font-size: .85em; }
+.weft-doc-prompt { border-inline-start: 3px solid var(--weft-blue); margin: var(--weft-space-4) 0; padding: var(--weft-space-3) var(--weft-space-4); background: var(--weft-fill-soft); }
+.weft-doc-prompt > :last-child { margin-block-end: 0; }
+.weft-doc-table { max-width: 100%; overflow: auto; margin-block: var(--weft-space-5); }
+.weft-doc-table table { width: 100%; border-collapse: collapse; text-align: start; font-size: .875rem; }
+.weft-doc-table caption { text-align: start; font-weight: 600; margin-block-end: var(--weft-space-3); }
+.weft-doc-table :is(th,td) { text-align: start; padding: var(--weft-space-3); vertical-align: top; border: 1px solid var(--weft-rule); }
+.weft-doc-table thead { background: var(--weft-fill-soft); }
+.weft-doc-disclosure { margin-block: var(--weft-space-5); border-block: 1px solid var(--weft-rule); }
+.weft-doc-disclosure > summary { padding-block: var(--weft-space-3); min-height: var(--weft-touch-target); cursor: pointer; }
+.weft-doc-disclosure > div { padding-block: var(--weft-space-3); }
+@media print { .weft-doc { max-width: none; padding: 0; } .weft-doc :is(h2,h3,h4) { break-after: avoid; } }
+
+.weft-doc-heading { font-family: var(--weft-font-serif); line-height: 1.25; margin-block: 0 var(--weft-space-4); }
+.weft-doc-heading[data-level='1'] { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+.weft-doc-heading[data-level='2'] { font-size: 1.5rem; }
+.weft-doc-heading[data-level='3'] { font-size: 1.25rem; }
+.weft-doc-heading[data-level='4'] { font-size: 1.125rem; }
+.weft-doc-text { margin-block: 0 var(--weft-space-4); font: 400 1rem/1.6 var(--weft-font-sans); color: var(--weft-ink); overflow-wrap: anywhere; }
+.weft-doc-text[data-tone='muted'] { color: var(--weft-muted); }
+.weft-doc-text[data-size='lede'] { font-size: 1.125rem; }
+.weft-doc-text[data-size='caption'] { font-size: .875rem; }
+.weft-doc-label { font: 600 .875rem/1.5 var(--weft-font-sans); color: var(--weft-ink); }
+.weft-doc-link { color: var(--weft-link); text-decoration: underline; text-underline-offset: .2em; overflow-wrap: anywhere; }
+.weft-doc-link:focus-visible { outline: 2px solid var(--weft-link); outline-offset: 3px; }
+.weft-doc-divider { margin-block: var(--weft-space-5); border: 0; border-block-start: 1px solid var(--weft-rule); }
+.weft-doc-caption { margin-block-start: var(--weft-space-3); font: 400 .875rem/1.6 var(--weft-font-sans); color: var(--weft-muted); }
+.weft-doc-fact { margin-block: var(--weft-space-4); }
+.weft-doc-fact dd { margin: var(--weft-space-1) 0 0; }
+.weft-doc-header { margin-block-end: var(--weft-space-5); }
+.weft-doc-code { font-family: var(--weft-font-mono); font-size: .875em; overflow-wrap: anywhere; }
+.weft-doc-code-block { max-width: 100%; overflow: auto; white-space: pre; padding: var(--weft-space-4); background: var(--weft-fill-soft); border: 1px solid var(--weft-rule); border-radius: var(--weft-radius-card); }
+.weft-doc-code-block:focus-visible { outline: 2px solid var(--weft-link); outline-offset: 3px; }
+.weft-doc-code-block > code { overflow-wrap: normal; }
+.weft-doc-status { padding-block: var(--weft-space-3); border-block-end: 1px solid var(--weft-rule); }
+.weft-doc-callout { margin-block: var(--weft-space-4); padding: var(--weft-space-4); border-inline-start: 3px solid var(--weft-blue); background: var(--weft-fill-soft); }
+.weft-doc-callout > :last-child { margin-block-end: 0; }
+.weft-doc-section { margin-block: var(--weft-space-5); }
+.weft-doc-section > :first-child { margin-block-start: 0; }

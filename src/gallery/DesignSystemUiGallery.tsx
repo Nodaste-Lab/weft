@@ -1,3 +1,4 @@
+import { DocumentFinding, DocumentText } from '../ui/document-content';
 import { FileShell } from '../templates/file-shell';
 import { fileShellParticipants } from '../templates/file-shell.fixture';
 import { FileHeaderExample } from './FileHeaderExample';
@@ -274,6 +275,7 @@ export const SHOWCASED_PRIMITIVE_IDS = [
   'content-viewer',
   'context-menu',
   'dialog',
+  'document-content',
   'dot',
   'dropdown-menu',
   'empty-state',
@@ -2845,6 +2847,7 @@ export function DesignSystemUiGallery({
         </div>
       </PrimitiveCard>
 
+      <PrimitiveCard id="document-content" title="Document content" summary="Shared authored-document atoms through organisms"><DocumentFinding headingId="gallery-finding" heading="Document hierarchy"><DocumentText>Compose the same exported components into HTML templates.</DocumentText></DocumentFinding></PrimitiveCard>
       <PrimitiveCard id="file-shell-controls" title="File shell controls" summary="Controlled rail, panels, presence and history."><FileHeaderExample workspaceOnly populated commentCount={3}/></PrimitiveCard>
       <PrimitiveCard id="file-header" title="File header" summary="Shared title, context, status and actions across file types."><FileHeaderExample saveState="saved"/></PrimitiveCard>
       <PrimitiveCard
