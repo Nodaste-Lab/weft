@@ -1,3 +1,4 @@
+import fileHeaderExampleSource from '../../../src/gallery/FileHeaderExample.tsx?raw';
 import { SelectionLoadingExample } from './SelectionLoadingExample';
 import React from 'react';
 import propsSnapshot from '../../../props-snapshot.json';
@@ -78,6 +79,7 @@ function Example() {
   return <${id === 'combobox' ? 'Combobox' : 'MultiSelect'} label="${id === 'combobox' ? 'Space' : 'Spaces'}" options={options} value={value} onValueChange={setValue} />;
 }`}/>}
 
+      {id === 'file-header' && <FieldCode code={fileHeaderExampleSource}/> }
 
       {['input', 'text-field', 'textarea', 'search-field', 'calendar'].includes(id) && <FieldFamilyGuide kind={id} />}
 
@@ -93,7 +95,7 @@ function Example() {
         <ControlUsageGuide multiline={id === 'textarea'}/>
         <Playground id={id === 'textarea' ? 'textarea' : 'input'}/>
       </> : <Playground id={id} />}
-      {['input','text-field','textarea','search-field','calendar','form','combobox','multi-select'].includes(id) ? <section aria-label="Control variants and states">
+      {['input','text-field','textarea','search-field','calendar','form','combobox','multi-select','file-header'].includes(id) ? <section aria-label="Control variants and states">
         <h3>Control variants and states</h3>
         <SpecimenMatrix id={id}/>
       </section> : <Collapsible style={{ display: 'grid', gap: 12, marginTop: 16 }}>

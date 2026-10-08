@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Activity,
-  AlignLeft,
   Bell,
   ChevronDown,
   ChevronRight,
@@ -14,9 +13,10 @@ import {
   Network,
   Plus,
   Settings,
-  PanelTop,
   SlidersHorizontal,
 } from "lucide-react";
+
+import { fileTypeIcons } from "../semantics/file-type-icons";
 
 /** Rail-specific meanings. A glyph is never selected independently of its purpose. */
 export const navigationIconDefinitions = {
@@ -174,8 +174,8 @@ function KanbanOutline({ size = 16, ...props }: React.SVGProps<SVGSVGElement> & 
 const railIconGlyphs = {
   filter: SlidersHorizontal,
   file: FileText,
-  text: AlignLeft,
-  html: PanelTop,
+  text: fileTypeIcons.document,
+  html: fileTypeIcons.htmlFile,
   folder: Folder,
   board: KanbanOutline,
   signals: Activity,

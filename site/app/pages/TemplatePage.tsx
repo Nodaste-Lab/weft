@@ -1,4 +1,5 @@
 import React from 'react';
+import { FileHeaderTemplate } from './FileHeaderTemplate';
 import { TemplateExample } from '../../../src/gallery/DesignSystemUiGallery';
 import { docForPath, sectionFor } from '../content';
 import { displayTitle, templates } from '../nav';
@@ -7,6 +8,7 @@ import { Code, Frame, LastEdited, LinkList, Markdown, NotYetWritten, PageTitle, 
 import { templateDate } from '../dates';
 
 export function TemplatePage({ id }: { id?: string }) {
+  if (id === 'file-header' || id === 'file-shell') return <FileHeaderTemplate />;
   if (!id) {
     return (
       <div>
@@ -14,7 +16,7 @@ export function TemplatePage({ id }: { id?: string }) {
         <ul style={{ display: 'grid', gap: 8, padding: 0, listStyle: 'none' }}>
           {templates.map((t) => (
             <li key={t.id}>
-              <a href={hrefFor('templates', t.id)}>{displayTitle(t.id)}</a>{' '}
+              <a href={hrefFor('templates', t.id)}>{t.title ?? displayTitle(t.id)}</a>{' '}
               <span style={{ color: 'var(--muted-foreground)', fontSize: 13 }}>{t.summary}</span>
             </li>
           ))}

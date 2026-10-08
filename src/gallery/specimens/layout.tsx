@@ -1,3 +1,4 @@
+import { FileHeaderExample, FileHeaderStateExample } from '../FileHeaderExample';
 import * as React from 'react';
 import { FileText, Inbox, Plus, Sparkles } from 'lucide-react';
 import { AspectRatio } from '../../ui/aspect-ratio';
@@ -77,6 +78,16 @@ const TRANSCRIPT_FOOTER = (
 
 /** Specimens for the layout category. One entry per component id; see ../specimen-types.ts. */
 export const layoutSpecimens: Record<string, Specimen> = {
+ 'file-shell-controls': {component:'FileShellPanels',module:'file-shell-controls',axes:[],base:{},states:[{label:'Controlled workspace',props:{},code:'<FileShellPanels panels={panels} active={active} onActiveChange={setActive} label="File side controls">{content}</FileShellPanels>'}],render:()=> <FileHeaderExample workspaceOnly populated/>},
+ 'file-header': {component:'FileHeader',module:'file-header',axes:['saveState'],base:{title:'Product direction',fileTypeLabel:'Document'},states:[
+ {label:'Inline rename',props:{editableExample:true},code:'<FileHeader title={title} fileTypeLabel="Document" onRename={setTitle} />'},
+ {label:'Read only',props:{readOnlyExample:true},code:'<FileHeader title="Product direction" fileTypeLabel="Document" />'},
+ {label:'Spreadsheet',props:{fileTypeLabel:'Spreadsheet',title:'Quarterly forecast'},code:'<FileHeader title="Quarterly forecast" fileTypeLabel="Spreadsheet" />'},
+ {label:'Image',props:{fileTypeLabel:'Image',title:'Workspace overview.png'},code:'<FileHeader title="Workspace overview.png" fileTypeLabel="Image" />'},
+ {label:'Presentation',props:{fileTypeLabel:'Presentation',title:'Team introduction'},code:'<FileHeader title="Team introduction" fileTypeLabel="Presentation" />'},
+ {label:'Long title',props:{title:'Research findings and recommendations for the next iteration of the shared workspace'},code:'<FileHeader title="Research findings and recommendations for the next iteration of the shared workspace" fileTypeLabel="Document" />'},
+ {label:'Rename failure',props:{failRename:true},code:'<FileHeader title={title} fileTypeLabel="Document" onRename={async () => { throw new Error("Demo failure"); }} />',note:'Choose Rename, edit the name and Save to inspect recovery.'}
+ ],render:(p:P)=><FileHeaderStateExample {...p}/>},
   sidebar: {
     component: 'SidebarMenuButton',
     module: 'sidebar',

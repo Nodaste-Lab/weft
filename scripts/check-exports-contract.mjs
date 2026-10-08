@@ -31,10 +31,13 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/package.json',
   // ./src/* pattern — the deep-import surface Heddle builds on
   '@nodaste-lab/weft/src/ui/button.tsx',
+  '@nodaste-lab/weft/src/ui/file-header.tsx',
+  '@nodaste-lab/weft/src/ui/file-shell-controls.tsx',
   '@nodaste-lab/weft/src/ui/text-field.tsx',
   '@nodaste-lab/weft/src/ui/combobox.tsx',
   '@nodaste-lab/weft/src/ui/multi-select.tsx',
   '@nodaste-lab/weft/src/ui/navigation-actions.tsx',
+  '@nodaste-lab/weft/src/ui/navigation-file-list.tsx',
   '@nodaste-lab/weft/src/ui/navigation-space-picker.tsx',
   '@nodaste-lab/weft/src/ui/navigation-search.tsx',
   '@nodaste-lab/weft/src/ui/navigation-account.tsx',
@@ -45,6 +48,8 @@ const SPECIFIERS = [
   '@nodaste-lab/weft/src/ui/navigation-icon.tsx',
   '@nodaste-lab/weft/src/ui/use-commit-boundary.ts',
   '@nodaste-lab/weft/src/ui/utils.ts',
+  '@nodaste-lab/weft/src/templates/navigation-rail.tsx',
+  '@nodaste-lab/weft/src/templates/file-shell.tsx',
   '@nodaste-lab/weft/src/gallery/DesignSystemUiGallery.tsx',
   '@nodaste-lab/weft/src/test-support/ds-assert.ts',
   // built entry ("." resolves via dist)

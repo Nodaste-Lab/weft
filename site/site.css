@@ -12,3 +12,14 @@
   .weft-site-nav[data-mobile-open="false"] { display: none !important; }
   .weft-site-main { padding: 16px !important; }
 }
+
+/* Desktop navigation can be removed from the layout to inspect wide templates. */
+.weft-site-nav-toggle { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:8px; border:1px solid var(--weft-rule); border-radius:4px; background:var(--weft-paper); color:var(--weft-ink); cursor:pointer; }
+.weft-site-nav-toggle:focus-visible { outline:2px solid var(--weft-accent); outline-offset:3px; }
+@media (min-width: 768px) {
+ .weft-site-shell[data-nav-collapsed="true"] { grid-template-columns:minmax(0,1fr) !important; }
+ .weft-site-shell[data-nav-collapsed="true"] > .weft-site-nav { display:none !important; }
+}
+@media (max-width: 767px) {
+ .weft-site-nav-toggle { display:none; }
+}

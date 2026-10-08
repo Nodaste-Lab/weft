@@ -1,4 +1,5 @@
 import React from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 import manifest from '../../manifest.json';
 import { buildNav, categoryOrder } from './nav';
@@ -18,6 +19,8 @@ function ThemeToggle() {
 }
 
 export function Layout({ route, children }: { route: Route; children: ReactNode }) {
+  const [navCollapsed, setNavCollapsed] = React.useState(() => { try { return localStorage.getItem('weft-site-nav-collapsed') === 'true'; } catch { return false; } });
+  function toggleNavigation() { setNavCollapsed(current => { const next = !current; try { localStorage.setItem('weft-site-nav-collapsed', String(next)); } catch {} return next; }); }
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
   React.useEffect(() => setMobileNavOpen(false), [route.section, route.id]);
   const nav = React.useMemo(() => buildNav(), []);
@@ -26,7 +29,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
   const documented = componentGroups.reduce((n, g) => n + g.items.filter((i) => (i.written ?? 0) > 0).length, 0);
 
   return (
-    <div className="weft-site-shell" style={shellStyle}>
+    <div className="weft-site-shell" data-nav-collapsed={navCollapsed} style={shellStyle}>
       <a className="weft-sr-only weft-sr-only-focusable" href="#main">
         Skip to content
       </a>
@@ -100,7 +103,7 @@ export function Layout({ route, children }: { route: Route; children: ReactNode 
       </nav>
       <div style={mainColumnStyle}>
         <header style={headerStyle}>
-          <span style={crumbStyle}>{crumb(route)}</span>
+          <div style={{display:'flex',alignItems:'center',gap:12}}><button type="button" className="weft-site-nav-toggle" aria-label={navCollapsed ? 'Expand site navigation' : 'Collapse site navigation'} title={navCollapsed ? 'Expand site navigation' : 'Collapse site navigation'} aria-expanded={!navCollapsed} aria-controls="weft-site-nav" onClick={toggleNavigation}>{navCollapsed ? <PanelLeftOpen size={20} aria-hidden="true"/> : <PanelLeftClose size={20} aria-hidden="true"/>}</button><span style={crumbStyle}>{crumb(route)}</span></div>
           <ThemeToggle />
         </header>
         <main className="weft-site-main" id="main" tabIndex={-1} style={mainStyle}>

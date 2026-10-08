@@ -310,6 +310,22 @@
       "version": "1.0.0"
     },
     {
+      "id": "file-header",
+      "path": "src/ui/file-header.tsx",
+      "category": "layout",
+      "summary": "Universal file title, context, save status and capability-based actions.",
+      "showcase": true,
+      "version": "1.1.0"
+    },
+    {
+      "id": "file-shell-controls",
+      "path": "src/ui/file-shell-controls.tsx",
+      "category": "layout",
+      "summary": "Controlled file rail and panels, presence, annotation modes, toolbar, metadata and version history.",
+      "showcase": true,
+      "version": "1.0.0"
+    },
+    {
       "id": "follow-up-block",
       "path": "src/ui/follow-up-block.tsx",
       "category": "actions",
@@ -602,7 +618,7 @@
       "category": "navigation",
       "summary": "Shared file actions with desktop submenus and accessible compact Back panels.",
       "showcase": true,
-      "version": "1.0.2"
+      "version": "1.1.0"
     },
     {
       "id": "navigation-count",
@@ -611,6 +627,14 @@
       "summary": "Awaiting-action signal counts with file/Space scope; notifications restricted to the Signals destination.",
       "showcase": true,
       "version": "1.0.1"
+    },
+    {
+      "id": "navigation-file-list",
+      "path": "src/ui/navigation-file-list.tsx",
+      "category": "navigation",
+      "summary": "Reusable nested file lists, paging and async states, drag presentation, rename and alternate action entry points; application-owned data and permissions.",
+      "showcase": true,
+      "version": "1.0.0"
     },
     {
       "id": "navigation-file-list",
@@ -1145,6 +1169,34 @@
     }
   ],
   "templates": [
+    {
+      "id": "file-shell",
+      "kind": "react",
+      "path": "src/templates/file-shell.tsx",
+      "fixture": "src/templates/file-shell.fixture.ts",
+      "version": "1.0.0",
+      "summary": "Controlled file workspace around host content, with capabilities, semantic identity, exclusive panels and annotation modes.",
+      "docs": "docs/brand-package/14-react-templates.md",
+      "composes": [
+        "file-header",
+        "file-shell-controls"
+      ]
+    },
+    {
+      "id": "navigation-rail",
+      "kind": "react",
+      "path": "src/templates/navigation-rail.tsx",
+      "fixture": "src/templates/navigation-rail.fixture.ts",
+      "version": "1.0.0",
+      "summary": "Workspace rail \u2014 space picker, section navigation with counts, document tree with folders and per-row actions, signed-in profile. React template composed only from Weft primitives; all content arrives through props.",
+      "composes": [
+        "sidebar",
+        "collapsible",
+        "select",
+        "avatar"
+      ],
+      "docs": "docs/brand-package/14-react-templates.md"
+    },
     {
       "id": "weft-board",
       "kind": "css",

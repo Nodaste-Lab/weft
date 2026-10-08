@@ -89,3 +89,11 @@ Back/Forward behavior; selected destinations use `aria-current="page"`. Verify
 keyboard resize and refresh restoration, narrow drawer focus return, independent
 file disclosure/opening, and a file tree that retains the active/focused row
 while paging. Automated checks supplement a manual NVDA/VoiceOver and touch pass.
+
+## `file-shell` — controlled file workspace
+
+Exports FileShell and its capability contract. Composes file-header and file-shell-controls only; all data arrives through props. Header identity uses fileKind to select the same semantic glyph as navigation. Supply read/write/comment/review capabilities separately. Read denial hides content/panels/presence; write denial removes rename and disables formatting; review denial omits that panel; comment denial omits HTML annotation modes. Host-provided panel content and action slots must enforce their own permissions too.
+
+Panels are controlled, exclusive and semantic: Comments first, Working status, Review, File info and Version history. Keyboard opening moves focus into the region. The panel is a persistent region, not a dismissible layer. Escape is reserved for the content editor and for transient controls inside the panel. The rail control toggles the panel; closing it keeps focus on that control. Shift+Tab from the panel returns to the rail. Formatting stays in the document column; HTML gets mutually exclusive annotation modes and matching cursors. FilePresence, FileMetadata and FileVersionHistory are exported compositions for panel content; saved snapshots are separate from revision lineage. Key file views by stable identity to reset transient state when navigating.
+
+Use this as a design-system composition reference, not a final working Avalandra file view. The application owns routing, access enforcement, persistence, editor commands, coordinate/element anchors, iframe cursor propagation, comment services, verified activity, review/approval and revision operations. Fixtures are local examples; no successful service operation is implied by their state. Test the integration against the deployed Avalandra contract, which differs from the local source snapshot used for discovery.
