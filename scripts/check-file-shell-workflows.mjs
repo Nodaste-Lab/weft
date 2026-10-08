@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+import { spawn } from 'node:child_process';
+const previewUrl=process.env.WEFT_SITE_URL??'http://127.0.0.1:5197';
+const server=process.env.WEFT_SITE_URL?null:spawn(process.execPath,['node_modules/vite/bin/vite.js','--config','site/vite.config.ts','--port','5197','--strictPort'],{stdio:'ignore'});
+if(server){for(let i=0;i<100;i++){if(server.exitCode!==null)throw Error('Workflow preview server exited');try{if((await fetch(previewUrl)).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}}
 // Run against site:dev, or set WEFT_SITE_URL to a built site:preview server.
 const browser=await chromium.launch();
 try {
  const page=await browser.newPage({viewport:{width:1314,height:960}});
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
- await page.goto(`${process.env.WEFT_SITE_URL??'http://127.0.0.1:5181'}/#/templates/file-shell`);
+ await page.goto(`${previewUrl}/#/templates/file-shell`);
  assert.equal(await page.evaluate(()=>document.activeElement.tagName),'BODY');
  const shell=page.locator('.weft-file-shell').first();
  // Remaining focus assertions exercise keyboard activation.
@@ -51,7 +55,7 @@ try {
  await mobileRail.getByRole('button',{name:'Working status',exact:true}).click();
  await mobileShell.getByRole('radio').first().focus();
  await page.keyboard.press('Shift+Tab');
- assert.equal(await mobileRail.getByRole('button').last().evaluate(e=>e===document.activeElement),true,'Shift+Tab from first panel control returns to rail');
+ assert.equal(await mobileRail.getByRole('button',{name:'Working status',exact:true}).evaluate(e=>e===document.activeElement),true,'Shift+Tab from first panel control returns to rail');
  await mobileRail.getByRole('button').first().focus();
  for(const button of await mobileRail.getByRole('button').all()){
   assert.equal(await button.evaluate(e=>e===document.activeElement),true,'Mobile Tab follows visual rail order');
@@ -67,4 +71,4 @@ try {
  assert.equal(boxes[1].left<boxes[0].right&&boxes[2].left<boxes[1].right,true,'Stacked avatar visuals overlap');
  assert.equal(await stacked.locator('.weft-file-person').evaluateAll(nodes=>nodes.every(e=>{const r=e.getBoundingClientRect();return r.width===44&&r.height===44})),true);
  assert.deepEqual(errors,[]);console.log('File-shell workflows passed: rail/menu focus, Escape, cursor, version save/restore, read-only status, mobile layout.');
-} finally {await browser.close();}
+} finally {await browser.close();server?.kill();}

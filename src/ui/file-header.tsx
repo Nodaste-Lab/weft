@@ -35,12 +35,13 @@ export const FileHeader = React.forwardRef<HTMLElement, FileHeaderProps>(functio
   const restoreFocus = React.useRef(true);
   const composing = React.useRef(false);
   const request = React.useRef(0);
-  const identity = React.useRef(fileId);
-  identity.current = fileId;
-  const previousIdentity = React.useRef(fileId);
+  const identity = React.useRef(fileId ?? title);
+  identity.current = fileId ?? title;
+  const previousIdentity = React.useRef(fileId ?? title);
   React.useEffect(() => {
-    if (previousIdentity.current === fileId) return;
-    previousIdentity.current = fileId; request.current++; saving.current = false;
+    if (previousIdentity.current === (fileId ?? title)) return;
+    const acceptedRename = fileId === undefined && saving.current && title === draft.trim();
+    previousIdentity.current = fileId ?? title; if (!acceptedRename) restoreFocus.current = false; request.current++; saving.current = false;
     setEditing(false); setPending(false); setError(""); setDraft(title);
   }, [fileId, title]);
   const wasEditing = React.useRef(false);
@@ -61,7 +62,7 @@ export const FileHeader = React.forwardRef<HTMLElement, FileHeaderProps>(functio
     if (!next) { setError("Enter a file name."); input.current?.focus(); return; }
     if (next === title) { setEditing(false); return; }
     const currentRequest = ++request.current;
-    const isCurrent = () => mounted.current && request.current === currentRequest && identity.current === fileId;
+    const isCurrent = () => mounted.current && request.current === currentRequest && identity.current === (fileId ?? title);
     saving.current = true; setPending(true); setError("");
     try { await onRename(next); if (isCurrent()) setEditing(false); }
     catch { if (isCurrent()) { setError("The file could not be renamed. Try again."); input.current?.focus(); } }
