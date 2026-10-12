@@ -54,7 +54,7 @@ function ActionButtonRow({
           {auxiliaryActions}
         </div>
         <div className="weft-action-button-row-primary">
-          <Button type="button" {...primaryAction} size="sm" variant="default" />
+          <Button type="button" {...primaryAction} size="sm" variant={variant === "navigation" ? "outline" : "default"} />
         </div>
       </div>
     );

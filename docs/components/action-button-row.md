@@ -28,7 +28,7 @@ An action row with explicit form, navigation and composer hierarchy, plus a gene
 ## How to use
 
 - **Form:** `variant="form"` groups link-styled Cancel and filled Save at the end. Pass `secondaryAction={{ children: "Cancel", onClick: cancel }}` and `primaryAction={{ children: "Save", type: "submit" }}`. Cancel stays a semantic button, not a navigation link.
-- **Navigation:** `variant="navigation"` places outlined Back at the start and filled Continue at the end. Separation communicates direction; DOM and keyboard order remain Back then Continue.
+- **Navigation:** `variant="navigation"` places outlined Back at the start and outlined Continue at the end. Both navigation actions are neutral: forward movement alone does not justify primary-action color. Separation communicates direction; DOM and keyboard order remain Back then Continue.
 - **Composer:** `variant="composer"` places link-styled Cancel and secondary Attach at the start, with filled Send at the end. Supply Attach through `auxiliaryActions`, using `Button variant="outline" size="sm"`.
 - Structured variants require `primaryAction`, accept an optional `secondaryAction`, and own their button sizes and variants. Action objects accept Button props such as `onClick`, `type`, `disabled`, `loading`, and accessible names. The default type is `button`; explicitly use `submit` for form submission.
 - The host owns validation, saving, attachment picking, sending, errors/retry, and whether Cancel is available during a request. Nothing is persisted by the row.
@@ -38,7 +38,7 @@ An action row with explicit form, navigation and composer hierarchy, plus a gene
 
 ## Heuristics
 
-- One filled (default variant) button per row. The others are `outline`, `secondary` or `ghost`.
+- Use a filled (default variant) button only for an appropriate primary action, such as Save or Send. Back and Continue are both neutral; use spacing and opposite-edge placement to communicate direction. A row may have no filled button.
 - Order follows frequency and consequence: the common, safe actions first; a destructive action last, never between two safe ones.
 - A generic row stays on one line in the default mode. When labels would wrap or truncate, cut an action rather than shrinking the text.
 - The trailing slot holds the one item that is not an action: a link to a fuller view.

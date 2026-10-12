@@ -54,6 +54,7 @@ describe('structured action hierarchy', () => {
     </form>);
     const cancelButton = screen.getByRole('button', { name: 'Cancel' });
     expect(cancelButton.className).toContain('hover:underline');
+    expect(screen.getByRole('button', { name: 'Save' }).className).toContain('bg-primary');
     fireEvent.click(cancelButton); expect(cancel).toHaveBeenCalledOnce(); expect(save).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Save' })); expect(save).toHaveBeenCalledOnce();
     await expectA11yClean(container);
@@ -71,6 +72,10 @@ describe('structured action hierarchy', () => {
     cleanup(); const back = vi.fn(); const next = vi.fn();
     render(<ActionButtonRow variant="navigation" secondaryAction={{ children: 'Back', onClick: back }} primaryAction={{ children: 'Continue', onClick: next }} />);
     expect(screen.getAllByRole('button').map((button) => button.textContent)).toEqual(['Back', 'Continue']);
+    for (const name of ['Back', 'Continue']) {
+      expect(screen.getByRole('button', { name }).className).not.toContain('bg-primary');
+      expect(screen.getByRole('button', { name }).className).toContain('bg-background');
+    }
     fireEvent.click(screen.getByRole('button', { name: 'Back' })); expect(back).toHaveBeenCalledOnce(); expect(next).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Continue' })); expect(next).toHaveBeenCalledOnce();
   });
