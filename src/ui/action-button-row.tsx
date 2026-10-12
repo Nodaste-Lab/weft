@@ -1,39 +1,64 @@
 import * as React from "react";
 
+import { Button } from "./button";
+
 import { cn } from "./utils";
 
-/*
- * ActionButtonRow — flex row for grouped panel actions.
- *
- * Standardizes the gap, alignment, and overflow behavior for action sets like
- * Copy / Email / Vault / Generate that recur in panel headers and toolbars.
- * Use as a slot inside <PanelHeader> or as a standalone toolbar row.
- *
- * The trailing flex-1 spacer placement is handled here so primary actions can
- * sit at the right edge with the standard gap.
- *
- * `dense` mode uses a tighter gap for operator boards that stack many controls
- * in a narrow column.
- *
- * A `trailingLink` node is pushed to the far right (margin-left: auto) whenever
- * it is supplied — it is independent of `dense`, though the operator-board
- * drawer is where the pairing shows up most. Use a Button size="dense"
- * variant="ghost", or a plain anchor styled as a link.
+/** Structured variants own hierarchy; callbacks and pending state remain host-owned.
+ * Omit variant to retain the generic children/align/trailingLink composition.
  */
+type RowAction = Omit<React.ComponentProps<typeof Button>, "variant" | "size" | "asChild">;
+type ActionButtonRowProps = React.ComponentProps<"div"> & {
+  align?: "start" | "end" | "between";
+  variant?: "actions" | "form" | "navigation" | "composer";
+  primaryAction?: RowAction;
+  secondaryAction?: RowAction;
+  auxiliaryActions?: React.ReactNode;
+  dense?: boolean;
+  trailingLink?: React.ReactNode;
+} & ({
+  variant?: "actions";
+  primaryAction?: never;
+  secondaryAction?: never;
+  auxiliaryActions?: never;
+} | {
+  variant: "form" | "navigation" | "composer";
+  primaryAction: RowAction;
+  secondaryAction?: RowAction;
+  auxiliaryActions?: React.ReactNode;
+  children?: never;
+  trailingLink?: never;
+  align?: never;
+});
+
 function ActionButtonRow({
   className,
   align = "start",
   dense = false,
   trailingLink,
+  variant = "actions",
+  primaryAction,
+  secondaryAction,
+  auxiliaryActions,
   children,
   ...props
-}: React.ComponentProps<"div"> & {
-  align?: "start" | "end" | "between";
-  /** Tighter gap for operator-board drawer action rows. */
-  dense?: boolean;
-  /** Node pushed to the far-right trailing edge, in any density. */
-  trailingLink?: React.ReactNode;
-}) {
+}: ActionButtonRowProps) {
+  if (variant !== "actions") {
+    return (
+      <div {...props} data-slot="action-button-row" data-variant={variant}
+        data-dense={dense || undefined}
+        className={cn("weft-action-button-row", className)}>
+        <div className="weft-action-button-row-leading">
+          {secondaryAction ? <Button type="button" {...secondaryAction} size="sm"
+            variant={variant === "navigation" ? "outline" : "link"} /> : null}
+          {auxiliaryActions}
+        </div>
+        <div className="weft-action-button-row-primary">
+          <Button type="button" {...primaryAction} size="sm" variant="default" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       data-slot="action-button-row"

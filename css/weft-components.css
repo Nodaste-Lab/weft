@@ -922,6 +922,14 @@ html,
 /* Trailing slot wrapper — use <span class="weft-action-button-row-trailing"> around any trailing link/action. */
 .weft-action-button-row-trailing { margin-left: auto; }
 
+/* Structured action rows preserve DOM order and separate supporting actions
+ * from the forward/primary action. Groups wrap without reversing direction. */
+.weft-action-button-row[data-variant] { gap: 12px 24px; }
+.weft-action-button-row-leading { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.weft-action-button-row-primary { margin-inline-start: auto; }
+.weft-action-button-row[data-variant="form"] { justify-content: flex-end; }
+.weft-action-button-row[data-variant="form"] .weft-action-button-row-primary { margin-inline-start: 0; }
+
 /* ── StatRow plain-CSS counterpart (D13) ─────────────────────────────────────
  * Compact stat summary row, typically used inside a narrow panel slot.
  * Markup:

@@ -63,16 +63,21 @@ export const actionsSpecimens: Record<string, Specimen> = {
   'action-button-row': {
     component: 'ActionButtonRow',
     module: 'action-button-row',
-    base: { children: ROW_ACTIONS },
+    base: { variant: 'form', primaryAction: { children: 'Save', type: 'button' }, secondaryAction: { children: 'Cancel' } },
     states: [
-      { label: 'Dense', props: { dense: true }, code: '<ActionButtonRow dense>', note: 'Tighter gap for narrow operator-board columns; wraps when the row overflows.' },
-      { label: 'With trailing link', props: { trailingLink: <Button size="sm" variant="ghost">Board view</Button> }, code: '<ActionButtonRow trailingLink={<Button size="sm" variant="ghost">Board view</Button>}>', note: 'The trailing node is pushed to the far edge in any alignment.' },
+      { label: 'Back and Continue', props: { variant: 'navigation', primaryAction: { children: 'Continue' }, secondaryAction: { children: 'Back' } }, code: '<ActionButtonRow variant="navigation" secondaryAction={{ children: "Back", onClick: goBack }} primaryAction={{ children: "Continue", onClick: goForward }} />', note: 'Back stays at the start; the filled Continue action sits at the opposite edge.' },
+      { label: 'Cancel, Attach and Send', props: { variant: 'composer', primaryAction: { children: 'Send' }, secondaryAction: { children: 'Cancel' }, auxiliaryActions: <Button type="button" size="sm" variant="outline">Attach</Button> }, code: '<ActionButtonRow variant="composer" secondaryAction={{ children: "Cancel", onClick: cancel }} auxiliaryActions={<Button type="button" size="sm" variant="outline" onClick={attach}>Attach</Button>} primaryAction={{ children: "Send", onClick: send }} />', note: 'Cancel is link-styled, Attach is secondary, and Send is the primary action at the end.' },
+      { label: 'Saving', props: { primaryAction: { children: 'Saving…', loading: true }, secondaryAction: { children: 'Cancel', disabled: true } }, code: '<ActionButtonRow variant="form" primaryAction={{ children: "Saving…", loading: true }} secondaryAction={{ children: "Cancel", disabled: true }} />', note: 'The host supplies pending state and decides whether cancellation remains available.' },
+      { label: 'Generic actions', props: { variant: 'actions', primaryAction: undefined, secondaryAction: undefined, children: ROW_ACTIONS }, code: '<ActionButtonRow><Button variant="outline">Refresh</Button><Button variant="outline">Filter</Button></ActionButtonRow>', note: 'Generic action groups remain supported.' },
     ],
-    render: ({ children, ...p }: P) => (
-      <div style={{ width: 320 }}>
-        <ActionButtonRow {...(p as React.ComponentProps<typeof ActionButtonRow>)}>{children as React.ReactNode}</ActionButtonRow>
-      </div>
-    ),
+    render: (p: P) => {
+      if (p.variant === 'actions' || p.align !== undefined) {
+        return <div style={{ width: '100%', maxWidth: 480 }}><ActionButtonRow align={p.align as 'start' | 'end' | 'between'}>{ROW_ACTIONS}</ActionButtonRow></div>;
+      }
+      const primaryAction = { ...(p.primaryAction as object), children: p.variant === 'navigation' ? 'Continue' : p.variant === 'composer' ? 'Send' : (p.primaryAction as { children?: React.ReactNode })?.children };
+      const secondaryAction = { ...(p.secondaryAction as object), children: p.variant === 'navigation' ? 'Back' : 'Cancel' };
+      return <div style={{ width: '100%', maxWidth: 480 }}><ActionButtonRow {...(p as React.ComponentProps<typeof ActionButtonRow>)} primaryAction={primaryAction} secondaryAction={secondaryAction} /></div>;
+    },
   },
   'add-item-button': {
     component: 'AddItemButton',

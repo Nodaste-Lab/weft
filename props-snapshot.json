@@ -10,7 +10,7 @@
       }
     },
     "action-button-row": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "surface": {
         "variants": {},
         "props": {
@@ -22,13 +22,34 @@
               "start"
             ]
           },
+          "auxiliaryActions": {
+            "optional": true,
+            "union": null
+          },
           "dense": {
+            "optional": true,
+            "union": null
+          },
+          "primaryAction": {
+            "optional": true,
+            "union": null
+          },
+          "secondaryAction": {
             "optional": true,
             "union": null
           },
           "trailingLink": {
             "optional": true,
             "union": null
+          },
+          "variant": {
+            "optional": true,
+            "union": [
+              "actions",
+              "composer",
+              "form",
+              "navigation"
+            ]
           }
         },
         "native": [

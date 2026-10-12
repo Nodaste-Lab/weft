@@ -24,9 +24,9 @@
       "id": "action-button-row",
       "path": "src/ui/action-button-row.tsx",
       "category": "actions",
-      "summary": "Flex row container for grouped panel actions (Copy/Email/Vault, etc.) with start/end/between alignment. Supports dense mode and trailingLink slot.",
+      "summary": "Action hierarchy for forms, navigation and composers, plus generic grouped actions.",
       "showcase": true,
-      "version": "1.1.0"
+      "version": "1.2.0"
     },
     {
       "id": "add-item-button.figma",

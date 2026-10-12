@@ -2831,19 +2831,12 @@ export function DesignSystemUiGallery({
       <PrimitiveCard
         id="action-button-row"
         title="Action Button Row"
-        summary="Horizontal action strip for panel-rail toolbars. D3 default adopts dense start-group + trailing link arrangement."
+        summary="Clear action hierarchy for forms, navigation and composers."
       >
-        <div className="flex w-full max-w-sm flex-col gap-2">
-          <ActionButtonRow
-            trailingLink={<Button size="dense" variant="ghost" className="is-link px-0 text-xs">Board view</Button>}
-          >
-            <Button size="dense" variant="outline">Refresh</Button>
-            <Button size="dense" variant="outline">Filter</Button>
-          </ActionButtonRow>
-          <ActionButtonRow>
-            <Button size="sm" variant="secondary">Export</Button>
-            <Button size="sm" variant="outline">Settings</Button>
-          </ActionButtonRow>
+        <div className="flex w-full max-w-sm flex-col gap-4">
+          <ActionButtonRow variant="form" primaryAction={{ children: "Save" }} secondaryAction={{ children: "Cancel" }} />
+          <ActionButtonRow variant="navigation" primaryAction={{ children: "Continue" }} secondaryAction={{ children: "Back" }} />
+          <ActionButtonRow variant="composer" primaryAction={{ children: "Send" }} secondaryAction={{ children: "Cancel" }} auxiliaryActions={<Button type="button" size="sm" variant="outline">Attach</Button>} />
         </div>
       </PrimitiveCard>
 
